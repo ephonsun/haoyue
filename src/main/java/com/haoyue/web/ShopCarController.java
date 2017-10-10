@@ -38,7 +38,11 @@ public class ShopCarController {
 
     @RequestMapping("/del")
     public Result del(Integer id){
-        shopCarService.del(id);
+        try {
+            shopCarService.del(id);
+        }catch (Exception e){
+            return new Result(false,Global.record_unexist,null,null);
+        }
         return new Result(false,Global.do_success,null,null);
     }
 

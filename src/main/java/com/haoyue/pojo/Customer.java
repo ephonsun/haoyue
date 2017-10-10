@@ -1,6 +1,9 @@
 package com.haoyue.pojo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import javax.persistence.*;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -18,8 +21,21 @@ public class Customer {
     private String openId;//小程序用户唯一标识
     private String sellerId;//appid
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:SS", timezone = "GMT+8")
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(updatable = false)
+    private Date createDate;//创建日期
+
     @OneToMany
     private List<Address> addressList;
+
+    public Date getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
+    }
 
     public String getSellerId() {
         return sellerId;

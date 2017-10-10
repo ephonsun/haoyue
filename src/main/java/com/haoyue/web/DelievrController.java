@@ -29,6 +29,11 @@ public class DelievrController {
         if (order.getSellerId()!=Integer.parseInt(token)){
             return new Result(true,Global.have_no_right,null,token);
         }
+        //判断快递单号-快递名是否存在
+        Deliver deliver2=delievrService.findByDcodeAndDename(deliver.getDcode(),deliver.getDename());
+        if (deliver2!=null){
+            return new Result(true,Global.record_exist,null,null);
+        }
         Deliver deliver1=order.getDeliver();
         deliver.setId(deliver1.getId());
         delievrService.update(deliver);

@@ -104,8 +104,8 @@ public class OrderController {
         //商品分类
         ProdutsType produtsType = produtsTypeService.findOne(proTypeId);
         //判断库存量是否足够
-        if (produtsType.getAmount()<amount){
-            return new Result(true,Global.amount_notEnough,null,null);
+        if (produtsType.getAmount() < amount) {
+            return new Result(true, Global.amount_notEnough, null, null);
         }
         List<ProdutsType> produtsTypes = new ArrayList<>();
         produtsTypes.add(produtsType);
@@ -158,7 +158,7 @@ public class OrderController {
     public Result changeState(Integer oid, String state) {
         Order order = orderService.findOne(oid);
         //支付日期
-        if (state.equals("待发货订单")){
+        if (state.equals("待发货订单")) {
             order.setPayDate(new Date());
         }
         order.setState(state);
@@ -199,14 +199,14 @@ public class OrderController {
     @RequestMapping("/excel")
     public Result excel(String state, String token) throws IOException {
         //根据订单状态选出需要导出excel文件的订单
-        Map<String,String> map=new HashMap<>();
-        map.put("state",state);
-        map.put("sellerId",token);
-        Iterable<Order> iterable=orderService.clist(map);
+        Map<String, String> map = new HashMap<>();
+        map.put("state", state);
+        map.put("sellerId", token);
+        Iterable<Order> iterable = orderService.clist(map);
 
         //倒序结果集
-        Iterator<Order> itreator=iterable.iterator();
-        List<Order> list=copyIterator(itreator);
+        Iterator<Order> itreator = iterable.iterator();
+        List<Order> list = copyIterator(itreator);
         Collections.reverse(list);
 
         //2007 及以上excel
@@ -238,7 +238,7 @@ public class OrderController {
         cell.setCellValue("订单状态");
 
         int row_index = 1;
-        if (list!=null&&list.size()!=0) {
+        if (list != null && list.size() != 0) {
             for (int i = 0; i < list.size(); i++) {
                 Order order = list.get(i);
                 if (order == null) {
@@ -286,12 +286,12 @@ public class OrderController {
             }
         }
         //获取项目根路径
-        String relativelyPath=System.getProperty("user.dir");
+        String relativelyPath = System.getProperty("user.dir");
         //把excel文件写入 haoyue/excel/ 文件夹下
-        String filename=relativelyPath+"/excel/"+ new Date().getTime()+token+".xlsx";
-        String mkdis=relativelyPath+"/excel/";
-        File file1=new File(mkdis);
-        if (!file1.isDirectory()){
+        String filename = relativelyPath + "/excel/" + new Date().getTime() + token + ".xlsx";
+        String mkdis = relativelyPath + "/excel/";
+        File file1 = new File(mkdis);
+        if (!file1.isDirectory()) {
             file1.mkdirs();
         }
         FileOutputStream out = new FileOutputStream(
@@ -299,32 +299,24 @@ public class OrderController {
         workbook.write(out);
         out.close();
         //缓存文件
-        File file=new File(filename);
+        File file = new File(filename);
         //上传到阿里云，并返回文件外链
         OSSClientUtil ossClientUtil = new OSSClientUtil();
-        FileInputStream inputStream=new FileInputStream(file);
-        filename=filename.substring(filename.lastIndexOf("/")+1);
-        filename="excel/"+filename;
+        FileInputStream inputStream = new FileInputStream(file);
+        filename = filename.substring(filename.lastIndexOf("/") + 1);
+        filename = "excel/" + filename;
         try {
             ossClientUtil.uploadFile2OSS(inputStream, filename, null);
-            Global.excel_urls.add("hymarket/"+filename);
-        }catch (Exception e){
+            Global.excel_urls.add("hymarket/" + filename);
+        } catch (Exception e) {
             e.printStackTrace();
-            return new Result(true,Global.server_busying,null,null);
+            return new Result(true, Global.server_busying, null, null);
         }
         //删除缓存文件
         file.delete();
-        return new Result(false, Global.do_success, Global.aliyun_href+filename, null);
+        return new Result(false, Global.do_success, Global.aliyun_href + filename, null);
     }
 
-    @RequestMapping("/delexcel")
-    public void del (String key){
-        OSSClientUtil ossClientUtil=new OSSClientUtil();
-        key="hymarket/2017/9/14/1505380758254.avi";
-        //hymarket/excel/15065659815771.xlsx
-        //filename excel/15065659815771.xlsx
-        ossClientUtil.delete(key);
-    }
 
     public static <T> List<T> copyIterator(Iterator<T> iter) {
         List<T> copy = new ArrayList<T>();
@@ -333,12 +325,11 @@ public class OrderController {
         return copy;
     }
 
-
     @RequestMapping("/update")
-    public Result update(Order order,String selleId){
-        Order order1=orderService.findOne(order.getId());
+    public Result update(Order order, String selleId) {
+        Order order1 = orderService.findOne(order.getId());
         order1.setLeaveMessage_seller(order.getLeaveMessage_seller());
         orderService.update(order1);
-        return new Result(false,Global.do_success,null,null);
+        return new Result(false, Global.do_success, null, null);
     }
 }

@@ -20,7 +20,6 @@ public class Address {
     private String openId;
     private String address;//地址
 
-
     public String getPhone() {
         return phone;
     }

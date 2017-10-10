@@ -65,6 +65,7 @@ public class CustomerController {
             customer=new Customer();
             customer.setOpenId(openId);
             customer.setSellerId(sellerId);
+            customer.setCreateDate(new Date());
             customer=customerService.save(customer);
         }
         return new Result(false,Global.do_success,customer,null);

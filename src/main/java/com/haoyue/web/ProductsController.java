@@ -38,13 +38,10 @@ public class ProductsController {
     @Autowired
     private ThumbsupRepo thumbsupRepo;
 
-
-
     @RequestMapping("/list")
     public Result list(@RequestParam Map<String, String> map, @RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize) {
         return new Result(false, "", productsService.plist(map, pageNumber, pageSize), map.get("token"));
     }
-
 
     @RequestMapping("/uploadPic")
     public Object uploadPic(MultipartFile[] multipartFiles, String token) throws IOException, MyException {
@@ -116,7 +113,6 @@ public class ProductsController {
         return productsService.updateDesc(map);
     }
 
-
     @RequestMapping("/thumbs-up")
     public Result thumbsup(String proId, String openId) {
         Thumbsup thumbsup = thumbsupRepo.findByProIdAndOpenId(proId, openId);
@@ -138,7 +134,7 @@ public class ProductsController {
         }
     }
 
-    @RequestMapping("/save")
+    @RequestMapping("/newsave")
     public Result update_all(Products products, String token, String protypes) {
          String[] strs = protypes.split("=");
          List<ProdutsType> produtsTypes=new ArrayList<>();
@@ -173,10 +169,52 @@ public class ProductsController {
 
         try {
             productsService.save(products);
+            //蒋商品信息注入 dictionary
+            dictionaryService.addProduct(products);
         } catch (IOException e) {
             e.printStackTrace();
         }
         return new Result(false, Global.do_success, products, null);
     }
 
+    /**
+     * 旧版商品保存
+     * @param products
+     * @param token
+     * @param dictionaryses 商品分类
+     * @return
+     */
+    @RequestMapping("/save")
+    public Result save(Products products, String token, String dictionaryses) {
+        Seller seller = sellerService.findOne(Integer.parseInt(token));
+        try {
+            String[] splits = dictionaryses.split("=");
+            List<ProdutsType> list = new ArrayList<>();
+            for (String str : splits) {
+                if (StringUtils.isNullOrBlank(str)) {
+                    continue;
+                }
+                String[] strings = str.split(",");
+                if (Integer.parseInt(strings[3]) == 0) {
+                    continue;
+                }
+                ProdutsType produtsType = new ProdutsType();
+                produtsType.setColor(strings[0]);
+                produtsType.setSize(strings[1]);
+                produtsType.setPriceNew(Double.valueOf(strings[2]));
+                produtsType.setAmount(Integer.parseInt(strings[3]));
+                produtsType.setSellerId(Integer.parseInt(token));
+                list.add(produtsType);
+            }
+            products.setProdutsTypes(list);
+            products.setSellerId(seller.getSellerId());
+            productsService.save(products);
+            //蒋商品信息注入 dictionary
+            dictionaryService.addProduct(products);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Result(false, e.getMessage(), null);
+        }
+        return new Result(false, Global.do_success, products.getId(), token);
+    }
 }

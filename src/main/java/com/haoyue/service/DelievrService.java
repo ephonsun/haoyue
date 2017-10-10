@@ -27,8 +27,11 @@ public class DelievrService {
         return delievrRepo.save(deliver);
     }
 
-
     public void update(Deliver deliver) {
         delievrRepo.save(deliver);
+    }
+
+    public Deliver findByDcodeAndDename(String dcode, String dename) {
+        return delievrRepo.findByDcodeAndDename(dcode,dename);
     }
 }

@@ -31,7 +31,7 @@ public class ProductsService {
     @Autowired
     private ProdutsTypeRepo produtsTypeRepo;
 
-    public void save(Products products) throws IOException {
+    public Products save(Products products) throws IOException {
 
         if (products.getId() == null) {
             Date date = new Date();
@@ -47,7 +47,8 @@ public class ProductsService {
         for (ProdutsType produtsType : produtsTypeList) {
             produtsType.setProductId(products.getId());
         }
-        produtsTypeRepo.save(produtsTypeList);
+         produtsTypeRepo.save(produtsTypeList);
+         return products;
     }
 
     public Products findOne(Integer id) {
