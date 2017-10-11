@@ -70,6 +70,7 @@ public class Order {
     private boolean active = true;
     private boolean isApplyReturn = false;//是否申请退货
 
+
     public String getLeaveMessage_seller() {
         return leaveMessage_seller;
     }

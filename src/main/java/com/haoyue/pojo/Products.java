@@ -26,7 +26,6 @@ public class Products {
     @Column(columnDefinition="TEXT")
     private String pdesc;//描述
     private String deliverPrice;//快递费用
-
     private String deliever_name;//快递模板名
 
     private String pvideo;//视频

@@ -112,8 +112,13 @@ public class OrderController {
         order.setProdutsTypes(produtsTypes);
         //快递
         Deliver deliver = new Deliver();
-        //根据商品快递模板和买家的地区，筛选出快递费用，并以 deliver_price 传递后后台
-        deliver.setPrice(Double.valueOf(deliver_price==null?"0":deliver_price));
+        // if...else... 兼容新旧方法
+        if (!StringUtils.isNullOrBlank(deliver_price)) {
+            //根据商品快递模板和买家的地区，筛选出快递费用，并以 deliver_price 传递后后台
+            deliver.setPrice(Double.valueOf(deliver_price));
+        }else {
+            deliver.setPrice(Double.valueOf(products.getDeliverPrice()));
+        }
         delievrService.save2(deliver);
         order.setDeliver(deliver);
         //买家留言
@@ -318,7 +323,6 @@ public class OrderController {
         return new Result(false, Global.do_success, Global.aliyun_href + filename, null);
     }
 
-
     public static <T> List<T> copyIterator(Iterator<T> iter) {
         List<T> copy = new ArrayList<T>();
         while (iter.hasNext())
@@ -333,4 +337,5 @@ public class OrderController {
         orderService.update(order1);
         return new Result(false, Global.do_success, null, null);
     }
+
 }

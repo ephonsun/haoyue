@@ -30,8 +30,6 @@ public class Seller {
     private Integer maxFileSize;//存储空间 以 kb 为单位
     private Integer uploadFileSize;
     private String videos;//店铺视频
-    @OneToMany
-    private List<Order> orders;
 
     @Column(unique = true)
     private String appId;
@@ -184,11 +182,4 @@ public class Seller {
         this.sellerEmail = sellerEmail;
     }
 
-    public List<Order> getOrders() {
-        return orders;
-    }
-
-    public void setOrders(List<Order> orders) {
-        this.orders = orders;
-    }
 }

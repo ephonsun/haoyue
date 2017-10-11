@@ -3,6 +3,7 @@ package com.haoyue.service;
 import com.haoyue.pojo.Order;
 import com.haoyue.pojo.QOrder;
 import com.haoyue.repo.OrderRepo;
+import com.haoyue.untils.Global;
 import com.haoyue.untils.StringUtils;
 import com.querydsl.core.BooleanBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +11,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -22,63 +25,65 @@ public class OrderService {
     @Autowired
     private OrderRepo orderRepo;
 
-    public Iterable<Order> list(Map<String, String> map , int pageNumber, int pageSize) {
+    public Iterable<Order> list(Map<String, String> map, int pageNumber, int pageSize) {
 
         QOrder order = QOrder.order;
         BooleanBuilder bd = new BooleanBuilder();
-
         for (String name : map.keySet()) {
             String value = (String) map.get(name);
             if (!(StringUtils.isNullOrBlank(value))) {
-                if (name.equals("id")){
+                if (name.equals("id")) {
                     bd.and(order.id.eq(Integer.parseInt(value)));
                 }
-                if (name.equals("token")){
-                    Date now=new Date();
-                    Date befor=new Date();
+                if (name.equals("token")) {
+                    Date now = new Date();
+                    Date befor = new Date();
                     befor.setDate(1);
                     befor.setHours(0);
                     befor.setMinutes(0);
                     befor.setSeconds(0);
                     bd.and(order.sellerId.eq(Integer.parseInt(value)));
-                    bd.and(order.createDate.between(befor,now));
+                    bd.and(order.createDate.between(befor, now));
+                    bd.and(order.state.notIn(Global.order_unpay));
                 }
-                if (name.equals("state")){
+                if (name.equals("state")) {
                     bd.and(order.state.eq(value));
                 }
-                if (name.equals("sellerId")){
+                if (name.equals("sellerId")) {
                     bd.and(order.sellerId.eq(Integer.parseInt(value)));
+                }
+                if (name.equals("isApplyReturn")) {
+                    bd.and(order.isApplyReturn.eq(Boolean.valueOf(value)));
                 }
             }
         }
-        return orderRepo.findAll(bd.getValue(),new PageRequest(pageNumber, pageSize,new Sort(Sort.Direction.DESC,new String[]{"createDate"})));
+        return orderRepo.findAll(bd.getValue(), new PageRequest(pageNumber, pageSize, new Sort(Sort.Direction.DESC, new String[]{"createDate"})));
     }
 
-    public Iterable<Order> clist(Map<String, String> map ) {
+    public Iterable<Order> clist(Map<String, String> map) {
 
         QOrder order = QOrder.order;
         BooleanBuilder bd = new BooleanBuilder();
+
         for (String name : map.keySet()) {
             String value = (String) map.get(name);
             if (!(StringUtils.isNullOrBlank(value))) {
-                if (name.equals("cid")){
+                if (name.equals("cid")) {
                     bd.and(order.customerId.eq(Integer.parseInt(value)));
                 }
-                if (name.equals("state")){
+                if (name.equals("state")) {
                     if (!value.equals("全部订单")) {
                         bd.and(order.state.contains(value));
-
                     }
                 }
-                if (name.equals("sellerId")){
+                if (name.equals("sellerId")) {
                     bd.and(order.sellerId.eq(Integer.parseInt(value)));
                 }
-                if (name.equals("active")){
+                if (name.equals("active")) {
                     bd.and(order.active.eq(true));
                 }
             }
         }
-
         return orderRepo.findAll(bd.getValue());
     }
 
