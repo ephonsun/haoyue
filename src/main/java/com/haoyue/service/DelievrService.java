@@ -6,6 +6,9 @@ import com.haoyue.repo.DelievrRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by LiJia on 2017/8/24.
  */
@@ -33,5 +36,22 @@ public class DelievrService {
 
     public Deliver findByDcodeAndDename(String dcode, String dename) {
         return delievrRepo.findByDcodeAndDename(dcode,dename);
+    }
+
+    public List findBySellerId(String sellerId) {
+        List<String> dnames=delievrRepo.findDnamesBySellerId(sellerId);
+        List<Object> list=new ArrayList<>();
+        for (String dname:dnames){
+            list.add(delievrRepo.findBySellerIdAndDname(sellerId,dname));
+        }
+        return list;
+    }
+
+    public void deleteByDnameAndSellerId(String dname, String sellerId) {
+        delievrRepo.deleteByDnameAndSellerId(dname,sellerId);
+    }
+
+    public List<Deliver> findBySellerIdAndDname(String token, String deliver_name) {
+        return delievrRepo.findBySellerIdAndDname(token,deliver_name);
     }
 }

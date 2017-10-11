@@ -173,6 +173,11 @@ public class ProductsService {
             product.setActive(false);
             productsRepo.save(product);
         }
+        //商品上架
+        else if (!StringUtils.isNullOrBlank(map.get("active_pro"))){
+            product.setActive(true);
+            productsRepo.save(product);
+        }
         //单价
         else if (!StringUtils.isNullOrBlank(map.get("price"))) {
             ProdutsType ptype = produtsTypeRepo.findOne(Integer.parseInt(map.get("ptype")));

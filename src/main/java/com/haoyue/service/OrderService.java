@@ -51,8 +51,7 @@ public class OrderService {
                 }
             }
         }
-
-        return orderRepo.findAll(bd.getValue(),new PageRequest(pageNumber, pageSize));
+        return orderRepo.findAll(bd.getValue(),new PageRequest(pageNumber, pageSize,new Sort(Sort.Direction.DESC,new String[]{"createDate"})));
     }
 
     public Iterable<Order> clist(Map<String, String> map ) {

@@ -46,6 +46,13 @@ public class Global {
     public static int count=1;
     public static Object object=new Object();//线程锁
 
+    //物流模板
+    public static String account_unright="请确保所有单件数格式正确";
+    public static String price_unright="请确保所有邮费价格式正确";
+    public static String more_account_unright="请确保所有续件数格式正确";
+    public static String more_price_unright="请确保所有续件邮费价格式正确";
+
+
     //文件上传
     public static String memoryspace_lack="您的个人存储空间不足";
     public static String file_toolarge="文件过大，请上传小于100M的文件";

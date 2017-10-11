@@ -164,7 +164,9 @@ public class SellerService {
         if (!StringUtils.isNullOrBlank(seller.getVideos())){
             seller1.setVideos(seller.getVideos());
         }
-
+        if (!StringUtils.isNullOrBlank(seller.getSellerName())){
+            seller1.setSellerName(seller.getSellerName());
+        }
         sellerRepo.save(seller1);
     }
 

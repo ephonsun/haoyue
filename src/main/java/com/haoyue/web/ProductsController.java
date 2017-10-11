@@ -1,11 +1,9 @@
 package com.haoyue.web;
 
 import com.haoyue.Exception.MyException;
-import com.haoyue.pojo.Products;
-import com.haoyue.pojo.ProdutsType;
-import com.haoyue.pojo.Seller;
-import com.haoyue.pojo.Thumbsup;
+import com.haoyue.pojo.*;
 import com.haoyue.repo.ThumbsupRepo;
+import com.haoyue.service.DelievrService;
 import com.haoyue.service.DictionaryService;
 import com.haoyue.service.ProductsService;
 import com.haoyue.service.SellerService;
@@ -37,6 +35,8 @@ public class ProductsController {
     private DictionaryService dictionaryService;
     @Autowired
     private ThumbsupRepo thumbsupRepo;
+    @Autowired
+    private DelievrService delievrService;
 
     @RequestMapping("/list")
     public Result list(@RequestParam Map<String, String> map, @RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize) {
@@ -136,36 +136,36 @@ public class ProductsController {
 
     @RequestMapping("/newsave")
     public Result update_all(Products products, String token, String protypes) {
-         String[] strs = protypes.split("=");
-         List<ProdutsType> produtsTypes=new ArrayList<>();
-         for (int i=0;i<strs.length;i++){
-             String[] strings=strs[i].split(",");
-             String color=strings[0];//颜色
-             String size=strings[1];//尺码
-             String discount=strings[2];//折扣价
-             String price=strings[3];//原价
-             String amount=strings[4];//库存
-             if (amount.equals("0")){
-                 continue;
-             }
-             ProdutsType produtsType=new ProdutsType();
-             produtsType.setPriceNew(Double.valueOf(price));
-             produtsType.setColor(color);
-             //判断是否折扣
-             if (!discount.equals("0")) {
-                 produtsType.setISDiscount(true);
-                 produtsType.setDiscountPrice(Double.valueOf(discount));
-             }
-             produtsType.setAmount(Integer.parseInt(amount));
-             produtsType.setActive(true);
-             produtsType.setPriceOld(0.0);
-             produtsType.setSize(size);
-             produtsType.setSellerId(Integer.parseInt(token));
-             produtsTypes.add(produtsType);
-         }
-            products.setProdutsTypes(produtsTypes);
-            products.setSellerId(Integer.parseInt(token));
-            products.setSellerName(sellerService.findOne(products.getSellerId()).getSellerName());
+        String[] strs = protypes.split("=");
+        List<ProdutsType> produtsTypes = new ArrayList<>();
+        for (int i = 0; i < strs.length; i++) {
+            String[] strings = strs[i].split(",");
+            String color = strings[0];//颜色
+            String size = strings[1];//尺码
+            String discount = strings[2];//折扣价
+            String price = strings[3];//原价
+            String amount = strings[4];//库存
+            if (amount.equals("0")) {
+                continue;
+            }
+            ProdutsType produtsType = new ProdutsType();
+            produtsType.setPriceNew(Double.valueOf(price));
+            produtsType.setColor(color);
+            //判断是否折扣
+            if (!discount.equals("0")) {
+                produtsType.setISDiscount(true);
+                produtsType.setDiscountPrice(Double.valueOf(discount));
+            }
+            produtsType.setAmount(Integer.parseInt(amount));
+            produtsType.setActive(true);
+            produtsType.setPriceOld(0.0);
+            produtsType.setSize(size);
+            produtsType.setSellerId(Integer.parseInt(token));
+            produtsTypes.add(produtsType);
+        }
+        products.setProdutsTypes(produtsTypes);
+        products.setSellerId(Integer.parseInt(token));
+        products.setSellerName(sellerService.findOne(products.getSellerId()).getSellerName());
 
         try {
             productsService.save(products);
@@ -179,6 +179,7 @@ public class ProductsController {
 
     /**
      * 旧版商品保存
+     *
      * @param products
      * @param token
      * @param dictionaryses 商品分类

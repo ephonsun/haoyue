@@ -26,6 +26,9 @@ public class Products {
     @Column(columnDefinition="TEXT")
     private String pdesc;//描述
     private String deliverPrice;//快递费用
+
+    private String deliever_name;//快递模板名
+
     private String pvideo;//视频
     private String ptypeName;//宝贝分类 如 女装
 
@@ -60,6 +63,14 @@ public class Products {
 
     private Integer thumbsup;//点赞数
 
+
+    public String getDeliever_name() {
+        return deliever_name;
+    }
+
+    public void setDeliever_name(String deliever_name) {
+        this.deliever_name = deliever_name;
+    }
 
     public String getInvoice_type() {
         return invoice_type;

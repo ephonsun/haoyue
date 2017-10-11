@@ -91,7 +91,7 @@ public class OrderController {
     }
 
     @RequestMapping("/save")
-    public Result save(Integer proId, Integer proTypeId, String sellerId, String receiver, String phone, String address, Integer amount, String openId, String leaveMessage) {
+    public Result save(String deliver_price,Integer proId, Integer proTypeId, String sellerId, String receiver, String phone, String address, Integer amount, String openId, String leaveMessage) {
         Customer customer = customerService.findByOpenId(openId, sellerId);
         Order order = new Order();
         //客户
@@ -112,7 +112,8 @@ public class OrderController {
         order.setProdutsTypes(produtsTypes);
         //快递
         Deliver deliver = new Deliver();
-        deliver.setPrice(Double.valueOf(products.getDeliverPrice()));
+        //根据商品快递模板和买家的地区，筛选出快递费用，并以 deliver_price 传递后后台
+        deliver.setPrice(Double.valueOf(deliver_price==null?"0":deliver_price));
         delievrService.save2(deliver);
         order.setDeliver(deliver);
         //买家留言
