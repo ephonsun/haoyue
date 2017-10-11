@@ -38,8 +38,6 @@ public class SellerController {
     @RequestMapping("/reg")
     @Transactional
     public Result regist(Seller seller) throws MyException {
-
-
         return sellerService.save(seller);
     }
 
