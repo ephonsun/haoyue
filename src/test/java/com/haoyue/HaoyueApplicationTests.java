@@ -20,6 +20,10 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Clock;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
 
 @RunWith(SpringRunner.class)
@@ -258,6 +262,13 @@ public class HaoyueApplicationTests {
               .filter((String s)->(!s.contains("M")))
               .sorted((String s1,String s2)->(s1.length()-s2.length()))
               .forEach(s->System.out.println(s));
+    }
+
+    @Test
+    public void f14(){
+       // Instant current = Clock.system(ZoneId.of("Asia/Bei Jing")).instant();
+       // System.out.println(current.toString());
+
     }
 
 }
