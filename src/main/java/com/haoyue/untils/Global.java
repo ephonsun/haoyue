@@ -47,10 +47,11 @@ public class Global {
     public static Object object=new Object();//线程锁
 
     //物流模板
-    public static String account_unright="请确保所有单件数格式正确";
-    public static String price_unright="请确保所有邮费价格式正确";
-    public static String more_account_unright="请确保所有续件数格式正确";
-    public static String more_price_unright="请确保所有续件邮费价格式正确";
+    public static String account_unright="请确保所有件数、体积、重量数格式正确";
+    public static String price_unright="请确保所有初始邮费价格式正确";
+    public static String more_account_unright="请确保所有续件数、续件体积、续件重量数格式正确";
+    public static String more_price_unright="请确保所有续费邮费价格式正确";
+    public static String template_exist="已经存在相同物流名的模板";
 
 
     //文件上传

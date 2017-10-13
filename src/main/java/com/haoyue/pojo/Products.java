@@ -58,7 +58,7 @@ public class Products {
     private String designPic;//图案
     private String invoice_type;//发票类型
 
-    private Integer monthSale;//月销量，后台实现总销量代替月销量
+    private int monthSale;//月销量，后台实现总销量代替月销量
 
     private Integer thumbsup;//点赞数
 
@@ -99,7 +99,7 @@ public class Products {
         return monthSale;
     }
 
-    public void setMonthSale(Integer monthSale) {
+    public void setMonthSale(int monthSale) {
         this.monthSale = monthSale;
     }
 

@@ -35,9 +35,6 @@ public class CustomerController {
     //关键词查询 商品分类查询
     @RequestMapping("/proSearch")
     public Result proSearch(@RequestParam Map<String, String> map){
-
-
-
        return new Result(false, Global.do_success,productsService.list(map), map.get("token")) ;
     }
 

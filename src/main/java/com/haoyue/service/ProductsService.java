@@ -176,6 +176,11 @@ public class ProductsService {
         //商品上架
         else if (!StringUtils.isNullOrBlank(map.get("active_pro"))){
             product.setActive(true);
+            List<ProdutsType> produtsTypes=product.getProdutsTypes();
+            for(ProdutsType produtsType:produtsTypes){
+                produtsType.setActive(true);
+                produtsTypeRepo.save(produtsType);
+            }
             productsRepo.save(product);
         }
         //单价

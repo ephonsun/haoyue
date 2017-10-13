@@ -16,18 +16,35 @@ public class Deliver {
     private Integer id;
 
     private String sellerId;
-    private String destination;//目的地
-    private int account;//单件数
-    private int more_account;//增加件数
+    private String origin_address;//发货地址
+    private String destination;//接收地址片区
+    private int account;// 初始件数 初始重量  初始体积
+    private int more_account;//增加件数  增加重量 增加体积
     private Double more_price;//增加邮费
+    private String price_type;//计价方式  件数 重量 体积
 
     @Column(unique = true,length = 50)
     private String dcode;//快递号
     @Column(length = 20)
     private String dname;//快递名
     private String dename;//快递名 英文
-    private Double price;//运费
+    private Double price;//初始运费
 
+    public String getOrigin_address() {
+        return origin_address;
+    }
+
+    public void setOrigin_address(String origin_address) {
+        this.origin_address = origin_address;
+    }
+
+    public String getPrice_type() {
+        return price_type;
+    }
+
+    public void setPrice_type(String price_type) {
+        this.price_type = price_type;
+    }
 
     public int getAccount() {
         return account;

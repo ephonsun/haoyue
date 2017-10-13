@@ -183,7 +183,7 @@ public class OrderController {
             for (int i = 0; i < list.size(); i++) {
                 if (i == 0) {
                     Products products = list.get(i);
-                    products.setMonthSale(products.getMonthSale() == null ? 0 : products.getMonthSale() + order.getAmount());
+                    products.setMonthSale(products.getMonthSale() + order.getAmount());
                     // 更新 单个商品的交易额 订单数
                     Dictionary dictionary1 = dictionaryService.findByProductId(products.getId());
                     dictionary1.setBuyers(dictionary1.getBuyers() + 1);

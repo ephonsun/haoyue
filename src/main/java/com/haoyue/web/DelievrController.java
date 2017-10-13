@@ -48,61 +48,81 @@ public class DelievrController {
 
     @Transactional
     @RequestMapping("/save_template")
-    public Result seller_template(String sellerId, String delivers) {
+    public Result seller_template(String delivers, Deliver deliver) {
+
+        //判断新建的物流模板是不是已经存在
+        List<String> dnames = delievrService.findDnamesBySellerId(deliver.getSellerId());
+        if (dnames != null && dnames.size() != 0) {
+            for (String str : dnames) {
+                if (str.contains(deliver.getDname()) || deliver.getDname().contains(str)) {
+                    return new Result(true, Global.template_exist, null, null);
+                }
+            }
+        }
 
         String lines[] = delivers.split("-");
         String line[] = null;
         String destination = null;
-        int account = 1;
-        double price = 0.0;
-        int more_account = 1;
-        double more_price = 0.0;
-        String dname = null;
-        int index=1;
-        for (int i = 0; i < lines.length; i++) {
-            Deliver deliver = new Deliver();
-            line = lines[i].split(",");
+        int account = deliver.getAccount();
+        double price = deliver.getPrice();
+        int more_account = deliver.getMore_account();
+        double more_price = deliver.getMore_price();
 
-            if (!isDiget(line[2])) {
+        //默认运费，收货地区找不到买家地址
+        String dname = deliver.getDname();
+        Deliver deliver1 = new Deliver();
+        deliver1.setSellerId(deliver.getSellerId());
+        deliver1.setOrigin_address(deliver.getOrigin_address());
+        deliver1.setDname(deliver.getDname());
+        deliver1.setPrice_type(deliver.getPrice_type());
+        deliver1.setPrice(price);
+        deliver1.setAccount(account);
+        deliver1.setMore_account(more_account);
+        deliver1.setMore_price(more_price);
+        delievrService.save2(deliver1);
+
+        //快递模板信息保存
+        for (int i = 0; i < lines.length; i++) {
+            Deliver newdeliver = new Deliver();
+            line = lines[i].split("#");
+
+            if (!isDiget(line[1])) {
                 return new Result(true, Global.account_unright, null, null);
             }
-            if (!isDiget(line[3])) {
+            if (!isDiget(line[2])) {
                 return new Result(true, Global.price_unright, null, null);
             }
-            if (!isDiget(line[4])) {
+            if (!isDiget(line[3])) {
                 return new Result(true, Global.more_account_unright, null, null);
             }
-            if (!isDiget(line[5])) {
+            if (!isDiget(line[4])) {
                 return new Result(true, Global.more_price_unright, null, null);
             }
 
-            dname = line[0];
-            destination = line[1];
-            account = Integer.parseInt(line[2]);
-            price = Integer.parseInt(line[3]);
-            more_account = Integer.parseInt(line[4]);
-            more_price = Double.valueOf(line[5]);
+            //dname = line[0];
+            destination = line[0];
+            account = Integer.parseInt(line[1]);
+            price = Integer.parseInt(line[2]);
+            more_account = Integer.parseInt(line[3]);
+            more_price = Double.valueOf(line[4]);
 
-            deliver.setSellerId(sellerId);
-            deliver.setDname(dname);
-            deliver.setDestination(destination);
-            deliver.setAccount(account);
-            deliver.setPrice(price);
-            deliver.setMore_account(more_account);
-            deliver.setMore_price(more_price);
-            //判断是不是更新
-            if (index==1){
-                index++;
-                delievrService.deleteByDnameAndSellerId(dname,sellerId);
-            }
-            delievrService.save2(deliver);
+            newdeliver.setOrigin_address(deliver.getOrigin_address());
+            newdeliver.setPrice_type(deliver.getPrice_type());
+            newdeliver.setSellerId(deliver.getSellerId());
+            newdeliver.setDname(dname);
+            newdeliver.setDestination(destination);
+            newdeliver.setAccount(account);
+            newdeliver.setPrice(price);
+            newdeliver.setMore_account(more_account);
+            newdeliver.setMore_price(more_price);
+            delievrService.save2(newdeliver);
         }
 
         return new Result(false, Global.do_success, null, null);
     }
 
     public boolean isDiget(String str) {
-        if (StringUtils.isNullOrBlank(str)){
+        if (StringUtils.isNullOrBlank(str)) {
             return false;
         }
         for (int i = 0; i < str.length(); i++) {
@@ -114,15 +134,55 @@ public class DelievrController {
     }
 
     @RequestMapping("/getTemplate")
-    public Result getTamplate(String sellerId,String dname){
+    public Result getTamplate(String sellerId, String dname) {
         if (StringUtils.isNullOrBlank(dname)) {
             List deliverList = delievrService.findBySellerId(sellerId);
             return new Result(false, Global.do_success, deliverList, null);
+        } else {
+            List<Deliver> list = delievrService.findBySellerIdAndDname(sellerId, dname);
+            if (list==null||list.size()==0){
+                return new Result(true,Global.record_unexist,null,null);
+            }
+            return new Result(false, Global.do_success, list, null);
         }
-        else {
-            List<Deliver> list=delievrService.findBySellerIdAndDname(sellerId,dname);
-            return new Result(false,Global.do_success,list,null);
+    }
+
+    @RequestMapping("/del")
+    public Result del(String id, String seller_id, String dname) {
+        if (StringUtils.isNullOrBlank(dname)) {
+            return delievrService.delLine(id, seller_id);
+        } else {
+            delievrService.deleteByDnameAndSellerId(dname, seller_id);
+            return new Result(false, Global.do_success, null, null);
         }
+    }
+
+    @RequestMapping("/update")
+    public Result update(Deliver deliver){
+
+        Deliver deliver1= delievrService.findOne(deliver.getId());
+        //检验数据格式
+        if (!isDiget(deliver.getAccount()+"")) {
+            return new Result(true, Global.account_unright, null, null);
+        }
+        if (!isDiget(deliver.getPrice()+"")) {
+            return new Result(true, Global.price_unright, null, null);
+        }
+        if (!isDiget(deliver.getMore_account()+"")) {
+            return new Result(true, Global.more_account_unright, null, null);
+        }
+        if (!isDiget(deliver.getMore_price()+"")) {
+            return new Result(true, Global.more_price_unright, null, null);
+        }
+
+        //更新
+        deliver1.setDestination(deliver.getDestination());
+        deliver1.setAccount(deliver.getAccount());
+        deliver1.setPrice(deliver.getPrice());
+        deliver1.setMore_account(deliver.getMore_account());
+        deliver1.setMore_price(deliver.getMore_price());
+        delievrService.save2(deliver1);
+        return new Result(false,Global.do_success,null,null);
     }
 
 }
