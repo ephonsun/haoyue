@@ -170,6 +170,7 @@ public class ProductsService {
         }
         //商品下架
         else if (!StringUtils.isNullOrBlank(map.get("downpro"))) {
+
             product.setActive(false);
             productsRepo.save(product);
         }
