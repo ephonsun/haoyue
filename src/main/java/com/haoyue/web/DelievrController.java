@@ -33,6 +33,9 @@ public class DelievrController {
         if (order.getSellerId() != Integer.parseInt(token)) {
             return new Result(true, Global.have_no_right, null, token);
         }
+        if(StringUtils.isNullOrBlank(deliver.getDname())||StringUtils.isNullOrBlank(deliver.getDcode())){
+            return  new Result(true,Global.data_unright,null,null);
+        }
         //判断快递单号-快递名是否存在
         Deliver deliver2 = delievrService.findByDcodeAndDename(deliver.getDcode(), deliver.getDename());
         if (deliver2 != null) {
@@ -49,7 +52,6 @@ public class DelievrController {
     @Transactional
     @RequestMapping("/save_template")
     public Result seller_template(String delivers, Deliver deliver) {
-
         //判断新建的物流模板是不是已经存在
         List<String> dnames = delievrService.findDnamesBySellerId(deliver.getSellerId());
         if (dnames != null && dnames.size() != 0) {
@@ -59,7 +61,6 @@ public class DelievrController {
                 }
             }
         }
-
         String lines[] = delivers.split("-");
         String line[] = null;
         String destination = null;
@@ -174,7 +175,6 @@ public class DelievrController {
         if (!isDiget(deliver.getMore_price()+"")) {
             return new Result(true, Global.more_price_unright, null, null);
         }
-
         //更新
         deliver1.setDestination(deliver.getDestination());
         deliver1.setAccount(deliver.getAccount());
@@ -184,5 +184,4 @@ public class DelievrController {
         delievrService.save2(deliver1);
         return new Result(false,Global.do_success,null,null);
     }
-
 }

@@ -77,6 +77,8 @@ public class Global {
     public static  String bucketname="haoyue";
 
     //阿里云
+    //http://haoyue.oss-cn-beijing.aliyuncs.com/hymarket/2017/10/10/1507615986025.jpg
+    //http://cslapp.com/hymarket/2017/10/10/1507615986025.jpg
     public static String aliyun_href="http://haoyue.oss-cn-beijing.aliyuncs.com/hymarket/";
     public static String accessKeyId="LTAIRHJkjEByQvQL";
     public static String accessKeySecret = "pXTOa9qMzha20WKKTzl6DNDGQglNpB";

@@ -347,9 +347,15 @@ public class SellerController {
      * @return
      */
     @RequestMapping("/test")
-    public Result test(String message) {
-        System.out.println(message);
-        return new Result(false, Global.do_success, message, null);
+    public Result test(String encryptedData,String ivv,String session_key) {
+        System.out.println(encryptedData);
+        System.out.println(ivv);
+        System.out.println(session_key);
+        WXAppletUserInfo wxAppletUserInfo=new WXAppletUserInfo();
+        String str=wxAppletUserInfo.decodeUserInfo(encryptedData,ivv,session_key);
+        return new Result(false, Global.do_success, str, null);
     }
+
+
 
 }
