@@ -86,7 +86,7 @@ public class Global {
     public static String TemplateCode="SMS_91140162";
 
     //微信支付
-    public static String notify_url="https://www.cslapp.com/pay/notify";//通知地址(目前该地址供测试使用)
+    public static String notify_url="https://www.cslapp.com/pay/notify";//通知地址
     public static String common_pay_url="https://api.mch.weixin.qq.com/pay/unifiedorder";//统一下单url
 
     //非拦截地址
@@ -104,12 +104,9 @@ public class Global {
         list.add("/customer/getSessionKey");
         list.add("/pay/notify");
         list.add("/websocket");
+        list.add("/helloWord");
+        list.add("/welcome");
         return list;
-    }
-
-    public void d(){
-         TimeZone tz =TimeZone.getTimeZone("Asia/Shanghai");
-         TimeZone.setDefault(tz);
     }
 
 }

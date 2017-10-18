@@ -12,8 +12,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.servlet.ServletContext;
-import java.io.ByteArrayInputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -255,29 +257,61 @@ public class HaoyueApplicationTests {
         //Arrays.sort(players,(String s1,String s2)->(s1.length()-s2.length()));
         //Arrays.sort(javaProgrammers,(Person p1,Person p2)->(p1.getSalary()-p2.getSalary()));
 
-      Arrays.asList(players).stream()
-              .filter((String s)->(!s.contains("M")))
-              .sorted((String s1,String s2)->(s1.length()-s2.length()))
-              .forEach(s->System.out.println(s));
+        Arrays.asList(players).stream()
+                .filter((String s) -> (!s.contains("M")))
+                .sorted((String s1, String s2) -> (s1.length() - s2.length()))
+                .forEach(s -> System.out.println(s));
     }
 
     @Test
-    public void f14(){
+    public void f14() {
 //        encryptedData:"y/OT3nATZZ1l5OVQqLSwaF3weGRLWe7ngFI8bfkJ6V7AJeUVCcPSLbYVgchR7jE3OnNV/qbvi6IwlxU8LPQAdSXy0NurqJQF5hPsSBc5TPuahybR73KgjKW++muRLD5VzT9LHvHExcQf/+bi/STdEhDgxCSjKjDdpNTB62ZjnQg4OtoB+w2T/UmQ6HoyW9IOFES13ikt3qX9J3tKaqgzSQ931DSbXcJ8wcW7qx+d3gsyd9WSnJ8Y8nTwe+m3+y39fHxJfZ9MsnJGT1ZoCn/DFs4psCbPRNGLY5P6WcQDtvypuX/W95tszj8vmHWorJN/I0YkVXVsk9lP6RFMwzJNgwEbpUoZ+9SpKxcv6GmSilmuWr2NLOx4z4MNyEs+TLhMsyBs121Z6c+bbaLhASNne5J8jPxSF8w2P9OlrEf4t+SurC0cucjsVy+XSB4tnjxfk+TRjRF+ZW9KUfOq6G4u61sIo8DZePQRKAmLF/4+QE+DszztHTm1U+OPlRYIzAexjkyn5Pg6JIkOkdE7vqbtN0CZmz/we2+n/9k5ie5Kd6PEpZsjtl2DRrsGnK/Wmjbb81tDKm5TMgh2j2EdFwpWbokOOR2RKlGJDl2Y8CRmUBCL1IcSs+Eg01JFMd0zxkVrwCQFH4Ytnj1V0rgrCysxtvXLvbgOhTzv1FAXbFkap1XSbOwjdIdQA6HMbOi51xyFRFPraZde4N/TrFw2RndnxYUl5IZHwDEx2iyiDGVVAwbdJfnt3GJsRUfmePF/SmLwB9S/eH7EIITTTq4LBB+wq81nKFGQVyK/WGYLUAQogE1/rP6E1E3xFGzaOUv05A9A7ab1GkzrQHoWrfDjegrSJJ9kp7+1+zHO+swdOxyHqKyrXTJ+lO5WPHN4b2DZmv94yatdJME9AiqXfhb5JbFVtK6MbW1YXFMWXqEqhus28ErvtTgihmtiVCEYwHvSHKghMa0giMzBT3vowZwoOR1OX7ECAS7lGJy8tim+mB0ZOnV+7BCdnMYO9KaysUo1UtwCTrDOikNQ6ehv6A7MXE8aEBTqVFTb/GSXknGhyr31mMKuI+4zkLOXMr+CexQ3X7jv+T1m0mPk0SKMR5bqS2EPHJoN+W4+m66qXLvrQHgsUdgTAWOBNwCWaBmB+SHZMkb6xn62My/6z8UydEh05jpOe3uVl6cF6cPLPyDELyAZM5ag7tsHfraF+rCQiZH40kXwdIGhCSw+ZxHt8+fAFxmMKm+7+2rJXinGlHGFKIlfIGSbvdcsQR6soZ+Qa5ZOUsu0o1DEzNMWFnKifvpwEC0oLsUP/CwHJRbZGmZdQTKylAYiECo+ESVOgWgNA0DhUXqLjQKST2AILgebogbmvXF9ux1iDpH3zsnad8nusovpddLWPmrbhRGUqgRHD8Vqhdyx6NZsWqau3mHPsEh/nuV8a9upG1IyAxC/Yjxkbpk43ZlhJSxWxKzYBgteaIVbHt+ByL2XSVPwrDLfEGlm7MSuA0tAagdo16NjLcopxmOHdZiQ7JwYEhAuIsCy6nvjgBi3msSPB1PVD26BexGL3FqOHJAwiAMhm3mj0yzLKMaKxiTz6tkm9La5lLocNXrSdoB/eDIGV7UKxdDrQfmLNtNpR30IIypXGNYel37W3AgvpAc="
 //        errMsg:"getWeRunData:ok"
 //        iv:"/hRYIbdgR8ZZoGDhZhyL2A=="
-        String encryptedData="y/OT3nATZZ1l5OVQqLSwaF3weGRLWe7ngFI8bfkJ6V7AJeUVCcPSLbYVgchR7jE3OnNV/qbvi6IwlxU8LPQAdSXy0NurqJQF5hPsSBc5TPuahybR73KgjKW++muRLD5VzT9LHvHExcQf/+bi/STdEhDgxCSjKjDdpNTB62ZjnQg4OtoB+w2T/UmQ6HoyW9IOFES13ikt3qX9J3tKaqgzSQ931DSbXcJ8wcW7qx+d3gsyd9WSnJ8Y8nTwe+m3+y39fHxJfZ9MsnJGT1ZoCn/DFs4psCbPRNGLY5P6WcQDtvypuX/W95tszj8vmHWorJN/I0YkVXVsk9lP6RFMwzJNgwEbpUoZ+9SpKxcv6GmSilmuWr2NLOx4z4MNyEs+TLhMsyBs121Z6c+bbaLhASNne5J8jPxSF8w2P9OlrEf4t+SurC0cucjsVy+XSB4tnjxfk+TRjRF+ZW9KUfOq6G4u61sIo8DZePQRKAmLF/4+QE+DszztHTm1U+OPlRYIzAexjkyn5Pg6JIkOkdE7vqbtN0CZmz/we2+n/9k5ie5Kd6PEpZsjtl2DRrsGnK/Wmjbb81tDKm5TMgh2j2EdFwpWbokOOR2RKlGJDl2Y8CRmUBCL1IcSs+Eg01JFMd0zxkVrwCQFH4Ytnj1V0rgrCysxtvXLvbgOhTzv1FAXbFkap1XSbOwjdIdQA6HMbOi51xyFRFPraZde4N/TrFw2RndnxYUl5IZHwDEx2iyiDGVVAwbdJfnt3GJsRUfmePF/SmLwB9S/eH7EIITTTq4LBB+wq81nKFGQVyK/WGYLUAQogE1/rP6E1E3xFGzaOUv05A9A7ab1GkzrQHoWrfDjegrSJJ9kp7+1+zHO+swdOxyHqKyrXTJ+lO5WPHN4b2DZmv94yatdJME9AiqXfhb5JbFVtK6MbW1YXFMWXqEqhus28ErvtTgihmtiVCEYwHvSHKghMa0giMzBT3vowZwoOR1OX7ECAS7lGJy8tim+mB0ZOnV+7BCdnMYO9KaysUo1UtwCTrDOikNQ6ehv6A7MXE8aEBTqVFTb/GSXknGhyr31mMKuI+4zkLOXMr+CexQ3X7jv+T1m0mPk0SKMR5bqS2EPHJoN+W4+m66qXLvrQHgsUdgTAWOBNwCWaBmB+SHZMkb6xn62My/6z8UydEh05jpOe3uVl6cF6cPLPyDELyAZM5ag7tsHfraF+rCQiZH40kXwdIGhCSw+ZxHt8+fAFxmMKm+7+2rJXinGlHGFKIlfIGSbvdcsQR6soZ+Qa5ZOUsu0o1DEzNMWFnKifvpwEC0oLsUP/CwHJRbZGmZdQTKylAYiECo+ESVOgWgNA0DhUXqLjQKST2AILgebogbmvXF9ux1iDpH3zsnad8nusovpddLWPmrbhRGUqgRHD8Vqhdyx6NZsWqau3mHPsEh/nuV8a9upG1IyAxC/Yjxkbpk43ZlhJSxWxKzYBgteaIVbHt+ByL2XSVPwrDLfEGlm7MSuA0tAagdo16NjLcopxmOHdZiQ7JwYEhAuIsCy6nvjgBi3msSPB1PVD26BexGL3FqOHJAwiAMhm3mj0yzLKMaKxiTz6tkm9La5lLocNXrSdoB/eDIGV7UKxdDrQfmLNtNpR30IIypXGNYel37W3AgvpAc=";
-        String iv="/hRYIbdgR8ZZoGDhZhyL2A==";
-        String session_key="43xbxdnTuqVfxhaF6dRgNA==";
-        WXAppletUserInfo wxAppletUserInfo=new WXAppletUserInfo();
-        String str=wxAppletUserInfo.decodeUserInfo(encryptedData,iv,session_key);
+        String encryptedData = "y/OT3nATZZ1l5OVQqLSwaF3weGRLWe7ngFI8bfkJ6V7AJeUVCcPSLbYVgchR7jE3OnNV/qbvi6IwlxU8LPQAdSXy0NurqJQF5hPsSBc5TPuahybR73KgjKW++muRLD5VzT9LHvHExcQf/+bi/STdEhDgxCSjKjDdpNTB62ZjnQg4OtoB+w2T/UmQ6HoyW9IOFES13ikt3qX9J3tKaqgzSQ931DSbXcJ8wcW7qx+d3gsyd9WSnJ8Y8nTwe+m3+y39fHxJfZ9MsnJGT1ZoCn/DFs4psCbPRNGLY5P6WcQDtvypuX/W95tszj8vmHWorJN/I0YkVXVsk9lP6RFMwzJNgwEbpUoZ+9SpKxcv6GmSilmuWr2NLOx4z4MNyEs+TLhMsyBs121Z6c+bbaLhASNne5J8jPxSF8w2P9OlrEf4t+SurC0cucjsVy+XSB4tnjxfk+TRjRF+ZW9KUfOq6G4u61sIo8DZePQRKAmLF/4+QE+DszztHTm1U+OPlRYIzAexjkyn5Pg6JIkOkdE7vqbtN0CZmz/we2+n/9k5ie5Kd6PEpZsjtl2DRrsGnK/Wmjbb81tDKm5TMgh2j2EdFwpWbokOOR2RKlGJDl2Y8CRmUBCL1IcSs+Eg01JFMd0zxkVrwCQFH4Ytnj1V0rgrCysxtvXLvbgOhTzv1FAXbFkap1XSbOwjdIdQA6HMbOi51xyFRFPraZde4N/TrFw2RndnxYUl5IZHwDEx2iyiDGVVAwbdJfnt3GJsRUfmePF/SmLwB9S/eH7EIITTTq4LBB+wq81nKFGQVyK/WGYLUAQogE1/rP6E1E3xFGzaOUv05A9A7ab1GkzrQHoWrfDjegrSJJ9kp7+1+zHO+swdOxyHqKyrXTJ+lO5WPHN4b2DZmv94yatdJME9AiqXfhb5JbFVtK6MbW1YXFMWXqEqhus28ErvtTgihmtiVCEYwHvSHKghMa0giMzBT3vowZwoOR1OX7ECAS7lGJy8tim+mB0ZOnV+7BCdnMYO9KaysUo1UtwCTrDOikNQ6ehv6A7MXE8aEBTqVFTb/GSXknGhyr31mMKuI+4zkLOXMr+CexQ3X7jv+T1m0mPk0SKMR5bqS2EPHJoN+W4+m66qXLvrQHgsUdgTAWOBNwCWaBmB+SHZMkb6xn62My/6z8UydEh05jpOe3uVl6cF6cPLPyDELyAZM5ag7tsHfraF+rCQiZH40kXwdIGhCSw+ZxHt8+fAFxmMKm+7+2rJXinGlHGFKIlfIGSbvdcsQR6soZ+Qa5ZOUsu0o1DEzNMWFnKifvpwEC0oLsUP/CwHJRbZGmZdQTKylAYiECo+ESVOgWgNA0DhUXqLjQKST2AILgebogbmvXF9ux1iDpH3zsnad8nusovpddLWPmrbhRGUqgRHD8Vqhdyx6NZsWqau3mHPsEh/nuV8a9upG1IyAxC/Yjxkbpk43ZlhJSxWxKzYBgteaIVbHt+ByL2XSVPwrDLfEGlm7MSuA0tAagdo16NjLcopxmOHdZiQ7JwYEhAuIsCy6nvjgBi3msSPB1PVD26BexGL3FqOHJAwiAMhm3mj0yzLKMaKxiTz6tkm9La5lLocNXrSdoB/eDIGV7UKxdDrQfmLNtNpR30IIypXGNYel37W3AgvpAc=";
+        String iv = "/hRYIbdgR8ZZoGDhZhyL2A==";
+        String session_key = "43xbxdnTuqVfxhaF6dRgNA==";
+        WXAppletUserInfo wxAppletUserInfo = new WXAppletUserInfo();
+        String str = wxAppletUserInfo.decodeUserInfo(encryptedData, iv, session_key);
         System.out.println(str);
     }
 
+    @Test
+    public void f15() {
+
+        try {
+            FileInputStream fileInputStream = new FileInputStream(new File("D:/hou.txt"));
+            FileOutputStream fileOutputStream = new FileOutputStream(new File("D:/hou123.txt"));
+            FileChannel fileChannel = fileInputStream.getChannel();
+            FileChannel fileChannel2 = fileOutputStream.getChannel();
+            ByteBuffer buffer = ByteBuffer.allocate(10240);
+            int len=0;
+            Charset charset = Charset.forName("gbk");// 创建GBK字符集
+            while(true){
+                buffer.clear();//pos=0,limit=capcity，作用是让ichannel从pos开始放数据
+                len=fileChannel.read(buffer);
+                if(len==-1)//到达文件末尾
+                    break;
+                buffer.flip();
+                System.out.println(charset.decode(buffer));
+                buffer.flip();
+                fileChannel2.write(buffer);//它们的作用是让ochanel写入pos - limit之间的数据
+
+            }
+            fileInputStream.close();
+            fileOutputStream.close();
+            fileChannel.close();
+            fileChannel2.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
 
 
 }
-class Person{
+
+class Person {
     private String firstName, lastName, job, gender;
     private int salary, age;
 

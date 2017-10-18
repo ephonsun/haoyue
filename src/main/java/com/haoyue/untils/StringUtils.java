@@ -87,5 +87,20 @@ public class StringUtils {
         date.setYear(date.getYear()+20);
         return date;
     }
+
+    public  static  boolean isDiget(String str) {
+        if (StringUtils.isNullOrBlank(str)) {
+            return false;
+        }
+        for (int i = 0; i < str.length(); i++) {
+            if (String.valueOf(str.charAt(i)).equals(".")){
+                continue;
+            }
+            if (!Character.isDigit(str.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
 }
 

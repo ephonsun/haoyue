@@ -20,7 +20,7 @@ public class Deliver {
     private String destination;//接收地址片区
     private int account;// 初始件数 初始重量  初始体积
     private int more_account;//增加件数  增加重量 增加体积
-    private Double more_price;//增加邮费
+    private double more_price;//增加邮费
     private String price_type;//计价方式  件数 重量 体积
 
     @Column(unique = true,length = 50)
@@ -28,7 +28,7 @@ public class Deliver {
     @Column(length = 20)
     private String dname;//快递名
     private String dename;//快递名 英文
-    private Double price;//初始运费
+    private double price;//初始运费
 
     public String getOrigin_address() {
         return origin_address;
@@ -62,11 +62,11 @@ public class Deliver {
         this.more_account = more_account;
     }
 
-    public Double getMore_price() {
+    public double getMore_price() {
         return more_price;
     }
 
-    public void setMore_price(Double more_price) {
+    public void setMore_price(double more_price) {
         this.more_price = more_price;
     }
 
@@ -94,11 +94,11 @@ public class Deliver {
         this.dename = dename;
     }
 
-    public Double getPrice() {
+    public double getPrice() {
         return price;
     }
 
-    public void setPrice(Double price) {
+    public void setPrice(double price) {
         this.price = price;
     }
 

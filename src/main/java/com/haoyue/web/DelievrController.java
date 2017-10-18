@@ -17,10 +17,10 @@ import java.util.List;
 /**
  * Created by LiJia on 2017/8/24.
  */
-
 @RestController
 @RequestMapping("/deliver")
 public class DelievrController {
+
 
     @Autowired
     private DelievrService delievrService;
@@ -33,8 +33,8 @@ public class DelievrController {
         if (order.getSellerId() != Integer.parseInt(token)) {
             return new Result(true, Global.have_no_right, null, token);
         }
-        if(StringUtils.isNullOrBlank(deliver.getDname())||StringUtils.isNullOrBlank(deliver.getDcode())){
-            return  new Result(true,Global.data_unright,null,null);
+        if (StringUtils.isNullOrBlank(deliver.getDname()) || StringUtils.isNullOrBlank(deliver.getDcode())) {
+            return new Result(true, Global.data_unright, null, null);
         }
         //判断快递单号-快递名是否存在
         Deliver deliver2 = delievrService.findByDcodeAndDename(deliver.getDcode(), deliver.getDename());
@@ -45,6 +45,7 @@ public class DelievrController {
         deliver.setId(deliver1.getId());
         delievrService.update(deliver);
         order.setDeliver(deliver);
+        order.setState(Global.order_send);
         orderService.update(order);
         return new Result(false, Global.do_success, order, token);
     }
@@ -61,19 +62,20 @@ public class DelievrController {
                 }
             }
         }
-        String lines[] = delivers.split("-");
+        String lines[] = null;
+        lines = delivers.split("-");
+
         String line[] = null;
         String destination = null;
         int account = deliver.getAccount();
         double price = deliver.getPrice();
         int more_account = deliver.getMore_account();
         double more_price = deliver.getMore_price();
-
         //默认运费，收货地区找不到买家地址
         String dname = deliver.getDname();
         Deliver deliver1 = new Deliver();
         deliver1.setSellerId(deliver.getSellerId());
-        deliver1.setOrigin_address(deliver.getOrigin_address());
+        deliver1.setOrigin_address(deliver.getOrigin_address()+"");
         deliver1.setDname(deliver.getDname());
         deliver1.setPrice_type(deliver.getPrice_type());
         deliver1.setPrice(price);
@@ -87,16 +89,16 @@ public class DelievrController {
             Deliver newdeliver = new Deliver();
             line = lines[i].split("#");
 
-            if (!isDiget(line[1])) {
+            if (!StringUtils.isDiget(line[1])) {
                 return new Result(true, Global.account_unright, null, null);
             }
-            if (!isDiget(line[2])) {
+            if (!StringUtils.isDiget(line[2])) {
                 return new Result(true, Global.price_unright, null, null);
             }
-            if (!isDiget(line[3])) {
+            if (!StringUtils.isDiget(line[3])) {
                 return new Result(true, Global.more_account_unright, null, null);
             }
-            if (!isDiget(line[4])) {
+            if (!StringUtils.isDiget(line[4])) {
                 return new Result(true, Global.more_price_unright, null, null);
             }
 
@@ -122,17 +124,7 @@ public class DelievrController {
         return new Result(false, Global.do_success, null, null);
     }
 
-    public boolean isDiget(String str) {
-        if (StringUtils.isNullOrBlank(str)) {
-            return false;
-        }
-        for (int i = 0; i < str.length(); i++) {
-            if (!Character.isDigit(str.charAt(i))) {
-                return false;
-            }
-        }
-        return true;
-    }
+
 
     @RequestMapping("/getTemplate")
     public Result getTamplate(String sellerId, String dname) {
@@ -141,8 +133,8 @@ public class DelievrController {
             return new Result(false, Global.do_success, deliverList, null);
         } else {
             List<Deliver> list = delievrService.findBySellerIdAndDname(sellerId, dname);
-            if (list==null||list.size()==0){
-                return new Result(true,Global.record_unexist,null,null);
+            if (list == null || list.size() == 0) {
+                return new Result(true, Global.record_unexist, null, null);
             }
             return new Result(false, Global.do_success, list, null);
         }
@@ -159,29 +151,50 @@ public class DelievrController {
     }
 
     @RequestMapping("/update")
-    public Result update(Deliver deliver){
+    public Result update(Deliver deliver, String sellerId) {
+        //添加一行数据
+        if (deliver.getId() == null) {
+            if (!StringUtils.isDiget(deliver.getAccount() + "")) {
+                return new Result(true, Global.account_unright, null, null);
+            }
+            if (!StringUtils.isDiget(deliver.getPrice() + "")) {
+                return new Result(true, Global.price_unright, null, null);
+            }
+            if (!StringUtils.isDiget(deliver.getMore_account() + "")) {
+                return new Result(true, Global.more_account_unright, null, null);
+            }
+            if (!StringUtils.isDiget(deliver.getMore_price() + "")) {
+                return new Result(true, Global.more_price_unright, null, null);
+            }
+            deliver.setSellerId(sellerId);
+            delievrService.save2(deliver);
+            return new Result(false, Global.do_success, null, null);
 
-        Deliver deliver1= delievrService.findOne(deliver.getId());
-        //检验数据格式
-        if (!isDiget(deliver.getAccount()+"")) {
-            return new Result(true, Global.account_unright, null, null);
         }
-        if (!isDiget(deliver.getPrice()+"")) {
-            return new Result(true, Global.price_unright, null, null);
+        //更新一行数据
+        else {
+            Deliver deliver1 = delievrService.findOne(deliver.getId());
+            //检验数据格式
+            if (!StringUtils.isDiget(deliver.getAccount() + "")) {
+                return new Result(true, Global.account_unright, null, null);
+            }
+            if (!StringUtils.isDiget(String.valueOf(deliver.getPrice()))) {
+                return new Result(true, Global.price_unright, null, null);
+            }
+            if (!StringUtils.isDiget(deliver.getMore_account() + "")) {
+                return new Result(true, Global.more_account_unright, null, null);
+            }
+            if (!StringUtils.isDiget(String.valueOf(deliver.getMore_price()))) {
+                return new Result(true, Global.more_price_unright, null, null);
+            }
+            //更新
+            deliver1.setDestination(deliver.getDestination());
+            deliver1.setAccount(deliver.getAccount());
+            deliver1.setPrice(deliver.getPrice());
+            deliver1.setMore_account(deliver.getMore_account());
+            deliver1.setMore_price(deliver.getMore_price());
+            delievrService.save2(deliver1);
+            return new Result(false, Global.do_success, null, null);
         }
-        if (!isDiget(deliver.getMore_account()+"")) {
-            return new Result(true, Global.more_account_unright, null, null);
-        }
-        if (!isDiget(deliver.getMore_price()+"")) {
-            return new Result(true, Global.more_price_unright, null, null);
-        }
-        //更新
-        deliver1.setDestination(deliver.getDestination());
-        deliver1.setAccount(deliver.getAccount());
-        deliver1.setPrice(deliver.getPrice());
-        deliver1.setMore_account(deliver.getMore_account());
-        deliver1.setMore_price(deliver.getMore_price());
-        delievrService.save2(deliver1);
-        return new Result(false,Global.do_success,null,null);
     }
 }

@@ -59,9 +59,7 @@ public class Products {
     private String invoice_type;//发票类型
 
     private int monthSale;//月销量，后台实现总销量代替月销量
-
     private Integer thumbsup;//点赞数
-
 
     public String getDeliever_name() {
         return deliever_name;
@@ -83,7 +81,7 @@ public class Products {
         return thumbsup;
     }
 
-    public void setThumbsup(Integer thumbsup) {
+    public void setThumbsup(int thumbsup) {
         this.thumbsup = thumbsup;
     }
 
