@@ -13,6 +13,7 @@ import com.querydsl.core.BooleanBuilder;
 import org.apache.commons.lang.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -63,6 +64,12 @@ public class DictionaryService {
     public Iterable<Dictionary> findBySellerId2(int sid,Integer pageNumber,Integer pageSize) {
         QDictionary dictionary = QDictionary.dictionary;
         Date from=new Date();
+        int month=from.getMonth()+1;
+        if (month==1||month==3||month==5||month==7||month==9||month==11){
+            pageSize=31;
+        }else {
+            pageSize=30;
+        }
         Date to=new Date();
         from.setDate(1);
         from.setHours(0);
@@ -72,13 +79,13 @@ public class DictionaryService {
         bd.and(dictionary.sellerId.eq(sid));
         bd.and(dictionary.createDate.between(from,to));
         bd.and(dictionary.productId.isNull());
-        return dictionaryRepo.findAll(bd.getValue(),new PageRequest(pageNumber, pageSize));
+        return dictionaryRepo.findAll(bd.getValue(),new PageRequest(pageNumber, pageSize,new Sort(Sort.Direction.DESC,"id")));
+
     }
 
     public Dictionary findByProductId(Integer pid) {
         return dictionaryRepo.findByProductId(pid);
     }
-
 
     public void addEachDay() {
         //每天向dictionary表注入当日新的数据

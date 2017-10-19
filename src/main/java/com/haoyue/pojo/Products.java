@@ -59,7 +59,16 @@ public class Products {
     private String invoice_type;//发票类型
 
     private int monthSale;//月销量，后台实现总销量代替月销量
-    private Integer thumbsup;//点赞数
+    private int thumbsup;//点赞数
+    private String dname;
+
+    public String getDname() {
+        return dname;
+    }
+
+    public void setDname(String dname) {
+        this.dname = dname;
+    }
 
     public String getDeliever_name() {
         return deliever_name;
@@ -77,7 +86,7 @@ public class Products {
         this.invoice_type = invoice_type;
     }
 
-    public Integer getThumbsup() {
+    public int getThumbsup() {
         return thumbsup;
     }
 
@@ -229,7 +238,6 @@ public class Products {
         this.images = images;
     }
 
-
     public Integer getId() {
         return id;
     }
@@ -245,7 +253,6 @@ public class Products {
     public void setPname(String pname) {
         this.pname = pname;
     }
-
 
     public String getPdesc() {
         return pdesc;

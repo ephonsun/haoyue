@@ -39,7 +39,6 @@ public class ProductsService {
         }
         List<ProdutsType> produtsTypeList = products.getProdutsTypes();
         if (products.getId() != null) {
-
             produtsTypeRepo.deleteByProId(products.getId());
         }
         produtsTypeRepo.save(produtsTypeList);

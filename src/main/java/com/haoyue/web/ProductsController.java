@@ -134,7 +134,7 @@ public class ProductsController {
         }
     }
 
-    @RequestMapping("/newsave")
+    @RequestMapping("/save")
     public Result update_all(Products products, String token, String protypes) {
         String[] strs = protypes.split("=");
         List<ProdutsType> produtsTypes = new ArrayList<>();
@@ -163,10 +163,10 @@ public class ProductsController {
             produtsType.setSellerId(Integer.parseInt(token));
             produtsTypes.add(produtsType);
         }
+
         products.setProdutsTypes(produtsTypes);
         products.setSellerId(Integer.parseInt(token));
         products.setSellerName(sellerService.findOne(products.getSellerId()).getSellerName());
-
         try {
             productsService.save(products);
             //蒋商品信息注入 dictionary
@@ -177,45 +177,45 @@ public class ProductsController {
         return new Result(false, Global.do_success, products, null);
     }
 
-    /**
-     * 旧版商品保存
-     *
-     * @param products
-     * @param token
-     * @param dictionaryses 商品分类
-     * @return
-     */
-    @RequestMapping("/save")
-    public Result save(Products products, String token, String dictionaryses) {
-        Seller seller = sellerService.findOne(Integer.parseInt(token));
-        try {
-            String[] splits = dictionaryses.split("=");
-            List<ProdutsType> list = new ArrayList<>();
-            for (String str : splits) {
-                if (StringUtils.isNullOrBlank(str)) {
-                    continue;
-                }
-                String[] strings = str.split(",");
-                if (Integer.parseInt(strings[3]) == 0) {
-                    continue;
-                }
-                ProdutsType produtsType = new ProdutsType();
-                produtsType.setColor(strings[0]);
-                produtsType.setSize(strings[1]);
-                produtsType.setPriceNew(Double.valueOf(strings[2]));
-                produtsType.setAmount(Integer.parseInt(strings[3]));
-                produtsType.setSellerId(Integer.parseInt(token));
-                list.add(produtsType);
-            }
-            products.setProdutsTypes(list);
-            products.setSellerId(seller.getSellerId());
-            productsService.save(products);
-            //蒋商品信息注入 dictionary
-            dictionaryService.addProduct(products);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new Result(false, e.getMessage(), null);
-        }
-        return new Result(false, Global.do_success, products.getId(), token);
-    }
+//    /**
+//     * 旧版商品保存
+//     *
+//     * @param products
+//     * @param token
+//     * @param dictionaryses 商品分类
+//     * @return
+//     */
+//    @RequestMapping("/save")
+//    public Result save(Products products, String token, String dictionaryses) {
+//        Seller seller = sellerService.findOne(Integer.parseInt(token));
+//        try {
+//            String[] splits = dictionaryses.split("=");
+//            List<ProdutsType> list = new ArrayList<>();
+//            for (String str : splits) {
+//                if (StringUtils.isNullOrBlank(str)) {
+//                    continue;
+//                }
+//                String[] strings = str.split(",");
+//                if (Integer.parseInt(strings[3]) == 0) {
+//                    continue;
+//                }
+//                ProdutsType produtsType = new ProdutsType();
+//                produtsType.setColor(strings[0]);
+//                produtsType.setSize(strings[1]);
+//                produtsType.setPriceNew(Double.valueOf(strings[2]));
+//                produtsType.setAmount(Integer.parseInt(strings[3]));
+//                produtsType.setSellerId(Integer.parseInt(token));
+//                list.add(produtsType);
+//            }
+//            products.setProdutsTypes(list);
+//            products.setSellerId(seller.getSellerId());
+//            productsService.save(products);
+//            //蒋商品信息注入 dictionary
+//            dictionaryService.addProduct(products);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return new Result(false, e.getMessage(), null);
+//        }
+//        return new Result(false, Global.do_success, products.getId(), token);
+//    }
 }

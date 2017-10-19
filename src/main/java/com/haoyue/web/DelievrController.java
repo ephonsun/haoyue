@@ -141,11 +141,12 @@ public class DelievrController {
     }
 
     @RequestMapping("/del")
-    public Result del(String id, String seller_id, String dname) {
+    public Result del(String id, String sellerId, String dname) {
         if (StringUtils.isNullOrBlank(dname)) {
-            return delievrService.delLine(id, seller_id);
-        } else {
-            delievrService.deleteByDnameAndSellerId(dname, seller_id);
+            return delievrService.delLine(id, sellerId);
+        }
+        else {
+            delievrService.deleteByDnameAndSellerId(dname, sellerId);
             return new Result(false, Global.do_success, null, null);
         }
     }
