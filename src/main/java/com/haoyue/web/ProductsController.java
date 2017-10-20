@@ -136,6 +136,10 @@ public class ProductsController {
 
     @RequestMapping("/save")
     public Result update_all(Products products, String token, String protypes) {
+        boolean flag=false;
+        if(products.getId()!=null){
+            flag=true;
+        }
         String[] strs = protypes.split("=");
         List<ProdutsType> produtsTypes = new ArrayList<>();
         for (int i = 0; i < strs.length; i++) {
@@ -167,13 +171,17 @@ public class ProductsController {
         products.setProdutsTypes(produtsTypes);
         products.setSellerId(Integer.parseInt(token));
         products.setSellerName(sellerService.findOne(products.getSellerId()).getSellerName());
+
         try {
             productsService.save(products);
             //蒋商品信息注入 dictionary
-            dictionaryService.addProduct(products);
+            if (!flag) {
+                dictionaryService.addProduct(products);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         return new Result(false, Global.do_success, products, null);
     }
 

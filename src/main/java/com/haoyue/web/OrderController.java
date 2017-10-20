@@ -117,7 +117,7 @@ public class OrderController {
             //根据商品快递模板和买家的地区，筛选出快递费用，并以 deliver_price 传递后后台
             deliver.setPrice(Double.valueOf(deliver_price));
         } else {
-            deliver.setPrice(Double.valueOf(products.getDeliverPrice()));
+            deliver.setPrice(Double.valueOf(products.getDeliverPrice())+0);
         }
         delievrService.save2(deliver);
         order.setDeliver(deliver);
