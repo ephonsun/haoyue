@@ -21,14 +21,13 @@ import java.util.List;
 @RequestMapping("/deliver")
 public class DelievrController {
 
-
     @Autowired
     private DelievrService delievrService;
     @Autowired
     private OrderService orderService;
 
     @RequestMapping("/save")
-    public Result deliver(Integer oid, Deliver deliver, String token) {
+    public Result deliver(Integer oid, Deliver deliver, String token, String iscontinue) {
         Order order = orderService.findOne(oid);
         if (order.getSellerId() != Integer.parseInt(token)) {
             return new Result(true, Global.have_no_right, null, token);
@@ -39,7 +38,9 @@ public class DelievrController {
         //判断快递单号-快递名是否存在
         Deliver deliver2 = delievrService.findByDcodeAndDename(deliver.getDcode(), deliver.getDename());
         if (deliver2 != null) {
-            return new Result(true, Global.record_exist, null, null);
+            if (StringUtils.isNullOrBlank(iscontinue)) {
+                return new Result(true, Global.record_exist, null, null);
+            }
         }
         Deliver deliver1 = order.getDeliver();
         deliver.setId(deliver1.getId());
@@ -75,7 +76,7 @@ public class DelievrController {
         String dname = deliver.getDname();
         Deliver deliver1 = new Deliver();
         deliver1.setSellerId(deliver.getSellerId());
-        deliver1.setOrigin_address(deliver.getOrigin_address()+"");
+        deliver1.setOrigin_address(deliver.getOrigin_address() + "");
         deliver1.setDname(deliver.getDname());
         deliver1.setPrice_type(deliver.getPrice_type());
         deliver1.setPrice(price);
@@ -125,7 +126,6 @@ public class DelievrController {
     }
 
 
-
     @RequestMapping("/getTemplate")
     public Result getTamplate(String sellerId, String dname) {
         if (StringUtils.isNullOrBlank(dname)) {
@@ -142,10 +142,14 @@ public class DelievrController {
 
     @RequestMapping("/del")
     public Result del(String id, String sellerId, String dname) {
+
+        if (StringUtils.isNullOrBlank(id)) {
+
+        }
+
         if (StringUtils.isNullOrBlank(dname)) {
             return delievrService.delLine(id, sellerId);
-        }
-        else {
+        } else {
             delievrService.deleteByDnameAndSellerId(dname, sellerId);
             return new Result(false, Global.do_success, null, null);
         }

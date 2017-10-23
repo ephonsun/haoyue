@@ -29,6 +29,7 @@ public class AfterSaleController {
     @Autowired
     private DictionaryService dictionaryService;
 
+    //http://localhost:8080/after-sale/save?oid=133&openId=1111&sellerId=1
     @RequestMapping("/save")
     public Result save(String oid, AfterSale afterSale) {
         Order order=orderService.findOne(Integer.parseInt(oid));
@@ -42,6 +43,7 @@ public class AfterSaleController {
         return new Result(false, Global.do_success, afterSaleService.save(afterSale), null);
     }
 
+    //http://localhost:8080/after-sale/deal?id=4&token=1&isAgree=yes
     @RequestMapping("/deal")
     public Result deal(String id,String token,String isAgree){
         AfterSale afterSale=afterSaleService.findOne(id);
@@ -49,7 +51,7 @@ public class AfterSaleController {
             return new Result(true,Global.have_no_right,null,null);
         }
         if (isAgree.equals("yes")){
-            afterSale.setIsAgree(true);
+            afterSale.setIsAgree("yes");
             Order order=afterSale.getOrder();
             Double totalPrice=order.getTotalPrice();
             Date date=order.getCreateDate();
@@ -57,7 +59,7 @@ public class AfterSaleController {
             dictionary.setTurnover(dictionary.getTurnover()-totalPrice);
             dictionaryService.update(dictionary);
         }else {
-            afterSale.setIsAgree(false);
+            afterSale.setIsAgree("no");
         }
         afterSaleService.update(afterSale);
         return new Result(false,Global.do_success,null,null);

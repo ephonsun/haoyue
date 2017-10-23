@@ -291,6 +291,7 @@ public class SellerController {
         map.put("active", "true");
         Iterable<Products> iterable = productsService.plist(map, Global.pageNumber, pageSize);
         objects.add(iterable);
+        objects.add(seller.getLunbo());
         return new Result(objects);
     }
 
@@ -338,6 +339,7 @@ public class SellerController {
         sellerService.update2(seller);
         return new Result(false, Global.do_success, null, null);
     }
+
 
 
     /**

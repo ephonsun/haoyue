@@ -8,4 +8,5 @@ import com.haoyue.repo.BaseRepo;
  */
 
 public interface ProductsRepo extends BaseRepo<Products,Integer> {
+    Products findByPcode(String pcode);
 }

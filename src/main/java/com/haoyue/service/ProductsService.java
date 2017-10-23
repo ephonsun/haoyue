@@ -209,4 +209,8 @@ public class ProductsService {
     public void updateList(List<Products> list) {
         productsRepo.save(list);
     }
+
+    public Products findByPcode(String pcode) {
+        return productsRepo.findByPcode(pcode);
+    }
 }

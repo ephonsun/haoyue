@@ -168,6 +168,9 @@ public class SellerService {
         if (!StringUtils.isNullOrBlank(seller.getSellerName())){
             seller1.setSellerName(seller.getSellerName());
         }
+        if (!StringUtils.isNullOrBlank(seller.getLunbo())){
+            seller1.setLunbo(seller.getLunbo());
+        }
         sellerRepo.save(seller1);
     }
 

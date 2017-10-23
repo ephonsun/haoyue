@@ -25,7 +25,7 @@ public class AfterSale {
     @Column(columnDefinition="TEXT")
     private String message;
 
-    private Boolean isAgree=null;//是否同意 null 等待卖家处理 true 同意 false 不同意
+    private String isAgree="null";//是否同意 null 等待卖家处理 true 同意 false 不同意
 
     public String getOpenId() {
         return openId;
@@ -67,11 +67,11 @@ public class AfterSale {
         this.message = message;
     }
 
-    public Boolean getIsAgree() {
+    public String getIsAgree() {
         return isAgree;
     }
 
-    public void setIsAgree(Boolean agree) {
-        isAgree = agree;
+    public void setIsAgree(String isAgree) {
+        this.isAgree = isAgree;
     }
 }

@@ -45,6 +45,15 @@ public class Seller {
     private String indexTitle;//首页转发标题
     private String pallTitle;//全部商品转发标题
     private String pdescTitle;//商品详情转发标题
+    private String lunbo;
+
+    public String getLunbo() {
+        return lunbo;
+    }
+
+    public void setLunbo(String lunbo) {
+        this.lunbo = lunbo;
+    }
 
     public boolean getIscoupon() {
         return iscoupon;

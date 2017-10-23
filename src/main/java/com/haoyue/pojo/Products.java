@@ -18,6 +18,8 @@ public class Products {
     @GeneratedValue
     private Integer id;
 
+    private String pcode;//商品编号
+
     private Integer sellerId;//卖家Id
     private String sellerName;//卖家姓名
     private String pname;//商品名
@@ -61,6 +63,14 @@ public class Products {
     private int monthSale;//月销量，后台实现总销量代替月销量
     private int thumbsup;//点赞数
     private String dname;
+
+    public String getPcode() {
+        return pcode;
+    }
+
+    public void setPcode(String pcode) {
+        this.pcode = pcode;
+    }
 
     public String getDname() {
         return dname;

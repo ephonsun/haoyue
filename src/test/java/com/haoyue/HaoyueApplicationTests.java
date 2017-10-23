@@ -311,6 +311,8 @@ public class HaoyueApplicationTests {
     @Test
     public void f16(){
 
+        String str=StringUtils.getPinYinByStr("哇哈哈123");
+        System.out.println(str);
 
     }
 

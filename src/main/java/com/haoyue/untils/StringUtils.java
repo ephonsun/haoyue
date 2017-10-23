@@ -102,5 +102,27 @@ public class StringUtils {
         }
         return true;
     }
+
+    public static String getPinYinByStr(String str){
+        char[] chars=str.toCharArray();
+        String result="";
+        for(int i=0;i<chars.length;i++){
+            if (String.valueOf(chars[i]).equals(" ")){
+                continue;
+            }
+            if(Character.isDigit(chars[i])){
+                result+=chars[i];
+                continue;
+            }
+            if(chars[i] >= 0x0391 && chars[i]<= 0xFFE5) //中文字符
+            {
+                result+= HanyuPinyinHelper.getFirstLetter(chars[i]+"");
+            }
+            if(chars[i] >=0x0000 && chars[i] <=0x00FF){ //英文字符
+                result+=chars[i];
+            }
+        }
+        return result;
+    }
 }
 

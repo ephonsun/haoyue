@@ -15,10 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by LiJia on 2017/8/22.
@@ -92,11 +89,19 @@ public class ProductsController {
     }
 
     @RequestMapping("/findOne")
-    public Result findOne(Integer pid, String token, String pname, String ptype) {
+    public Result findOne(Integer pid, String token, String pname, String ptype, String pcode) {
         Map<String, String> map = new HashMap<>();
         map.put("pname", pname);
         map.put("ptype", ptype);
         map.put("token", token);
+        if (!StringUtils.isNullOrBlank(pcode)) {
+            Products products = productsService.findByPcode(pcode);
+            if (products.getSellerId() != Integer.parseInt(token)) {
+                return new Result(true, Global.have_no_right, token);
+            }
+            return new Result(false, "", products, token);
+        }
+
         if (!StringUtils.isNullOrBlank(String.valueOf(pid))) {
             Products products = productsService.findOne(pid);
             if (products.getSellerId() != Integer.parseInt(token)) {
@@ -107,6 +112,7 @@ public class ProductsController {
             return new Result(false, Global.do_success, productsService.list(map), null);
         }
     }
+
 
     @RequestMapping("/update")
     public Result update(@RequestParam Map<String, String> map) {
@@ -136,9 +142,11 @@ public class ProductsController {
 
     @RequestMapping("/save")
     public Result update_all(Products products, String token, String protypes) {
-        boolean flag=false;
-        if(products.getId()!=null){
-            flag=true;
+        boolean flag = false;
+        if (products.getId() != null) {
+            flag = true;
+            Products products1 = productsService.findOne(products.getId());
+            products.setPcode(products1.getPcode());
         }
         String[] strs = protypes.split("=");
         List<ProdutsType> produtsTypes = new ArrayList<>();
@@ -174,6 +182,24 @@ public class ProductsController {
 
         try {
             productsService.save(products);
+            //设置商品号
+            if (StringUtils.isNullOrBlank(products.getPcode())) {
+                Seller seller = sellerService.findOne(Integer.parseInt(token));
+                String str = StringUtils.getPinYinByStr(seller.getSellerName());
+                String pcode=str + "-" + (Global.count++) + products.getId();
+                boolean f=true;
+                //判断新产生的商品号是否存在
+                while(f){
+                   Products products1= productsService.findByPcode(pcode);
+                   if (products1!=null&&products1.getPcode()!=null){
+                       pcode=str + "-" + (Global.count++) + products.getId();
+                   }else {
+                       f=false;
+                   }
+                }
+                products.setPcode(str + "-" + (Global.count++) + products.getId());
+                productsService.update(products);
+            }
             //蒋商品信息注入 dictionary
             if (!flag) {
                 dictionaryService.addProduct(products);
