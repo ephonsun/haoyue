@@ -140,9 +140,9 @@ public class OrderController {
         //支付方式
         order.setPayType(Global.pay_type);
         //原价
-        order.setOldPrice(produtsType.getPriceOld());
+        order.setOldPrice(produtsType.getPriceOld()==null?produtsType.getPriceNew():produtsType.getPriceOld());
         //现价
-        order.setPrice(produtsType.getPriceNew() * amount);
+        order.setPrice(produtsType.getDiscountPrice() * amount);
         //订单号 唯一
         synchronized (Global.object) {
             order.setOrderCode(Global.order_code_begin + (Global.count++) + new Date().getTime());

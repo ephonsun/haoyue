@@ -160,6 +160,12 @@ public class ProductsController {
             if (amount.equals("0")) {
                 continue;
             }
+            if(!StringUtils.isDiget(discount)||discount.equals("0")){
+                return new Result(true,Global.discount_price_unright,null,null);
+            }
+            if(!StringUtils.isDiget(price)){
+                return new Result(true,Global.price_is_unright,null,null);
+            }
             ProdutsType produtsType = new ProdutsType();
             produtsType.setPriceNew(Double.valueOf(price));
             produtsType.setColor(color);
@@ -173,6 +179,9 @@ public class ProductsController {
             produtsType.setPriceOld(0.0);
             produtsType.setSize(size);
             produtsType.setSellerId(Integer.parseInt(token));
+            if(produtsType.getDiscountPrice()>produtsType.getPriceNew()){
+                return new Result(true,Global.price_ls_discountprice);
+            }
             produtsTypes.add(produtsType);
         }
 
@@ -207,7 +216,6 @@ public class ProductsController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         return new Result(false, Global.do_success, products, null);
     }
 

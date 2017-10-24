@@ -53,6 +53,10 @@ public class Global {
     public static String more_price_unright="请确保所有续费邮费价格式正确";
     public static String template_exist="已经存在相同物流名的模板";
 
+    //商品添加
+    public static String discount_price_unright="折扣价输入不正确";
+    public static String price_is_unright="原价输入不正确";
+    public static String price_ls_discountprice="折扣价不应该大于原价";
 
     //文件上传
     public static String memoryspace_lack="您的个人存储空间不足";

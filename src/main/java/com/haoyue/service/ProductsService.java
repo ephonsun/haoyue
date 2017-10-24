@@ -203,6 +203,7 @@ public class ProductsService {
             ptype.setDiscountPrice(Double.valueOf(map.get("discount")));
             produtsTypeRepo.save(ptype);
         }
+
         return new Result(false, Global.do_success, token);
     }
 
