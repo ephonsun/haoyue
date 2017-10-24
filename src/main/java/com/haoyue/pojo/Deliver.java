@@ -23,7 +23,6 @@ public class Deliver {
     private double more_price;//增加邮费
     private String price_type;//计价方式  件数 重量 体积
 
-    @Column(unique = true,length = 50)
     private String dcode;//快递号
     @Column(length = 20)
     private String dname;//快递名

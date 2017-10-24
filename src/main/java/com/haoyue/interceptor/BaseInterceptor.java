@@ -3,6 +3,8 @@ package com.haoyue.interceptor;
 import com.haoyue.Exception.MyException;
 import com.haoyue.untils.Global;
 import com.haoyue.untils.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -16,32 +18,24 @@ import java.util.Map;
 
 public class BaseInterceptor implements HandlerInterceptor {
 
+    //private final static Logger logger = LoggerFactory.getLogger(BaseInterceptor.class);
+
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
 
 //        仅供nginx调试使用
         response.setHeader("Access-Control-Allow-Origin", "*");
-//        BeanFactory factory = WebApplicationContextUtils.getRequiredWebApplicationContext(request.getServletContext());
-//        OnlineService onlineService = (OnlineService) factory.getBean("OnlineService");
-//        String token=request.getParameter("token");
-//
-//        if (!StringUtils.isNullOrBlank(token)){
-//            Online online=onlineService.findOne(Integer.parseInt(token));
-//            if (online==null){
-//                throw new MyException(Global.user_unlogin);
-//            }
-//            if (new Date().getTime()-online.getCreateDate().getTime()>1000*60*60){
-//                //onlineService.del(Integer.parseInt(token));
-//                throw new MyException(Global.long_time_undeal);
-//            }
-//        }
 
         Map<String,String[]> map=request.getParameterMap();
         System.out.println("访问时间  "+StringUtils.getstrDate());
         System.out.println("访问路径  "+request.getRequestURI());
+        //logger.info("访问时间  "+StringUtils.getstrDate());
+        //logger.info("访问路径  "+request.getRequestURI());
+
         for (String key:map.keySet()){
-            System.out.println(key+"="+map.get(key)[0]);
+             System.out.println(key+"="+map.get(key)[0]);
+           // logger.info(key+"="+map.get(key)[0]);
         }
             String url=request.getRequestURI();
             if (Global.urls().contains(url)||url.contains("super-admin")||url.contains("leave-message")){

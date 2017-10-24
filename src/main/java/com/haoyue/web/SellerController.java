@@ -6,6 +6,8 @@ import com.haoyue.pojo.*;
 import com.haoyue.pojo.Dictionary;
 import com.haoyue.service.*;
 import com.haoyue.untils.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -278,8 +280,8 @@ public class SellerController {
      */
     @RequestMapping("/index")
     public Result index(Integer token, Integer pageSize) {
-        if (pageSize==null){
-            pageSize=10;
+        if (pageSize == null) {
+            pageSize = 10;
         }
         Integer sellerId = token;
         Seller seller = sellerService.findOne(sellerId);
@@ -323,7 +325,6 @@ public class SellerController {
 
     /**
      * 开启/关闭 优惠券功能
-     *
      * @param sellerId
      * @param flag
      * @return
@@ -341,17 +342,15 @@ public class SellerController {
     }
 
 
-
     /**
      * 微信小程序练习api
-     *
-     * @return     */
+     * @return
+     */
     @RequestMapping("/test")
     public Result test(String message) {
         System.out.println(message);
         return new Result(false, Global.do_success, message, null);
     }
-
 
 
 }
