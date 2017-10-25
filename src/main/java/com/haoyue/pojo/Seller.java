@@ -46,6 +46,15 @@ public class Seller {
     private String pallTitle;//全部商品转发标题
     private String pdescTitle;//商品详情转发标题
     private String lunbo;
+    private String onlineCode;//在线凭证
+
+    public String getOnlineCode() {
+        return onlineCode;
+    }
+
+    public void setOnlineCode(String onlineCode) {
+        this.onlineCode = onlineCode;
+    }
 
     public String getLunbo() {
         return lunbo;

@@ -19,7 +19,7 @@ public class GlobalExceptionHandler {
         r.setMessage(e.getMessage());
         r.setCode(e.getErrcode());
         r.setData(null);
-        r.setUrl(req.getRequestURL().toString());
+        //r.setUrl(req.getRequestURL().toString());
         return r;
     }
 

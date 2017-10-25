@@ -6,6 +6,7 @@ import com.haoyue.pojo.*;
 import com.haoyue.pojo.Dictionary;
 import com.haoyue.service.*;
 import com.haoyue.untils.*;
+import org.apache.catalina.servlet4preview.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +45,10 @@ public class SellerController {
     }
 
     @RequestMapping("/login")
-    public Result login(Seller seller) {
+    public Result login(Seller seller, HttpServletRequest request) {
+
+
+
         try {
             Seller seller1 = sellerService.login(seller);
             if (seller1 == null) {
@@ -55,6 +59,10 @@ public class SellerController {
             if (flag) {
                 return new Result(false, Global.service_stop, null, null);
             }
+            //刷新 online_code
+            seller1.setOnlineCode(new Date().getTime()+"");
+            sellerService.update(seller1);
+
             SellerUtils.hidePass(seller1);
             return new Result(false, Global.do_success, seller1, seller1.getSellerId() + "");
         } catch (Exception e) {
@@ -341,15 +349,30 @@ public class SellerController {
         return new Result(false, Global.do_success, null, null);
     }
 
-
     /**
      * 微信小程序练习api
      * @return
      */
     @RequestMapping("/test")
-    public Result test(String message) {
-        System.out.println(message);
-        return new Result(false, Global.do_success, message, null);
+    public Result test(HttpServletRequest request) {
+        System.out.println(request.getRemoteAddr());
+        System.out.println(request.getRemoteHost());
+        System.out.println(request.getRemoteUser());
+        System.out.println(request.getSession().getId());
+        return new Result(false, Global.do_success, null, null);
+    }
+
+    /**
+     * 离线操作
+     * @param token
+     * @return
+     */
+    @RequestMapping("/out_line")
+    public Result out_line(String token){
+        Seller seller=sellerService.findOne(Integer.parseInt(token));
+        //seller.setIsout(false);
+        sellerService.update2(seller);
+        return new Result(false, Global.do_success, null, null);
     }
 
 

@@ -212,12 +212,14 @@ public class SuperAdminController {
      * 定时器，一个小时执行一次,产品部署好之后，需要手动出发该定时器
      */
     @RequestMapping("/timer")
-    public void timer(String key) {
+    public String timer(String key) {
         if (key.equals("abcdefg")) {
             ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
             // 第二个参数为首次执行的延时时间，第三个参数为定时执行的间隔时间
             service.scheduleAtFixedRate(runnable, 60, 3600, TimeUnit.SECONDS);
+           return "ok";
         }
+        return "data_no_right";
     }
 
     Runnable runnable = new Runnable() {

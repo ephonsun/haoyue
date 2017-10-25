@@ -1,10 +1,15 @@
 package com.haoyue.interceptor;
 
 import com.haoyue.Exception.MyException;
+import com.haoyue.pojo.Seller;
+import com.haoyue.service.SellerService;
 import com.haoyue.untils.Global;
 import com.haoyue.untils.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -19,6 +24,8 @@ import java.util.Map;
 public class BaseInterceptor implements HandlerInterceptor {
 
     //private final static Logger logger = LoggerFactory.getLogger(BaseInterceptor.class);
+    @Autowired
+    private SellerService sellerService;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
@@ -30,12 +37,19 @@ public class BaseInterceptor implements HandlerInterceptor {
         Map<String,String[]> map=request.getParameterMap();
         System.out.println("访问时间  "+StringUtils.getstrDate());
         System.out.println("访问路径  "+request.getRequestURI());
-        //logger.info("访问时间  "+StringUtils.getstrDate());
-        //logger.info("访问路径  "+request.getRequestURI());
+
+
+        //注入service
+        BeanFactory factory = WebApplicationContextUtils.getRequiredWebApplicationContext(request.getServletContext());
+        sellerService = (SellerService) factory.getBean("SellerService");
+
+        //校验online_code
+        if(!request.getRequestURI().contains("login")&&!StringUtils.isNullOrBlank(request.getParameter("online_code"))&&!sellerService.findByOnlineCode(request.getParameter("online_code"))){
+            throw  new MyException(Global.seller_online,null,102);
+        }
 
         for (String key:map.keySet()){
              System.out.println(key+"="+map.get(key)[0]);
-           // logger.info(key+"="+map.get(key)[0]);
         }
             String url=request.getRequestURI();
             if (Global.urls().contains(url)||url.contains("super-admin")||url.contains("leave-message")){

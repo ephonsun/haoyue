@@ -3,6 +3,7 @@ package com.haoyue;
 import com.aliyun.oss.OSSClient;
 import com.aliyun.oss.model.PutObjectResult;
 import com.haoyue.untils.*;
+import io.goeasy.GoEasy;
 import org.dom4j.DocumentException;
 import org.json.JSONObject;
 import org.json.simple.JSONArray;
@@ -51,6 +52,7 @@ public class HaoyueApplicationTests {
         String response = HttpRequest.sendGet("https://api.weixin.qq.com/sns/jscode2session", "appid=" + appId + "&secret=" + secret + "&js_code=" + code + "&grant_type=authorization_code");
         System.out.println(response);
     }
+
     //customer/getPhone?encryptedData=12&iv=12&
 
     @Test
@@ -314,6 +316,13 @@ public class HaoyueApplicationTests {
         String str=StringUtils.getPinYinByStr("哇哈哈123");
         System.out.println(str);
 
+    }
+
+    @Test
+    public void f17(){
+        GoEasy goEasy = new GoEasy("rest-hangzhou.goeasy.io","BC-b368734ade974a11937b2b82c5dc6433");
+        goEasy.publish("channel1","HelloHello!");
+        //"http(s)://<REST Host>”
     }
 
 }

@@ -37,12 +37,11 @@ public class DictionaryService {
     }
 
     public Result save(Dictionary dictionary, String token) {
-        if (dictionary.getId()!=null){
-            if (dictionary.getSellerId()!=Integer.parseInt(token)){
-                return new Result(true, Global.have_no_right,token);
+        if (dictionary.getId() != null) {
+            if (dictionary.getSellerId() != Integer.parseInt(token)) {
+                return new Result(true, Global.have_no_right, token);
             }
-        }
-        else {
+        } else {
             dictionary.setSellerId(Integer.parseInt(token));
             dictionary.setCreateDate(new Date());
             dictionary.setBuyers(0);
@@ -50,36 +49,36 @@ public class DictionaryService {
             dictionary.setVisitors(0);
             dictionary.setTurnover(0.00);
         }
-        return new Result(dictionaryRepo.save(dictionary),token);
+        return new Result(dictionaryRepo.save(dictionary), token);
     }
 
     public Result findBySellerId(int sid) {
-        List<Dictionary> list=dictionaryRepo.findBySellerId(sid);
-        if (list.size()==0){
-            return new Result(false,Global.first_login,null,sid+"");
+        List<Dictionary> list = dictionaryRepo.findBySellerId(sid);
+        if (list.size() == 0) {
+            return new Result(false, Global.first_login, null, sid + "");
         }
-        return new Result(list,sid+"");
+        return new Result(list, sid + "");
     }
 
-    public Iterable<Dictionary> findBySellerId2(int sid,Integer pageNumber,Integer pageSize) {
+    public Iterable<Dictionary> findBySellerId2(int sid, Integer pageNumber, Integer pageSize) {
         QDictionary dictionary = QDictionary.dictionary;
-        Date from=new Date();
-        int month=from.getMonth()+1;
-        if (month==1||month==3||month==5||month==7||month==9||month==11){
-            pageSize=31;
-        }else {
-            pageSize=30;
+        Date from = new Date();
+        int month = from.getMonth() + 1;
+        if (month == 1 || month == 3 || month == 5 || month == 7 || month == 9 || month == 11) {
+            pageSize = 31;
+        } else {
+            pageSize = 30;
         }
-        Date to=new Date();
+        Date to = new Date();
         from.setDate(1);
         from.setHours(0);
         from.setMinutes(0);
         from.setSeconds(0);
         BooleanBuilder bd = new BooleanBuilder();
         bd.and(dictionary.sellerId.eq(sid));
-        bd.and(dictionary.createDate.between(from,to));
+        bd.and(dictionary.createDate.between(from, to));
         bd.and(dictionary.productId.isNull());
-        return dictionaryRepo.findAll(bd.getValue(),new PageRequest(pageNumber, pageSize,new Sort(Sort.Direction.DESC,"id")));
+        return dictionaryRepo.findAll(bd.getValue(), new PageRequest(pageNumber, pageSize, new Sort(Sort.Direction.DESC, "id")));
 
     }
 
@@ -89,32 +88,54 @@ public class DictionaryService {
 
     public void addEachDay() {
         //每天向dictionary表注入当日新的数据
-        Dictionary dictionery=dictionaryRepo.findLast();
-        Date date=StringUtils.getYMD(new Date());
-       if ((!dictionery.getCreateDate().equals(date))){
-          List<Integer> ids=sellerRepo.findIds();
-           for (Integer id : ids){
-             Dictionary dictionary=new Dictionary();
-               dictionary.setTurnover(0.0);
-               dictionary.setVisitors(0);
-               dictionary.setViews(0);
-               dictionary.setBuyers(0);
-               dictionary.setSellerId(id);
-               dictionary.setCreateDate(date);
-               dictionaryRepo.save(dictionary);
-           }
-           //每日清空 visitors 表
-           visitorsService.delAll();
-       }
+        Dictionary dictionery = dictionaryRepo.findLast();
+        Date date = StringUtils.getYMD(new Date());
+        if ((!dictionery.getCreateDate().equals(date))) {
+            List<Integer> ids = sellerRepo.findIds();
+            for (Integer id : ids) {
+                Dictionary dictionary = new Dictionary();
+                dictionary.setTurnover(0.0);
+                dictionary.setVisitors(0);
+                dictionary.setViews(0);
+                dictionary.setBuyers(0);
+                dictionary.setSellerId(id);
+                dictionary.setCreateDate(date);
+                dictionaryRepo.save(dictionary);
+            }
+            //每日清空 visitors 表
+            visitorsService.delAll();
+        }
+    }
+
+    public void addEachDay2() {
+        List<Integer> ids = sellerRepo.findIds();
+        Date date = StringUtils.getYMD(new Date());
+        for (Integer id : ids) {
+            //判断新添加数据存不存在
+            if (dictionaryRepo.findBySellerIdAndCreateDateAndProductIdIsNull(id, date) != null) {
+                continue;
+            }
+            Dictionary dictionary = new Dictionary();
+            dictionary.setTurnover(0.0);
+            dictionary.setVisitors(0);
+            dictionary.setViews(0);
+            dictionary.setBuyers(0);
+            dictionary.setSellerId(id);
+            dictionary.setCreateDate(date);
+
+            dictionaryRepo.save(dictionary);
+        }
+        //每日清空 visitors 表
+        visitorsService.delAll();
     }
 
     public Result del(Integer id) {
         dictionaryRepo.delete(id);
-        return new Result(false,"",null);
+        return new Result(false, "", null);
     }
 
     public Dictionary findByDateAndSellerId(Date date, Integer sellerId) {
-        return dictionaryRepo.findBySellerIdAndCreateDateAndProductIdIsNull(sellerId,StringUtils.getYMD(date));
+        return dictionaryRepo.findBySellerIdAndCreateDateAndProductIdIsNull(sellerId, StringUtils.getYMD(date));
 
     }
 
@@ -123,7 +144,7 @@ public class DictionaryService {
     }
 
     public void addProduct(Products products) {
-        Dictionary dictionary=new Dictionary();
+        Dictionary dictionary = new Dictionary();
         dictionary.setProductId(products.getId());
         dictionary.setTurnover(0.0);
         dictionary.setVisitors(0);

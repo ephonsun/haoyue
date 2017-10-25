@@ -14,6 +14,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -21,7 +22,7 @@ import java.util.UUID;
 /**
  * Created by LiJia on 2017/8/21.
  */
-@Service
+@Service("SellerService")
 public class SellerService {
     @Autowired
     private SellerRepo sellerRepo;
@@ -194,6 +195,13 @@ public class SellerService {
         return false;
     }
 
+    public boolean findByOnlineCode(String online_code){
+       List<String> strs= sellerRepo.findByOnlineCode(online_code);
+        if (strs!=null&&strs.size()>0){
+            return true;
+        }
+        return false;
+    }
 
 }
 
