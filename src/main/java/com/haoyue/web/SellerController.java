@@ -45,9 +45,7 @@ public class SellerController {
     }
 
     @RequestMapping("/login")
-    public Result login(Seller seller, HttpServletRequest request) {
-
-
+    public Result login(Seller seller) {
 
         try {
             Seller seller1 = sellerService.login(seller);
