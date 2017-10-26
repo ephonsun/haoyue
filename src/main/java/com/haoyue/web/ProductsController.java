@@ -3,10 +3,7 @@ package com.haoyue.web;
 import com.haoyue.Exception.MyException;
 import com.haoyue.pojo.*;
 import com.haoyue.repo.ThumbsupRepo;
-import com.haoyue.service.DelievrService;
-import com.haoyue.service.DictionaryService;
-import com.haoyue.service.ProductsService;
-import com.haoyue.service.SellerService;
+import com.haoyue.service.*;
 import com.haoyue.untils.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,7 +30,7 @@ public class ProductsController {
     @Autowired
     private ThumbsupRepo thumbsupRepo;
     @Autowired
-    private DelievrService delievrService;
+    private PtypeNamesService ptypeNamesService;
 
     @RequestMapping("/list")
     public Result list(@RequestParam Map<String, String> map, @RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize) {
@@ -160,11 +157,11 @@ public class ProductsController {
             if (amount.equals("0")) {
                 continue;
             }
-            if(!StringUtils.isDiget(discount)||discount.equals("0")){
-                return new Result(true,Global.discount_price_unright,null,null);
+            if (!StringUtils.isDiget(discount) || discount.equals("0")) {
+                return new Result(true, Global.discount_price_unright, null, null);
             }
-            if(!StringUtils.isDiget(price)){
-                return new Result(true,Global.price_is_unright,null,null);
+            if (!StringUtils.isDiget(price)) {
+                return new Result(true, Global.price_is_unright, null, null);
             }
             ProdutsType produtsType = new ProdutsType();
             produtsType.setPriceNew(Double.valueOf(price));
@@ -179,8 +176,8 @@ public class ProductsController {
             produtsType.setPriceOld(0.0);
             produtsType.setSize(size);
             produtsType.setSellerId(Integer.parseInt(token));
-            if(produtsType.getDiscountPrice()>produtsType.getPriceNew()){
-                return new Result(true,Global.price_ls_discountprice);
+            if (produtsType.getDiscountPrice() > produtsType.getPriceNew()) {
+                return new Result(true, Global.price_ls_discountprice);
             }
             produtsTypes.add(produtsType);
         }
@@ -191,20 +188,24 @@ public class ProductsController {
 
         try {
             productsService.save(products);
+
+            //商品分类更新
+            productsService.update_ptype(products);
+
             //设置商品号
             if (StringUtils.isNullOrBlank(products.getPcode())) {
                 Seller seller = sellerService.findOne(Integer.parseInt(token));
                 String str = StringUtils.getPinYinByStr(seller.getSellerName());
-                String pcode=str + "-" + (Global.count++) + products.getId();
-                boolean f=true;
+                String pcode = str + "-" + (Global.count++) + products.getId();
+                boolean f = true;
                 //判断新产生的商品号是否存在
-                while(f){
-                   Products products1= productsService.findByPcode(pcode);
-                   if (products1!=null&&products1.getPcode()!=null){
-                       pcode=str + "-" + (Global.count++) + products.getId();
-                   }else {
-                       f=false;
-                   }
+                while (f) {
+                    Products products1 = productsService.findByPcode(pcode);
+                    if (products1 != null && products1.getPcode() != null) {
+                        pcode = str + "-" + (Global.count++) + products.getId();
+                    } else {
+                        f = false;
+                    }
                 }
                 products.setPcode(str + "-" + (Global.count++) + products.getId());
                 productsService.update(products);

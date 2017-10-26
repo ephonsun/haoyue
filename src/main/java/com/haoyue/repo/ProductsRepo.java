@@ -2,6 +2,9 @@ package com.haoyue.repo;
 
 import com.haoyue.pojo.Products;
 import com.haoyue.repo.BaseRepo;
+import org.springframework.data.jpa.repository.Query;
+
+import java.util.List;
 
 /**
  * Created by LiJia on 2017/8/22.
@@ -9,4 +12,7 @@ import com.haoyue.repo.BaseRepo;
 
 public interface ProductsRepo extends BaseRepo<Products,Integer> {
     Products findByPcode(String pcode);
+
+    @Query(nativeQuery = true,value = "select * from products where seller_id=?1 and active=true")
+    List<Products> findBySellerIdAndActive(Integer sellerId);
 }

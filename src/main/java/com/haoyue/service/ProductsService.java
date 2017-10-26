@@ -1,9 +1,6 @@
 package com.haoyue.service;
 
-import com.haoyue.pojo.Products;
-import com.haoyue.pojo.ProdutsType;
-import com.haoyue.pojo.QProducts;
-import com.haoyue.pojo.Seller;
+import com.haoyue.pojo.*;
 import com.haoyue.repo.ProductsRepo;
 import com.haoyue.repo.ProdutsTypeRepo;
 import com.haoyue.untils.Global;
@@ -30,6 +27,8 @@ public class ProductsService {
     private ProductsRepo productsRepo;
     @Autowired
     private ProdutsTypeRepo produtsTypeRepo;
+    @Autowired
+    private PtypeNamesService ptypeNamesService;
 
     public Products save(Products products) throws IOException {
 
@@ -46,8 +45,8 @@ public class ProductsService {
         for (ProdutsType produtsType : produtsTypeList) {
             produtsType.setProductId(products.getId());
         }
-         produtsTypeRepo.save(produtsTypeList);
-         return products;
+        produtsTypeRepo.save(produtsTypeList);
+        return products;
     }
 
     public Products findOne(Integer id) {
@@ -169,19 +168,22 @@ public class ProductsService {
         }
         //商品下架
         else if (!StringUtils.isNullOrBlank(map.get("downpro"))) {
-
             product.setActive(false);
             productsRepo.save(product);
+            //商品分类更新
+            update_ptype(product);
         }
         //商品上架
-        else if (!StringUtils.isNullOrBlank(map.get("active_pro"))){
+        else if (!StringUtils.isNullOrBlank(map.get("active_pro"))) {
             product.setActive(true);
-            List<ProdutsType> produtsTypes=product.getProdutsTypes();
-            for(ProdutsType produtsType:produtsTypes){
+            List<ProdutsType> produtsTypes = product.getProdutsTypes();
+            for (ProdutsType produtsType : produtsTypes) {
                 produtsType.setActive(true);
                 produtsTypeRepo.save(produtsType);
             }
             productsRepo.save(product);
+            //商品分类更新
+            update_ptype(product);
         }
         //单价
         else if (!StringUtils.isNullOrBlank(map.get("price"))) {
@@ -214,4 +216,19 @@ public class ProductsService {
     public Products findByPcode(String pcode) {
         return productsRepo.findByPcode(pcode);
     }
+
+
+    public void update_ptype(Products product) {
+        //商品分类更新
+        List<Products> productses = productsRepo.findBySellerIdAndActive(product.getSellerId());
+        PtypeNames ptypeNames = ptypeNamesService.findBySellerId(product.getSellerId() + "");
+        StringBuffer stringBuffer = new StringBuffer();
+        for (Products products : productses) {
+            stringBuffer.append(products.getPtypeName());
+            stringBuffer.append(",");
+        }
+        ptypeNames.setPtypename(stringBuffer.toString());
+        ptypeNamesService.save(ptypeNames);
+    }
+
 }

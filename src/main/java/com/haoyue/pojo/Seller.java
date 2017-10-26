@@ -45,7 +45,7 @@ public class Seller {
     private String indexTitle;//首页转发标题
     private String pallTitle;//全部商品转发标题
     private String pdescTitle;//商品详情转发标题
-    private String lunbo;
+    private String lunbo;//店铺图片对应的商品编号
     private String onlineCode;//在线凭证
 
     public String getOnlineCode() {

@@ -220,13 +220,6 @@ public class SellerController {
                 stringBuffer.append(",");
             }
             seller.setBanners(stringBuffer.toString());
-            //删除原来的轮播图
-            if (!StringUtils.isNullOrBlank(oldpics)) {
-                String[] strings = oldpics.split(",");
-                for (String s : strings) {
-                    ossClientUtil.delete(s.substring(s.indexOf("hymarket")));
-                }
-            }
         }
         sellerService.update(seller);
         return new UploadSuccessResult(Global.do_success);
