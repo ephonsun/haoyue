@@ -3,6 +3,7 @@ package com.haoyue.pojo;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -12,7 +13,7 @@ import java.util.List;
 //卖家
 @Entity
 @Table(name = "sellers")
-public class Seller {
+public class Seller implements Serializable{
 
     @Id
     @GeneratedValue
@@ -200,4 +201,28 @@ public class Seller {
         this.sellerEmail = sellerEmail;
     }
 
+    @Override
+    public String toString() {
+        return "Seller{" +
+                "sellerId=" + sellerId +
+                ", sellerName='" + sellerName + '\'' +
+                ", sellerPass='" + sellerPass + '\'' +
+                ", sellerPhone='" + sellerPhone + '\'' +
+                ", sellerEmail='" + sellerEmail + '\'' +
+                ", banners='" + banners + '\'' +
+                ", maxFileSize=" + maxFileSize +
+                ", uploadFileSize=" + uploadFileSize +
+                ", videos='" + videos + '\'' +
+                ", appId='" + appId + '\'' +
+                ", authority='" + authority + '\'' +
+                ", isActive=" + isActive +
+                ", iscoupon=" + iscoupon +
+                ", expireDate=" + expireDate +
+                ", indexTitle='" + indexTitle + '\'' +
+                ", pallTitle='" + pallTitle + '\'' +
+                ", pdescTitle='" + pdescTitle + '\'' +
+                ", lunbo='" + lunbo + '\'' +
+                ", onlineCode='" + onlineCode + '\'' +
+                '}';
+    }
 }

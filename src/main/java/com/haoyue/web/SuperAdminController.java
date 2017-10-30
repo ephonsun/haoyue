@@ -6,12 +6,13 @@ import com.haoyue.pojo.ShopCar;
 import com.haoyue.pojo.SuperAdmin;
 import com.haoyue.service.*;
 import com.haoyue.untils.*;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -59,16 +60,10 @@ public class SuperAdminController {
         if (!StringUtils.isNullOrBlank(superAdmin.getAdmin_phone())) {
             superAdmin1.setAdmin_phone(superAdmin.getAdmin_phone());
         }
-        superAdmin1 = superAdminService.upadte(superAdmin1);
-        superAdmin1.setAdmin_pass("*******");
-        return new Result(false, Global.do_success, superAdmin1, null);
-    }
-
-    @RequestMapping("/update-pass")
-    public Result update_pass(String id, String newPass) {
-        SuperAdmin superAdmin = superAdminService.findOne(Integer.parseInt(id));
-        superAdmin.setAdmin_pass(newPass);
-        superAdminService.upadte(superAdmin);
+        if (!StringUtils.isNullOrBlank(superAdmin.getAdmin_pass())) {
+            superAdmin1.setAdmin_pass(superAdmin.getAdmin_pass());
+        }
+        superAdminService.upadte(superAdmin1);
         return new Result(false, Global.do_success, null, null);
     }
 
@@ -92,7 +87,6 @@ public class SuperAdminController {
         }
         return new Result(true, Global.do_success, code, null);
     }
-
 
     /**
      * 版本升级
@@ -163,15 +157,34 @@ public class SuperAdminController {
     }
 
     @RequestMapping("/sellers-list")
-    public Result slist(@RequestParam Map<String, String> map, @RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize) {
-        Iterable<Seller> iterable=sellerService.list(map, pageNumber, pageSize);
-        if (!StringUtils.isNullOrBlank(map.get("all"))) {
-            Iterator<Seller> iterator = iterable.iterator();
-            while (iterator.hasNext()) {
-                iterator.next().setSellerPass("******");
-            }
+    public Result slist(@RequestParam Map<String, String> map, @RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize) throws IOException {
+
+        Iterable<Seller> iterable = sellerService.list(map, pageNumber, pageSize);
+        List<Seller> sellerList = new ArrayList<>();
+        Iterator<Seller> iterator = iterable.iterator();
+        while (iterator.hasNext()) {
+            sellerList.add(iterator.next());
         }
-        return new Result(false, Global.do_success,iterable, null);
+        return new Result(false, Global.do_success, iterable, null);
+    }
+
+    /**
+     * 更新用户密码，手机号
+     *
+     * @param seller
+     * @return
+     */
+    @RequestMapping("/seller_update")
+    public Result seller_update(Seller seller) {
+        Seller seller1 = sellerService.findBySellerPhone(seller.getSellerPhone());
+        if (!StringUtils.isNullOrBlank(seller.getSellerPass())) {
+            seller1.setSellerPass(seller.getSellerPass());
+        }
+        if (!StringUtils.isNullOrBlank(seller.getSellerPhone())) {
+            seller1.setSellerPhone(seller.getSellerPhone());
+        }
+        sellerService.update2(seller1);
+        return new Result(false, Global.do_success, null, null);
     }
 
     @RequestMapping("/customer-list")
@@ -199,21 +212,20 @@ public class SuperAdminController {
 
     @RequestMapping("/shopCar-list")
     public Object shopCarlist(@RequestParam Map<String, String> map, @RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize) {
-        if(!StringUtils.isNullOrBlank(map.get("show"))){
-            Iterable<ShopCar> iterable= shopCarService.list(map, pageNumber, pageSize);
-            Iterator<ShopCar> iterator=iterable.iterator();
-            StringBuffer stringBuffer=new StringBuffer();
-            ShopCar shopCar=new ShopCar();
+        if (!StringUtils.isNullOrBlank(map.get("show"))) {
+            Iterable<ShopCar> iterable = shopCarService.list(map, pageNumber, pageSize);
+            Iterator<ShopCar> iterator = iterable.iterator();
+            StringBuffer stringBuffer = new StringBuffer();
+            ShopCar shopCar = new ShopCar();
 
-            while (iterator.hasNext()){
-                shopCar=iterator.next();
+            while (iterator.hasNext()) {
+                shopCar = iterator.next();
                 stringBuffer.append("</br>");
-                stringBuffer.append("时间："+shopCar.getCreateDate()+" 商品名:"+shopCar.getProductses().get(0).getPname()+"  件数："+shopCar.getShopCarDetails().get(0).getAmount());
+                stringBuffer.append("时间：" + shopCar.getCreateDate() + " 商品名:" + shopCar.getProductses().get(0).getPname() + "  件数：" + shopCar.getShopCarDetails().get(0).getAmount());
                 stringBuffer.append("</br>");
             }
-
             return stringBuffer.toString();
-        }else {
+        } else {
             return new Result(false, Global.do_success, shopCarService.list(map, pageNumber, pageSize), null);
         }
 
@@ -234,7 +246,7 @@ public class SuperAdminController {
             ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
             // 第二个参数为首次执行的延时时间，第三个参数为定时执行的间隔时间
             service.scheduleAtFixedRate(runnable, 60, 3600, TimeUnit.SECONDS);
-           return "ok";
+            return "ok";
         }
         return "data_no_right";
     }

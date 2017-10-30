@@ -1,21 +1,22 @@
 package com.haoyue.web;
 
 import com.aliyuncs.exceptions.ClientException;
+import com.google.gson.JsonObject;
 import com.haoyue.Exception.MyException;
 import com.haoyue.pojo.*;
 import com.haoyue.pojo.Dictionary;
 import com.haoyue.service.*;
 import com.haoyue.untils.*;
+import net.sf.json.util.JSONUtils;
 import org.apache.catalina.servlet4preview.http.HttpServletRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
@@ -58,7 +59,7 @@ public class SellerController {
                 return new Result(false, Global.service_stop, null, null);
             }
             //刷新 online_code
-            seller1.setOnlineCode(new Date().getTime()+"");
+            seller1.setOnlineCode(new Date().getTime() + "");
             sellerService.update(seller1);
 
             SellerUtils.hidePass(seller1);
@@ -70,7 +71,8 @@ public class SellerController {
     }
 
     @RequestMapping("/findOne")
-    public Result findOne(@RequestParam Map<String, String> map) {
+    public Result findOne(@RequestParam Map<String, String> map) throws IOException {
+
         String token = "";
         if (!StringUtils.isNullOrBlank(map.get("token"))) {
             token = map.get("token");
@@ -194,8 +196,8 @@ public class SellerController {
         if (files != null && files.length != 0) {
             StringBuffer stringBuffer = new StringBuffer();
             seller.setUploadFileSize(seller1.getUploadFileSize());
-            for (int i=0;i<files.length;i++) {
-                MultipartFile multipartFile=files[i];
+            for (int i = 0; i < files.length; i++) {
+                MultipartFile multipartFile = files[i];
                 long size = multipartFile.getSize();
                 int kb = (int) size / 1024;
                 if (kb > 102400) {
@@ -219,7 +221,7 @@ public class SellerController {
                 }
                 stringBuffer.append(Global.aliyun_href + uploadUrl);
                 //去除最后一个多余的逗号
-                if (i!=files.length-1) {
+                if (i != files.length - 1) {
                     stringBuffer.append(",");
                 }
             }
@@ -329,6 +331,7 @@ public class SellerController {
 
     /**
      * 开启/关闭 优惠券功能
+     *
      * @param sellerId
      * @param flag
      * @return
@@ -347,6 +350,7 @@ public class SellerController {
 
     /**
      * 微信小程序练习api
+     *
      * @return
      */
     @RequestMapping("/test")
@@ -357,12 +361,13 @@ public class SellerController {
 
     /**
      * 离线操作
+     *
      * @param token
      * @return
      */
     @RequestMapping("/out_line")
-    public Result out_line(String token){
-        Seller seller=sellerService.findOne(Integer.parseInt(token));
+    public Result out_line(String token) {
+        Seller seller = sellerService.findOne(Integer.parseInt(token));
         //seller.setIsout(false);
         sellerService.update2(seller);
         return new Result(false, Global.do_success, null, null);
