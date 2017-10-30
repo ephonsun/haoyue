@@ -1,9 +1,7 @@
 package com.haoyue.web;
 
 import com.aliyuncs.exceptions.ClientException;
-import com.haoyue.pojo.Seller;
-import com.haoyue.pojo.ShopCar;
-import com.haoyue.pojo.SuperAdmin;
+import com.haoyue.pojo.*;
 import com.haoyue.service.*;
 import com.haoyue.untils.*;
 
@@ -12,10 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -265,8 +260,27 @@ public class SuperAdminController {
                 //清空Global.excel_urls
                 Global.excel_urls.clear();
             }
+            //默认收货
+            auto_receive();
         }
     };
 
+    public void auto_receive(){
+        //待收货
+        List<Order> orders=orderService.findUnDone(Global.order_send);
+        Deliver deliver=new Deliver();
+        Date now_date=new Date();
+        Date old_date=null;
+        for (Order order:orders){
+            deliver=order.getDeliver();
+            old_date=deliver.getCreateDate();
+            //判断距离发货日期的时间差
+            if ((now_date.getTime()-old_date.getTime())>1000*60*60*24*11){
+                order.setState(Global.order_finsh);
+                orderService.update(order);
+            }
+        }
+
+    }
 }
 

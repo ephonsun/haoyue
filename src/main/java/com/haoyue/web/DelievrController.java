@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.transaction.Transactional;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -44,6 +45,7 @@ public class DelievrController {
         }
         Deliver deliver1 = order.getDeliver();
         deliver.setId(deliver1.getId());
+        deliver.setCreateDate(new Date());//发送日期
         delievrService.update(deliver);
         order.setDeliver(deliver);
         order.setState(Global.order_send);

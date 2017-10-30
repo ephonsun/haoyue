@@ -102,4 +102,8 @@ public class OrderService {
     public Order save(Order order) {
         return orderRepo.save(order);
     }
+
+    public List<Order> findUnDone(String order_send) {
+        return orderRepo.findByState(order_send);
+    }
 }

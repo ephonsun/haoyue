@@ -1,6 +1,9 @@
 package com.haoyue.pojo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import javax.persistence.*;
+import java.util.Date;
 
 /**
  * Created by LiJia on 2017/8/24.  物流
@@ -28,6 +31,19 @@ public class Deliver {
     private String dname;//快递名
     private String dename;//快递名 英文
     private double price;//初始运费
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:SS", timezone = "GMT+8")
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(updatable = false)
+    private Date createDate;//创建日期
+
+    public Date getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
+    }
 
     public String getOrigin_address() {
         return origin_address;

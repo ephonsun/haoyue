@@ -328,11 +328,23 @@ public class OrderController {
     }
 
     @RequestMapping("/update")
-    public Result update(Order order, String selleId) {
+    public Result update(Order order, String selleId,String changePrice) {
         Order order1 = orderService.findOne(order.getId());
-        order1.setLeaveMessage_seller(order.getLeaveMessage_seller());
+        //卖家备注
+        if (StringUtils.isNullOrBlank(changePrice)) {
+            order1.setLeaveMessage_seller(order.getLeaveMessage_seller());
+        }
+        //修改待付款订单总价
+        else {
+            if (!order.getState().equals(Global.order_unpay)){
+                return new Result(true,Global.order_not_unpay,null,null);
+            }
+            order1.setTotalPrice(order.getTotalPrice());
+        }
         orderService.update(order1);
         return new Result(false, Global.do_success, null, null);
     }
+
+
 
 }
