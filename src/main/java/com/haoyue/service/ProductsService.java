@@ -220,11 +220,11 @@ public class ProductsService {
 
     public void update_ptype(Products product) {
         //商品分类更新
-        List<Products> productses = productsRepo.findBySellerIdAndActive(product.getSellerId());
+        List<String> productses = productsRepo.findBySellerIdAndActive(product.getSellerId());
         PtypeNames ptypeNames = ptypeNamesService.findBySellerId(product.getSellerId() + "");
         StringBuffer stringBuffer = new StringBuffer();
-        for (Products products : productses) {
-            stringBuffer.append(products.getPtypeName());
+        for (String products : productses) {
+            stringBuffer.append(products);
             stringBuffer.append(",");
         }
         ptypeNames.setPtypename(stringBuffer.toString());

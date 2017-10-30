@@ -13,6 +13,6 @@ import java.util.List;
 public interface ProductsRepo extends BaseRepo<Products,Integer> {
     Products findByPcode(String pcode);
 
-    @Query(nativeQuery = true,value = "select * from products where seller_id=?1 and active=true")
-    List<Products> findBySellerIdAndActive(Integer sellerId);
+    @Query(nativeQuery = true,value = "select distinct(ptype_name) from products where seller_id=?1 and active=true")
+    List<String> findBySellerIdAndActive(Integer sellerId);
 }

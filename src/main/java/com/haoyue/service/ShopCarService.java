@@ -85,6 +85,10 @@ public class ShopCarService {
 
             }
         }
+        if(!StringUtils.isNullOrBlank(map.get("orderby_id"))){
+            pageSize=30;
+            return shopCarRepo.findAll(bd.getValue(),new PageRequest(pageNumber,pageSize,new Sort(Sort.Direction.DESC,"id")));
+        }
         return shopCarRepo.findAll(bd.getValue(),new PageRequest(pageNumber,pageSize,null));
 
     }

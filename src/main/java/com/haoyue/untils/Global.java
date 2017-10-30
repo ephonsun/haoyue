@@ -111,6 +111,7 @@ public class Global {
         list.add("/websocket");
         list.add("/helloWord");
         list.add("/welcome");
+        list.add("/leave-message");
         return list;
     }
 

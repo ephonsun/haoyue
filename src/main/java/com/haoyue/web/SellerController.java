@@ -194,7 +194,8 @@ public class SellerController {
         if (files != null && files.length != 0) {
             StringBuffer stringBuffer = new StringBuffer();
             seller.setUploadFileSize(seller1.getUploadFileSize());
-            for (MultipartFile multipartFile : files) {
+            for (int i=0;i<files.length;i++) {
+                MultipartFile multipartFile=files[i];
                 long size = multipartFile.getSize();
                 int kb = (int) size / 1024;
                 if (kb > 102400) {
@@ -217,8 +218,12 @@ public class SellerController {
                     continue;
                 }
                 stringBuffer.append(Global.aliyun_href + uploadUrl);
-                stringBuffer.append(",");
+                //去除最后一个多余的逗号
+                if (i!=files.length-1) {
+                    stringBuffer.append(",");
+                }
             }
+
             seller.setBanners(stringBuffer.toString());
         }
         sellerService.update(seller);
@@ -345,12 +350,9 @@ public class SellerController {
      * @return
      */
     @RequestMapping("/test")
-    public Result test(HttpServletRequest request) {
-        System.out.println(request.getRemoteAddr());
-        System.out.println(request.getRemoteHost());
-        System.out.println(request.getRemoteUser());
-        System.out.println(request.getSession().getId());
-        return new Result(false, Global.do_success, null, null);
+    public Object test(HttpServletRequest request) {
+
+        return "hhhhhh</br>hhhhhhhhhh</br>aaaaaaa";
     }
 
     /**

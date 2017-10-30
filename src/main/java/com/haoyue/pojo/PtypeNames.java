@@ -7,6 +7,7 @@ import javax.persistence.Table;
 
 /**
  * Created by LiJia on 2017/10/26.
+ * 用于存放商品分类
  */
 @Entity
 @Table(name = "ptypenames")

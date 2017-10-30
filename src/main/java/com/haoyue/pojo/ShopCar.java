@@ -1,6 +1,9 @@
 package com.haoyue.pojo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import javax.persistence.*;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -23,6 +26,19 @@ public class ShopCar {
 
     @OneToMany(cascade = CascadeType.ALL)
     private List<ShopCarDetail> shopCarDetails;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:SS", timezone = "GMT+8")
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(updatable = false)
+    private Date createDate;//创建日期
+
+    public Date getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
+    }
 
     public Integer getSellerId() {
         return sellerId;

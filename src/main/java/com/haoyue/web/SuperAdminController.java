@@ -2,6 +2,7 @@ package com.haoyue.web;
 
 import com.aliyuncs.exceptions.ClientException;
 import com.haoyue.pojo.Seller;
+import com.haoyue.pojo.ShopCar;
 import com.haoyue.pojo.SuperAdmin;
 import com.haoyue.service.*;
 import com.haoyue.untils.*;
@@ -197,9 +198,25 @@ public class SuperAdminController {
     }
 
     @RequestMapping("/shopCar-list")
-    public Result shopCarlist(@RequestParam Map<String, String> map, @RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize) {
+    public Object shopCarlist(@RequestParam Map<String, String> map, @RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize) {
+        if(!StringUtils.isNullOrBlank(map.get("show"))){
+            Iterable<ShopCar> iterable= shopCarService.list(map, pageNumber, pageSize);
+            Iterator<ShopCar> iterator=iterable.iterator();
+            StringBuffer stringBuffer=new StringBuffer();
+            ShopCar shopCar=new ShopCar();
 
-        return new Result(false, Global.do_success, shopCarService.list(map, pageNumber, pageSize), null);
+            while (iterator.hasNext()){
+                shopCar=iterator.next();
+                stringBuffer.append("</br>");
+                stringBuffer.append("时间："+shopCar.getCreateDate()+" 商品名:"+shopCar.getProductses().get(0).getPname()+"  件数："+shopCar.getShopCarDetails().get(0).getAmount());
+                stringBuffer.append("</br>");
+            }
+
+            return stringBuffer.toString();
+        }else {
+            return new Result(false, Global.do_success, shopCarService.list(map, pageNumber, pageSize), null);
+        }
+
     }
 
     @RequestMapping("/customer-del-all")

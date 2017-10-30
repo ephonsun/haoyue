@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -58,6 +59,7 @@ public class ShopCarController {
         Customer customer=customerService.findByOpenId(openId,sellerId+"");
         shopCar.setCustomerId(customer.getId());
         shopCar.setSellerId(sellerId);
+        shopCar.setCreateDate(new Date());
        return new Result(false,Global.do_success,shopCarService.save(shopCar,proId,shopCarDetail) ,null);
     }
 
