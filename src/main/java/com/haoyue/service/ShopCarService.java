@@ -82,14 +82,16 @@ public class ShopCarService {
         for (String name : map.keySet()) {
             String value = (String) map.get(name);
             if (!(StringUtils.isNullOrBlank(value))) {
-
+                if (name.equals("sellerId")){
+                    bd.and(shopCar.sellerId.eq(Integer.parseInt(value)));
+                }
             }
         }
         if(!StringUtils.isNullOrBlank(map.get("orderby_id"))){
             pageSize=30;
             return shopCarRepo.findAll(bd.getValue(),new PageRequest(pageNumber,pageSize,new Sort(Sort.Direction.DESC,"id")));
         }
-        return shopCarRepo.findAll(bd.getValue(),new PageRequest(pageNumber,pageSize,null));
+        return shopCarRepo.findAll(bd.getValue(),new PageRequest(pageNumber,pageSize,new Sort(Sort.Direction.DESC,"id")));
 
     }
 }

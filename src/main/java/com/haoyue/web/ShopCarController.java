@@ -8,6 +8,7 @@ import com.haoyue.service.ShopCarDetailService;
 import com.haoyue.service.ShopCarService;
 import com.haoyue.untils.Global;
 import com.haoyue.untils.Result;
+import com.haoyue.untils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -31,10 +32,18 @@ public class ShopCarController {
     private ShopCarDetailService shopCarDetailService;
 
     @RequestMapping("/list")
-    public Result list(@RequestParam Map<String, String> map){
-        Customer customer=customerService.findByOpenId(map.get("openId"),map.get("sellerId"));
-        map.put("cid",customer.getId()+"");
-        return  new Result(false, Global.do_success,customerService.list(map),null);
+    public Result list(@RequestParam Map<String, String> map,@RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize){
+        //小程序端用户查看自己的购物车
+        if(!StringUtils.isNullOrBlank(map.get("openId"))){
+            Customer customer=customerService.findByOpenId(map.get("openId"),map.get("sellerId"));
+            map.put("cid",customer.getId()+"");
+            return  new Result(false, Global.do_success,customerService.list(map),null);
+        }
+        //卖家后台购物车
+        else {
+            Iterable<ShopCar> shopCars=shopCarService.list(map,pageNumber,pageSize);
+            return  new Result(false, Global.do_success,shopCars,null);
+        }
     }
 
     @RequestMapping("/del")

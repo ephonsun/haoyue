@@ -252,16 +252,12 @@ public class SuperAdminController {
             //数据表 dictionarys 新增数据
             dictionaryService.addEachDay();
             //清空一小时内生成的excel文件
-            OSSClientUtil ossClientUtil = new OSSClientUtil();
-            if (Global.excel_urls.size() != 0) {
-                for (String s : Global.excel_urls) {
-                    ossClientUtil.delete(s);
-                }
-                //清空Global.excel_urls
-                Global.excel_urls.clear();
+            clear_excel();
+            //默认收货 两小时执行一次
+            Global.flag=!Global.flag;
+            if(Global.flag) {
+                auto_receive();
             }
-            //默认收货
-            auto_receive();
         }
     };
 
@@ -280,7 +276,18 @@ public class SuperAdminController {
                 orderService.update(order);
             }
         }
+    }
 
+    public void clear_excel(){
+        //清空一小时内生成的excel文件
+        OSSClientUtil ossClientUtil = new OSSClientUtil();
+        if (Global.excel_urls.size() != 0) {
+            for (String s : Global.excel_urls) {
+                ossClientUtil.delete(s);
+            }
+            //清空Global.excel_urls
+            Global.excel_urls.clear();
+        }
     }
 }
 
