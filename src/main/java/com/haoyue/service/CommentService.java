@@ -38,8 +38,7 @@ public class CommentService {
     public Object save(String openId, Comment comment) {
 
         Order order=orderService.findOne(comment.getOrderId());
-        //Integer customerId=customerService.findByOpenId(openId).getId();
-        Integer customerId=null;
+        Integer customerId=customerService.findByOpenId(openId,comment.getSellerId()+"").getId();
         if (order.getCustomerId()!=customerId){
             return new Result(true, Global.do_fail,null,null);
         }

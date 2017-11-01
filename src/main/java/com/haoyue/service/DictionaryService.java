@@ -62,22 +62,10 @@ public class DictionaryService {
 
     public Iterable<Dictionary> findBySellerId2(int sid, Integer pageNumber, Integer pageSize) {
         QDictionary dictionary = QDictionary.dictionary;
-        Date from = new Date();
-        int month = from.getMonth() + 1;
-        if (month == 1 || month == 3 || month == 5 || month == 7 || month == 9 || month == 11) {
-            pageSize = 31;
-        } else {
-            pageSize = 30;
-        }
-        Date to = new Date();
-        from.setDate(1);
-        from.setHours(0);
-        from.setMinutes(0);
-        from.setSeconds(0);
         BooleanBuilder bd = new BooleanBuilder();
         bd.and(dictionary.sellerId.eq(sid));
-        bd.and(dictionary.createDate.between(from, to));
         bd.and(dictionary.productId.isNull());
+        pageSize=30;
         return dictionaryRepo.findAll(bd.getValue(), new PageRequest(pageNumber, pageSize, new Sort(Sort.Direction.DESC, "id")));
 
     }

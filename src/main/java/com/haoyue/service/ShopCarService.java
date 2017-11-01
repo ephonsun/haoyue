@@ -12,10 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by LiJia on 2017/9/4.
@@ -93,5 +90,41 @@ public class ShopCarService {
         }
         return shopCarRepo.findAll(bd.getValue(),new PageRequest(pageNumber,pageSize,new Sort(Sort.Direction.DESC,"id")));
 
+    }
+
+    public List<Object> listByProducts(Map<String, String> map,String sellerId) {
+        map.put("token",sellerId);
+        //所有在售商品
+        Iterable<Products> iterable= productsService.list(map);
+        Iterator<Products> iterator=iterable.iterator();
+        List<Products> products=new ArrayList<>();
+        List<Object> result=new ArrayList<>();
+        while (iterator.hasNext()){
+            Products product=iterator.next();
+            int count= shopCarRepo.findCountByPid(product.getId());
+            product.setShopcar_count(count);
+            products.add(product);
+        }
+        //排序，单个商品加入购物车人数多的在前
+        products.stream()
+                .sorted((p, p2) -> (p.getShopcar_count().compareTo(p2.getShopcar_count())))
+                .forEach((p)->result.add(p));
+        Collections.reverse(result);
+        return result;
+    }
+
+    public List<String> findShopCarIdByProId(String proId) {
+        List<Integer> ids= shopCarRepo.findShopCarIdByProId(proId);
+        List<String> names=new ArrayList<>();
+        for (Integer id:ids){
+            String name=findOne(id).getWxname();
+            if (names.size()!=0){
+                if (names.contains(name)){
+                    continue;
+                }
+            }
+            names.add(name);
+        }
+        return names;
     }
 }

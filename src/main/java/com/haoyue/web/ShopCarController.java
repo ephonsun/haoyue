@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -63,13 +64,26 @@ public class ShopCarController {
     }
 
     @RequestMapping("/save")
-    public Result save(Integer proId,String openId,ShopCarDetail shopCarDetail,Integer sellerId){
+    public Result save(Integer proId,String openId,ShopCarDetail shopCarDetail,Integer sellerId,String wxname){
         ShopCar shopCar=new ShopCar();
         Customer customer=customerService.findByOpenId(openId,sellerId+"");
         shopCar.setCustomerId(customer.getId());
         shopCar.setSellerId(sellerId);
         shopCar.setCreateDate(new Date());
+        shopCar.setWxname(wxname);
        return new Result(false,Global.do_success,shopCarService.save(shopCar,proId,shopCarDetail) ,null);
+    }
+
+    @RequestMapping("/shopcar_by_pro")
+    public Result listByProducts(@RequestParam Map<String, String> map,String sellerId){
+        List<Object> list=shopCarService.listByProducts(map,sellerId);
+        return new Result(false,Global.do_success,list ,null);
+    }
+
+    @RequestMapping("/findnames_by_pro")
+    public Result findone_by_pro(String sellerId,String proId){
+        List<String> names =shopCarService.findShopCarIdByProId(proId);
+        return new Result(false,Global.do_success,names ,null);
     }
 
 

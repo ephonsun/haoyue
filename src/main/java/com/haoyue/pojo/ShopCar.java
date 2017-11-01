@@ -19,6 +19,7 @@ public class ShopCar {
     private Integer id;
 
     private Integer customerId;
+    private String  wxname;
     private Integer sellerId;
 
     @ManyToMany
@@ -31,6 +32,14 @@ public class ShopCar {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(updatable = false)
     private Date createDate;//创建日期
+
+    public String getWxname() {
+        return wxname;
+    }
+
+    public void setWxname(String wxname) {
+        this.wxname = wxname;
+    }
 
     public Date getCreateDate() {
         return createDate;

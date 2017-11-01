@@ -91,7 +91,7 @@ public class OrderController {
     }
 
     @RequestMapping("/save")
-    public Result save(String deliver_price, Integer proId, Integer proTypeId, String sellerId, String receiver, String phone, String address, Integer amount, String openId, String leaveMessage) {
+    public Result save(String deliver_price, Integer proId, Integer proTypeId, String sellerId, String receiver, String phone, String address, Integer amount, String openId, String leaveMessage,String member) {
         Customer customer = customerService.findByOpenId(openId, sellerId);
         Order order = new Order();
         //客户
@@ -156,7 +156,10 @@ public class OrderController {
         order.setState(Global.order_unpay);
         //总计
         order.setTotalPrice(order.getPrice() + order.getDeliver().getPrice());
-
+        //会员卡
+        if (!StringUtils.isNullOrBlank(member)){
+            order.setTotalPrice(order.getTotalPrice()*Double.valueOf(member));
+        }
         return new Result(false, Global.do_success, orderService.save(order), null);
     }
 

@@ -63,6 +63,15 @@ public class Products {
     private int monthSale;//月销量，后台实现总销量代替月销量
     private int thumbsup;//点赞数
     private String dname;
+    private Integer shopcar_count;//被加入购物车数量
+
+    public Integer getShopcar_count() {
+        return shopcar_count;
+    }
+
+    public void setShopcar_count(Integer shopcar_count) {
+        this.shopcar_count = shopcar_count;
+    }
 
     public String getPcode() {
         return pcode;

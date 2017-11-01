@@ -53,12 +53,17 @@ public class SellerService {
        try {
            //判断权限格式，APPID是否准确
            if (StringUtils.isNullOrBlank(seller.getAuthority())||StringUtils.isNullOrBlank(seller.getAppId())){
-               return new Result(true,Global.data_unright,null,null);
+               return new Result(true,Global.appid_authority_isnull,null,null);
            }
            for(int i=0;i<seller.getAuthority().length();i++){
                if (!Character.isDigit(seller.getAuthority().charAt(i))){
-                   return new Result(true,Global.data_unright,null,null);
+                   return new Result(true,Global.authority_not_digit,null,null);
                }
+           }
+           //判断appid是否已经存在
+           List<Seller> sellerList=sellerRepo.findByAppId(seller.getAppId());
+           if (sellerList!=null&&sellerList.size()>=1){
+               return new Result(true,Global.do_success,Global.appid_exist,null);
            }
            //判断权限值，初始化存储空间
            int i=1;

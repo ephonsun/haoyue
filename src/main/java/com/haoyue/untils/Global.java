@@ -20,6 +20,15 @@ public class Global {
     public static String alery_done="不可重复操作";
     public static List<String> excel_urls=new ArrayList<>();//存放excel存储路径，每天定时清空oss上的excel文件
 
+    //注册
+    public static String appid_exist="appid已经存在";
+    public static String authority_not_digit="权限值应填写数字";
+    public static String appid_authority_isnull="appid和权限值不应为空";
+
+    //会员
+    public static String member_exist="会员信息已经存在";
+    public static String discount_not_set="店主未设置会员折扣";
+
     //基本返回数据
     public static  String do_success="操作成功";
     public static  String do_fail="操作失败";

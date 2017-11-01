@@ -112,6 +112,9 @@ public class ProductsService {
                 if (name.equals("ptype")) {
                     bd.and(pro.ptypeName.contains(value));
                 }
+                if (name.equals("active")){
+                    bd.and(pro.active.eq(Boolean.valueOf(value)));
+                }
 
             }
         }
