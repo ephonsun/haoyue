@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -19,14 +20,6 @@ public class MemberService {
     private MemberRepo memberRepo;
 
     public void save(Member member) {
-        //默认0.9折
-        if (StringUtils.isNullOrBlank(member.getDiscount())){
-            member.setDiscount("0.9");
-        }
-        member.setCreateDate(new Date());
-        memberRepo.save(member);
-        int code_begin=88800000;
-        member.setCode((code_begin+member.getId())+"");
         memberRepo.save(member);
     }
 
@@ -42,7 +35,29 @@ public class MemberService {
         return memberRepo.getDiscount(sellerId);
     }
 
-    public Member findBySellerIdAndOpenIdIsNull(String sellerId) {
+    public List<Member> findBySellerIdAndOpenIdIsNull(String sellerId) {
         return memberRepo.findBySellerIdAndOpenIdIsNull(sellerId);
+    }
+
+
+
+    public List<Member> list(String sellerId) {
+        return memberRepo.findBySellerIdAndOpenIdIsNotNull(sellerId);
+    }
+
+    public void updateMemeber(Member member) {
+        memberRepo.save(member);
+    }
+
+    public void del(Member member) {
+        memberRepo.delete(member);
+    }
+
+    public void delVip() {
+        memberRepo.delVip();
+    }
+
+    public List<Member> findByOpenIdIsNotNull() {
+        return memberRepo.findByOpenIdIsNotNull();
     }
 }

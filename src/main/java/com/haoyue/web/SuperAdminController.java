@@ -256,7 +256,7 @@ public class SuperAdminController {
             //默认收货 两小时执行一次
             Global.flag=!Global.flag;
             if(Global.flag) {
-                auto_receive();
+               // auto_receive();
             }
         }
     };
@@ -271,7 +271,7 @@ public class SuperAdminController {
             deliver=order.getDeliver();
             old_date=deliver.getCreateDate();
             //判断距离发货日期的时间差
-            if ((now_date.getTime()-old_date.getTime())>1000*60*60*24*11){
+            if ((now_date.getTime()-old_date.getTime())>1000*60*60*24*20){
                 order.setState(Global.order_finsh);
                 orderService.update(order);
             }

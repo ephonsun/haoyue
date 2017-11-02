@@ -1,6 +1,7 @@
 package com.haoyue.service;
 
 import com.haoyue.pojo.Dictionary;
+import com.haoyue.pojo.Member;
 import com.haoyue.pojo.Products;
 import com.haoyue.pojo.QDictionary;
 import com.haoyue.repo.DictionaryRepo;
@@ -16,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -31,6 +33,8 @@ public class DictionaryService {
     private SellerRepo sellerRepo;
     @Autowired
     private VisitorsService visitorsService;
+    @Autowired
+    private MemberService memberService;
 
     public Dictionary findByTokenAndName(String token, String name) {
         return null;
@@ -63,10 +67,23 @@ public class DictionaryService {
     public Iterable<Dictionary> findBySellerId2(int sid, Integer pageNumber, Integer pageSize) {
         QDictionary dictionary = QDictionary.dictionary;
         BooleanBuilder bd = new BooleanBuilder();
+        Date from =new Date();
+        Date to=new Date();
+        int month=from.getMonth()-1;
+        if(month==-1){
+            month=11;
+        }
+        from.setMonth(month);
+        month++;
+        if(month==1||month==3||month==5||month==7||month==8||month==10||month==12){
+            from.setDate(24);
+        }else {
+            from.setDate(23);
+        }
+        bd.and(dictionary.createDate.between(from,to));
         bd.and(dictionary.sellerId.eq(sid));
         bd.and(dictionary.productId.isNull());
-        pageSize=30;
-        return dictionaryRepo.findAll(bd.getValue(), new PageRequest(pageNumber, pageSize, new Sort(Sort.Direction.DESC, "id")));
+        return dictionaryRepo.findAll(bd.getValue(),  new Sort(Sort.Direction.DESC, "id"));
 
     }
 
@@ -92,6 +109,47 @@ public class DictionaryService {
             }
             //每日清空 visitors 表
             visitorsService.delAll();
+            //判断年份是否改变,新的一年刷新所有会员信息
+            if (dictionery.getCreateDate().getYear()!=date.getYear()){
+                flushMembers();
+            }
+        }
+    }
+
+    public void flushMembers(){
+        //删除普通会员
+        memberService.delVip();
+        //高级会员和至尊会员降一级
+        List<Member> memberList=memberService.findByOpenIdIsNotNull();
+        String discount_1="";
+        String discount_2="";
+        String total_consume1="";
+        String total_consume2="";
+        List<Member> memberList1=new ArrayList<>();
+        for (Member member:memberList){
+            //找到买家对应的卖家会员模板信息
+            memberList1=memberService.findBySellerIdAndOpenIdIsNull(member.getSellerId());
+            for (Member member1:memberList1){
+                if (member1.getLeavel().equals("lev1")){
+                    discount_1=member1.getDiscount();
+                    total_consume1=member1.getTotal_consume();
+                }
+                if (member1.getLeavel().equals("lev2")){
+                    discount_2=member1.getDiscount();
+                    total_consume2=member1.getTotal_consume();
+                }
+            }
+            if (member.getLeavel().equals("lev2")){
+                member.setLeavel("lev1");
+                member.setDiscount(discount_1);
+                member.setTotal_consume(total_consume1);
+            }
+            if (member.getLeavel().equals("lev3")){
+                member.setLeavel("lev2");
+                member.setDiscount(discount_2);
+                member.setTotal_consume(total_consume2);
+            }
+            memberService.save(member);
         }
     }
 

@@ -69,7 +69,15 @@ public class Order {
 
     private boolean active = true;
     private boolean isApplyReturn = false;//是否申请退货
+    private String wxname;
 
+    public String getWxname() {
+        return wxname;
+    }
+
+    public void setWxname(String wxname) {
+        this.wxname = wxname;
+    }
 
     public String getLeaveMessage_seller() {
         return leaveMessage_seller;

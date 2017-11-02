@@ -1,6 +1,8 @@
 package com.haoyue.service;
 
+import com.haoyue.pojo.Member;
 import com.haoyue.pojo.Order;
+import com.haoyue.pojo.OrderTotalPrice;
 import com.haoyue.pojo.QOrder;
 import com.haoyue.repo.OrderRepo;
 import com.haoyue.untils.Global;
@@ -24,6 +26,12 @@ public class OrderService {
 
     @Autowired
     private OrderRepo orderRepo;
+
+    @Autowired
+    private CustomerService customerService;
+
+    @Autowired
+    private MemberService memberService;
 
     public Iterable<Order> list(Map<String, String> map, int pageNumber, int pageSize) {
 
@@ -105,5 +113,91 @@ public class OrderService {
 
     public List<Order> findUnDone(String order_send) {
         return orderRepo.findByState(order_send);
+    }
+
+
+    public double getToTalPriceByCustomerId(String cid,String sellerId,Date date) {
+        return orderRepo.getToTalPriceBySellerId(cid,sellerId,date);
+    }
+
+    public Date getdate(){
+        Date date=new Date();
+        date.setMonth(0);
+        date.setDate(1);
+        date.setHours(0);
+        date.setMinutes(0);
+        return date;
+    }
+
+    // 卖家更新会员系统后，刷新所有买家会员信息
+    public void getToTalPriceByCustomer(String sellerId, List<Member> news) {
+        // 查询该年至今所有买家的交易额
+        List<OrderTotalPrice> list = orderRepo.getToTalPriceBySellerAndCustomer(sellerId,getdate());
+        String total_consume_1 = "";
+        String discount_1 = "";
+        String total_consume_2 = "";
+        String discount_2 = "";
+        String total_consume_3 = "";
+        String discount_3 = "";
+        int index = 0;
+        int customer_id = 0;
+        String openId = "";
+        String result_discount = "";
+        for (Member m : news) {
+            if (m.getLeavel().equals("lev1")) {
+                total_consume_1 = m.getTotal_consume();
+                discount_1 = m.getDiscount();
+            }
+            if (m.getLeavel().equals("lev2")) {
+                total_consume_2 = m.getTotal_consume();
+                discount_2 = m.getDiscount();
+            }
+            if (m.getLeavel().equals("lev3")) {
+                total_consume_3 = m.getTotal_consume();
+                discount_3 = m.getDiscount();
+            }
+        }
+        // 遍历每一个买家的交易额和会员成长体系进行对比
+        for (OrderTotalPrice each : list) {
+            if (each.getTotal_price() >= Double.valueOf(total_consume_1)) {
+                index = 1;
+                result_discount = discount_1;
+            }
+            if (each.getTotal_price() >= Double.valueOf(total_consume_2)) {
+                index = 2;
+                result_discount = discount_2;
+            }
+            if (each.getTotal_price() >= Double.valueOf(total_consume_3)) {
+                index = 3;
+                result_discount = discount_3;
+            }
+            // 新增会员，更新老会员
+            if (index != 0) {
+                customer_id = each.getCustomerId();
+                openId = customerService.findOpenIdById(customer_id + "");
+                Member member = memberService.findByOpenIdAndSellerId(sellerId, openId);
+                if (member == null && member.getId() == null) {
+                    member = new Member();
+                    member.setSellerId(sellerId);
+                    member.setCreateDate(new Date());
+                    member.setOpenId(openId);
+                    member.setTotal_consume(each.getTotal_price()+"");
+                }
+                member.setDiscount(result_discount);
+                member.setLeavel("lev" + index);
+                memberService.save(member);
+                if (StringUtils.isNullOrBlank(member.getCode())) {
+                    member.setCode((8888 + member.getId()) + "");
+                    memberService.save(member);
+                }
+            }
+            //删除老会员
+            if (index==0){
+                Member member = memberService.findByOpenIdAndSellerId(sellerId, openId);
+                if (member!=null&&member.getId()!=null){
+                    memberService.del(member);
+                }
+            }
+        }
     }
 }

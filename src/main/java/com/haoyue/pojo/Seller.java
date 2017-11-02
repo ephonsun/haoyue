@@ -48,6 +48,15 @@ public class Seller implements Serializable{
     private String pdescTitle;//商品详情转发标题
     private String lunbo;//店铺图片对应的商品编号
     private String onlineCode;//在线凭证
+    private boolean isMember=false;
+
+    public boolean getIsMember() {
+        return isMember;
+    }
+
+    public void setIsMember(boolean member) {
+        isMember = member;
+    }
 
     public String getOnlineCode() {
         return onlineCode;

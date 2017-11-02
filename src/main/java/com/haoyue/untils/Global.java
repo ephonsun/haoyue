@@ -29,6 +29,10 @@ public class Global {
     public static String member_exist="会员信息已经存在";
     public static String discount_not_set="店主未设置会员折扣";
 
+    //抵用券
+    public static String no_cashticket="抵用券已被抢完";
+    public static String get_ticket_alerady="每人只能抢一张";
+
     //基本返回数据
     public static  String do_success="操作成功";
     public static  String do_fail="操作失败";

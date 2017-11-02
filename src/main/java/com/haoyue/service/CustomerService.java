@@ -81,4 +81,8 @@ public class CustomerService {
     public void deleteAll() {
         customerRepo.deleteAll();
     }
+
+    public String findOpenIdById(String id) {
+        return customerRepo.findOne(Integer.parseInt(id)).getOpenId();
+    }
 }

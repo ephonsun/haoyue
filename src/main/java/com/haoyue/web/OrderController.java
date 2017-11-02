@@ -44,6 +44,10 @@ public class OrderController {
     private AddressService addressService;
     @Autowired
     private DelievrService delievrService;
+    @Autowired
+    private MemberService memberService;
+    @Autowired
+    private CashTicketService cashTicketService;
 
     @RequestMapping("/list")
     public Result list(@RequestParam Map<String, String> map, @RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize) {
@@ -91,11 +95,13 @@ public class OrderController {
     }
 
     @RequestMapping("/save")
-    public Result save(String deliver_price, Integer proId, Integer proTypeId, String sellerId, String receiver, String phone, String address, Integer amount, String openId, String leaveMessage,String member) {
+    public Result save(String deliver_price, Integer proId, Integer proTypeId, String sellerId, String receiver, String phone, String address, Integer amount, String openId, String leaveMessage, String usevip, String wxname,String cashTicketCode) {
         Customer customer = customerService.findByOpenId(openId, sellerId);
         Order order = new Order();
         //客户
         order.setCustomerId(customer.getId());
+        //微信昵称
+        order.setWxname(wxname);
         //商品
         Products products = productsService.findOne(proId);
         List<Products> productses = new ArrayList<>();
@@ -117,7 +123,7 @@ public class OrderController {
             //根据商品快递模板和买家的地区，筛选出快递费用，并以 deliver_price 传递后后台
             deliver.setPrice(Double.valueOf(deliver_price));
         } else {
-            deliver.setPrice(Double.valueOf(products.getDeliverPrice())+0);
+            deliver.setPrice(Double.valueOf(products.getDeliverPrice()) + 0);
         }
         delievrService.save2(deliver);
         order.setDeliver(deliver);
@@ -140,7 +146,7 @@ public class OrderController {
         //支付方式
         order.setPayType(Global.pay_type);
         //原价
-        order.setOldPrice(produtsType.getPriceOld()==null?produtsType.getPriceNew():produtsType.getPriceOld());
+        order.setOldPrice(produtsType.getPriceOld() == null ? produtsType.getPriceNew() : produtsType.getPriceOld());
         //现价
         order.setPrice(produtsType.getDiscountPrice() * amount);
         //订单号 唯一
@@ -156,9 +162,17 @@ public class OrderController {
         order.setState(Global.order_unpay);
         //总计
         order.setTotalPrice(order.getPrice() + order.getDeliver().getPrice());
-        //会员卡
-        if (!StringUtils.isNullOrBlank(member)){
-            order.setTotalPrice(order.getTotalPrice()*Double.valueOf(member));
+        //是否使用会员卡
+        if (!StringUtils.isNullOrBlank(usevip)&&usevip.equals("yes")) {
+            Member member = memberService.findByOpenIdAndSellerId(openId, sellerId);
+            order.setTotalPrice(order.getTotalPrice() * Double.valueOf(member.getDiscount()));
+        }
+        //是否使用抵用券
+        if (!StringUtils.isNullOrBlank(cashTicketCode)) {
+            CashTicket cashTicket = cashTicketService.findByCode(cashTicketCode);
+            order.setTotalPrice(order.getTotalPrice() - Double.valueOf(cashTicket.getCash()));
+            cashTicket.setIsuse(true);
+            cashTicketService.update(cashTicket);
         }
         return new Result(false, Global.do_success, orderService.save(order), null);
     }
@@ -169,6 +183,8 @@ public class OrderController {
         order.setState(state);
         // 未付款 - 未发货
         if (state.equals(Global.order_unsend)) {
+            //每次付款后更新当前买家的会员信息
+            saveMember(order);
             //付款日期
             order.setPayDate(new Date());
             //更新 dictionary  全部 交易额 订单数量
@@ -331,7 +347,7 @@ public class OrderController {
     }
 
     @RequestMapping("/update")
-    public Result update(Order order, String selleId,String changePrice) {
+    public Result update(Order order, String selleId, String changePrice) {
         Order order1 = orderService.findOne(order.getId());
         //卖家备注
         if (StringUtils.isNullOrBlank(changePrice)) {
@@ -339,8 +355,8 @@ public class OrderController {
         }
         //修改待付款订单总价
         else {
-            if (!order.getState().equals(Global.order_unpay)){
-                return new Result(true,Global.order_not_unpay,null,null);
+            if (!order.getState().equals(Global.order_unpay)) {
+                return new Result(true, Global.order_not_unpay, null, null);
             }
             order1.setTotalPrice(order.getTotalPrice());
         }
@@ -348,6 +364,60 @@ public class OrderController {
         return new Result(false, Global.do_success, null, null);
     }
 
+    //每当买家订单付款后会更新该买家的会员信息
+    public void saveMember(Order order) {
+        String cid = order.getCustomerId() + "";
+        String open_id = customerService.findOpenIdById(cid);
+        double total_price = orderService.getToTalPriceByCustomerId(cid, order.getSellerId() + "", orderService.getdate());
+        List<Member> memberList = memberService.findBySellerIdAndOpenIdIsNull(order.getSellerId() + "");
+        int leavel = 0;
+        String lev_1 = "";
+        String lev_2 = "";
+        String lev_3 = "";
+        for (Member member : memberList) {
+            if (total_price >= Double.valueOf(member.getTotal_consume())) {
+                leavel++;
+            }
+            if (member.getLeavel().equals("lev1")) {
+                lev_1 = member.getDiscount();
+            }
+            if (member.getLeavel().equals("lev2")) {
+                lev_2 = member.getDiscount();
+            }
+            if (member.getLeavel().equals("lev3")) {
+                lev_3 = member.getDiscount();
+            }
+        }
+        if (leavel != 0) {
+            Member member = memberService.findByOpenIdAndSellerId(open_id, order.getSellerId() + "");
+            // 区别被降级的会员和升级的会员
+            if (total_price > Double.valueOf(member.getTotal_consume())) {
+                if (member == null && member.getId() == null) {
+                    member = new Member();
+                    member.setOpenId(open_id);
+                    member.setSellerId(order.getSellerId() + "");
+                    member.setCreateDate(new Date());
+                }
+                member.setTotal_consume(String.valueOf(total_price));
+                member.setLeavel("lev" + leavel);
+                if (leavel == 1) {
+                    member.setDiscount(lev_1);
+                }
+                if (leavel == 2) {
+                    member.setDiscount(lev_2);
+                }
+                if (leavel == 3) {
+                    member.setDiscount(lev_3);
+                }
+                member.setWxname(order.getWxname());
+                memberService.save(member);
+                if (StringUtils.isNullOrBlank(member.getCode())) {
+                    member.setCode((8888 + member.getId()) + "");
+                    memberService.save(member);
+                }
+            }
+        }
+    }
 
 
 }
