@@ -355,7 +355,7 @@ public class OrderController {
         }
         //修改待付款订单总价
         else {
-            if (!order.getState().equals(Global.order_unpay)) {
+            if (!order1.getState().equals(Global.order_unpay)) {
                 return new Result(true, Global.order_not_unpay, null, null);
             }
             order1.setTotalPrice(order.getTotalPrice());
