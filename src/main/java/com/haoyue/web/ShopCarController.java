@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -75,9 +76,27 @@ public class ShopCarController {
     }
 
     @RequestMapping("/shopcar_by_pro")
-    public Result listByProducts(@RequestParam Map<String, String> map,String sellerId){
+    public Result listByProducts(@RequestParam Map<String, String> map,String sellerId,@RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize){
         List<Object> list=shopCarService.listByProducts(map,sellerId);
-        return new Result(false,Global.do_success,list ,null);
+        List result=new ArrayList();
+        double pagenumber=Math.ceil((list.size()/10.0));
+        if (pageNumber==0){
+            if (pageSize>list.size()){
+                result=list;
+            }else {
+                result=list.subList(0,pageSize);
+            }
+        }else {
+            if (pageNumber>pagenumber){
+                return new Result(false,Global.pagenumber_not_right,null);
+            }
+            if (pageNumber*pageSize+pageSize>list.size()){
+                result=list.subList(pageNumber*pageSize,list.size());
+            }else {
+                result = list.subList(pageNumber * pageSize, pageSize + pageNumber * pageSize);
+            }
+        }
+        return new Result(false,Global.do_success,result ,pagenumber+"");
     }
 
     @RequestMapping("/findnames_by_pro")

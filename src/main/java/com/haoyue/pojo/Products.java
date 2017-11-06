@@ -64,6 +64,25 @@ public class Products {
     private int thumbsup;//点赞数
     private String dname;
     private Integer shopcar_count;//被加入购物车数量
+    private boolean isLuckDraw=false;//是否抽奖
+    private boolean isLuckDrawEnd=false;
+
+
+    public boolean getIsLuckDrawEnd() {
+        return isLuckDrawEnd;
+    }
+
+    public void setIsLuckDrawEnd(boolean luckDrawEnd) {
+        isLuckDrawEnd = luckDrawEnd;
+    }
+
+    public boolean getIsLuckDraw() {
+        return isLuckDraw;
+    }
+
+    public void setIsLuckDraw(boolean luckDraw) {
+        isLuckDraw = luckDraw;
+    }
 
     public Integer getShopcar_count() {
         return shopcar_count;

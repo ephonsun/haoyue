@@ -63,6 +63,12 @@ public class OrderService {
                 if (name.equals("isApplyReturn")) {
                     bd.and(order.isApplyReturn.eq(Boolean.valueOf(value)));
                 }
+                if (name.equals("luckdraw")){
+                    bd.and(order.isLuckDraw.eq(true));
+                }
+                if (name.equals("luck")){
+                    bd.and(order.isLuck.eq(true));
+                }
             }
         }
         return orderRepo.findAll(bd.getValue(), new PageRequest(pageNumber, pageSize, new Sort(Sort.Direction.DESC, new String[]{"createDate"})));
@@ -89,6 +95,9 @@ public class OrderService {
                 }
                 if (name.equals("active")) {
                     bd.and(order.active.eq(true));
+                }
+                if (name.equals("luckdraw")){
+                    bd.and(order.isLuckDraw.eq(true));
                 }
             }
         }
@@ -197,6 +206,29 @@ public class OrderService {
                 if (member!=null&&member.getId()!=null){
                     memberService.del(member);
                 }
+            }
+        }
+    }
+
+    public List<String> findBySellerIdAndProIdAndIsLuckDrawEnd(Integer sellerId, Integer pid) {
+        List<Integer> oids= orderRepo.findBySellerIdAndProIdAndIsLuckDrawEnd(pid);
+        List<String> codes=new ArrayList<>();
+        for (Integer id:oids){
+            Order order=orderRepo.findOne(id);
+            if (order.getIsLuckDraw()==true&&order.getIsLuckDrawEnd()==false){
+                codes.add(order.getLuckcode());
+            }
+        }
+        return codes;
+    }
+
+    public void updateIsLuckDrawEnd(Integer pid) {
+        List<Integer> oids= orderRepo.findBySellerIdAndProIdAndIsLuckDrawEnd(pid);
+        for (Integer id:oids){
+            Order order=orderRepo.findOne(id);
+            if (order.getIsLuckDrawEnd()==false) {
+                order.setIsLuckDrawEnd(true);
+                orderRepo.save(order);
             }
         }
     }

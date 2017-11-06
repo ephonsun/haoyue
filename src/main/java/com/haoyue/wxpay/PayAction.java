@@ -140,6 +140,7 @@ public class PayAction {
                 String nonceStr = UUIDHexGenerator.generate();
                 JsonObject.put("nonceStr", nonceStr);
                 JsonObject.put("package", "prepay_id=" + prepay_id);
+                Global.package_map.put(openId,prepay_id);
                 Long timeStamp = System.currentTimeMillis() / 1000;
                 JsonObject.put("timeStamp", timeStamp + "");
                 String stringSignTemp = "appId=" + appid + "&nonceStr=" + nonceStr + "&package=prepay_id=" + prepay_id + "&signType=MD5&timeStamp=" + timeStamp;
@@ -218,6 +219,24 @@ public class PayAction {
         out.close();
     }
 
+    @RequestMapping("/sendTemplate")
+    public void getTemplate(String openId,String data){
+
+        //模板信息通知用户
+            //获取 access_token
+        String access_token_url="https://api.weixin.qq.com/cgi-bin/token";
+        String param1="grant_type=client_credential&appid=wxe46b9aa1b768e5fe&secret=8bcdb74a9915b5685fa0ec37f6f25b24";
+        String access_token= HttpRequest.sendPost(access_token_url,param1);
+        access_token=access_token.substring(access_token.indexOf(":")+2,access_token.indexOf(",")-1);
+            //发送模板信息
+        String url="https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send";
+        String form_id=Global.package_map.get(openId);
+        Global.package_map.remove(openId);
+        String param2="access_token="+access_token+"&touser="+openId+"&template_id=Z_Xg6rYdQgci4FP_aOjTvZHXeC5BSs99EwARD6NJXWk&form_id"+form_id+"&data="+data;
+        String result=HttpRequest.sendPost(url,param2);
+        System.out.println(result);
+    }
+
     /**
      * 支付结果查询
      * 接口留下备用
@@ -239,8 +258,6 @@ public class PayAction {
         String prestr = PayUtil.createLinkString(map);
         String mysign = PayUtil.sign(prestr, key, "utf-8").toUpperCase();
         String param = "appid=" + appId + "&mch_id=" + machId + "&transaction_id=" + transaction_id + "&nonce_str=" + nonceStr + "&sign=" + mysign;
-        String response = HttpRequest.sendPost(url, param);
-        System.out.println(response);
     }
 
 }

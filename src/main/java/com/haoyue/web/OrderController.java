@@ -48,6 +48,8 @@ public class OrderController {
     private MemberService memberService;
     @Autowired
     private CashTicketService cashTicketService;
+    @Autowired
+    private LuckDrawService luckDrawService;
 
     @RequestMapping("/list")
     public Result list(@RequestParam Map<String, String> map, @RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize) {
@@ -95,13 +97,15 @@ public class OrderController {
     }
 
     @RequestMapping("/save")
-    public Result save(String deliver_price, Integer proId, Integer proTypeId, String sellerId, String receiver, String phone, String address, Integer amount, String openId, String leaveMessage, String usevip, String wxname,String cashTicketCode) {
+    public Result save(String deliver_price, Integer proId, Integer proTypeId, String sellerId, String receiver, String phone, String address, Integer amount, String openId, String leaveMessage, String usevip, String wxname, String cashTicketCode) {
         Customer customer = customerService.findByOpenId(openId, sellerId);
         Order order = new Order();
         //客户
         order.setCustomerId(customer.getId());
         //微信昵称
         order.setWxname(wxname);
+        //卖家留言
+        order.setLeaveMessage_seller("");
         //商品
         Products products = productsService.findOne(proId);
         List<Products> productses = new ArrayList<>();
@@ -163,7 +167,7 @@ public class OrderController {
         //总计
         order.setTotalPrice(order.getPrice() + order.getDeliver().getPrice());
         //是否使用会员卡
-        if (!StringUtils.isNullOrBlank(usevip)&&usevip.equals("yes")) {
+        if (!StringUtils.isNullOrBlank(usevip) && usevip.equals("yes")) {
             Member member = memberService.findByOpenIdAndSellerId(openId, sellerId);
             order.setTotalPrice(order.getTotalPrice() * Double.valueOf(member.getDiscount()));
         }
@@ -174,6 +178,11 @@ public class OrderController {
             cashTicket.setIsuse(true);
             cashTicketService.update(cashTicket);
         }
+        //是否抽奖订单
+        if (products.getIsLuckDraw()) {
+            order.setState(Global.order_luckdraw_unpay);
+            order.setIsLuckDraw(true);
+        }
         return new Result(false, Global.do_success, orderService.save(order), null);
     }
 
@@ -182,9 +191,9 @@ public class OrderController {
         Order order = orderService.findOne(oid);
         order.setState(state);
         // 未付款 - 未发货
-        if (state.equals(Global.order_unsend)) {
+        if (state.equals(Global.order_unsend) || state.equals(Global.order_luckdraw)) {
             //每次付款后更新当前买家的会员信息
-            saveMember(order);
+            //saveMember(order);
             //付款日期
             order.setPayDate(new Date());
             //更新 dictionary  全部 交易额 订单数量
@@ -214,7 +223,43 @@ public class OrderController {
             productsService.updateList(list);
             produtsTypeService.update(produtsTypes);
         }
+        //如果是抽奖订单
+        if (state.equals(Global.order_luckdraw)) {
+            LuckDraw luckDraw = luckDrawService.findBySellerId(order.getSellerId() + "");
+            //参与人数+1
+            luckDraw.setJoinNumber(luckDraw.getJoinNumber()+1);
+            //产生随机中奖号码
+            int allNumber = luckDraw.getAllNumber();
+            int random = (int) Math.ceil(Math.random() * allNumber);
+            //找出所有已经下单的抽奖订单的抽奖号码
+            List<String> luckcodes = orderService.findBySellerIdAndProIdAndIsLuckDrawEnd(order.getSellerId(), order.getProducts().get(0).getId());
+            //判断该号码是否已存在
+            while (luckcodes!=null&&luckcodes.contains(random)) {
+                random = (int) Math.ceil(Math.random() * allNumber);
+            }
+            order.setLuckcode(String.valueOf(random));
+            //判断是否中奖
+            String luckNumbers[]=luckDraw.getLackNumber().split("=");
+            for (String str:luckNumbers){
+                if (String.valueOf(random).equals(str)){
+                    order.setIsLuck(true);
+                }
+            }
+            //判断抽奖活动是否结束
+            if ((luckcodes.size() + 1) == allNumber) {
+                Products products = order.getProducts().get(0);
+                products.setIsLuckDrawEnd(true);
+                productsService.update(products);
+                orderService.updateIsLuckDrawEnd(products.getId());
+            }
+            luckDrawService.update(luckDraw);
+        }
         orderService.update(order);
+        // 如果中奖则转待发货订单
+        if(order.getIsLuck()){
+            order.setState(Global.order_unsend);
+            orderService.update(order);
+        }
         return new Result(false, Global.do_success, order, null);
     }
 
@@ -352,9 +397,8 @@ public class OrderController {
         //卖家备注
         if (StringUtils.isNullOrBlank(changePrice)) {
             order1.setLeaveMessage_seller(order.getLeaveMessage_seller());
-        }
-        //修改待付款订单总价
-        else {
+        } else {
+            //修改待付款订单总价
             if (!order1.getState().equals(Global.order_unpay)) {
                 return new Result(true, Global.order_not_unpay, null, null);
             }

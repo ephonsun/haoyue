@@ -1,8 +1,6 @@
 package com.haoyue.untils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.TimeZone;
+import java.util.*;
 
 /**
  * Created by LiJia on 2017/8/23.
@@ -43,6 +41,7 @@ public class Global {
     public static  String coupon_isopen="优惠券活动开启，请输入优惠券进入店铺";
     public static  String coupon_isuse="该优惠已经被使用";
     public static  String coupon_not_exist="该优惠券不存在，请确认优惠码";
+    public static  String pagenumber_not_right="当前页数不正确";
 
     //error code
     public static String user_unlogin="当前用户未登录"; // errorcode 101
@@ -51,6 +50,8 @@ public class Global {
 
     //订单
     public static String order_unpay="待付款订单";
+    public static String order_luckdraw_unpay="待付款抽奖订单";
+    public static String order_luckdraw="抽奖订单";
     public static String order_unsend="待发货订单";
     public static String order_send="待收货订单";
     public static String order_back="退货订单";
@@ -108,6 +109,9 @@ public class Global {
     //微信支付
     public static String notify_url="https://www.cslapp.com/pay/notify";//通知地址
     public static String common_pay_url="https://api.mch.weixin.qq.com/pay/unifiedorder";//统一下单url
+
+    // 付款package
+    public static Map<String,String> package_map=new HashMap<>();
 
     //非拦截地址
     public static List<String> urls(){

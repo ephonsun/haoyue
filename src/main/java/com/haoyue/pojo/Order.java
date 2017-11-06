@@ -69,7 +69,43 @@ public class Order {
 
     private boolean active = true;
     private boolean isApplyReturn = false;//是否申请退货
+    private boolean isLuckDraw=false;//是否是抽奖订单
+    private boolean isLuckDrawEnd=false;//抽奖是否结束
     private String wxname;
+    private String luckcode;//抽奖号码
+    private boolean isLuck=false;//是否中奖
+
+    public boolean getIsLuck() {
+        return isLuck;
+    }
+
+    public void setIsLuck(boolean luck) {
+        isLuck = luck;
+    }
+
+    public boolean getIsLuckDrawEnd() {
+        return isLuckDrawEnd;
+    }
+
+    public void setIsLuckDrawEnd(boolean luckDrawEnd) {
+        isLuckDrawEnd = luckDrawEnd;
+    }
+
+    public String getLuckcode() {
+        return luckcode;
+    }
+
+    public void setLuckcode(String luckcode) {
+        this.luckcode = luckcode;
+    }
+
+    public boolean getIsLuckDraw() {
+        return isLuckDraw;
+    }
+
+    public void setIsLuckDraw(boolean luckDraw) {
+        isLuckDraw = luckDraw;
+    }
 
     public String getWxname() {
         return wxname;

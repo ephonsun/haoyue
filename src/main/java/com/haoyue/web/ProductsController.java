@@ -31,6 +31,8 @@ public class ProductsController {
     private ThumbsupRepo thumbsupRepo;
     @Autowired
     private PtypeNamesService ptypeNamesService;
+    @Autowired
+    private OrderService orderService;
 
     @RequestMapping("/list")
     public Result list(@RequestParam Map<String, String> map, @RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize) {
@@ -187,11 +189,16 @@ public class ProductsController {
         products.setSellerName(sellerService.findOne(products.getSellerId()).getSellerName());
 
         try {
+            //抽奖是否结束
+            if (products.getId()!=null&&products.getIsLuckDraw()==false){
+                if (productsService.findOne(products.getId()).getIsLuckDraw()){
+                    products.setIsLuckDrawEnd(true);
+                    orderService.updateIsLuckDrawEnd(products.getId());
+                }
+            }
             productsService.save(products);
-
             //商品分类更新
             productsService.update_ptype(products);
-
             //设置商品号
             if (StringUtils.isNullOrBlank(products.getPcode())) {
                 Seller seller = sellerService.findOne(Integer.parseInt(token));
