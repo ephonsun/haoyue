@@ -7,6 +7,7 @@ import java.util.Date;
 
 /**
  * Created by LiJia on 2017/11/7.
+ * 商品每一个分类
  */
 @Entity
 @Table(name = "t_products_type")
@@ -23,10 +24,29 @@ public class TProductsTypes {
     private double tuanPrice;
     private int amount;
     private String saleId;
+    private int saleNum;
+    private boolean active=true;
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:SS", timezone="GMT+8")
     @Temporal(TemporalType.TIMESTAMP)
     @Column(updatable=false)
     private Date createDate;//创建日期
+
+
+    public int getSaleNum() {
+        return saleNum;
+    }
+
+    public void setSaleNum(int saleNum) {
+        this.saleNum = saleNum;
+    }
+
+    public boolean getIsActive() {
+        return active;
+    }
+
+    public void setIsActive(boolean active) {
+        this.active = active;
+    }
 
     public Integer getId() {
         return id;

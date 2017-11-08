@@ -29,6 +29,7 @@ public class TDeliverTemplatesController {
     // /tuan/tdelivertemplates/save?dname=申通&sendAddress=发送地&priceType=计价方式&deliverType=运送方式&price=默认运费
     // &count=默认件数&moreCount=增加件数&morePrice=增加运费&saleId=卖家Id
     // &lines=行之间用==分隔，格之间=分隔
+    @RequestMapping("/save")
     public TResult save(TDeliverTemplates templates,String lines){
         //校验快递模板是否存在
         TDeliverTemplates templates1= templatesService.findBySaleIdAndDname(templates.getSaleId(),templates.getDname());
@@ -59,6 +60,7 @@ public class TDeliverTemplatesController {
     }
 
     //   /tuan/tdelivertemplates/del_templates?saleId=卖家Id&id=12
+    @RequestMapping("/del_templates")
     public TResult del_templates(TDeliverTemplates templates){
         TDeliverTemplates tDeliverTemplates=templatesService.findOne(templates.getId());
         if (templates.getSaleId()!=tDeliverTemplates.getSaleId()){
@@ -69,6 +71,7 @@ public class TDeliverTemplatesController {
     }
 
     //   /tuan/tdelivertemplates/del_template?saleId=卖家Id&id=12
+    @RequestMapping("/del_template")
     public TResult del_template(TDeliverTemplate template){
         TDeliverTemplate deliverTemplate=templateService.findOne(template.getId());
         if (template.getSaleId()!=deliverTemplate.getSaleId()){
@@ -79,6 +82,7 @@ public class TDeliverTemplatesController {
     }
 
     //   /tuan/tdelivertemplates/update_template?saleId=卖家Id&id=12&destinationAddress=安徽，江苏&price=首件运费&count=首件数&morePrice=增加运费&moreCount=增加运费
+    @RequestMapping("/update_template")
     public TResult update_template(TDeliverTemplate template){
         TDeliverTemplate deliverTemplate=templateService.findOne(template.getId());
         if (template.getSaleId()!=deliverTemplate.getSaleId()){
@@ -94,12 +98,14 @@ public class TDeliverTemplatesController {
     }
 
     //   /tuan/tdelivertemplates/list?saleId=12
+    @RequestMapping("/list")
     public TResult list(String saleId){
         List<TDeliverTemplates> list= templatesService.findBySaleId(saleId);
         return new TResult(false, TGlobal.do_success,list);
     }
 
     //   /tuan/tdelivertemplates/add_template?templatesId=1&destinationAddress=目的地&price=首件运费&count=首件数&morePrice=增加运费&moreCount=增加件数&saleId=1
+    @RequestMapping("/add_template")
     public TResult add_template(TDeliverTemplate template,String templatesId){
         template.setCreateDate(new Date());
         templateService.save(template);

@@ -6,6 +6,7 @@ import com.haoyue.tuangou.pojo.TUserSale;
 import com.haoyue.tuangou.service.TUserSaleService;
 import com.haoyue.tuangou.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,30 +18,36 @@ import java.util.Map;
  * Created by LiJia on 2017/11/2.
  */
 @RestController
+@RequestMapping("/tuan/tusersale")
 public class TUserSaleController {
 
     @Autowired
     private TUserSaleService tUserSaleService;
 
     // http://localhost:8080/tuan/tusersale/save?appId=1&name=abc&pass=123&email=123@qq.com&phone=123&authority=[0 1 2]
+    @RequestMapping("/save")
     public void save(TUserSale tUserSale){
         tUserSaleService.save(tUserSale);
     }
 
     // http://localhost:8080/tuan/tusersale/findone?[name=11&phone=12&email=123@qq.com 参数可选,至少一个]
-    public TResult findOne(TUserSale tUserSale){
+    @RequestMapping("/findone")
+    public TResult findOne(TUserSale tUserSale,String saleId){
+        tUserSale.setId(Integer.parseInt(saleId));
         Iterable<TUserSale> iterable=tUserSaleService.findOne(tUserSale);
         iterable=hidepass(iterable);
        return new TResult(false, TGlobal.do_success,iterable);
     }
 
     // http://localhost:8080/tuan/tusersale/list?[name=11&phone=12&email=123@qq.com 参数可选,无参数也可]
+    @RequestMapping("/list")
     public TResult list(@RequestParam Map<String, String> map, @RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize){
         Iterable<TUserSale> iterable= tUserSaleService.list(map,pageNumber,pageSize);
         return new TResult(false, TGlobal.do_success,iterable);
     }
 
     // http://localhost:8080/tuan/tusersale/login?name=用户名、手机、邮箱&pass=1234
+    @RequestMapping("/login")
     public TResult login(TUserSale tUserSale){
         TUserSale sale=tUserSaleService.login(tUserSale);
         if (sale==null){
@@ -52,13 +59,17 @@ public class TUserSaleController {
     }
 
     // http://localhost:8080/tuan/tusersale/update?id=1&email=123@qq.com&phone=123&pass=123&name=123&lunbo=123412
-    public TResult update(TUserSale tUserSale){
+    @RequestMapping("/update")
+    public TResult update(TUserSale tUserSale,String saleId){
+        tUserSale.setId(Integer.parseInt(saleId));
         tUserSaleService.update(tUserSale);
         return new TResult(false, TGlobal.do_success,null);
     }
 
     // http://localhost:8080/tuan/tusersale/checkpass?id=1&pass=123
-    public TResult checkoldpass(TUserSale sale){
+    @RequestMapping("/checkpass")
+    public TResult checkoldpass(TUserSale sale,String saleId){
+        sale.setId(Integer.parseInt(saleId));
         String oldpass=sale.getPass();
         sale.setPass(null);
         Iterable<TUserSale> iterable=tUserSaleService.findOne(sale);
@@ -80,7 +91,9 @@ public class TUserSaleController {
     }
 
     // http://localhost:8080/tuan/tusersale/get_phonecode?id=1
-    public TResult getphonecode(TUserSale sale) {
+    @RequestMapping("/phonecode")
+    public TResult getphonecode(TUserSale sale,String saleId) {
+        sale.setId(Integer.parseInt(saleId));
         Iterable<TUserSale> iterable = tUserSaleService.findOne(sale);
         Iterator<TUserSale> iterator = iterable.iterator();
         TUserSale tUserSale = iterator.next();
@@ -96,7 +109,9 @@ public class TUserSaleController {
     }
 
     // http://localhost:8080/tuan/tusersale/uploadFile?id=1&files=需要上传的所有图片
-    public Object uploadFile(MultipartFile[] files,TUserSale sale){
+    @RequestMapping("/uploadfile")
+    public Object uploadFile(MultipartFile[] files,TUserSale sale,String saleId){
+        sale.setId(Integer.parseInt(saleId));
         Iterable<TUserSale> iterable = tUserSaleService.findOne(sale);
         Iterator<TUserSale> iterator = iterable.iterator();
         TUserSale tUserSale = iterator.next();

@@ -187,95 +187,97 @@ public class OrderController {
 
     @RequestMapping("/changeState")
     public Result changeState(Integer oid, String state) {
-        Order order = orderService.findOne(oid);
-        order.setState(state);
-        // 未付款 - 未发货
-        if (state.equals(Global.order_unsend) || state.equals(Global.order_luckdraw)) {
-            //每次付款后更新当前买家的会员信息
-            //saveMember(order);
-            //付款日期
-            order.setPayDate(new Date());
-            //更新 dictionary  全部 交易额 订单数量
-            Dictionary dictionary = dictionaryService.findByDateAndSellerId(new Date(), order.getSellerId());
-            dictionary.setBuyers(dictionary.getBuyers() + 1);
-            dictionary.setTurnover(order.getTotalPrice() + dictionary.getTurnover());
-            dictionaryService.update(dictionary);
+        synchronized (Global.object2) {
+            Order order = orderService.findOne(oid);
+            order.setState(state);
+            // 未付款 - 未发货
+            if (state.equals(Global.order_unsend) || state.equals(Global.order_luckdraw)) {
+                //每次付款后更新当前买家的会员信息
+                //saveMember(order);
+                //付款日期
+                order.setPayDate(new Date());
+                //更新 dictionary  全部 交易额 订单数量
+                Dictionary dictionary = dictionaryService.findByDateAndSellerId(new Date(), order.getSellerId());
+                dictionary.setBuyers(dictionary.getBuyers() + 1);
+                dictionary.setTurnover(order.getTotalPrice() + dictionary.getTurnover());
+                dictionaryService.update(dictionary);
 
-            //更新商品已经卖出量
-            List<Products> list = order.getProducts();
-            List<ProdutsType> produtsTypes = order.getProdutsTypes();
-            for (int i = 0; i < list.size(); i++) {
-                if (i == 0) {
-                    Products products = list.get(i);
-                    products.setMonthSale(products.getMonthSale() + order.getAmount());
-                    // 更新 单个商品的交易额 订单数
-                    Dictionary dictionary1 = dictionaryService.findByProductId(products.getId());
-                    dictionary1.setBuyers(dictionary1.getBuyers() + 1);
-                    dictionary1.setTurnover(dictionary1.getTurnover() + order.getTotalPrice());
-                    dictionaryService.update(dictionary1);
+                //更新商品已经卖出量
+                List<Products> list = order.getProducts();
+                List<ProdutsType> produtsTypes = order.getProdutsTypes();
+                for (int i = 0; i < list.size(); i++) {
+                    if (i == 0) {
+                        Products products = list.get(i);
+                        products.setMonthSale(products.getMonthSale() + order.getAmount());
+                        // 更新 单个商品的交易额 订单数
+                        Dictionary dictionary1 = dictionaryService.findByProductId(products.getId());
+                        dictionary1.setBuyers(dictionary1.getBuyers() + 1);
+                        dictionary1.setTurnover(dictionary1.getTurnover() + order.getTotalPrice());
+                        dictionaryService.update(dictionary1);
+                    }
                 }
+                //更新商品分类存库量
+                for (ProdutsType produtsType : produtsTypes) {
+                    produtsType.setAmount(produtsType.getAmount() - order.getAmount());
+                }
+                productsService.updateList(list);
+                produtsTypeService.update(produtsTypes);
             }
-            //更新商品分类存库量
-            for (ProdutsType produtsType : produtsTypes) {
-                produtsType.setAmount(produtsType.getAmount() - order.getAmount());
-            }
-            productsService.updateList(list);
-            produtsTypeService.update(produtsTypes);
-        }
-        //如果是抽奖订单
-        if (state.equals(Global.order_luckdraw)) {
-            LuckDraw luckDraw = luckDrawService.findBySellerId(order.getSellerId() + "");
-            //参与人数+1
-            luckDraw.setJoinNumber(luckDraw.getJoinNumber()+1);
-            //产生随机中奖号码
-            int allNumber = luckDraw.getAllNumber();
-            int random = (int) Math.ceil(Math.random() * allNumber);
-            //找出所有已经下单的抽奖订单的抽奖号码
-            List<String> luckcodes = orderService.findBySellerIdAndProIdAndIsLuckDrawEnd(order.getSellerId(), order.getProducts().get(0).getId());
-            //判断该号码是否已存在
-            while (luckcodes!=null&&luckcodes.contains(random)) {
-                random = (int) Math.ceil(Math.random() * allNumber);
-            }
-            order.setLuckcode(String.valueOf(random));
-            //判断是否中奖
-            String luckNumbers[]=luckDraw.getLackNumber().split("=");
+            //如果是抽奖订单
+            if (state.equals(Global.order_luckdraw)) {
+                LuckDraw luckDraw = luckDrawService.findBySellerId(order.getSellerId() + "");
+                //参与人数+1
+                luckDraw.setJoinNumber(luckDraw.getJoinNumber() + 1);
+                //产生随机中奖号码
+                int allNumber = luckDraw.getAllNumber();
+                int random = (int) Math.ceil(Math.random() * allNumber);
+                //找出所有已经下单的抽奖订单的抽奖号码
+                List<String> luckcodes = orderService.findBySellerIdAndProIdAndIsLuckDrawEnd(order.getSellerId(), order.getProducts().get(0).getId());
+                //判断该号码是否已存在
+                while (luckcodes != null && luckcodes.contains(random)) {
+                    random = (int) Math.ceil(Math.random() * allNumber);
+                }
+                order.setLuckcode(String.valueOf(random));
+                //判断是否中奖
+                String luckNumbers[] = luckDraw.getLackNumber().split("=");
 
-            for (String str:luckNumbers){
-                if (StringUtils.isNullOrBlank(str)){
-                    continue;
+                for (String str : luckNumbers) {
+                    if (StringUtils.isNullOrBlank(str)) {
+                        continue;
+                    }
+                    // 中奖
+                    if (String.valueOf(random).equals(str)) {
+                        order.setIsLuck(true);
+                    }
                 }
-                // 中奖
-                if (String.valueOf(random).equals(str)){
-                    order.setIsLuck(true);
+                //判断抽奖活动是否结束
+                if (luckcodes == null) {
+                    luckcodes = new ArrayList<>();
                 }
+                if (luckDraw.getJoinNumber() == allNumber) {
+                    Products products = order.getProducts().get(0);
+                    products.setIsLuckDrawEnd(true);
+                    productsService.update(products);
+                    orderService.updateIsLuckDrawEnd(products.getId());
+                }
+                luckDrawService.update(luckDraw);
             }
-            //判断抽奖活动是否结束
-            if (luckcodes==null){
-                luckcodes=new ArrayList<>();
-            }
-            if (luckDraw.getJoinNumber() ==allNumber) {
-                Products products = order.getProducts().get(0);
-                products.setIsLuckDrawEnd(true);
-                productsService.update(products);
-                orderService.updateIsLuckDrawEnd(products.getId());
-            }
-            luckDrawService.update(luckDraw);
-        }
-        orderService.update(order);
-        // 如果中奖则转待发货订单
-        if(order.getIsLuckDraw()==true&&order.getIsLuck()==true){
-            order.setState(Global.order_unsend);
             orderService.update(order);
-        }
-        //未中奖转已完成订单
-        if (order.getIsLuckDraw()==true&&order.getIsLuck()==false){
-            order.setState(Global.order_finsh);
-            orderService.update(order);
-        }
+            // 如果中奖则转待发货订单
+            if (order.getIsLuckDraw() == true && order.getIsLuck() == true) {
+                order.setState(Global.order_unsend);
+                orderService.update(order);
+            }
+            //未中奖转已完成订单
+            if (order.getIsLuckDraw() == true && order.getIsLuck() == false) {
+                order.setState(Global.order_finsh);
+                orderService.update(order);
+            }
 
-        //微信付款通知模板
-        addTemplate(order);
-        return new Result(false, Global.do_success, order, null);
+            //微信付款通知模板
+            addTemplate(order);
+            return new Result(false, Global.do_success, order, null);
+        }
     }
 
     @RequestMapping("/excel")

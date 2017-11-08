@@ -61,6 +61,7 @@ public class Global {
     public static int count=1;
     public static boolean flag=false;
     public static Object object=new Object();//线程锁
+    public static Object object2=new Object();
 
     //物流模板
     public static String account_unright="请确保所有件数、体积、重量数格式正确";

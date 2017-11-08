@@ -32,6 +32,10 @@ public class TGlobal {
     public static String space_not_enough="存储空间不够";
     public static int max_FileSzie=1048576; // 1G
 
+    //商品上传
+    public static String pro_isNull_blank="请确认颜色、尺码、价格、库存不为空";
+    public static String pro_notdiget="请确认价格、库存为数字";
+
 
 
 

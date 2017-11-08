@@ -17,14 +17,23 @@ public class TUserBuy {
     @GeneratedValue
     private Integer id;
     private String openId;
+    private String saleId;
     private String wxname;
     private String wxpic;
     private String city;
-    private int gender;
+    private int gender; // 1 男 2 女
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:SS", timezone="GMT+8")
     @Temporal(TemporalType.TIMESTAMP)
     @Column(updatable=false)
     private Date createDate;//创建日期
+
+    public String getSaleId() {
+        return saleId;
+    }
+
+    public void setSaleId(String saleId) {
+        this.saleId = saleId;
+    }
 
     public String getCity() {
         return city;
