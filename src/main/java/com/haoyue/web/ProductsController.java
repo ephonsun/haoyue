@@ -33,6 +33,8 @@ public class ProductsController {
     private PtypeNamesService ptypeNamesService;
     @Autowired
     private OrderService orderService;
+    @Autowired
+    private LuckDrawService luckDrawService;
 
     @RequestMapping("/list")
     public Result list(@RequestParam Map<String, String> map, @RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize) {
@@ -193,6 +195,9 @@ public class ProductsController {
             if (products.getId()!=null&&products.getIsLuckDraw()==false){
                 if (productsService.findOne(products.getId()).getIsLuckDraw()){
                     products.setIsLuckDrawEnd(true);
+                    LuckDraw luckDraw=luckDrawService.findBySellerId(products.getSellerId()+"");
+                    luckDraw.setJoinNumber(0);
+                    luckDrawService.update(luckDraw);
                     orderService.updateIsLuckDrawEnd(products.getId());
                 }
             }

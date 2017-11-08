@@ -1,11 +1,11 @@
-package com.tuangou.service;
+package com.haoyue.tuangou.service;
 
 import com.querydsl.core.BooleanBuilder;
-import com.tuangou.pojo.QTUserSale;
-import com.tuangou.pojo.TUserSale;
-import com.tuangou.repo.TUserSaleRepo;
-import com.tuangou.utils.StringUtils;
-import com.tuangou.utils.TGlobal;
+import com.haoyue.tuangou.pojo.QTUserSale;
+import com.haoyue.tuangou.pojo.TUserSale;
+import com.haoyue.tuangou.repo.TUserSaleRepo;
+import com.haoyue.tuangou.utils.StringUtils;
+import com.haoyue.tuangou.utils.TGlobal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -113,6 +113,12 @@ public class TUserSaleService {
         }
         if (!StringUtils.isNullOrBlank(tUserSale.getLunbo())){
             sale.setLunbo(tUserSale.getLunbo());
+        }
+        if (!StringUtils.isNullOrBlank(tUserSale.getLunbo_products())){
+            sale.setLunbo_products(tUserSale.getLunbo_products());
+        }
+        if (!StringUtils.isNullOrBlank(tUserSale.getIdentification())){
+            sale.setIdentification(tUserSale.getIdentification());
         }
         tUserSaleRepo.save(sale);
     }

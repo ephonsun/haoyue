@@ -22,6 +22,6 @@ public interface OrderRepo extends BaseRepo<Order,Integer> {
     @Query(nativeQuery = true,value = "select sum(total_price) as total_price , customer_id from orders where seller_id=?1 and create_date >= ?2 group by customer_id")
     List<OrderTotalPrice> getToTalPriceBySellerAndCustomer(String sellerId, Date date);
 
-    @Query(nativeQuery = true,value ="select * from order_product where product_id=?1")
+    @Query(nativeQuery = true,value ="select order_id from order_product where product_id=?1")
     List<Integer> findBySellerIdAndProIdAndIsLuckDrawEnd(Integer pid);
 }

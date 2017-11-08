@@ -1,4 +1,4 @@
-package com.tuangou.utils;
+package com.haoyue.tuangou.utils;
 
 import com.haoyue.untils.HanyuPinyinHelper;
 

@@ -1,4 +1,4 @@
-package com.tuangou.pojo;
+package com.haoyue.tuangou.pojo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -24,13 +24,31 @@ public class TUserSale {
     private double uploadFile;
     private double maxFile;
     private String lunbo;
+    private String lunbo_products;
     private String onlineCode;
     private String authority;
+    private String identification;
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:SS", timezone="GMT+8")
     @Temporal(TemporalType.TIMESTAMP)
     @Column(updatable=false)
     private Date createDate;//创建日期
 
+
+    public String getIdentification() {
+        return identification;
+    }
+
+    public void setIdentification(String identification) {
+        this.identification = identification;
+    }
+
+    public String getLunbo_products() {
+        return lunbo_products;
+    }
+
+    public void setLunbo_products(String lunbo_products) {
+        this.lunbo_products = lunbo_products;
+    }
 
     public String getAuthority() {
         return authority;

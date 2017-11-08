@@ -221,7 +221,6 @@ public class PayAction {
 
     @RequestMapping("/sendTemplate")
     public void getTemplate(String openId,String data){
-
         //模板信息通知用户
             //获取 access_token
         String access_token_url="https://api.weixin.qq.com/cgi-bin/token";

@@ -1,13 +1,16 @@
-package com.tuangou.utils;
+package com.haoyue.tuangou.utils;
 
 /**
  * Created by LiJia on 2017/11/2.
  */
 public class TGlobal {
 
-    public static int max_FileSzie=1048576; // 1G
+
     public static String do_success="操作成功";
     public static String do_fail="操作失败";
+    public static String have_no_right="无权操作";
+    public static String deliver_template_exist="快递模板已经存在";
+
 
     //注册 登录
     public static String tusersale_isnull="用户名或密码错误";
@@ -25,6 +28,9 @@ public class TGlobal {
     public static String signName="苏州皓月科技";
     public static String TemplateCode="SMS_91140162";
 
+    //上传文件
+    public static String space_not_enough="存储空间不够";
+    public static int max_FileSzie=1048576; // 1G
 
 
 

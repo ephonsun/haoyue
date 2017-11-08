@@ -1,4 +1,4 @@
-package com.tuangou.pojo;
+package com.haoyue.tuangou.pojo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -13,6 +13,8 @@ import java.util.Date;
 @Table(name = "t_userbuy")
 public class TUserBuy {
 
+    @Id
+    @GeneratedValue
     private Integer id;
     private String openId;
     private String wxname;

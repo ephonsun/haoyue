@@ -1,12 +1,11 @@
 package com.haoyue.web;
 
+import com.google.gson.JsonObject;
 import com.haoyue.pojo.*;
 import com.haoyue.pojo.Dictionary;
 import com.haoyue.service.*;
-import com.haoyue.untils.Global;
-import com.haoyue.untils.OSSClientUtil;
-import com.haoyue.untils.Result;
-import com.haoyue.untils.StringUtils;
+import com.haoyue.untils.*;
+import com.haoyue.wxpay.PayAction;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -240,13 +239,21 @@ public class OrderController {
             order.setLuckcode(String.valueOf(random));
             //判断是否中奖
             String luckNumbers[]=luckDraw.getLackNumber().split("=");
+
             for (String str:luckNumbers){
+                if (StringUtils.isNullOrBlank(str)){
+                    continue;
+                }
+                // 中奖
                 if (String.valueOf(random).equals(str)){
                     order.setIsLuck(true);
                 }
             }
             //判断抽奖活动是否结束
-            if ((luckcodes.size() + 1) == allNumber) {
+            if (luckcodes==null){
+                luckcodes=new ArrayList<>();
+            }
+            if (luckDraw.getJoinNumber() ==allNumber) {
                 Products products = order.getProducts().get(0);
                 products.setIsLuckDrawEnd(true);
                 productsService.update(products);
@@ -256,10 +263,18 @@ public class OrderController {
         }
         orderService.update(order);
         // 如果中奖则转待发货订单
-        if(order.getIsLuck()){
+        if(order.getIsLuckDraw()==true&&order.getIsLuck()==true){
             order.setState(Global.order_unsend);
             orderService.update(order);
         }
+        //未中奖转已完成订单
+        if (order.getIsLuckDraw()==true&&order.getIsLuck()==false){
+            order.setState(Global.order_finsh);
+            orderService.update(order);
+        }
+
+        //微信付款通知模板
+        addTemplate(order);
         return new Result(false, Global.do_success, order, null);
     }
 
@@ -463,5 +478,60 @@ public class OrderController {
         }
     }
 
+    public void getTemplate(Template template){
+        //模板信息通知用户
+        //获取 access_token
+        String access_token_url="https://api.weixin.qq.com/cgi-bin/token";
+        String param1="grant_type=client_credential&appid=wxe46b9aa1b768e5fe&secret=8bcdb74a9915b5685fa0ec37f6f25b24";
+        String access_token= HttpRequest.sendPost(access_token_url,param1);
+        access_token=access_token.substring(access_token.indexOf(":")+2,access_token.indexOf(",")-1);
+        //发送模板信息
+        String form_id=Global.package_map.get(template.getToUser());
+        template.setForm_id(form_id);
+        String url="https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token="+access_token+"&form_id="+form_id;
+        String result=CommonUtil.httpRequest(url,"POST",template.toJSON());
+    }
 
+    public void addTemplate(Order order){
+
+        List<TemplateResponse> list=new ArrayList<>();
+        TemplateResponse templateResponse1=new TemplateResponse();
+        templateResponse1.setColor("#000000");
+        templateResponse1.setName("keyword1");
+        templateResponse1.setValue(order.getProducts().get(0).getPname());
+        list.add(templateResponse1);
+
+        TemplateResponse templateResponse2=new TemplateResponse();
+        templateResponse2.setColor("#000000");
+        templateResponse2.setName("keyword2");
+        templateResponse2.setValue(order.getWxname());
+        list.add(templateResponse2);
+
+        TemplateResponse templateResponse3=new TemplateResponse();
+        templateResponse3.setColor("#000000");
+        templateResponse3.setName("keyword3");
+        templateResponse3.setValue(order.getTotalPrice()+"");
+        list.add(templateResponse3);
+
+        TemplateResponse templateResponse4=new TemplateResponse();
+        templateResponse4.setColor("#000000");
+        templateResponse4.setName("keyword4");
+        templateResponse4.setValue("微信支付");
+        list.add(templateResponse4);
+
+        TemplateResponse templateResponse5=new TemplateResponse();
+        templateResponse5.setColor("#000000");
+        templateResponse5.setName("keyword5");
+        String date=StringUtils.formDateToStr(new Date());
+        templateResponse5.setValue(date);
+        list.add(templateResponse5);
+
+        Template template=new Template();
+        template.setTemplateId("Z_Xg6rYdQgci4FP_aOjTvZHXeC5BSs99EwARD6NJXWk");
+        template.setTemplateParamList(list);
+        template.setTopColor("#000000");
+        template.setPage("pages/index/index");
+        template.setToUser(customerService.findOpenIdById(order.getCustomerId()+""));
+        getTemplate(template);
+    }
 }

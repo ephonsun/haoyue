@@ -1,17 +1,15 @@
-package com.tuangou.web;
+package com.haoyue.tuangou.web;
 
 import com.aliyuncs.exceptions.ClientException;
-import com.tuangou.pojo.TUserSale;
-import com.tuangou.service.TUserSaleService;
-import com.tuangou.utils.StringUtils;
-import com.tuangou.utils.TGlobal;
-import com.tuangou.utils.TResult;
-import com.tuangou.utils.TSendCode;
+import com.haoyue.Exception.MyException;
+import com.haoyue.tuangou.pojo.TUserSale;
+import com.haoyue.tuangou.service.TUserSaleService;
+import com.haoyue.tuangou.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -82,11 +80,11 @@ public class TUserSaleController {
     }
 
     // http://localhost:8080/tuan/tusersale/get_phonecode?id=1
-    public TResult getphonecode(TUserSale sale){
-        Iterable<TUserSale> iterable=tUserSaleService.findOne(sale);
-        Iterator<TUserSale> iterator=iterable.iterator();
-        TUserSale tUserSale=iterator.next();
-        String phonecode=StringUtils.getPhoneCode();
+    public TResult getphonecode(TUserSale sale) {
+        Iterable<TUserSale> iterable = tUserSaleService.findOne(sale);
+        Iterator<TUserSale> iterator = iterable.iterator();
+        TUserSale tUserSale = iterator.next();
+        String phonecode = StringUtils.getPhoneCode();
         try {
             TSendCode.sendSms(tUserSale.getPhone(), phonecode);
         } catch (ClientException e) {
@@ -94,12 +92,48 @@ public class TUserSaleController {
         }
         // 1 可在 TUserSale 加入 phonecode 字段，获取验证码后刷新该字段，再对用户输入的验证码进行对比
         // 2 phonecode 进行加密传输
-        return new TResult(false,TGlobal.do_success,phonecode);
+        return new TResult(false, TGlobal.do_success, phonecode);
     }
 
+    // http://localhost:8080/tuan/tusersale/uploadFile?id=1&files=需要上传的所有图片
+    public Object uploadFile(MultipartFile[] files,TUserSale sale){
+        Iterable<TUserSale> iterable = tUserSaleService.findOne(sale);
+        Iterator<TUserSale> iterator = iterable.iterator();
+        TUserSale tUserSale = iterator.next();
+        double size_kb=0;
+        String url="";
+        StringBuffer stringBuffer=new StringBuffer();
+        // 循环获得每个文件
+        if (files!=null&&files.length!=0) {
+            for (int i=0;i<files.length;i++) {
+                MultipartFile multipartFile=files[i];
+                //校验存储空间是否够用
+                size_kb = (double) multipartFile.getSize() / 1024;
+                if ((size_kb+tUserSale.getUploadFile())>=tUserSale.getMaxFile()){
+                    return new TResult(true, TGlobal.space_not_enough, null);
+                }else {
+                    tUserSale.setUploadFile(tUserSale.getUploadFile()+size_kb);
+                }
+                //上传图片
+                TOSSClientUtil tossClientUtil=new TOSSClientUtil();
+                try {
+                    //返回上传的图片地址
+                    url=tossClientUtil.uploadImg2Oss(multipartFile);
 
-
-
-
-
+                } catch (MyException e) {
+                    e.printStackTrace();
+                }
+                //拼接返回的图片地址
+                url=TGlobal.aliyun_href+url;
+                stringBuffer.append(url);
+                if (i!=files.length-1){
+                    stringBuffer.append(",");
+                }
+            }
+        }
+        //更新sale
+        tUserSale.setLunbo(stringBuffer.toString());
+        tUserSaleService.update(tUserSale);
+        return  new TUploadRepo(TGlobal.do_success);
+    }
 }

@@ -1,4 +1,4 @@
-package com.tuangou.utils;
+package com.haoyue.tuangou.utils;
 
 /**
  * Created by LiJia on 2017/11/2.
