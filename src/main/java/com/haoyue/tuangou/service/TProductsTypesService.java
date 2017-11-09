@@ -37,4 +37,8 @@ public class TProductsTypesService {
         }
         tProductsTypesRepo.save(producttype);
     }
+
+    public TProductsTypes findOne(int id) {
+        return tProductsTypesRepo.findOne(id);
+    }
 }

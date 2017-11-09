@@ -36,6 +36,13 @@ public class TGlobal {
     public static String pro_isNull_blank="请确认颜色、尺码、价格、库存不为空";
     public static String pro_notdiget="请确认价格、库存为数字";
 
+    //订单
+    public static String order_unpay="待付款订单";
+    public static String order_unsend="待发货订单";
+    public static String order_unreceive="待收货订单";
+    public static String order_finsh="已完成订单";
+    public static String ordercode_begin="888";
+    public static Object object=new Object();
 
 
 
