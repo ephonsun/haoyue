@@ -2,8 +2,10 @@ package com.haoyue;
 
 import com.aliyun.oss.OSSClient;
 import com.aliyun.oss.model.PutObjectResult;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonObject;
 import com.haoyue.untils.*;
-import io.goeasy.GoEasy;
+//import io.goeasy.GoEasy;
 import org.dom4j.DocumentException;
 import org.json.JSONObject;
 import org.json.simple.JSONArray;
@@ -14,6 +16,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.servlet.ServletContext;
 import java.io.*;
+import java.net.URL;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
@@ -287,12 +292,12 @@ public class HaoyueApplicationTests {
             FileChannel fileChannel = fileInputStream.getChannel();
             FileChannel fileChannel2 = fileOutputStream.getChannel();
             ByteBuffer buffer = ByteBuffer.allocate(10240);
-            int len=0;
+            int len = 0;
             Charset charset = Charset.forName("gbk");// 创建GBK字符集
-            while(true){
+            while (true) {
                 buffer.clear();//pos=0,limit=capcity，作用是让ichannel从pos开始放数据
-                len=fileChannel.read(buffer);
-                if(len==-1)//到达文件末尾
+                len = fileChannel.read(buffer);
+                if (len == -1)//到达文件末尾
                     break;
                 buffer.flip();
                 System.out.println(charset.decode(buffer));
@@ -311,17 +316,43 @@ public class HaoyueApplicationTests {
 
 
     @Test
-    public void f16(){
-
-        String str=StringUtils.getPinYinByStr("哇哈哈123");
-        System.out.println(str);
+    public void f16() {
 
     }
 
+    class response {
+        private String access_token;
+        private String expires_in;
+
+        public String getAccess_token() {
+            return access_token;
+        }
+
+        public void setAccess_token(String access_token) {
+            this.access_token = access_token;
+        }
+
+        public String getExpires_in() {
+            return expires_in;
+        }
+
+        public void setExpires_in(String expires_in) {
+            this.expires_in = expires_in;
+        }
+
+        @Override
+        public String toString() {
+            return "response{" +
+                    "access_token='" + access_token + '\'' +
+                    ", expires_in='" + expires_in + '\'' +
+                    '}';
+        }
+    }
+
     @Test
-    public void f17(){
-        GoEasy goEasy = new GoEasy("rest-hangzhou.goeasy.io","BC-b368734ade974a11937b2b82c5dc6433");
-        goEasy.publish("channel1","HelloHello!");
+    public void f17() {
+//        GoEasy goEasy = new GoEasy("rest-hangzhou.goeasy.io","BC-b368734ade974a11937b2b82c5dc6433");
+//        goEasy.publish("channel1","HelloHello!");
         //"http(s)://<REST Host>”
     }
 

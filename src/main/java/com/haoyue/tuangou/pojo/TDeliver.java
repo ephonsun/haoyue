@@ -101,4 +101,15 @@ public class TDeliver {
     public void setCreateDate(Date createDate) {
         this.createDate = createDate;
     }
+
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
 }
