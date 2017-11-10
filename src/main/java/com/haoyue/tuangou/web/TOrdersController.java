@@ -59,7 +59,7 @@ public class TOrdersController {
             TProductsTypes tProductsTypes = tProductsTypesService.findOne(Integer.parseInt(ptypeId));
             orders.settProducts(tProducts);
             orders.settProductsTypes(tProductsTypes);
-            orders.setTotalPrice(orders.getDeliverPrice() + orders.getProductPrice());
+            orders.setTotalPrice(orders.getDeliverPrice() + orders.getProductPrice()*orders.getAmount());
             orders.setState(TGlobal.order_unpay);
             orders.setCode(TGlobal.ordercode_begin + new Date().getTime());
         }
@@ -112,17 +112,10 @@ public class TOrdersController {
     }
 
 
-    //   卖家-普通订单-未发货 /tuan/torders/saleId=12&state=待发货订单
-    //   卖家-普通订单-已发货 /tuan/torders/saleId=12&state=待收货订单
+    //   卖家-普通订单-未发货 /tuan/torders/list?saleId=12&state=待发货订单
+    //   卖家-普通订单-已发货 /tuan/torders/list?saleId=12&state=待收货订单
     @RequestMapping("/list")
     public TResult list(@RequestParam Map<String, String> map, @RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize) {
-        //订单号查询，普通订单，团购订单
-        if (!StringUtils.isNullOrBlank(map.get("code"))) {
-            TOrders tOrders = tOrdersService.findByCode(map.get("code"));
-            // todo 团购订单订单号查询
-            List<Object> objects = new ArrayList<>();
-            objects.add(tOrders);
-        }
         Iterable<TOrders> iterable = tOrdersService.list(map, pageNumber, pageSize);
         return new TResult(false, TGlobal.do_success, iterable);
     }

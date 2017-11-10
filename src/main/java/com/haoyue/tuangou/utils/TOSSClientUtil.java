@@ -116,6 +116,7 @@ public class TOSSClientUtil {
         }
 
         try {
+
             objectMetadata.setContentLength(instream.available());
             objectMetadata.setCacheControl("no-cache");
             objectMetadata.setHeader("Pragma", "no-cache");

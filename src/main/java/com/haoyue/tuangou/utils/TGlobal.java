@@ -44,6 +44,14 @@ public class TGlobal {
     public static String ordercode_begin="888";
     public static Object object=new Object();
 
+    //团购订单
+    public static String tuan_order_unpay="待付款团购订单";
+    public static String tuan_order_tuaning="正在拼团团购订单";
+    public static String tuan_order_success="待发货团购订单";
+    public static String tuan_order_unreive="待收货团购订单";
+    public static String tuan_order_fail="拼团失败团购订单";
+    public static String tuan_ordercode_begin="666";
+    public static Object object2=new Object();
 
 
 }
