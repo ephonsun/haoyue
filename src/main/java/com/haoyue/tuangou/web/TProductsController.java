@@ -2,10 +2,7 @@ package com.haoyue.tuangou.web;
 
 import com.haoyue.Exception.MyException;
 import com.haoyue.tuangou.pojo.*;
-import com.haoyue.tuangou.service.TProductsService;
-import com.haoyue.tuangou.service.TProductsTypesNameService;
-import com.haoyue.tuangou.service.TProductsTypesService;
-import com.haoyue.tuangou.service.TUserSaleService;
+import com.haoyue.tuangou.service.*;
 import com.haoyue.tuangou.utils.*;
 import com.haoyue.tuangou.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +28,8 @@ public class TProductsController {
     private TProductsTypesService tProductsTypesService;
     @Autowired
     private TProductsTypesNameService tProductsTypesNameService;
+    @Autowired
+    private TuanOrdersService tuanOrdersService;
 
 
     /**
@@ -46,9 +45,9 @@ public class TProductsController {
         Date date = new Date();
         if (tProducts.getId() == null) {
             tProducts.setCreateDate(date);
-        }else {
-            if (!tProductsService.findOne(tProducts.getId()).getSaleId().equals(tProducts.getSaleId())){
-                return new TResult(true,TGlobal.have_no_right,null);
+        } else {
+            if (!tProductsService.findOne(tProducts.getId()).getSaleId().equals(tProducts.getSaleId())) {
+                return new TResult(true, TGlobal.have_no_right, null);
             }
         }
         //是否团购
@@ -107,7 +106,7 @@ public class TProductsController {
 
     // /tuan/product/uploadPic?id=卖家ID&files=需要上传的所有图片
     @RequestMapping("/uploadPic")
-    public Object uploadFile(MultipartFile[] files, TUserSale sale,String saleId) {
+    public Object uploadFile(MultipartFile[] files, TUserSale sale, String saleId) {
         sale.setId(Integer.parseInt(saleId));
         Iterable<TUserSale> iterable = tUserSaleService.findOne(sale);
         Iterator<TUserSale> iterator = iterable.iterator();
@@ -159,8 +158,8 @@ public class TProductsController {
     @RequestMapping("/update")
     public TResult update(TProducts tProducts) {
         TProducts products = tProductsService.findOne(tProducts.getId());
-        if (!tProducts.getSaleId().equals(products.getSaleId())){
-            return  new TResult(true,TGlobal.have_no_right,null);
+        if (!tProducts.getSaleId().equals(products.getSaleId())) {
+            return new TResult(true, TGlobal.have_no_right, null);
         }
         //下架、上架
         products.setIsActive(tProducts.getIsActive());
@@ -170,19 +169,79 @@ public class TProductsController {
 
     // /tuan/product/findone?pid=商品Id&active=true/false
     @RequestMapping("/findone")
-    public TResult findOne(String pid,String active,String saleId){
-        TProducts tProducts= tProductsService.findOne(Integer.parseInt(pid));
-        if (active.equals("true")){
-            List<TProductsTypes> newlist=new ArrayList<>();
-            List<TProductsTypes> list=tProducts.getProductsTypes();
-            for (TProductsTypes type:list){
-                if (type.getIsActive()){
+    public TResult findOne(String pid, String active, String saleId) {
+        TProducts tProducts = tProductsService.findOne(Integer.parseInt(pid));
+        if (active.equals("true")) {
+            List<TProductsTypes> newlist = new ArrayList<>();
+            List<TProductsTypes> list = tProducts.getProductsTypes();
+            for (TProductsTypes type : list) {
+                if (type.getIsActive()) {
                     newlist.add(type);
                 }
             }
-          tProducts.setProductsTypes(newlist);
+            tProducts.setProductsTypes(newlist);
         }
         return new TResult(false, TGlobal.do_success, tProducts);
     }
+
+
+    // /tuan/product/pname?saleId=12&pname=商品名
+    @RequestMapping("/pname")
+    public TResult findByName(String pname, String saleId) {
+        if (StringUtils.isNullOrBlank(pname)) {
+            return new TResult(true, TGlobal.pro_name_null, null);
+        }
+        Iterable<TProducts> iterable = tProductsService.findByPname(pname, saleId);
+        return new TResult(false, TGlobal.do_success, iterable);
+    }
+
+    // /tuan/product/news?saleId=12
+    @RequestMapping("/news")
+    public TResult news(String saleId) {
+        Iterable<TProducts> iterable = tProductsService.news(saleId);
+        return new TResult(false, TGlobal.do_success, iterable);
+    }
+
+    // /tuan/product/alls?saleId=12&typeName=分类名
+    @RequestMapping("/alls")
+    public TResult alls(String saleId, String typeName) {
+        Iterable<TProducts> iterable = tProductsService.alls(saleId, typeName);
+        return new TResult(false, TGlobal.do_success, iterable);
+    }
+
+    // /tuan/product/tuanorders?pid=商品Id&saleId=12
+    @RequestMapping("/tuanorders")
+    public TResult findTuanOrdersByPid(Integer pid, String saleId) {
+        Iterable<TuanOrders> iterable = tuanOrdersService.findTuanOrdersByTProducts(pid, saleId);
+        Iterator<TuanOrders> iterator = iterable.iterator();
+        List<TuanOrders> ownerList = new ArrayList<>();
+        int count = 0;
+        while (iterator.hasNext()) {
+            count++;
+            TuanOrders tuanOrders = iterator.next();
+            if (tuanOrders.getIsowner()) {
+                ownerList.add(tuanOrders);
+            }
+        }
+        TProductsTuanResponse response = new TProductsTuanResponse();
+        response.setAmount(count);
+        response.setTuanOrdersList(ownerList);
+        return new TResult(false, TGlobal.do_success, ownerList);
+    }
+
+    // /tuan/product/tuanorders?pid=当前查询的商品Id&saleId=12
+    @RequestMapping("/recommend")
+    public TResult recommend(String saleId, String pid) {
+        List<TProducts> result = new ArrayList<>();
+        if (!StringUtils.isNullOrBlank(pid)) {
+            result = tProductsService.recommend(saleId, pid);
+        } else {
+            result = tProductsService.recommend2(saleId);
+        }
+        return new TResult(false, TGlobal.do_success, result);
+
+
+    }
+
 
 }

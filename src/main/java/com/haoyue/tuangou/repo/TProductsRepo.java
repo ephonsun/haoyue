@@ -12,4 +12,7 @@ public interface TProductsRepo extends TBaseRepo<TProducts,Integer> {
 
     @Query(nativeQuery = true,value = "select * from t_products where is_tuan=true and active=true and sale_id=?1")
     List<TProducts> findByTuanProduct(String saleId);
+
+    @Query(nativeQuery = true,value = "select id from t_products where  sale_id=?1 and active=true")
+    List<Integer> findPidsBySaleId(String saleId);
 }

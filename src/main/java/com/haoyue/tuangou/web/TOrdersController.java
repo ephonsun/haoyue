@@ -1,13 +1,7 @@
 package com.haoyue.tuangou.web;
 
-import com.haoyue.tuangou.pojo.TDeliver;
-import com.haoyue.tuangou.pojo.TOrders;
-import com.haoyue.tuangou.pojo.TProducts;
-import com.haoyue.tuangou.pojo.TProductsTypes;
-import com.haoyue.tuangou.service.TDeliverService;
-import com.haoyue.tuangou.service.TOrdersService;
-import com.haoyue.tuangou.service.TProductsService;
-import com.haoyue.tuangou.service.TProductsTypesService;
+import com.haoyue.tuangou.pojo.*;
+import com.haoyue.tuangou.service.*;
 import com.haoyue.tuangou.utils.StringUtils;
 import com.haoyue.tuangou.utils.TGlobal;
 import com.haoyue.tuangou.utils.TResult;
@@ -16,10 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by LiJia on 2017/11/9.
@@ -36,6 +27,8 @@ public class TOrdersController {
     private TProductsTypesService tProductsTypesService;
     @Autowired
     private TDeliverService tDeliverService;
+    @Autowired
+    private TuanOrdersService tuanOrdersService;
 
 
     //   /tuan/torders/save?pid=商品ID&ptypeId=商品分类ID&amount=购买数量&productPrice=下单的商品价格
@@ -59,7 +52,7 @@ public class TOrdersController {
             TProductsTypes tProductsTypes = tProductsTypesService.findOne(Integer.parseInt(ptypeId));
             orders.settProducts(tProducts);
             orders.settProductsTypes(tProductsTypes);
-            orders.setTotalPrice(orders.getDeliverPrice() + orders.getProductPrice()*orders.getAmount());
+            orders.setTotalPrice(orders.getDeliverPrice() + orders.getProductPrice() * orders.getAmount());
             orders.setState(TGlobal.order_unpay);
             orders.setCode(TGlobal.ordercode_begin + new Date().getTime());
         }
@@ -128,4 +121,64 @@ public class TOrdersController {
     }
 
 
+    //普通订单-待付款  /tuan/torders/unpay?saleId=12&openId=21
+    @RequestMapping("/unpay")
+    public TResult unpay(String saleId, String openId) {
+        Iterable<TOrders> iterable1 = tOrdersService.clist(saleId, openId, null);
+        return new TResult(false, TGlobal.do_success, iterable1);
+    }
+
+
+    //   /tuan/torders/unsend?saleId=12&openId=21
+    @RequestMapping("/unsend")
+    public TResult unsend(String saleId, String openId) {
+        //普通订单未发货
+        String unsend = "yes";
+        Iterable<TOrders> iterable1 = tOrdersService.clist(saleId, openId, unsend);
+        //团购订单待发货
+        Iterable<TuanOrders> iterable2 = tuanOrdersService.unsend(saleId, openId);
+        //抽出两个结果集的ID和创建时间，放进TMixOrders
+        List<TMixOrders> list = new ArrayList<>();
+        Iterator<TOrders> iterator = iterable1.iterator();
+        Iterator<TuanOrders> iterator2 = iterable2.iterator();
+        while (iterator.hasNext()) {
+            TMixOrders tMixOrders = new TMixOrders();
+            TOrders tOrders = iterator.next();
+            tMixOrders.setDate(tOrders.getCreateDate());
+            tMixOrders.setOid(tOrders.getId());
+            list.add(tMixOrders);
+        }
+        while (iterator2.hasNext()){
+            TMixOrders tMixOrders = new TMixOrders();
+            TuanOrders tuanOrders=iterator2.next();
+            tMixOrders.setOid(tuanOrders.getId());
+            tMixOrders.setDate(tuanOrders.getStartDate());
+            tMixOrders.setIstuan(true);
+            list.add(tMixOrders);
+        }
+        if (list.size()==0){
+            return new TResult(false, TGlobal.do_success, null);
+        }
+        //对TMixOrders中的数据按照时间排序
+        List<TMixOrders> list2=new ArrayList<>();
+        list.stream()
+                .sorted((p1,p2)->(p1.getDate().compareTo(p2.getDate())))
+                .forEach(p->list2.add(p));
+        //遍历list2，获取订单，封装结果集objects
+        List<Object> objects=new ArrayList<>();
+        for (int i=0;i<list2.size();i++){
+            TMixOrders tMixOrders=list2.get(i);
+            if (tMixOrders.istuan()){
+                //团购订单
+                objects.add(tuanOrdersService.findOne(tMixOrders.getOid()));
+            }else {
+                //普通订单
+                objects.add(tOrdersService.findOne(tMixOrders.getOid()));
+            }
+        }
+        return new TResult(false, TGlobal.do_success, objects);
+    }
+    
+    // // TODO: 2017/11/13 待收货 
 }
+

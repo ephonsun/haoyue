@@ -2,7 +2,9 @@ package com.haoyue.tuangou.web;
 
 import com.aliyuncs.exceptions.ClientException;
 import com.haoyue.Exception.MyException;
+import com.haoyue.tuangou.pojo.TProducts;
 import com.haoyue.tuangou.pojo.TUserSale;
+import com.haoyue.tuangou.service.TProductsService;
 import com.haoyue.tuangou.service.TUserSaleService;
 import com.haoyue.tuangou.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +13,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -23,6 +27,8 @@ public class TUserSaleController {
 
     @Autowired
     private TUserSaleService tUserSaleService;
+    @Autowired
+    private TProductsService tProductsService;
 
     // http://localhost:8080/tuan/tusersale/save?appId=1&name=abc&pass=123&email=123@qq.com&phone=123&authority=[0 1 2]
     @RequestMapping("/save")
@@ -151,4 +157,21 @@ public class TUserSaleController {
         tUserSaleService.update(tUserSale);
         return  new TUploadRepo(TGlobal.do_success);
     }
+
+
+
+    // http://localhost:8080/tuan/tusersale/index?id=卖家ID
+    @RequestMapping("/index")
+    public TResult index(TUserSale sale){
+        Iterable<TUserSale> iterable = tUserSaleService.findOne(sale);
+        Iterator<TUserSale> iterator = iterable.iterator();
+        TUserSale tUserSale = iterator.next();
+        List<Object> result=new ArrayList<>();
+        Iterable<TProducts> iterable1= tProductsService.index(sale.getId());
+        result.add(tUserSale.getLunbo());
+        result.add(iterable1);
+        return new TResult(false, TGlobal.do_success,result);
+    }
+
+
 }

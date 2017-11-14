@@ -223,5 +223,11 @@ public class TuanOrdersController {
         return count;
     }
 
+    //   /tuan/tuanorders/clist?saleId=12&openId=12
+    @RequestMapping("/tuaning_clist")
+    public TResult clist(String saleId,String openId){
+        Iterable<TuanOrders> iterable=tuanOrdersService.tuaning_clist(saleId,openId);
+        return new TResult(false, TGlobal.do_success, iterable);
+    }
 
 }

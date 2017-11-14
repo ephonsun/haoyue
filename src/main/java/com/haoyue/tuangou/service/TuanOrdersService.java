@@ -93,8 +93,29 @@ public class TuanOrdersService {
         BooleanBuilder bd = new BooleanBuilder();
         bd.and(tuanorders.tProducts.id.eq(pid));
         bd.and(tuanorders.saleId.eq(saleId));
-        bd.and(tuanorders.isowner.eq(true));
+       // bd.and(tuanorders.isowner.eq(true));
         bd.and(tuanorders.state.eq(TGlobal.tuan_order_tuaning));
         return tuanOrdersRepo.findAll(bd.getValue());
+    }
+
+
+    public Iterable<TuanOrders> tuaning_clist(String saleId, String openId) {
+        QTuanOrders tuanorders = QTuanOrders.tuanOrders;
+        BooleanBuilder bd = new BooleanBuilder();
+        bd.and(tuanorders.saleId.eq(saleId));
+        bd.and(tuanorders.openId.eq(openId));
+        bd.and(tuanorders.state.eq(TGlobal.tuan_order_tuaning));
+        bd.and(tuanorders.isover.eq(false));
+        return tuanOrdersRepo.findAll(bd.getValue(),new Sort(Sort.Direction.DESC,"id"));
+    }
+
+    public Iterable<TuanOrders> unsend(String saleId, String openId) {
+        QTuanOrders tuanorders = QTuanOrders.tuanOrders;
+        BooleanBuilder bd = new BooleanBuilder();
+        bd.and(tuanorders.saleId.eq(saleId));
+        bd.and(tuanorders.openId.eq(openId));
+        bd.and(tuanorders.state.eq(TGlobal.tuan_order_success));
+        bd.and(tuanorders.isover.eq(true));
+        return tuanOrdersRepo.findAll(bd.getValue(),new Sort(Sort.Direction.DESC,"id"));
     }
 }

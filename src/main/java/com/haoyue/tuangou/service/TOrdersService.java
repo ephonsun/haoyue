@@ -4,6 +4,7 @@ import com.haoyue.tuangou.pojo.QTOrders;
 import com.haoyue.tuangou.pojo.TOrders;
 import com.haoyue.tuangou.repo.TOrdersRepo;
 import com.haoyue.tuangou.utils.StringUtils;
+import com.haoyue.tuangou.utils.TGlobal;
 import com.querydsl.core.BooleanBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -62,5 +63,18 @@ public class TOrdersService {
 
     public TOrders findByCode(String code) {
         return tOrdersRepo.findByCode(code);
+    }
+
+    public Iterable<TOrders> clist(String saleId, String openId,String unsend) {
+        QTOrders order=QTOrders.tOrders;
+        BooleanBuilder bd=new BooleanBuilder();
+        bd.and(order.saleId.eq(saleId));
+        bd.and(order.openId.eq(openId));
+        bd.and(order.state.eq(TGlobal.order_unpay));
+        if (!StringUtils.isNullOrBlank(unsend)){
+            bd.and(order.state.eq(TGlobal.order_unsend));
+        }
+        bd.and(order.showbuy.eq(true));
+        return tOrdersRepo.findAll(bd.getValue(),new Sort(Sort.Direction.DESC,"id"));
     }
 }

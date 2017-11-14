@@ -10,6 +10,7 @@ public class TGlobal {
     public static String do_fail="操作失败";
     public static String have_no_right="无权操作";
     public static String deliver_template_exist="快递模板已经存在";
+    public static Object object3=new Object();
 
 
     //注册 登录
@@ -35,6 +36,7 @@ public class TGlobal {
     //商品上传
     public static String pro_isNull_blank="请确认颜色、尺码、价格、库存不为空";
     public static String pro_notdiget="请确认价格、库存为数字";
+    public static String pro_name_null="商品名不能为空";
 
     //订单
     public static String order_unpay="待付款订单";

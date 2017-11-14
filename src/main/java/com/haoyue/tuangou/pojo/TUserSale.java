@@ -24,7 +24,7 @@ public class TUserSale {
     private double uploadFile;
     private double maxFile;
     private String lunbo;
-    private String lunbo_products;
+    private String lunbo_products;//轮播图对应商品编号
     private String onlineCode;
     private String authority;
     private String identification;
