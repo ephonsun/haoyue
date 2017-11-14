@@ -20,7 +20,7 @@ import java.util.Map;
 public class TOrdersService {
 
     @Autowired
-    private TOrdersRepo  tOrdersRepo;
+    private TOrdersRepo tOrdersRepo;
 
     public void save(TOrders orders) {
         tOrdersRepo.save(orders);
@@ -35,46 +35,60 @@ public class TOrdersService {
     }
 
     public Iterable<TOrders> list(Map<String, String> map, int pageNumber, int pageSize) {
-        QTOrders orders=QTOrders.tOrders;
-        BooleanBuilder bd=new BooleanBuilder();
+        QTOrders orders = QTOrders.tOrders;
+        BooleanBuilder bd = new BooleanBuilder();
         for (String name : map.keySet()) {
             String value = (String) map.get(name);
             if (!(StringUtils.isNullOrBlank(value))) {
-               if (name.equals("saleId")){
-                   bd.and(orders.saleId.eq(value));
-                   bd.and(orders.showsale.eq(true));
-               }
-               else if(name.equals("openId")){
-                   bd.and(orders.openId.eq(value));
-                   bd.and(orders.showbuy.eq(true));
-               }
-               else if (name.equals("state")){
-                   bd.and(orders.state.eq(value));
-               }
-               else if (name.equals("code")){
-                   bd.and(orders.code.eq(value));
-               }
+                if (name.equals("saleId")) {
+                    bd.and(orders.saleId.eq(value));
+                    bd.and(orders.showsale.eq(true));
+                } else if (name.equals("openId")) {
+                    bd.and(orders.openId.eq(value));
+                    bd.and(orders.showbuy.eq(true));
+                } else if (name.equals("state")) {
+                    bd.and(orders.state.eq(value));
+                } else if (name.equals("code")) {
+                    bd.and(orders.code.eq(value));
+                }
 
             }
         }
 
-        return tOrdersRepo.findAll(bd.getValue(),new PageRequest(pageNumber,pageSize,new Sort(Sort.Direction.DESC,"id")));
+        return tOrdersRepo.findAll(bd.getValue(), new PageRequest(pageNumber, pageSize, new Sort(Sort.Direction.DESC, "id")));
     }
 
     public TOrders findByCode(String code) {
         return tOrdersRepo.findByCode(code);
     }
 
-    public Iterable<TOrders> clist(String saleId, String openId,String unsend) {
-        QTOrders order=QTOrders.tOrders;
-        BooleanBuilder bd=new BooleanBuilder();
+    public Iterable<TOrders> clist(String saleId, String openId, String str) {
+        QTOrders order = QTOrders.tOrders;
+        BooleanBuilder bd = new BooleanBuilder();
         bd.and(order.saleId.eq(saleId));
         bd.and(order.openId.eq(openId));
-        bd.and(order.state.eq(TGlobal.order_unpay));
-        if (!StringUtils.isNullOrBlank(unsend)){
-            bd.and(order.state.eq(TGlobal.order_unsend));
+        if (!StringUtils.isNullOrBlank(str)) {
+            if (str.equals("unsend")) {
+                bd.and(order.state.eq(TGlobal.order_unsend));
+            }
+            if (str.equals("unreceive")) {
+                bd.and(order.state.eq(TGlobal.order_unreceive));
+            }
+            if (str.equals("finsh")) {
+                bd.and(order.state.eq(TGlobal.order_finsh));
+            }
+        } else {
+            bd.and(order.state.eq(TGlobal.order_unpay));
         }
         bd.and(order.showbuy.eq(true));
-        return tOrdersRepo.findAll(bd.getValue(),new Sort(Sort.Direction.DESC,"id"));
+        return tOrdersRepo.findAll(bd.getValue(), new Sort(Sort.Direction.DESC, "id"));
+    }
+
+    public Iterable<TOrders> comments(Map<String, String> map, int pageNumber, int pageSize) {
+        QTOrders order = QTOrders.tOrders;
+        BooleanBuilder bd = new BooleanBuilder();
+        bd.and(order.iscomment.eq(true));
+        bd.and(order.tProducts.id.eq(Integer.parseInt(map.get("id"))));
+        return tOrdersRepo.findAll(bd.getValue(),  new Sort(Sort.Direction.DESC, "id"));
     }
 }

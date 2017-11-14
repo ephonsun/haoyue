@@ -1,9 +1,26 @@
-package com.haoyue.wxpay;
+package com.haoyue.tuangou.wxpay;
 
 /**
  * Created by LiJia on 2017/9/12.
  */
 
+
+import com.haoyue.tuangou.Exception.MyException;
+import com.haoyue.tuangou.utils.StringUtils;
+import com.haoyue.tuangou.utils.TGlobal;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+import org.apache.catalina.servlet4preview.http.HttpServletRequest;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.Element;
+import org.dom4j.io.SAXReader;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.ServletInputStream;
+import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -11,28 +28,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.haoyue.Exception.MyException;
-import com.haoyue.untils.Global;
-import com.haoyue.untils.HttpRequest;
-import com.haoyue.untils.Result;
-import com.haoyue.untils.StringUtils;
-import org.apache.catalina.servlet4preview.http.HttpServletRequest;
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.Element;
-import org.dom4j.io.SAXReader;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import javax.servlet.ServletInputStream;
-import javax.servlet.http.HttpServletResponse;
-
 
 @RestController
-@RequestMapping("/pay")
+@RequestMapping("/tuan/pay")
 public class PayAction {
 
     @Autowired
@@ -44,12 +42,12 @@ public class PayAction {
      */
     @RequestMapping("/do")
     public JSONArray pay(String body, String appId, String mchId, String ip, String openId, String key1, String session_key, String total_fee) throws UnsupportedEncodingException, DocumentException, MyException {
-        synchronized (Global.object) {
+        synchronized (TGlobal.pay_object) {
             if (StringUtils.isNullOrBlank(openId)) {
-                throw new MyException(Global.openId_isNull, null, 102);
+                throw new MyException(TGlobal.openId_isNull, null, 102);
             }
             if (ip.equals("undefined")) {
-                throw new MyException(Global.ip_unright, null, 103);
+                throw new MyException(TGlobal.ip_unright, null, 103);
             }
 
             //body = new String(body.getBytes("UTF-8"), "ISO-8859-1");
@@ -63,7 +61,7 @@ public class PayAction {
             String out_trade_no = mch_id + today + code;//商户订单号
             String spbill_create_ip = "替换为自己的终端IP";//终端IP
             spbill_create_ip = ip;
-            String notify_url = Global.notify_url;//通知地址
+            String notify_url = TGlobal.notify_url;//通知地址
             String trade_type = "JSAPI";//交易类型
             String openid = "替换为用户的openid";//用户标识
             openid = openId;
@@ -107,7 +105,7 @@ public class PayAction {
             String respXml = MessageUtil.messageToXML(paymentPo);
             // 打印respXml发现，得到的xml中有“__”不对，应该替换成“_”
             respXml = respXml.replace("__", "_");
-            String url = Global.common_pay_url;//统一下单API接口链接
+            String url = TGlobal.common_pay_url;//统一下单API接口链接
             String param = respXml;
             //String result = SendRequestForUrl.sendRequest(url, param);//发起请求
             String result = PayUtil.httpRequest(url, "POST", param);
@@ -138,7 +136,7 @@ public class PayAction {
                 String nonceStr = UUIDHexGenerator.generate();
                 JsonObject.put("nonceStr", nonceStr);
                 JsonObject.put("package", "prepay_id=" + prepay_id);
-                Global.package_map.put(openId,prepay_id);
+                TGlobal.tuan_package_map.put(openId,prepay_id);
                 Long timeStamp = System.currentTimeMillis() / 1000;
                 JsonObject.put("timeStamp", timeStamp + "");
                 String stringSignTemp = "appId=" + appid + "&nonceStr=" + nonceStr + "&package=prepay_id=" + prepay_id + "&signType=MD5&timeStamp=" + timeStamp;
@@ -218,22 +216,6 @@ public class PayAction {
         out.close();
     }
 
-    @RequestMapping("/sendTemplate")
-    public void getTemplate(String openId,String data){
-        //模板信息通知用户
-            //获取 access_token
-        String access_token_url="https://api.weixin.qq.com/cgi-bin/token";
-        String param1="grant_type=client_credential&appid=wxe46b9aa1b768e5fe&secret=8bcdb74a9915b5685fa0ec37f6f25b24";
-        String access_token= HttpRequest.sendPost(access_token_url,param1);
-        access_token=access_token.substring(access_token.indexOf(":")+2,access_token.indexOf(",")-1);
-            //发送模板信息
-        String url="https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send";
-        String form_id=Global.package_map.get(openId);
-        Global.package_map.remove(openId);
-        String param2="access_token="+access_token+"&touser="+openId+"&template_id=Z_Xg6rYdQgci4FP_aOjTvZHXeC5BSs99EwARD6NJXWk&form_id"+form_id+"&data="+data;
-        String result=HttpRequest.sendPost(url,param2);
-        System.out.println(result);
-    }
 
     /**
      * 支付结果查询

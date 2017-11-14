@@ -118,4 +118,23 @@ public class TuanOrdersService {
         bd.and(tuanorders.isover.eq(true));
         return tuanOrdersRepo.findAll(bd.getValue(),new Sort(Sort.Direction.DESC,"id"));
     }
+
+    public Iterable<TuanOrders> finsh(String saleId, String openId) {
+        QTuanOrders tuanorders = QTuanOrders.tuanOrders;
+        BooleanBuilder bd = new BooleanBuilder();
+        bd.and(tuanorders.saleId.eq(saleId));
+        bd.and(tuanorders.openId.eq(openId));
+        bd.and(tuanorders.state.eq(TGlobal.tuan_order_success));
+        bd.and(tuanorders.isover.eq(true));
+        bd.and(tuanorders.showbuy.eq(true));
+        return tuanOrdersRepo.findAll(bd.getValue(),new Sort(Sort.Direction.DESC,"id"));
+    }
+
+    public Iterable<TuanOrders> comments(Map<String, String> map, int pageNumber, int pageSize) {
+        QTuanOrders tuanorders = QTuanOrders.tuanOrders;
+        BooleanBuilder bd = new BooleanBuilder();
+        bd.and(tuanorders.iscomment.eq(true));
+        bd.and(tuanorders.tProducts.id.eq(Integer.parseInt(map.get("pid"))));
+        return tuanOrdersRepo.findAll(bd.getValue(), new Sort(Sort.Direction.DESC, "id"));
+    }
 }

@@ -230,4 +230,29 @@ public class TuanOrdersController {
         return new TResult(false, TGlobal.do_success, iterable);
     }
 
+
+    //   /tuan/tuanorders/finsh?oid=订单ID&openId=12
+    @RequestMapping("/finsh")
+    public TResult finsh(String oid,String openId){
+        TuanOrders tuanOrders= tuanOrdersService.findOne(Integer.parseInt(oid));
+        if (!tuanOrders.getOpenId().equals(openId)){
+            return new TResult(true,TGlobal.have_no_right,null);
+        }
+        tuanOrders.setState(TGlobal.tuan_order_finsh);
+        tuanOrdersService.update(tuanOrders);
+        return new TResult(true,TGlobal.do_success,null);
+    }
+
+    //   /tuan/tuanorders/buydel?oid=订单ID&openId=12
+    @RequestMapping("/buydel")
+    public TResult  delTuanorder(String oid,String openId){
+        TuanOrders tuanOrders=tuanOrdersService.findOne(Integer.parseInt(oid));
+        if (!tuanOrders.getOpenId().equals(openId)){
+           return new TResult(true,TGlobal.have_no_right,null);
+        }
+        tuanOrders.setShowbuy(false);
+        tuanOrdersService.update(tuanOrders);
+        return new TResult(false,TGlobal.do_success,null);
+    }
+
 }

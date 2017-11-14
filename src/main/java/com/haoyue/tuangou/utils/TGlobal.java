@@ -1,5 +1,8 @@
 package com.haoyue.tuangou.utils;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by LiJia on 2017/11/2.
  */
@@ -52,8 +55,16 @@ public class TGlobal {
     public static String tuan_order_success="待发货团购订单";
     public static String tuan_order_unreive="待收货团购订单";
     public static String tuan_order_fail="拼团失败团购订单";
+    public static String tuan_order_finsh="已完成团购订单";
     public static String tuan_ordercode_begin="666";
     public static Object object2=new Object();
 
+    //支付
+    public static Object pay_object=new Object();
+    public static String openId_isNull="openId为空";
+    public static String ip_unright="IP不正确";
+    public static String notify_url="https://www.cslapp.com/tuan/pay/notify";
+    public static String common_pay_url="https://api.mch.weixin.qq.com/pay/unifiedorder";//统一下单url
+    public static Map<String,String> tuan_package_map=new HashMap<>();
 
 }

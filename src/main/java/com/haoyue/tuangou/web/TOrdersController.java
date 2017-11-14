@@ -1,10 +1,15 @@
 package com.haoyue.tuangou.web;
 
+
+
+
 import com.haoyue.tuangou.pojo.*;
 import com.haoyue.tuangou.service.*;
+import com.haoyue.tuangou.utils.CommonUtil;
 import com.haoyue.tuangou.utils.StringUtils;
 import com.haoyue.tuangou.utils.TGlobal;
 import com.haoyue.tuangou.utils.TResult;
+import com.haoyue.tuangou.wxpay.HttpRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -29,6 +34,8 @@ public class TOrdersController {
     private TDeliverService tDeliverService;
     @Autowired
     private TuanOrdersService tuanOrdersService;
+    @Autowired
+    private TUserBuyService tuserBuyService;
 
 
     //   /tuan/torders/save?pid=商品ID&ptypeId=商品分类ID&amount=购买数量&productPrice=下单的商品价格
@@ -133,7 +140,7 @@ public class TOrdersController {
     @RequestMapping("/unsend")
     public TResult unsend(String saleId, String openId) {
         //普通订单未发货
-        String unsend = "yes";
+        String unsend = "unsend";
         Iterable<TOrders> iterable1 = tOrdersService.clist(saleId, openId, unsend);
         //团购订单待发货
         Iterable<TuanOrders> iterable2 = tuanOrdersService.unsend(saleId, openId);
@@ -178,7 +185,166 @@ public class TOrdersController {
         }
         return new TResult(false, TGlobal.do_success, objects);
     }
-    
-    // // TODO: 2017/11/13 待收货 
+
+    //   /tuan/torders/unreceive?saleId=12&openId=21
+    @RequestMapping("/unreceive")
+    public TResult unreceive(String saleId, String openId){
+        //普通订单待收货
+        String unreceive= "unreceive";
+        Iterable<TOrders> iterable1 = tOrdersService.clist(saleId, openId, unreceive);
+        //团购订单待收货
+        Iterable<TuanOrders> iterable2 = tuanOrdersService.unsend(saleId, openId);
+        //抽出两个结果集的ID和创建时间，放进TMixOrders
+        List<TMixOrders> list = new ArrayList<>();
+        Iterator<TOrders> iterator = iterable1.iterator();
+        Iterator<TuanOrders> iterator2 = iterable2.iterator();
+        while (iterator.hasNext()) {
+            TMixOrders tMixOrders = new TMixOrders();
+            TOrders tOrders = iterator.next();
+            tMixOrders.setDate(tOrders.getCreateDate());
+            tMixOrders.setOid(tOrders.getId());
+            list.add(tMixOrders);
+        }
+        while (iterator2.hasNext()){
+            TMixOrders tMixOrders = new TMixOrders();
+            TuanOrders tuanOrders=iterator2.next();
+            tMixOrders.setOid(tuanOrders.getId());
+            tMixOrders.setDate(tuanOrders.getStartDate());
+            tMixOrders.setIstuan(true);
+            list.add(tMixOrders);
+        }
+        if (list.size()==0){
+            return new TResult(false, TGlobal.do_success, null);
+        }
+        //对TMixOrders中的数据按照时间排序
+        List<TMixOrders> list2=new ArrayList<>();
+        list.stream()
+                .sorted((p1,p2)->(p1.getDate().compareTo(p2.getDate())))
+                .forEach(p->list2.add(p));
+        //遍历list2，获取订单，封装结果集objects
+        List<Object> objects=new ArrayList<>();
+        for (int i=0;i<list2.size();i++){
+            TMixOrders tMixOrders=list2.get(i);
+            if (tMixOrders.istuan()){
+                //团购订单
+                objects.add(tuanOrdersService.findOne(tMixOrders.getOid()));
+            }else {
+                //普通订单
+                objects.add(tOrdersService.findOne(tMixOrders.getOid()));
+            }
+        }
+        return new TResult(false, TGlobal.do_success, objects);
+    }
+
+
+    //   /tuan/torders/finsh?saleId=12&openId=21
+    @RequestMapping("/finsh")
+    public TResult finsh(String saleId, String openId){
+        //普通订单已完成
+        String finsh= "finsh";
+        Iterable<TOrders> iterable1 = tOrdersService.clist(saleId, openId, finsh);
+        //团购订单已完成
+        Iterable<TuanOrders> iterable2 = tuanOrdersService.finsh(saleId, openId);
+        //抽出两个结果集的ID和创建时间，放进TMixOrders
+        List<TMixOrders> list = new ArrayList<>();
+        Iterator<TOrders> iterator = iterable1.iterator();
+        Iterator<TuanOrders> iterator2 = iterable2.iterator();
+        while (iterator.hasNext()) {
+            TMixOrders tMixOrders = new TMixOrders();
+            TOrders tOrders = iterator.next();
+            tMixOrders.setDate(tOrders.getCreateDate());
+            tMixOrders.setOid(tOrders.getId());
+            list.add(tMixOrders);
+        }
+        while (iterator2.hasNext()){
+            TMixOrders tMixOrders = new TMixOrders();
+            TuanOrders tuanOrders=iterator2.next();
+            tMixOrders.setOid(tuanOrders.getId());
+            tMixOrders.setDate(tuanOrders.getStartDate());
+            tMixOrders.setIstuan(true);
+            list.add(tMixOrders);
+        }
+        if (list.size()==0){
+            return new TResult(false, TGlobal.do_success, null);
+        }
+        //对TMixOrders中的数据按照时间排序
+        List<TMixOrders> list2=new ArrayList<>();
+        list.stream()
+                .sorted((p1,p2)->(p1.getDate().compareTo(p2.getDate())))
+                .forEach(p->list2.add(p));
+        //遍历list2，获取订单，封装结果集objects
+        List<Object> objects=new ArrayList<>();
+        for (int i=0;i<list2.size();i++){
+            TMixOrders tMixOrders=list2.get(i);
+            if (tMixOrders.istuan()){
+                //团购订单
+                objects.add(tuanOrdersService.findOne(tMixOrders.getOid()));
+            }else {
+                //普通订单
+                objects.add(tOrdersService.findOne(tMixOrders.getOid()));
+            }
+        }
+        return new TResult(false, TGlobal.do_success, objects);
+    }
+
+
+    public void addTemplate(TOrders order){
+        List<TemplateResponse> list=new ArrayList<>();
+        TemplateResponse templateResponse1=new TemplateResponse();
+        templateResponse1.setColor("#000000");
+        templateResponse1.setName("keyword1");
+        templateResponse1.setValue(order.gettProducts().getPname());
+        list.add(templateResponse1);
+
+        TemplateResponse templateResponse2=new TemplateResponse();
+        templateResponse2.setColor("#000000");
+        templateResponse2.setName("keyword2");
+        templateResponse2.setValue(order.getWxname());
+        list.add(templateResponse2);
+
+        TemplateResponse templateResponse3=new TemplateResponse();
+        templateResponse3.setColor("#000000");
+        templateResponse3.setName("keyword3");
+        templateResponse3.setValue(order.getTotalPrice()+"");
+        list.add(templateResponse3);
+
+        TemplateResponse templateResponse4=new TemplateResponse();
+        templateResponse4.setColor("#000000");
+        templateResponse4.setName("keyword4");
+        templateResponse4.setValue("微信支付");
+        list.add(templateResponse4);
+
+        TemplateResponse templateResponse5=new TemplateResponse();
+        templateResponse5.setColor("#000000");
+        templateResponse5.setName("keyword5");
+        String date= com.haoyue.untils.StringUtils.formDateToStr(new Date());
+        templateResponse5.setValue(date);
+        list.add(templateResponse5);
+
+        Template template=new Template();
+        template.setTemplateId("Z_Xg6rYdQgci4FP_aOjTvZHXeC5BSs99EwARD6NJXWk");
+        template.setTemplateParamList(list);
+        template.setTopColor("#000000");
+        template.setPage("pages/index/index");
+        template.setToUser(order.getOpenId());
+        getTemplate(template);
+    }
+
+    public void getTemplate(Template template){
+        //模板信息通知用户
+        //获取 access_token
+        String access_token_url="https://api.weixin.qq.com/cgi-bin/token";
+        String param1="grant_type=client_credential&appid=wxe46b9aa1b768e5fe&secret=8bcdb74a9915b5685fa0ec37f6f25b24";
+        String access_token= HttpRequest.sendPost(access_token_url,param1);
+        access_token=access_token.substring(access_token.indexOf(":")+2,access_token.indexOf(",")-1);
+        //发送模板信息
+        String form_id=TGlobal.tuan_package_map.get(template.getToUser());
+        template.setForm_id(form_id);
+        String url="https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token="+access_token+"&form_id="+form_id;
+        String result= CommonUtil.httpRequest(url,"POST",template.toJSON());
+        //删除该key-value
+        TGlobal.tuan_package_map.remove(template.getToUser());
+    }
+
 }
 

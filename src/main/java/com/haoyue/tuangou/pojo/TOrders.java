@@ -43,6 +43,25 @@ public class TOrders {
     private Date payDate;//付款日期
     private boolean showbuy=true;
     private boolean showsale=true;
+    private boolean iscomment=false;
+    @OneToOne
+    private TComment comment;
+
+    public TComment getComment() {
+        return comment;
+    }
+
+    public void setComment(TComment comment) {
+        this.comment = comment;
+    }
+
+    public boolean getIsComment() {
+        return iscomment;
+    }
+
+    public void setIscomment(boolean iscomment) {
+        this.iscomment = iscomment;
+    }
 
     public double getDeliverPrice() {
         return deliverPrice;

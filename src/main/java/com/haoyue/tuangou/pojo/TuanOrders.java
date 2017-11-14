@@ -41,7 +41,12 @@ public class TuanOrders {
     private int hours;//团购时间
     private boolean isowner=false;//是否房主
     private boolean isover=false;
+    private boolean showbuy=false;
+    private boolean showsale=false;
+    private boolean iscomment=false;
 
+    @OneToOne
+    private TComment comment;
 
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:SS", timezone="GMT+8")
     @Temporal(TemporalType.TIMESTAMP)
@@ -52,6 +57,39 @@ public class TuanOrders {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(updatable=false)
     private Date endDate;//结束日期
+
+
+    public boolean getIscomment() {
+        return iscomment;
+    }
+
+    public void setIscomment(boolean iscomment) {
+        this.iscomment = iscomment;
+    }
+
+    public TComment getComment() {
+        return comment;
+    }
+
+    public void setComment(TComment comment) {
+        this.comment = comment;
+    }
+
+    public boolean getShowbuy() {
+        return showbuy;
+    }
+
+    public void setShowbuy(boolean showbuy) {
+        this.showbuy = showbuy;
+    }
+
+    public boolean getShowsale() {
+        return showsale;
+    }
+
+    public void setShowsale(boolean showsale) {
+        this.showsale = showsale;
+    }
 
     public int getHours() {
         return hours;
