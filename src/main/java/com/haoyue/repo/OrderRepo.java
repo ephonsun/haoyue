@@ -24,4 +24,7 @@ public interface OrderRepo extends BaseRepo<Order,Integer> {
 
     @Query(nativeQuery = true,value ="select order_id from order_product where product_id=?1")
     List<Integer> findBySellerIdAndProIdAndIsLuckDrawEnd(Integer pid);
+
+    @Query(nativeQuery = true,value ="select * from orders where seller_id=?1 and create_date>?2 and create_date<?3")
+    List<Order> findBySellerIdAndCreateDate(String sellerId, Date from, Date end);
 }

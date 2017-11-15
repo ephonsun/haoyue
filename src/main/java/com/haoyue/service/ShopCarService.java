@@ -127,4 +127,8 @@ public class ShopCarService {
         }
         return names;
     }
+
+    public List<ShopCar> findBySellerIdAndCreateDate(String sellerId, Date from, Date end) {
+        return  shopCarRepo.findBySellerIdAndCreateDate(sellerId,from,end);
+    }
 }

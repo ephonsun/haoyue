@@ -98,7 +98,7 @@ public class HanyuPinyinHelper {
     /**
      * 取第一个汉字的第一个字符
      * @Title: getFirstLetter
-     * @Description: TODO
+     * @Description:
      * @return String
      * @throws
      */

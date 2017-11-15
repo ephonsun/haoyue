@@ -232,4 +232,8 @@ public class OrderService {
             }
         }
     }
+
+    public List<Order> findBySellerIdAndCreateDate(String sellerId, Date from, Date end) {
+        return orderRepo.findBySellerIdAndCreateDate(sellerId,from,end);
+    }
 }

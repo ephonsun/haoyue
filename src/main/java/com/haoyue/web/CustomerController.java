@@ -45,7 +45,7 @@ public class CustomerController {
     @RequestMapping("/loginOrReg")
     public Result save(String openId,String sellerId,String wxname,String wxpic){
 
-       // boolean flag=sellerService.isStop(sellerId);
+        // boolean flag=sellerService.isStop(sellerId);
         Seller seller=sellerService.findOne(Integer.parseInt(sellerId));
         boolean flag=seller.getIsActive();
         boolean isCoupon=seller.getIscoupon();
