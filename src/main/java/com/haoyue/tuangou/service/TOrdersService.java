@@ -11,6 +11,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -89,6 +91,50 @@ public class TOrdersService {
         BooleanBuilder bd = new BooleanBuilder();
         bd.and(order.iscomment.eq(true));
         bd.and(order.tProducts.id.eq(Integer.parseInt(map.get("id"))));
+        return tOrdersRepo.findAll(bd.getValue(),  new Sort(Sort.Direction.DESC, "id"));
+    }
+
+    public Iterable<TOrders> query(Map<String, String> map) {
+        QTOrders order = QTOrders.tOrders;
+        BooleanBuilder bd = new BooleanBuilder();
+        Date from=null;
+        Date end=null;
+        for (String key:map.keySet()){
+            String value=map.get(key);
+            if (!StringUtils.isNullOrBlank(value)){
+                if (key.equals("code")){
+                    bd.and(order.code.contains(value));
+                }
+                if (key.equals("startDate")){
+                    try {
+                        from=StringUtils.formatStrToDate((map.get("startDate")));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (key.equals("endDate")){
+                    try {
+                        end=StringUtils.formatStrToDate((map.get("endDate")));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (from!=null&&end!=null){
+                    bd.and(order.createDate.between(from,end));
+                }
+                if (key.equals("wxname")){
+                    bd.and(order.wxname.contains(value));
+                }
+            }
+        }
+        return tOrdersRepo.findAll(bd.getValue(),  new Sort(Sort.Direction.DESC, "id"));
+    }
+
+    public Iterable<TOrders> commentslist(Map<String, String> map) {
+        QTOrders order = QTOrders.tOrders;
+        BooleanBuilder bd = new BooleanBuilder();
+        bd.and(order.iscomment.eq(true));
+        bd.and(order.saleId.eq(map.get("saleId")));
         return tOrdersRepo.findAll(bd.getValue(),  new Sort(Sort.Direction.DESC, "id"));
     }
 }

@@ -15,6 +15,8 @@ public class TGlobal {
     public static String deliver_template_exist="快递模板已经存在";
     public static Object object3=new Object();
 
+    //分页
+    public static String pagenumber_not_right="页数不正常";
 
     //注册 登录
     public static String tusersale_isnull="用户名或密码错误";
@@ -57,6 +59,8 @@ public class TGlobal {
     public static String tuan_order_fail="拼团失败团购订单";
     public static String tuan_order_finsh="已完成团购订单";
     public static String tuan_ordercode_begin="666";
+    public static String tuan_num_too_late="人数已满，你来晚了一步";
+    public static String tuan_time_too_late="结束时间已到，你来晚了一步";
     public static Object object2=new Object();
 
     //支付

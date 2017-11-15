@@ -34,8 +34,6 @@ public class TOrdersController {
     private TDeliverService tDeliverService;
     @Autowired
     private TuanOrdersService tuanOrdersService;
-    @Autowired
-    private TUserBuyService tuserBuyService;
 
 
     //   /tuan/torders/save?pid=商品ID&ptypeId=商品分类ID&amount=购买数量&productPrice=下单的商品价格
@@ -92,6 +90,8 @@ public class TOrdersController {
             productsTypes.setAmount(productsTypes.getAmount() - orders.getAmount());
             tProductsService.update(products);
             tProductsTypesService.save(productsTypes);
+            //微信通知
+            addTemplate(orders);
         }
         tOrdersService.update(orders);
         return new TResult(false, TGlobal.do_success, orders);
@@ -344,6 +344,23 @@ public class TOrdersController {
         String result= CommonUtil.httpRequest(url,"POST",template.toJSON());
         //删除该key-value
         TGlobal.tuan_package_map.remove(template.getToUser());
+    }
+
+
+    //卖家后台查询
+    //  /tuan/torders/query?order_type=【1 普通订单 2 团购订单】&【code 单号 / startDate,endDate / wxname 买家昵称】
+    @RequestMapping("/query")
+    public TResult query(@RequestParam Map<String, String> map){
+
+        if (map.get("order_type").equals("1")){
+            Iterable<TOrders> iterable= tOrdersService.query(map);
+            return new TResult(false,TGlobal.do_success,iterable);
+        }
+        if (map.get("order_type").equals("2")){
+            Iterable<TuanOrders> iterable= tuanOrdersService.query(map);
+            return new TResult(false,TGlobal.do_success,iterable);
+        }
+        return new TResult(false,TGlobal.do_success,null);
     }
 
 }

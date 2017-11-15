@@ -212,7 +212,7 @@ public class TProductsController {
     // /tuan/product/tuanorders?pid=商品Id&saleId=12
     @RequestMapping("/tuanorders")
     public TResult findTuanOrdersByPid(Integer pid, String saleId) {
-        Iterable<TuanOrders> iterable = tuanOrdersService.findTuanOrdersByTProducts(pid, saleId);
+        Iterable<TuanOrders> iterable = tuanOrdersService.findTuanOrdersByTProducts(pid, saleId,null);
         Iterator<TuanOrders> iterator = iterable.iterator();
         List<TuanOrders> ownerList = new ArrayList<>();
         int count = 0;

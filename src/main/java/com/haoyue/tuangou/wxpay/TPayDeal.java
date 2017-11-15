@@ -10,8 +10,8 @@ import java.util.Date;
  * 付款结果记录
  */
 @Entity
-@Table(name = "paydeals")
-public class PayDeal {
+@Table(name = "t_paydeals")
+public class TPayDeal {
 
     @Id
     @GeneratedValue

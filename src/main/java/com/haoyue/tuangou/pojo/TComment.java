@@ -16,6 +16,11 @@ public class TComment {
     @GeneratedValue
     private Integer id;
 
+    @OneToOne
+    private TProducts tProducts;
+    @OneToOne
+    private TProductsTypes tProductsTypes;
+
     @Lob
     @Column(columnDefinition = "TEXT")
     private String message;
@@ -24,10 +29,36 @@ public class TComment {
     private String openId;
     private String saleId;
     private String pics;//评论图片
+    private String replay;//卖家回复
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:SS", timezone="GMT+8")
     @Temporal(TemporalType.TIMESTAMP)
     @Column(updatable=false)
     private Date createDate;//创建日期
+
+
+    public String getReplay() {
+        return replay;
+    }
+
+    public void setReplay(String replay) {
+        this.replay = replay;
+    }
+
+    public TProducts gettProducts() {
+        return tProducts;
+    }
+
+    public void settProducts(TProducts tProducts) {
+        this.tProducts = tProducts;
+    }
+
+    public TProductsTypes gettProductsTypes() {
+        return tProductsTypes;
+    }
+
+    public void settProductsTypes(TProductsTypes tProductsTypes) {
+        this.tProductsTypes = tProductsTypes;
+    }
 
     public Integer getId() {
         return id;

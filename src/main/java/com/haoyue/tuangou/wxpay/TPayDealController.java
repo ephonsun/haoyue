@@ -13,15 +13,15 @@ import java.util.Map;
  * Created by LiJia on 2017/9/19.
  */
 @RestController
-@RequestMapping("/paydeal")
-public class PayDealController {
+@RequestMapping("/tuan/paydeal")
+public class TPayDealController {
 
     @Autowired
-    private PayDealService payDealService;
+    private TPayDealService TPayDealService;
 
     @RequestMapping("list")
     public Result list(@RequestParam Map<String, String> map, @RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize){
-        Iterable iterable=payDealService.list(map,pageNumber,pageSize);
+        Iterable iterable= TPayDealService.list(map,pageNumber,pageSize);
         return new Result(false, Global.do_success,iterable,null);
     }
 

@@ -31,10 +31,10 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/tuan/pay")
-public class PayAction {
+public class TPayAction {
 
     @Autowired
-    private PayDealService payDealService;
+    private TPayDealService TPayDealService;
 
     /**
      * 小程序端请求的后台action，后台调用统一下单URL，对返回数据再次签名后，把数据传到前台
@@ -199,15 +199,15 @@ public class PayAction {
         }
 
         //将每次支付结果通知信息保存到数据库
-        PayDeal payDeal = new PayDeal();
-        payDeal.setOpenId(map.get("openid"));
-        payDeal.setMch_id(map.get("mch_id"));
-        payDeal.setReturn_code(map.get("return_code"));
-        payDeal.setTotal_fee(map.get("total_fee"));
-        payDeal.setTransaction_id(map.get("transaction_id"));
-        payDeal.setDate(StringUtils.formatDate(map.get("time_end")));
-        payDeal.setAppId(map.get("appid"));
-        payDealService.save(payDeal);
+        TPayDeal TPayDeal = new TPayDeal();
+        TPayDeal.setOpenId(map.get("openid"));
+        TPayDeal.setMch_id(map.get("mch_id"));
+        TPayDeal.setReturn_code(map.get("return_code"));
+        TPayDeal.setTotal_fee(map.get("total_fee"));
+        TPayDeal.setTransaction_id(map.get("transaction_id"));
+        TPayDeal.setDate(StringUtils.formatDate(map.get("time_end")));
+        TPayDeal.setAppId(map.get("appid"));
+        TPayDealService.save(TPayDeal);
 
         BufferedOutputStream out = new BufferedOutputStream(
                 response.getOutputStream());

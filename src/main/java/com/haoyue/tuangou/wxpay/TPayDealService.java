@@ -13,16 +13,16 @@ import java.util.Map;
  * Created by LiJia on 2017/9/19.
  */
 @Service
-public class PayDealService {
+public class TPayDealService {
 
     @Autowired
-    private PayDealRepo payDealRepo;
+    private TPayDealRepo TPayDealRepo;
 
-    public void save(PayDeal payDeal) {
-        payDealRepo.save(payDeal);
+    public void save(TPayDeal TPayDeal) {
+        TPayDealRepo.save(TPayDeal);
     }
 
-    public Iterable<PayDeal> list(Map<String, String> map , int pageNumber, int pageSize) {
+    public Iterable<TPayDeal> list(Map<String, String> map , int pageNumber, int pageSize) {
 
         QPayDeal payDeal=QPayDeal.payDeal;
         BooleanBuilder bd = new BooleanBuilder();
@@ -39,7 +39,7 @@ public class PayDealService {
             }
         }
 
-        return payDealRepo.findAll(bd.getValue(),new PageRequest(pageNumber, pageSize));
+        return TPayDealRepo.findAll(bd.getValue(),new PageRequest(pageNumber, pageSize));
 
     }
 

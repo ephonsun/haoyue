@@ -43,7 +43,7 @@ public class CustomerController {
     购物车列表显示物品分类，尺码，颜色
     */
     @RequestMapping("/loginOrReg")
-    public Result save(String openId,String sellerId){
+    public Result save(String openId,String sellerId,String wxname,String wxpic){
 
        // boolean flag=sellerService.isStop(sellerId);
         Seller seller=sellerService.findOne(Integer.parseInt(sellerId));
@@ -66,7 +66,13 @@ public class CustomerController {
             customer.setOpenId(openId);
             customer.setSellerId(sellerId);
             customer.setCreateDate(new Date());
+            customer.setWxname(wxname);
+            customer.setWxpic(wxpic);
             customer=customerService.save(customer);
+        }else {
+            customer.setWxname(wxname);
+            customer.setWxpic(wxpic);
+            customerService.update(customer);
         }
         return new Result(false,Global.do_success,customer,null);
     }

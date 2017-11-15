@@ -42,6 +42,9 @@ public class TCommentController {
         orders.setComment(comment);
         orders.setIscomment(true);
         ordersService.update(orders);
+        comment.settProducts(orders.gettProducts());
+        comment.settProductsTypes(orders.gettProductsTypes());
+        commentService.save(comment);
         return new TResult(false, TGlobal.do_success, null);
     }
 
@@ -54,6 +57,9 @@ public class TCommentController {
         tuanOrders.setIscomment(true);
         tuanOrders.setComment(comment);
         tuanOrdersService.update(tuanOrders);
+        comment.settProducts(tuanOrders.gettProducts());
+        comment.settProductsTypes(tuanOrders.gettProductsTypes());
+        commentService.save(comment);
         return new TResult(false, TGlobal.do_success, null);
     }
 
@@ -83,8 +89,9 @@ public class TCommentController {
     }
 
     // 查看某个商品的评论
-    // /tuan/tcomment/list?pid=商品ID
-    public TResult list(@RequestParam Map<String, String> map, @RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize) {
+    // /tuan/tcomment/product?pid=商品ID
+    @RequestMapping("/product")
+    public TResult product(@RequestParam Map<String, String> map, @RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize) {
         Iterable<TOrders> iterable = ordersService.comments(map, pageNumber, pageSize);
         Iterable<TuanOrders> iterable2 = tuanOrdersService.comments(map, pageNumber, pageSize);
         List<TComment> list = new ArrayList<>();
@@ -95,6 +102,42 @@ public class TCommentController {
                 .sorted((p1,p2)->p1.getCreateDate().compareTo(p2.getCreateDate()))
                 .forEach(p->sortlist.add(p));
         return new TResult(false,TGlobal.do_success,sortlist);
+    }
+
+
+
+    //  评论列表 /tuan/tcomment/list?saleId=123
+    @RequestMapping("/list")
+    public TResult list(@RequestParam Map<String, String> map, @RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize){
+        Iterable<TOrders> iterable=ordersService.commentslist(map);
+        Iterable<TuanOrders> iterable2 = tuanOrdersService.commentslist(map);
+        List<TComment> list = new ArrayList<>();
+        List<TComment> sortlist = new ArrayList<>();
+        List<TComment> result = new ArrayList<>();
+        list.addAll(getComments1(iterable));
+        list.addAll(getComments2(iterable2));
+        list.stream()
+                .sorted((p1,p2)->p1.getCreateDate().compareTo(p2.getCreateDate()))
+                .forEach(p->sortlist.add(p));
+        //使用list实现分页功能
+        double pagenumber=Math.ceil((list.size()/10.0));
+        if (pageNumber==0){
+            if (pageSize>list.size()){
+                result=list;
+            }else {
+                result=list.subList(0,pageSize);
+            }
+        }else {
+            if (pageNumber>pagenumber){
+                return new TResult(true,TGlobal.pagenumber_not_right,null);
+            }
+            if (pageNumber*pageSize+pageSize>list.size()){
+                result=list.subList(pageNumber*pageSize,list.size());
+            }else {
+                result = list.subList(pageNumber * pageSize, pageSize + pageNumber * pageSize);
+            }
+        }
+        return new TResult(false,pagenumber+"",result);
     }
 
 

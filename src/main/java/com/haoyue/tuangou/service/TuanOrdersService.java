@@ -11,6 +11,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -88,12 +90,14 @@ public class TuanOrdersService {
         return tuanOrdersRepo.findAll(bd.getValue(),new PageRequest(pageNumber,pageSize,new Sort(Sort.Direction.DESC,"id")));
     }
 
-    public Iterable<TuanOrders> findTuanOrdersByTProducts(Integer pid, String saleId) {
+    public Iterable<TuanOrders> findTuanOrdersByTProducts(Integer pid, String saleId,String str) {
         QTuanOrders tuanorders = QTuanOrders.tuanOrders;
         BooleanBuilder bd = new BooleanBuilder();
         bd.and(tuanorders.tProducts.id.eq(pid));
         bd.and(tuanorders.saleId.eq(saleId));
-       // bd.and(tuanorders.isowner.eq(true));
+        if (!StringUtils.isNullOrBlank(str)){
+             bd.and(tuanorders.isowner.eq(true));
+        }
         bd.and(tuanorders.state.eq(TGlobal.tuan_order_tuaning));
         return tuanOrdersRepo.findAll(bd.getValue());
     }
@@ -136,5 +140,54 @@ public class TuanOrdersService {
         bd.and(tuanorders.iscomment.eq(true));
         bd.and(tuanorders.tProducts.id.eq(Integer.parseInt(map.get("pid"))));
         return tuanOrdersRepo.findAll(bd.getValue(), new Sort(Sort.Direction.DESC, "id"));
+    }
+
+    public Iterable<TuanOrders> query(Map<String, String> map) {
+        QTuanOrders tuanorders = QTuanOrders.tuanOrders;
+        BooleanBuilder bd = new BooleanBuilder();
+        Date from=null;
+        Date end=null;
+        for (String key:map.keySet()){
+            String value=map.get(key);
+            if (!StringUtils.isNullOrBlank(value)){
+                if (key.equals("code")){
+                    bd.and(tuanorders.code.contains(value));
+                }
+                if (key.equals("startDate")){
+                    try {
+                        from=StringUtils.formatStrToDate((map.get("startDate")));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (key.equals("endDate")){
+                    try {
+                        end=StringUtils.formatStrToDate((map.get("endDate")));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (from!=null&&end!=null){
+                    bd.and(tuanorders.startDate.between(from,end));
+                }
+                if (key.equals("wxname")){
+                    bd.and(tuanorders.wxname.contains(value));
+                }
+            }
+        }
+        return tuanOrdersRepo.findAll(bd.getValue(), new Sort(Sort.Direction.DESC, "id"));
+    }
+
+    public Iterable<TuanOrders> commentslist(Map<String, String> map) {
+        QTuanOrders tuanorders = QTuanOrders.tuanOrders;
+        BooleanBuilder bd = new BooleanBuilder();
+        bd.and(tuanorders.iscomment.eq(true));
+        bd.and(tuanorders.saleId.eq(map.get("saleId")));
+        return tuanOrdersRepo.findAll(bd.getValue(), new Sort(Sort.Direction.DESC, "id"));
+    }
+
+    //定时刷新团购订单状态
+    public void flush() {
+        tuanOrdersRepo.flushdata();
     }
 }

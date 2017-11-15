@@ -20,6 +20,8 @@ public class Customer {
     private String phone;
     private String openId;//小程序用户唯一标识
     private String sellerId;//appid
+    private String wxname;
+    private String wxpic;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:SS", timezone = "GMT+8")
     @Temporal(TemporalType.TIMESTAMP)
@@ -28,6 +30,22 @@ public class Customer {
 
     @OneToMany
     private List<Address> addressList;
+
+    public String getWxname() {
+        return wxname;
+    }
+
+    public void setWxname(String wxname) {
+        this.wxname = wxname;
+    }
+
+    public String getWxpic() {
+        return wxpic;
+    }
+
+    public void setWxpic(String wxpic) {
+        this.wxpic = wxpic;
+    }
 
     public Date getCreateDate() {
         return createDate;
