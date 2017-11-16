@@ -21,7 +21,7 @@ public class ProductDailyRecordService {
     public ProductDailyRecord findByPidAndSellerIdAndDate(String pid, String sellerId) {
         Date now=new Date();
         Date date=StringUtils.getYMD(now);
-        return productDailyRecordRepo.findByPidAndSellerIdAndDate(Integer.parseInt(pid),sellerId,date);
+        return productDailyRecordRepo.findByPidAndSellerIdAndCreateDate(Integer.parseInt(pid),sellerId,date);
     }
 
     public void save(ProductDailyRecord productDailyRecord) {

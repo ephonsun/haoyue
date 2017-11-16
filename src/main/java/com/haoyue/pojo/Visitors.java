@@ -18,6 +18,15 @@ public class Visitors {
     private Integer sellerId;
     private Integer productId;
     private String openId;
+    private int num;//浏览次数
+
+    public int getNum() {
+        return num;
+    }
+
+    public void setNum(int num) {
+        this.num = num;
+    }
 
     public Integer getProductId() {
         return productId;

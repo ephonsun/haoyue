@@ -34,6 +34,8 @@ public class TOrdersController {
     private TDeliverService tDeliverService;
     @Autowired
     private TuanOrdersService tuanOrdersService;
+    @Autowired
+    private TDictionarysService tDictionarysService;
 
 
     //   /tuan/torders/save?pid=商品ID&ptypeId=商品分类ID&amount=购买数量&productPrice=下单的商品价格
@@ -92,6 +94,10 @@ public class TOrdersController {
             tProductsTypesService.save(productsTypes);
             //微信通知
             addTemplate(orders);
+            //更新tdictionary表
+            TDictionarys tDictionarys= tDictionarysService.findByTodaySaleId(orders.getSaleId());
+            tDictionarys.setTurnover(tDictionarys.getTurnover()+orders.getTotalPrice());
+            tDictionarysService.update(tDictionarys);
         }
         tOrdersService.update(orders);
         return new TResult(false, TGlobal.do_success, orders);

@@ -80,6 +80,7 @@ public class DictionaryController {
                 visitors = new Visitors();
                 visitors.setSellerId(sellerId1);
                 visitors.setOpenId(openId);
+                visitors.setNum(1);
                 visitorsService.save(visitors);
                 //同步代码块
                 synchronized (this) {
@@ -91,6 +92,9 @@ public class DictionaryController {
                     dictionary.setVisitors(dictionary.getVisitors() == null ? 0 : dictionary.getVisitors() + 1);
                     dictionaryService.update(dictionary);
                 }
+            }else {
+                visitors.setNum(visitors.getNum()+1);
+                visitorsService.update(visitors);
             }
             return new Result(false, Global.do_success, null, null);
         }else {

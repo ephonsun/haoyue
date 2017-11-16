@@ -58,6 +58,7 @@ public class Global {
     public static String order_finsh="已完成订单";
     public static String amount_notEnough="库存量不足";
     public static String order_not_unpay="当前订单不是待付款订单";
+    public static String luckdraw_num_enough="抽奖人数已满";
     public static int count=1;
     public static boolean flag=false;
     public static Object object=new Object();//线程锁

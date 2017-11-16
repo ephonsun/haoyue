@@ -1,6 +1,6 @@
 package com.haoyue.web;
 
-import com.haoyue.pojo.Collections;
+import com.haoyue.pojo.Collection;
 import com.haoyue.service.CollectionsService;
 import com.haoyue.untils.Global;
 import com.haoyue.untils.Result;
@@ -26,20 +26,20 @@ public class CollectionsController {
 
     //   /collection/save?openId=12&sellerId=12&wxname=微信名&wxpic=微信头像&pid=商品Id
     @RequestMapping("/save")
-    public Result save(Collections collections) {
-        collections.setCreateDate(new Date());
-        collectionsService.save(collections);
+    public Result save(Collection collection) {
+        collection.setCreateDate(new Date());
+        collectionsService.save(collection);
         return new Result(false, Global.do_success,null,null);
     }
 
     //   /collection/cancel?openId=12&id=收藏记录Id
     @RequestMapping("/cancel")
     public Result cancel(String id,String openId){
-        Collections collections=collectionsService.findOne(Integer.parseInt(id));
-        if (!collections.getOpenId().equals(openId)){
+        Collection collection =collectionsService.findOne(Integer.parseInt(id));
+        if (!collection.getOpenId().equals(openId)){
             return new Result(true, Global.have_no_right,null,null);
         }
-        collectionsService.del(collections);
+        collectionsService.del(collection);
         return new Result(false, Global.do_success,null,null);
     }
 
@@ -47,7 +47,7 @@ public class CollectionsController {
     //   /collection/clist?openId=12&sellerId=123
     @RequestMapping("/clist")
     public Result customerlist(String openId,String sellerId){
-        List<Collections> list= collectionsService.findByOpenIdAndSellerId(openId,sellerId);
+        List<Collection> list= collectionsService.findByOpenIdAndSellerId(openId,sellerId);
         return new Result(false, Global.do_success,list,null);
     }
 
@@ -58,11 +58,11 @@ public class CollectionsController {
         Date now=new Date();
         Date date= StringUtils.getYMD(now);
         //今日收藏量
-        List<Collections> list1=collectionsService.findBySellerIdAndCreateDate(sellerId,date);
+        List<Collection> list1=collectionsService.findBySellerIdAndCreateDate(sellerId,date);
         //昨日收藏量
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DATE, -1);
-        List<Collections> list2=collectionsService.findBySellerIdAndCreateDate(sellerId,calendar.getTime());
+        List<Collection> list2=collectionsService.findBySellerIdAndCreateDate(sellerId,calendar.getTime());
         //封装结果集
         Response response=new Response();
         response.setSum(list1.size());

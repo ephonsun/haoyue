@@ -1,10 +1,7 @@
 package com.haoyue.tuangou.web;
 
 import com.haoyue.tuangou.pojo.*;
-import com.haoyue.tuangou.service.TDeliverService;
-import com.haoyue.tuangou.service.TProductsService;
-import com.haoyue.tuangou.service.TProductsTypesService;
-import com.haoyue.tuangou.service.TuanOrdersService;
+import com.haoyue.tuangou.service.*;
 import com.haoyue.tuangou.utils.CommonUtil;
 import com.haoyue.tuangou.utils.StringUtils;
 import com.haoyue.tuangou.utils.TGlobal;
@@ -32,6 +29,8 @@ public class TuanOrdersController {
     private TProductsTypesService tProductsTypesService;
     @Autowired
     private TDeliverService tDeliverService;
+    @Autowired
+    private TDictionarysService tDictionarysService;
 
 
     //   自己创建团购   /tuan/tuanorders/save?pid=商品ID&protypeId=商品分类ID&openId=1&saleId=1
@@ -140,10 +139,15 @@ public class TuanOrdersController {
                     orders.setState(state);
                     tuanOrdersService.update(orders);
                 }
+
             }
         }
-        //微信通知
+        //微信付款通知
         addTemplate(orders);
+        //更新tdictionary表
+        TDictionarys tDictionarys= tDictionarysService.findByTodaySaleId(orders.getSaleId());
+        tDictionarys.setTurnover(tDictionarys.getTurnover()+orders.getTotalPrice());
+        tDictionarysService.update(tDictionarys);
         return new TResult(false, TGlobal.do_success, null);
     }
 
@@ -266,6 +270,25 @@ public class TuanOrdersController {
         }
         tuanOrders.setShowbuy(false);
         tuanOrdersService.update(tuanOrders);
+        return new TResult(false, TGlobal.do_success, null);
+    }
+
+
+    //人为设置拼团成功，根据房间号
+    //   /tuan/tuanorders/setsuccess?groupCode=团购号&saleId=123
+    @RequestMapping("/setsuccess")
+    public TResult setSuccessByGroupCode(String groupCode,String saleId){
+        List<TuanOrders> list= tuanOrdersService.findByGroupCode(groupCode);
+        if (list!=null&&list.size()!=0){
+            if (!list.get(0).getSaleId().equals(saleId)){
+                return new TResult(true, TGlobal.have_no_right, null);
+            }
+            for (TuanOrders orders:list){
+                orders.setIsover(true);
+                orders.setState(TGlobal.tuan_order_success);
+                tuanOrdersService.update(orders);
+            }
+        }
         return new TResult(false, TGlobal.do_success, null);
     }
 

@@ -30,7 +30,9 @@ public class TDictionarysService {
     private TVisitorsRepo tVisitorsRepo;
 
     public TDictionarys findByTodaySaleId(String saleId) {
-        return tDictionarysRepo.findByTodaySaleId(saleId,new Date());
+        Date now=new Date();
+        Date date=StringUtils.getYMD(now);
+        return tDictionarysRepo.findByTodaySaleId(saleId,date);
     }
 
     public void update(TDictionarys tDictionarys) {

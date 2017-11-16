@@ -20,7 +20,7 @@ public class TDictionarys  {
     private String saleId;
     private int views;
     private int visitors;
-    private int turnover;
+    private double turnover;
 
     @JsonFormat(pattern="yyyy-MM-dd", timezone="GMT+8")
     @Temporal(TemporalType.DATE)
@@ -60,11 +60,11 @@ public class TDictionarys  {
         this.visitors = visitors;
     }
 
-    public int getTurnover() {
+    public double getTurnover() {
         return turnover;
     }
 
-    public void setTurnover(int turnover) {
+    public void setTurnover(double turnover) {
         this.turnover = turnover;
     }
 

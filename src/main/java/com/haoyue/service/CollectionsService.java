@@ -1,6 +1,6 @@
 package com.haoyue.service;
 
-import com.haoyue.pojo.Collections;
+import com.haoyue.pojo.Collection;
 import com.haoyue.repo.CollectionsRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,23 +18,23 @@ public class CollectionsService {
     @Autowired
     private CollectionsRepo collectionsRepo;
 
-    public void save(Collections collections) {
-        collectionsRepo.save(collections);
+    public void save(Collection collection) {
+        collectionsRepo.save(collection);
     }
 
-    public Collections findOne(int id) {
+    public Collection findOne(int id) {
         return collectionsRepo.findOne(id);
     }
 
-    public void del(Collections collections) {
-        collectionsRepo.delete(collections);
+    public void del(Collection collection) {
+        collectionsRepo.delete(collection);
     }
 
-    public List<Collections> findByOpenIdAndSellerId(String openId, String sellerId) {
+    public List<Collection> findByOpenIdAndSellerId(String openId, String sellerId) {
         return collectionsRepo.findByOpenIdAndSellerId(openId,sellerId);
     }
 
-    public List<Collections> findBySellerIdAndCreateDate(String sellerId, Date date) {
+    public List<Collection> findBySellerIdAndCreateDate(String sellerId, Date date) {
         return collectionsRepo.findBySellerIdAndCreateDate(sellerId,date);
     }
 }

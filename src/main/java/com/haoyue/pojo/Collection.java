@@ -10,7 +10,7 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "collections")
-public class Collections {
+public class Collection {
 
     @Id
     @GeneratedValue

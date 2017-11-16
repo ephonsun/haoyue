@@ -169,7 +169,7 @@ public class ProductDailyRecordController {
             list2=new ArrayList<>();
         }
         //获取当日收藏人数
-        List<Collections> list3= collectionsService.findBySellerIdAndCreateDate(sellerId,date);
+        List<Collection> list3= collectionsService.findBySellerIdAndCreateDate(sellerId,date);
         if (list3==null){
             list3=new ArrayList<>();
         }
@@ -200,7 +200,7 @@ public class ProductDailyRecordController {
             list22=new ArrayList<>();
         }
         //获取昨日收藏人数
-        List<Collections> list33= collectionsService.findBySellerIdAndCreateDate(sellerId,calendar2.getTime());
+        List<Collection> list33= collectionsService.findBySellerIdAndCreateDate(sellerId,calendar2.getTime());
         if (list33==null){
             list33=new ArrayList<>();
         }

@@ -1,5 +1,7 @@
 package com.haoyue.tuangou.service;
 
+import com.haoyue.tuangou.pojo.TDictionarys;
+import com.haoyue.tuangou.repo.TDictionarysRepo;
 import com.querydsl.core.BooleanBuilder;
 import com.haoyue.tuangou.pojo.QTUserSale;
 import com.haoyue.tuangou.pojo.TUserSale;
@@ -22,6 +24,8 @@ public class TUserSaleService {
 
     @Autowired
     private TUserSaleRepo tUserSaleRepo;
+    @Autowired
+    private TDictionarysRepo tDictionarysRepo;
 
 
     public void save(TUserSale tUserSale) {
@@ -35,6 +39,12 @@ public class TUserSaleService {
             tUserSale.setMaxFile(TGlobal.max_FileSzie * 10);
         }
         tUserSaleRepo.save(tUserSale);
+        //向tdictionarys表插入当日记录
+        TDictionarys dictionarys=new TDictionarys();
+        dictionarys.setCreateDate(new Date());
+        dictionarys.setSaleId(tUserSale.getId()+"");
+        tDictionarysRepo.save(dictionarys);
+
     }
 
     public Iterable<TUserSale> findOne(TUserSale tUserSale) {

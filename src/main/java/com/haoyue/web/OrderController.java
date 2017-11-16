@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.*;
 import java.util.*;
+import java.util.Collections;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -181,6 +182,11 @@ public class OrderController {
         if (products.getIsLuckDraw()) {
             order.setState(Global.order_luckdraw_unpay);
             order.setIsLuckDraw(true);
+            //判断抽奖人数是否满
+            LuckDraw luckDraw= luckDrawService.findBySellerId(sellerId);
+            if (luckDraw.getJoinNumber()+1>luckDraw.getAllNumber()){
+                return new Result(true,Global.luckdraw_num_enough,null,null);
+            }
         }
         return new Result(false, Global.do_success, orderService.save(order), null);
     }
