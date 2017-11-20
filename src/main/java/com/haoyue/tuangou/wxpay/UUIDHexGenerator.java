@@ -31,7 +31,6 @@ public class UUIDHexGenerator {
     public static int toInt(byte[] bytes) {
         int result = 0;
         for (int i = 0; i < 4; i++) {
-
             int value;
             value = (int) (((bytes[i] & 0xFF) << 24)
                     | ((bytes[i + 1] & 0xFF) << 16)

@@ -104,6 +104,8 @@ public class TProductsController {
         return new TResult(false, TGlobal.do_success, null);
     }
 
+    // https://www.cslapp.com/tuan/product/uploadPic?saleId=1&files=121211221
+    // http://localhost:8080/tuan/product/uploadPic?saleId=1&files=121211221
     // /tuan/product/uploadPic?id=卖家ID&files=需要上传的所有图片
     @RequestMapping("/uploadPic")
     public Object uploadFile(MultipartFile[] files, TUserSale sale, String saleId) {
@@ -130,7 +132,6 @@ public class TProductsController {
                 try {
                     //返回上传的图片地址
                     url = tossClientUtil.uploadImg2Oss(multipartFile);
-
                 } catch (MyException e) {
                     e.printStackTrace();
                 }
@@ -144,6 +145,10 @@ public class TProductsController {
         }
         //更新sale的存储空间
         tUserSaleService.update(tUserSale);
+        if (files==null||files.length==0){
+            System.out.println("files为空");
+        }
+        System.out.println(stringBuffer.toString());
         return new TUploadRepo(stringBuffer.toString());
     }
 
@@ -151,6 +156,18 @@ public class TProductsController {
     @RequestMapping("/list")
     public TResult list(@RequestParam Map<String, String> map, @RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize) {
         Iterable<TProducts> iterable = tProductsService.list(map, pageNumber, pageSize);
+        Iterator<TProducts> iterator=iterable.iterator();
+        while (iterator.hasNext()){
+            TProducts products=iterator.next();
+            List<TProductsTypes> productsTypes= products.getProductsTypes();
+            List<TProductsTypes> list=new ArrayList<>();
+            for (TProductsTypes types:productsTypes){
+                if (types.getIsActive()){
+                    list.add(types);
+                }
+            }
+            products.setProductsTypes(list);
+        }
         return new TResult(false, TGlobal.do_success, iterable);
     }
 

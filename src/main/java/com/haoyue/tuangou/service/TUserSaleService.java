@@ -14,12 +14,13 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /**
  * Created by LiJia on 2017/11/2.
  */
-@Service
+@Service("TUserSaleService")
 public class TUserSaleService {
 
     @Autowired
@@ -131,5 +132,17 @@ public class TUserSaleService {
             sale.setIdentification(tUserSale.getIdentification());
         }
         tUserSaleRepo.save(sale);
+    }
+
+    public void update2(TUserSale userSale){
+        tUserSaleRepo.save(userSale);
+    }
+
+    public TUserSale findOneById(int id){
+        return tUserSaleRepo.findOne(id);
+    }
+
+    public List<TUserSale> findByOnlineCode(String onlinecode) {
+        return tUserSaleRepo.findByOnlineCode(onlinecode);
     }
 }

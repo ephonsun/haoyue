@@ -37,6 +37,7 @@ public class OrderService {
 
         QOrder order = QOrder.order;
         BooleanBuilder bd = new BooleanBuilder();
+        boolean flag = false;
         for (String name : map.keySet()) {
             String value = (String) map.get(name);
             if (!(StringUtils.isNullOrBlank(value))) {
@@ -63,13 +64,19 @@ public class OrderService {
                 if (name.equals("isApplyReturn")) {
                     bd.and(order.isApplyReturn.eq(Boolean.valueOf(value)));
                 }
-                if (name.equals("luckdraw")){
+                if (name.equals("luckdraw")) {
                     bd.and(order.isLuckDraw.eq(true));
+                    bd.and(order.state.ne(Global.order_luckdraw_unpay));
+                    flag = true;
                 }
-                if (name.equals("luck")){
+                if (name.equals("luck")) {
                     bd.and(order.isLuck.eq(true));
                 }
             }
+        }
+        if (flag) {
+            int count = orderRepo.findLuckDrawSize(map.get("sellerId"));
+            return orderRepo.findAll(bd.getValue(), new PageRequest(pageNumber, count, new Sort(Sort.Direction.DESC, new String[]{"createDate"})));
         }
         return orderRepo.findAll(bd.getValue(), new PageRequest(pageNumber, pageSize, new Sort(Sort.Direction.DESC, new String[]{"createDate"})));
     }
@@ -96,7 +103,7 @@ public class OrderService {
                 if (name.equals("active")) {
                     bd.and(order.active.eq(true));
                 }
-                if (name.equals("luckdraw")){
+                if (name.equals("luckdraw")) {
                     bd.and(order.isLuckDraw.eq(true));
                 }
             }
@@ -125,12 +132,12 @@ public class OrderService {
     }
 
 
-    public double getToTalPriceByCustomerId(String cid,String sellerId,Date date) {
-        return orderRepo.getToTalPriceBySellerId(cid,sellerId,date);
+    public double getToTalPriceByCustomerId(String cid, String sellerId, Date date) {
+        return orderRepo.getToTalPriceBySellerId(cid, sellerId, date);
     }
 
-    public Date getdate(){
-        Date date=new Date();
+    public Date getdate() {
+        Date date = new Date();
         date.setMonth(0);
         date.setDate(1);
         date.setHours(0);
@@ -141,7 +148,7 @@ public class OrderService {
     // 卖家更新会员系统后，刷新所有买家会员信息
     public void getToTalPriceByCustomer(String sellerId, List<Member> news) {
         // 查询该年至今所有买家的交易额
-        List<OrderTotalPrice> list = orderRepo.getToTalPriceBySellerAndCustomer(sellerId,getdate());
+        List<OrderTotalPrice> list = orderRepo.getToTalPriceBySellerAndCustomer(sellerId, getdate());
         String total_consume_1 = "";
         String discount_1 = "";
         String total_consume_2 = "";
@@ -190,7 +197,7 @@ public class OrderService {
                     member.setSellerId(sellerId);
                     member.setCreateDate(new Date());
                     member.setOpenId(openId);
-                    member.setTotal_consume(each.getTotal_price()+"");
+                    member.setTotal_consume(each.getTotal_price() + "");
                 }
                 member.setDiscount(result_discount);
                 member.setLeavel("lev" + index);
@@ -201,9 +208,9 @@ public class OrderService {
                 }
             }
             //删除老会员
-            if (index==0){
+            if (index == 0) {
                 Member member = memberService.findByOpenIdAndSellerId(sellerId, openId);
-                if (member!=null&&member.getId()!=null){
+                if (member != null && member.getId() != null) {
                     memberService.del(member);
                 }
             }
@@ -211,11 +218,11 @@ public class OrderService {
     }
 
     public List<String> findBySellerIdAndProIdAndIsLuckDrawEnd(Integer sellerId, Integer pid) {
-        List<Integer> oids= orderRepo.findBySellerIdAndProIdAndIsLuckDrawEnd(pid);
-        List<String> codes=new ArrayList<>();
-        for (Integer id:oids){
-            Order order=orderRepo.findOne(id);
-            if (order.getIsLuckDraw()==true&&order.getIsLuckDrawEnd()==false){
+        List<Integer> oids = orderRepo.findBySellerIdAndProIdAndIsLuckDrawEnd(pid);
+        List<String> codes = new ArrayList<>();
+        for (Integer id : oids) {
+            Order order = orderRepo.findOne(id);
+            if (order.getIsLuckDraw() == true && order.getIsLuckDrawEnd() == false) {
                 codes.add(order.getLuckcode());
             }
         }
@@ -223,17 +230,32 @@ public class OrderService {
     }
 
     public void updateIsLuckDrawEnd(Integer pid) {
-        List<Integer> oids= orderRepo.findBySellerIdAndProIdAndIsLuckDrawEnd(pid);
-        for (Integer id:oids){
-            Order order=orderRepo.findOne(id);
-            if (order.getIsLuckDrawEnd()==false) {
+        List<Integer> oids = orderRepo.findBySellerIdAndProIdAndIsLuckDrawEnd(pid);
+        for (Integer id : oids) {
+            Order order = orderRepo.findOne(id);
+            if (order.getIsLuckDrawEnd() == false) {
                 order.setIsLuckDrawEnd(true);
+                if (order.getIsLuck()) {
+                    //中奖-待发货
+                    order.setState(Global.order_unsend);
+                } else {
+                    //未中奖-已完成
+                    order.setState(Global.order_finsh);
+                }
                 orderRepo.save(order);
             }
         }
     }
 
     public List<Order> findBySellerIdAndCreateDate(String sellerId, Date from, Date end) {
-        return orderRepo.findBySellerIdAndCreateDate(sellerId,from,end);
+        return orderRepo.findBySellerIdAndCreateDate(sellerId, from, end);
+    }
+
+    public void updateIsLuckDrawEndBySeller(String sellerId) {
+        orderRepo.updateIsLuckDrawEndBySeller(sellerId);
+    }
+
+    public List<String> findByLuckCodeBySeller(Integer sellerId) {
+        return orderRepo.findByLuckCodeBySeller(sellerId);
     }
 }

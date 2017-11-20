@@ -70,11 +70,11 @@ public class TDeliverTemplatesController {
         return new TResult(false, TGlobal.do_success,null);
     }
 
-    //   /tuan/tdelivertemplates/del_template?saleId=卖家Id&id=12
+    //   https://www.cslapp.com/tuan/tdelivertemplates/del_template?saleId=7&id=2
     @RequestMapping("/del_template")
     public TResult del_template(TDeliverTemplate template){
         TDeliverTemplate deliverTemplate=templateService.findOne(template.getId());
-        if (template.getSaleId()!=deliverTemplate.getSaleId()){
+        if (!template.getSaleId().equals(deliverTemplate.getSaleId())){
             return new TResult(true, TGlobal.have_no_right,null);
         }
         templateService.del(deliverTemplate);

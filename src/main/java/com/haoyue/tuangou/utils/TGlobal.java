@@ -24,6 +24,7 @@ public class TGlobal {
     //卖家更新信息
     public static String oldpass_not_right="原密码不正确";
     public static String oldpass_right="原密码正确";
+    public static String out_line="当前账号已被登录，你已被迫下线，如遇密码泄露，请尽快修改";
 
     //阿里云
     //http://haoyue.oss-cn-beijing.aliyuncs.com/hymarket/2017/10/10/1507615986025.jpg

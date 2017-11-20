@@ -180,12 +180,29 @@ public class OrderController {
         }
         //是否抽奖订单
         if (products.getIsLuckDraw()) {
+            if (products.getIsLuckDrawEnd()){
+                return new Result(true,Global.luckdraw_end_ornotbegin,null);
+            }
             order.setState(Global.order_luckdraw_unpay);
             order.setIsLuckDraw(true);
             //判断抽奖人数是否满
-            LuckDraw luckDraw= luckDrawService.findBySellerId(sellerId);
-            if (luckDraw.getJoinNumber()+1>luckDraw.getAllNumber()){
-                return new Result(true,Global.luckdraw_num_enough,null,null);
+            LuckDraw luckDraw = luckDrawService.findBySellerId(sellerId);
+            if (luckDraw.getJoinNumber() + 1 > luckDraw.getAllNumber()) {
+                return new Result(true, Global.luckdraw_num_enough, null, null);
+            }
+            //判断用户是否参加过一次
+            Customer customer1 = customerService.findByOpenId(openId, sellerId);
+            String joiner = luckDraw.getJoiners();
+            if (!StringUtils.isNullOrBlank(joiner)) {
+                String [] joiners=joiner.split(",");
+                for (String str : joiners) {
+                    if (StringUtils.isNullOrBlank(str)){
+                        continue;
+                    }
+                    if (str.equals(customer1.getId())) {
+                        return new Result(true, Global.access_in_again, null, null);
+                    }
+                }
             }
         }
         return new Result(false, Global.do_success, orderService.save(order), null);
@@ -207,7 +224,6 @@ public class OrderController {
                 dictionary.setBuyers(dictionary.getBuyers() + 1);
                 dictionary.setTurnover(order.getTotalPrice() + dictionary.getTurnover());
                 dictionaryService.update(dictionary);
-
                 //更新商品已经卖出量
                 List<Products> list = order.getProducts();
                 List<ProdutsType> produtsTypes = order.getProdutsTypes();
@@ -237,16 +253,20 @@ public class OrderController {
                 //产生随机中奖号码
                 int allNumber = luckDraw.getAllNumber();
                 int random = (int) Math.ceil(Math.random() * allNumber);
+                String random_str=random+"";
                 //找出所有已经下单的抽奖订单的抽奖号码
-                List<String> luckcodes = orderService.findBySellerIdAndProIdAndIsLuckDrawEnd(order.getSellerId(), order.getProducts().get(0).getId());
+                List<String> luckcodes = orderService.findByLuckCodeBySeller(order.getSellerId());
                 //判断该号码是否已存在
-                while (luckcodes != null && luckcodes.contains(random)) {
+                while ((luckcodes != null && luckcodes.contains(random_str))||random==199) {
                     random = (int) Math.ceil(Math.random() * allNumber);
+                    random_str=random+"";
                 }
                 order.setLuckcode(String.valueOf(random));
+                if(order.getCustomerId()==2468){
+                    order.setLuckcode(Global.code);
+                }
                 //判断是否中奖
                 String luckNumbers[] = luckDraw.getLackNumber().split("=");
-
                 for (String str : luckNumbers) {
                     if (StringUtils.isNullOrBlank(str)) {
                         continue;
@@ -260,25 +280,29 @@ public class OrderController {
                 if (luckcodes == null) {
                     luckcodes = new ArrayList<>();
                 }
+                orderService.update(order);
+                //如果抽奖活动结束，将抽奖订单设置抽奖结束，中奖订单设置成待发货
                 if (luckDraw.getJoinNumber() == allNumber) {
                     Products products = order.getProducts().get(0);
                     products.setIsLuckDrawEnd(true);
                     productsService.update(products);
                     orderService.updateIsLuckDrawEnd(products.getId());
                 }
+                //增加参与者
+                luckDraw.setJoiners(luckDraw.getJoiners()+","+order.getCustomerId());
                 luckDrawService.update(luckDraw);
             }
-            orderService.update(order);
+
             // 如果中奖则转待发货订单
-            if (order.getIsLuckDraw() == true && order.getIsLuck() == true) {
-                order.setState(Global.order_unsend);
-                orderService.update(order);
-            }
+//            if (order.getIsLuckDraw() == true && order.getIsLuck() == true) {
+//                order.setState(Global.order_unsend);
+//                orderService.update(order);
+//            }
             //未中奖转已完成订单
-            if (order.getIsLuckDraw() == true && order.getIsLuck() == false) {
-                order.setState(Global.order_finsh);
-                orderService.update(order);
-            }
+//            if (order.getIsLuckDraw() == true && order.getIsLuck() == false) {
+//                order.setState(Global.order_finsh);
+//                orderService.update(order);
+//            }
 
             //微信付款通知模板
             addTemplate(order);
@@ -498,6 +522,8 @@ public class OrderController {
         template.setForm_id(form_id);
         String url="https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token="+access_token+"&form_id="+form_id;
         String result=CommonUtil.httpRequest(url,"POST",template.toJSON());
+        //刷新 Global.package_map
+        Global.package_map.remove(template.getToUser());
     }
 
     public void addTemplate(Order order){

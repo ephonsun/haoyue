@@ -40,7 +40,10 @@ public class TPayDealService {
         }
 
         return TPayDealRepo.findAll(bd.getValue(),new PageRequest(pageNumber, pageSize));
+    }
 
+    public TPayDeal findByOut_trade_no(String out_trade_no){
+        return TPayDealRepo.findByOut_trade_no(out_trade_no);
     }
 
 }

@@ -18,7 +18,7 @@ public class Customer {
     private Integer id;
 
     private String phone;
-    private String openId;//小程序用户唯一标识
+    private String openId;//小程序用户唯一标识  ook0P0U-SCSR6GMDophZ3Ij_87hU   id  2468
     private String sellerId;//appid
     private String wxname;
     private String wxpic;

@@ -30,10 +30,8 @@ public class BaseInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
-
-//        仅供nginx调试使用
+        // 仅供nginx调试使用
         response.setHeader("Access-Control-Allow-Origin", "*");
-
         Map<String, String[]> map = request.getParameterMap();
         System.out.println("访问时间  " + StringUtils.getstrDate());
         System.out.println("访问路径  " + request.getRequestURI());
@@ -41,7 +39,11 @@ public class BaseInterceptor implements HandlerInterceptor {
         for (String key : map.keySet()) {
             System.out.println(key + "=" + map.get(key)[0]);
         }
-
+        String url = request.getRequestURI();
+        //如果是拼多多直接跳过
+        if (url.contains("/tuan")){
+            return true;
+        }
         //注入service
         BeanFactory factory = WebApplicationContextUtils.getRequiredWebApplicationContext(request.getServletContext());
         sellerService = (SellerService) factory.getBean("SellerService");
@@ -52,7 +54,6 @@ public class BaseInterceptor implements HandlerInterceptor {
         }
 
         //校验是否携带参数token
-        String url = request.getRequestURI();
         if (Global.urls().contains(url) || url.contains("super-admin") || url.contains("leave-message")) {
             return true;
         } else {

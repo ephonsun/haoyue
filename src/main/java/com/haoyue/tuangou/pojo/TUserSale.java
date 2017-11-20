@@ -17,6 +17,8 @@ public class TUserSale {
     @GeneratedValue
     private Integer id;
     private String appId;
+    private String machId;// 1487862802
+    private String key1;//支付密匙  hecaishangwu1234hecaishangwu1234
     private String name;
     private String pass;
     private String email;
@@ -33,6 +35,22 @@ public class TUserSale {
     @Column(updatable=false)
     private Date createDate;//创建日期
 
+
+    public String getMachId() {
+        return machId;
+    }
+
+    public void setMachId(String machId) {
+        this.machId = machId;
+    }
+
+    public String getKey1() {
+        return key1;
+    }
+
+    public void setKey1(String key1) {
+        this.key1 = key1;
+    }
 
     public String getIdentification() {
         return identification;

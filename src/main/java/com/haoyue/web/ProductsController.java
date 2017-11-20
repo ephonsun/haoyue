@@ -41,6 +41,7 @@ public class ProductsController {
         return new Result(false, "", productsService.plist(map, pageNumber, pageSize), map.get("token"));
     }
 
+    // http://localhost:8080/seller/pro/uploadPic?token=1&multipartFiles=12221
     @RequestMapping("/uploadPic")
     public Object uploadPic(MultipartFile[] multipartFiles, String token) throws IOException, MyException {
         Seller seller = sellerService.findOne(Integer.parseInt(token));

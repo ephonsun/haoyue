@@ -43,7 +43,7 @@ public class PayAction {
      * 前后再调用 wx.request(object) 进行支付
      */
     @RequestMapping("/do")
-    public JSONArray pay(String body, String appId, String mchId, String ip, String openId, String key1, String session_key, String total_fee) throws UnsupportedEncodingException, DocumentException, MyException {
+    public JSONArray pay(String body, String appId, String mchId, String ip, String openId,  String key1, String session_key, String total_fee) throws UnsupportedEncodingException, DocumentException, MyException {
         synchronized (Global.object) {
             if (StringUtils.isNullOrBlank(openId)) {
                 throw new MyException(Global.openId_isNull, null, 102);
@@ -209,6 +209,7 @@ public class PayAction {
         payDeal.setTransaction_id(map.get("transaction_id"));
         payDeal.setDate(StringUtils.formatDate(map.get("time_end")));
         payDeal.setAppId(map.get("appid"));
+        payDeal.setOut_trade_no(map.get("out_trade_no"));
         payDealService.save(payDeal);
 
         BufferedOutputStream out = new BufferedOutputStream(
@@ -220,19 +221,19 @@ public class PayAction {
 
     @RequestMapping("/sendTemplate")
     public void getTemplate(String openId,String data){
-        //模板信息通知用户
-            //获取 access_token
-        String access_token_url="https://api.weixin.qq.com/cgi-bin/token";
-        String param1="grant_type=client_credential&appid=wxe46b9aa1b768e5fe&secret=8bcdb74a9915b5685fa0ec37f6f25b24";
-        String access_token= HttpRequest.sendPost(access_token_url,param1);
-        access_token=access_token.substring(access_token.indexOf(":")+2,access_token.indexOf(",")-1);
-            //发送模板信息
-        String url="https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send";
-        String form_id=Global.package_map.get(openId);
-        Global.package_map.remove(openId);
-        String param2="access_token="+access_token+"&touser="+openId+"&template_id=Z_Xg6rYdQgci4FP_aOjTvZHXeC5BSs99EwARD6NJXWk&form_id"+form_id+"&data="+data;
-        String result=HttpRequest.sendPost(url,param2);
-        System.out.println(result);
+//        //模板信息通知用户
+//            //获取 access_token
+//        String access_token_url="https://api.weixin.qq.com/cgi-bin/token";
+//        String param1="grant_type=client_credential&appid=wxe46b9aa1b768e5fe&secret=8bcdb74a9915b5685fa0ec37f6f25b24";
+//        String access_token= HttpRequest.sendPost(access_token_url,param1);
+//        access_token=access_token.substring(access_token.indexOf(":")+2,access_token.indexOf(",")-1);
+//            //发送模板信息
+//        String url="https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send";
+//        String form_id=Global.package_map.get(openId);
+//        Global.package_map.remove(openId);
+//        String param2="access_token="+access_token+"&touser="+openId+"&template_id=Z_Xg6rYdQgci4FP_aOjTvZHXeC5BSs99EwARD6NJXWk&form_id"+form_id+"&data="+data;
+//        String result=HttpRequest.sendPost(url,param2);
+//        System.out.println(result);
     }
 
     /**

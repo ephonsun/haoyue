@@ -103,6 +103,13 @@
 			<scope>system</scope>
 			<systemPath>${basedir}/src/lib/json-lib.jar</systemPath>
 		</dependency>
+		<dependency>
+			<groupId>goeasy-sdk</groupId>
+			<artifactId>goeasy-sdk</artifactId>
+			<version>1.0</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/src/lib/goeasy-sdk.jar</systemPath>
+		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/com.aliyun/aliyun-java-sdk-core -->
 		<dependency>

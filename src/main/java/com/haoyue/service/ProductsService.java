@@ -234,4 +234,8 @@ public class ProductsService {
         ptypeNamesService.save(ptypeNames);
     }
 
+    public List<Products> findBySellerIdAndCreateDate(String sellerId, Date date) {
+        return productsRepo.findBySellerIdAndCreateDate(sellerId,date);
+    }
+
 }

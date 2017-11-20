@@ -148,72 +148,72 @@ public class ProductDailyRecordController {
     // 详情页跳出率
     // /product/dailyrecord/jumpout?sellerId=12
     @RequestMapping("/jumpout")
-    public Result jumpout(String sellerId){
+    public Result jumpout(String sellerId) {
         //获取当日商品浏览数
         Date now = new Date();
         Date date = StringUtils.getYMD(now);
         List<ProductDailyRecord> list1 = productDailyRecordService.findBySellerIdAndCreateDate(sellerId, date);
-        int views=0;
-        if (list1==null){
-            views=0;
-        }else {
-            for (ProductDailyRecord record:list1){
-               views+=record.getViews();
+        int views = 0;
+        if (list1 == null) {
+            views = 0;
+        } else {
+            for (ProductDailyRecord record : list1) {
+                views += record.getViews();
             }
         }
         //获取当日加入购物车人数
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DATE, 1);
-        List<ShopCar> list2= shopCarService.findBySellerIdAndCreateDate(sellerId,date,calendar.getTime());
-        if (list2==null){
-            list2=new ArrayList<>();
+        List<ShopCar> list2 = shopCarService.findBySellerIdAndCreateDate(sellerId, date, calendar.getTime());
+        if (list2 == null) {
+            list2 = new ArrayList<>();
         }
         //获取当日收藏人数
-        List<Collection> list3= collectionsService.findBySellerIdAndCreateDate(sellerId,date);
-        if (list3==null){
-            list3=new ArrayList<>();
+        List<Collection> list3 = collectionsService.findBySellerIdAndCreateDate(sellerId, date);
+        if (list3 == null) {
+            list3 = new ArrayList<>();
         }
         //获取当日订单数，不管是否付款
-        List<Order> list4= orderService.findBySellerIdAndCreateDate(sellerId,date,calendar.getTime());
-        if (list4==null){
-            list4=new ArrayList<>();
+        List<Order> list4 = orderService.findBySellerIdAndCreateDate(sellerId, date, calendar.getTime());
+        if (list4 == null) {
+            list4 = new ArrayList<>();
         }
 
         // 当日跳出率=（商品浏览数-加入购物车人数-收藏人数-订单成交数）/商品浏览数
-        double rate1=(views-list2.size()-list3.size()-list4.size())/views;
+        double rate1 = (views - list2.size() - list3.size() - list4.size()) / views;
 
         //获取昨日商品浏览数
         Calendar calendar2 = Calendar.getInstance();
         calendar2.add(Calendar.DATE, -1);
-        views=0;
+        views = 0;
         List<ProductDailyRecord> list11 = productDailyRecordService.findBySellerIdAndCreateDate(sellerId, calendar2.getTime());
-        if (list11==null){
-            views=0;
-        }else {
-            for (ProductDailyRecord record:list11){
-                views+=record.getViews();
+        if (list11 == null) {
+            views = 0;
+        } else {
+            for (ProductDailyRecord record : list11) {
+                views += record.getViews();
             }
         }
         //获取昨日加入购物车人数
-        List<ShopCar> list22= shopCarService.findBySellerIdAndCreateDate(sellerId,calendar2.getTime(),date);
-        if (list22==null){
-            list22=new ArrayList<>();
+        List<ShopCar> list22 = shopCarService.findBySellerIdAndCreateDate(sellerId, calendar2.getTime(), date);
+        if (list22 == null) {
+            list22 = new ArrayList<>();
         }
         //获取昨日收藏人数
-        List<Collection> list33= collectionsService.findBySellerIdAndCreateDate(sellerId,calendar2.getTime());
-        if (list33==null){
-            list33=new ArrayList<>();
+        List<Collection> list33 = collectionsService.findBySellerIdAndCreateDate(sellerId, calendar2.getTime());
+        if (list33 == null) {
+            list33 = new ArrayList<>();
         }
         //获取昨日订单数，不管是否付款
-        List<Order> list44= orderService.findBySellerIdAndCreateDate(sellerId,calendar2.getTime(),date);
-        if (list44==null){
-            list44=new ArrayList<>();
+        List<Order> list44 = orderService.findBySellerIdAndCreateDate(sellerId, calendar2.getTime(), date);
+        if (list44 == null) {
+            list44 = new ArrayList<>();
         }
 
         // 昨日跳出率=（商品浏览数-加入购物车人数-收藏人数-订单成交数）/商品浏览数
-        double rate2=(views-list22.size()-list33.size()-list44.size())/views;
+        double rate2 = (views - list22.size() - list33.size() - list44.size()) / views;
 
-        return new Result(false,Global.do_success,String.valueOf(rate2),String.valueOf(rate1));
+        return new Result(false, Global.do_success, String.valueOf(rate2), String.valueOf(rate1));
     }
 
 
@@ -278,10 +278,74 @@ public class ProductDailyRecordController {
         }
     }
 
-
-    // // TODO: 2017/11/15 异常商品
+    // 异常商品
     // 1 获取本月之前上传的商品
     //  2 分别得到每个商品上一个月对应的总浏览量s1
     //   3  分别得到每个商品当前月对应的总浏览量s2
     //    4  对比s1和s2，如果s1小于100跳过，如果s1大于100，s2下降50%以上，该商品为异常商品
+    // /product/dailyrecord/unusualProducts?sellerId=12
+    @RequestMapping("/unusualproducts")
+    public Result unusualProducts(String sellerId) {
+        // 1 获取本月之前上传的商品
+        Date date = new Date();
+        date.setDate(1);
+        date = StringUtils.getYMD(date);
+        int num = 0;
+        List<Products> list = productsService.findBySellerIdAndCreateDate(sellerId, date);
+        // 如果上传的商品数量为0
+        if (list == null) {
+            return new Result(false, Global.do_success, num, null);
+        }
+        //  2 分别得到每个商品上一个月对应的总浏览量s1,小于100跳过
+        int pid = 0;
+        List<Products> productsList = new ArrayList<>();
+        for (Products products : list) {
+            num = 0;
+            pid = products.getId();
+            List<ProductDailyRecord> productDailyRecordList = productDailyRecordService.findByPidLastMonth(pid);
+            for (ProductDailyRecord record : productDailyRecordList) {
+                num += record.getViews();
+            }
+            if (num > 100) {
+                products.setViews(num);
+                productsList.add(products);
+            }
+        }
+        //   3  分别得到每个商品当前月对应的总浏览量s2
+        List<Products> productsList2 = new ArrayList<>();
+        for (Products products : list) {
+            num = 0;
+            pid = products.getId();
+            List<ProductDailyRecord> productDailyRecordList = productDailyRecordService.findByPidThisMonth(pid);
+            for (ProductDailyRecord record : productDailyRecordList) {
+                num += record.getViews();
+            }
+            products.setViews(num);
+            productsList2.add(products);
+        }
+
+        //    4  对比s1和s2，s2下降50%以上，该商品为异常商品
+        //如果 productsList 为空
+        if (productsList.size() == 0) {
+            return new Result(false, Global.do_success, 0, null);
+        }
+        //如果 productsList2 为空
+        if (productsList2.size() == 0) {
+            return new Result(false, Global.do_success, productsList, null);
+        }
+        //如果 productsList  productsList2 不为空
+        List<Products> productsList3 = new ArrayList<>();
+        for (int i = 0; i < productsList.size(); i++) {
+            for (int j = 0; j < productsList2.size(); j++) {
+                if (productsList.get(i).getId() == productsList2.get(j).getId()) {
+                    if (productsList.get(i).getViews() / productsList2.get(j).getViews() >= 2) {
+                        productsList3.add(productsList.get(i));
+                    }
+                }
+            }
+        }
+        return new Result(false, Global.do_success, productsList3, null);
+    }
+
+
 }

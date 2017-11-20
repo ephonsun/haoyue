@@ -5,7 +5,9 @@ package com.haoyue.tuangou.wxpay;
  */
 
 
-import com.haoyue.tuangou.Exception.MyException;
+import com.haoyue.tuangou.Exception.TMyException;
+import com.haoyue.tuangou.pojo.TuanOrders;
+import com.haoyue.tuangou.service.TuanOrdersService;
 import com.haoyue.tuangou.utils.StringUtils;
 import com.haoyue.tuangou.utils.TGlobal;
 import net.sf.json.JSONArray;
@@ -35,19 +37,21 @@ public class TPayAction {
 
     @Autowired
     private TPayDealService TPayDealService;
+    @Autowired
+    private TuanOrdersService tuanOrdersService;
 
     /**
      * 小程序端请求的后台action，后台调用统一下单URL，对返回数据再次签名后，把数据传到前台
      * 前后再调用 wx.request(object) 进行支付
      */
     @RequestMapping("/do")
-    public JSONArray pay(String body, String appId, String mchId, String ip, String openId, String key1, String session_key, String total_fee) throws UnsupportedEncodingException, DocumentException, MyException {
+    public JSONArray pay(String body, String oid,String appId, String mchId, String ip, String openId, String key1, String session_key, String total_fee) throws UnsupportedEncodingException, DocumentException, TMyException {
         synchronized (TGlobal.pay_object) {
             if (StringUtils.isNullOrBlank(openId)) {
-                throw new MyException(TGlobal.openId_isNull, null, 102);
+                throw new TMyException(TGlobal.openId_isNull, null, 102);
             }
             if (ip.equals("undefined")) {
-                throw new MyException(TGlobal.ip_unright, null, 103);
+                throw new TMyException(TGlobal.ip_unright, null, 103);
             }
 
             //body = new String(body.getBytes("UTF-8"), "ISO-8859-1");
@@ -59,6 +63,10 @@ public class TPayAction {
             String today = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
             String code = PayUtil.createCode(8);
             String out_trade_no = mch_id + today + code;//商户订单号
+
+            // 更新团购订单的商户订单号
+            updateOrder(oid,out_trade_no);
+
             String spbill_create_ip = "替换为自己的终端IP";//终端IP
             spbill_create_ip = ip;
             String notify_url = TGlobal.notify_url;//通知地址
@@ -207,6 +215,7 @@ public class TPayAction {
         TPayDeal.setTransaction_id(map.get("transaction_id"));
         TPayDeal.setDate(StringUtils.formatDate(map.get("time_end")));
         TPayDeal.setAppId(map.get("appid"));
+        TPayDeal.setOut_trade_no(map.get("out_trade_no"));
         TPayDealService.save(TPayDeal);
 
         BufferedOutputStream out = new BufferedOutputStream(
@@ -238,6 +247,12 @@ public class TPayAction {
         String prestr = PayUtil.createLinkString(map);
         String mysign = PayUtil.sign(prestr, key, "utf-8").toUpperCase();
         String param = "appid=" + appId + "&mch_id=" + machId + "&transaction_id=" + transaction_id + "&nonce_str=" + nonceStr + "&sign=" + mysign;
+    }
+
+    public void updateOrder(String oid,String out_trade_no){
+        TuanOrders tuanOrders= tuanOrdersService.findOne(Integer.parseInt(oid));
+        tuanOrders.setOut_trade_no(out_trade_no);
+        tuanOrdersService.update(tuanOrders);
     }
 
 }

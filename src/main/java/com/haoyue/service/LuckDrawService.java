@@ -13,9 +13,14 @@ public class LuckDrawService {
 
     @Autowired
     private LuckDrawRepo luckDrawRepo;
+    @Autowired
+    private OrderService orderService;
 
     public void save(LuckDraw luckDraw) {
+        //删除之前的抽奖数据
         luckDrawRepo.delBySellerId(luckDraw.getSellerId());
+        //刷新订单 is_luck_draw_end
+        orderService.updateIsLuckDrawEndBySeller(luckDraw.getSellerId());
         luckDrawRepo.save(luckDraw);
     }
 

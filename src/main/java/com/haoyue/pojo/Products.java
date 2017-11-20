@@ -66,7 +66,15 @@ public class Products {
     private Integer shopcar_count;//被加入购物车数量
     private boolean isLuckDraw=false;//是否抽奖
     private boolean isLuckDrawEnd=false;
+    private int views;
 
+    public int getViews() {
+        return views;
+    }
+
+    public void setViews(int views) {
+        this.views = views;
+    }
 
     public boolean getIsLuckDrawEnd() {
         return isLuckDrawEnd;

@@ -49,6 +49,24 @@ public class Seller implements Serializable{
     private String lunbo;//店铺图片对应的商品编号
     private String onlineCode;//在线凭证
     private boolean isMember=false;
+    private String mchId;
+    private String key1;//支付密匙
+
+    public String getMchId() {
+        return mchId;
+    }
+
+    public void setMchId(String mchId) {
+        this.mchId = mchId;
+    }
+
+    public String getKey1() {
+        return key1;
+    }
+
+    public void setKey1(String key1) {
+        this.key1 = key1;
+    }
 
     public boolean getIsMember() {
         return isMember;

@@ -78,8 +78,13 @@ public class TuanOrdersController {
                 Iterable<TuanOrders> iterable = tuanOrdersService.filter(map);
                 Iterator<TuanOrders> iterator = iterable.iterator();
                 TuanOrders orders = iterator.next();
+                //判断时间
                 if (orders.getStartDate().before(date)) {
                     return new TResult(true, TGlobal.tuan_time_too_late, null);
+                }
+                //判断人数
+                if (orders.getJoinNum()+1>orders.getStartNum()){
+                    return new TResult(true, TGlobal.tuan_num_too_late, null);
                 }
                 tuanOrders.setEndDate(orders.getEndDate());
                 tuanOrders.setStartDate(orders.getStartDate());

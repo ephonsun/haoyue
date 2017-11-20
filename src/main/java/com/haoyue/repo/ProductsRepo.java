@@ -4,6 +4,7 @@ import com.haoyue.pojo.Products;
 import com.haoyue.repo.BaseRepo;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -15,4 +16,7 @@ public interface ProductsRepo extends BaseRepo<Products,Integer> {
 
     @Query(nativeQuery = true,value = "select distinct(ptype_name) from products where seller_id=?1 and active=true")
     List<String> findBySellerIdAndActive(Integer sellerId);
+
+    @Query(nativeQuery = true,value = "select * from products where seller_id=?1 and create_date<?2")
+    List<Products> findBySellerIdAndCreateDate(String sellerId, Date date);
 }

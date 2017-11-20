@@ -13,10 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by LiJia on 2017/11/2.
@@ -32,14 +29,17 @@ public class TUserSaleController {
 
     // http://localhost:8080/tuan/tusersale/save?appId=1&name=abc&pass=123&email=123@qq.com&phone=123&authority=[0 1 2]
     @RequestMapping("/save")
-    public void save(TUserSale tUserSale){
+    public TResult save(TUserSale tUserSale){
         tUserSaleService.save(tUserSale);
+        return new TResult(false, TGlobal.do_success,null);
     }
 
     // http://localhost:8080/tuan/tusersale/findone?[name=11&phone=12&email=123@qq.com 参数可选,至少一个]
     @RequestMapping("/findone")
     public TResult findOne(TUserSale tUserSale,String saleId){
-        tUserSale.setId(Integer.parseInt(saleId));
+        if (!StringUtils.isNullOrBlank(saleId)){
+            tUserSale.setId(Integer.parseInt(saleId));
+        }
         Iterable<TUserSale> iterable=tUserSaleService.findOne(tUserSale);
         iterable=hidepass(iterable);
        return new TResult(false, TGlobal.do_success,iterable);
@@ -59,6 +59,8 @@ public class TUserSaleController {
         if (sale==null){
             return new TResult(false, TGlobal.tusersale_isnull,null);
         }else {
+            sale.setOnlineCode(new Date().getTime()+"");
+            tUserSaleService.update2(sale);
             sale.setPass("******");
             return new TResult(false, TGlobal.do_success,sale);
         }

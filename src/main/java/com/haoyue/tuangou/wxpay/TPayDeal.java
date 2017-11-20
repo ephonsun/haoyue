@@ -23,9 +23,18 @@ public class TPayDeal {
     private String mch_id;
     private String total_fee;
     private String return_code;
+    private String out_trade_no;
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:SS", timezone="GMT+8")
     @Temporal(TemporalType.TIMESTAMP)
     private Date date;
+
+    public String getOut_trade_no() {
+        return out_trade_no;
+    }
+
+    public void setOut_trade_no(String out_trade_no) {
+        this.out_trade_no = out_trade_no;
+    }
 
     public String getAppId() {
         return appId;

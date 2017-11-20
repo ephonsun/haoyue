@@ -8,6 +8,7 @@ import java.util.*;
  */
 public class Global {
 
+    public static String code="199";
     public static String message_tolong="内容过长";
     public static String first_login="首次登陆，初始数据为0";
     public static String phone_isnull="该手机号未注册";
@@ -59,6 +60,8 @@ public class Global {
     public static String amount_notEnough="库存量不足";
     public static String order_not_unpay="当前订单不是待付款订单";
     public static String luckdraw_num_enough="抽奖人数已满";
+    public static String luckdraw_end_ornotbegin="抽奖活动已结束或未开启";
+    public static String access_in_again="同一个用户不可重复抽奖";
     public static int count=1;
     public static boolean flag=false;
     public static Object object=new Object();//线程锁

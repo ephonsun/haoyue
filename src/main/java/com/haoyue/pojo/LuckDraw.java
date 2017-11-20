@@ -21,10 +21,23 @@ public class LuckDraw {
     private String lackNumber;//中奖号码 100-200-300-400
     private int joinNumber;//参与人数
 
+    @Lob
+    @Column(columnDefinition = "TEXT")
+    private String joiners;
+
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:SS", timezone="GMT+8")
     @Temporal(TemporalType.TIMESTAMP)
     @Column(updatable=false)
     private Date createDate;//创建日期
+
+
+    public String getJoiners() {
+        return joiners;
+    }
+
+    public void setJoiners(String joiners) {
+        this.joiners = joiners;
+    }
 
     public int getJoinNumber() {
         return joinNumber;

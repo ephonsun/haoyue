@@ -23,6 +23,9 @@ public class TDeliverTemplateService {
     }
 
     public void del(TDeliverTemplate deliverTemplate) {
+        //删除关联表数据
+        tDeliverTemplateRepo.deleteById(deliverTemplate.getId());
+        //删除原来表数据
         tDeliverTemplateRepo.delete(deliverTemplate);
     }
 }

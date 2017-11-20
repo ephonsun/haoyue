@@ -188,6 +188,10 @@ public class TuanOrdersService {
 
     //定时刷新团购订单状态
     public void flush() {
-        tuanOrdersRepo.flushdata();
+        tuanOrdersRepo.flushdata(new Date());
+    }
+
+    public TuanOrders findByOut_trade_no(String out_trade_no) {
+        return tuanOrdersRepo.findByOut_trade_no(out_trade_no);
     }
 }

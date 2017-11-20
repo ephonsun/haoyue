@@ -3,11 +3,11 @@ package com.haoyue.tuangou.Exception;
 /**
  * Created by LiJia on 2017/8/25.
  */
-public class MyException extends Exception {
+public class TMyException extends Exception {
 
     private Integer errcode;
 
-    public MyException(String message) {
+    public TMyException(String message) {
         super(message);
     }
 
@@ -19,7 +19,7 @@ public class MyException extends Exception {
         this.errcode = errcode;
     }
 
-    public MyException(String message, Throwable cause, Integer errcode) {
+    public TMyException(String message, Throwable cause, Integer errcode) {
         super(message, cause);
         this.errcode = errcode;
     }

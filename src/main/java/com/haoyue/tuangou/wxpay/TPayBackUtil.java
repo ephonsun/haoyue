@@ -27,19 +27,27 @@ public class TPayBackUtil {
 
     public static String post(String url, String xmlParam) {
         StringBuilder sb = new StringBuilder();
-
+        //获取项目根路径
+        String relativelyPath = System.getProperty("user.dir");
+        System.out.println("底层地址   "+relativelyPath);
         try {
             KeyStore keyStore = KeyStore.getInstance("PKCS12");
-            FileInputStream instream = new FileInputStream(new File(""));
+            String mkdis = relativelyPath + "/wxpayfiles/";
+            File file1 = new File(mkdis);
+            if (!file1.isDirectory()) {
+                file1.mkdirs();
+            }
+            FileInputStream instream = new FileInputStream(new File(mkdis+"apiclient_cert.p12"));
             try {
-                keyStore.load(instream, "商户id".toCharArray());
+                //商户ID
+                keyStore.load(instream, "1487862802".toCharArray());
             } finally {
                 instream.close();
             }
 
             // 证书
             SSLContext sslcontext = SSLContexts.custom()
-                    .loadKeyMaterial(keyStore, "商户id".toCharArray())
+                    .loadKeyMaterial(keyStore, "1487862802".toCharArray())
                     .build();
             // 只允许TLSv1协议
             SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(

@@ -43,9 +43,6 @@ public class TProductsService {
                 }
                 else if (name.equals("active")){
                     bd.and(products.active.eq(Boolean.valueOf(value)));
-                    if (value.equals("true")) {
-                        bd.and(products.productsTypes.any().active.eq(true));
-                    }
                 }
             }
         }

@@ -58,6 +58,15 @@ public class TuanOrders {
     @Column(updatable=false)
     private Date endDate;//结束日期
 
+    private String out_trade_no;//后期退款时候的凭证
+
+    public String getOut_trade_no() {
+        return out_trade_no;
+    }
+
+    public void setOut_trade_no(String out_trade_no) {
+        this.out_trade_no = out_trade_no;
+    }
 
     public boolean getIscomment() {
         return iscomment;

@@ -17,4 +17,6 @@ public interface TUserSaleRepo extends TBaseRepo<TUserSale,Integer> {
 
     @Query(nativeQuery = true,value = "select id from t_usersale")
     List<Integer> findAllIds();
+
+    List<TUserSale> findByOnlineCode(String onlinecode);
 }
