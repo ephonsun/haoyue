@@ -7,6 +7,7 @@ import java.util.Date;
 
 /**
  * Created by LiJia on 2017/11/14.
+ * 买家评论
  */
 @Entity
 @Table(name = "t_comment")
@@ -30,11 +31,20 @@ public class TComment {
     private String saleId;
     private String pics;//评论图片
     private String replay;//卖家回复
+    private String level;//评论等级 1 好评 2 中评 3 差评
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:SS", timezone="GMT+8")
     @Temporal(TemporalType.TIMESTAMP)
     @Column(updatable=false)
     private Date createDate;//创建日期
 
+
+    public String getLevel() {
+        return level;
+    }
+
+    public void setLevel(String level) {
+        this.level = level;
+    }
 
     public String getReplay() {
         return replay;

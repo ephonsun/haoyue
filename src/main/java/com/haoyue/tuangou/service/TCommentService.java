@@ -27,4 +27,11 @@ public class TCommentService {
     }
 
 
+    public TComment findOne(int id) {
+        return commentRepo.findOne(id);
+    }
+
+    public void update(TComment comment) {
+        commentRepo.save(comment);
+    }
 }

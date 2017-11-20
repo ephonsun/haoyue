@@ -14,8 +14,8 @@ public class TCollectionsService {
     @Autowired
     private TCollectionsRepo tCollectionsRepo;
 
-    public TCollections findByCidAndSaleId(Integer id, String saleId) {
-        return tCollectionsRepo.findByCidAndSaleId(id,saleId);
+    public TCollections findByCidAndSaleId(Integer cid, String saleId) {
+        return tCollectionsRepo.findByCidAndSaleId(String.valueOf(cid),saleId);
     }
 
     public void save(TCollections collections) {

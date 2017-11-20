@@ -1,6 +1,8 @@
 package com.haoyue.tuangou.utils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -20,6 +22,7 @@ public class TGlobal {
 
     //注册 登录
     public static String tusersale_isnull="用户名或密码错误";
+    public static String saleid_openid_isnull="saleId或者openId为空";
 
     //卖家更新信息
     public static String oldpass_not_right="原密码不正确";
@@ -71,5 +74,14 @@ public class TGlobal {
     public static String notify_url="https://www.cslapp.com/tuan/pay/notify";
     public static String common_pay_url="https://api.mch.weixin.qq.com/pay/unifiedorder";//统一下单url
     public static Map<String,String> tuan_package_map=new HashMap<>();
+
+    public static  List<String> getUrls(){
+     List<String> urls=new ArrayList<>();
+        urls.add("/tusersale");
+        return urls;
+    }
+
+
+
 
 }

@@ -62,6 +62,7 @@ public class Global {
     public static String luckdraw_num_enough="抽奖人数已满";
     public static String luckdraw_end_ornotbegin="抽奖活动已结束或未开启";
     public static String access_in_again="同一个用户不可重复抽奖";
+    public static String cannot_get_info="请设置允许获取信息后再提交订单";
     public static int count=1;
     public static boolean flag=false;
     public static Object object=new Object();//线程锁

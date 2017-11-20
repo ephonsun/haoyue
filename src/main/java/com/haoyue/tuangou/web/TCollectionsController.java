@@ -58,13 +58,17 @@ public class TCollectionsController {
         return new TResult(false, TGlobal.do_success,null);
     }
 
-    // /tuan/collection/findone?openId=1&saleId=1
+
+
+    // /tuan/collection/findone?openId=ook0P0YZbNNbUzPMNjNDIr0auSLo&saleId=2
     @RequestMapping("/findone")
     public TResult findOne(String saleId,String openId){
         TUserBuy  tUserBuy=tUserBuyService.findByOpenIdAndSaleId(openId,saleId);
         TCollections tCollections=tCollectionsService.findByCidAndSaleId(tUserBuy.getId(),saleId);
         return new TResult(false, TGlobal.do_success,tCollections);
     }
+
+
 
     // /tuan/collection/cancel?openId=1&saleId=1&pid=商品Id
     @RequestMapping("/cancel")

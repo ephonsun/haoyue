@@ -4,6 +4,7 @@ import com.haoyue.tuangou.pojo.TUserBuy;
 import com.haoyue.tuangou.service.TUserBuyService;
 import com.haoyue.tuangou.utils.TGlobal;
 import com.haoyue.tuangou.utils.TResult;
+import com.haoyue.tuangou.wxpay.HttpRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,6 +36,13 @@ public class TUserBuyController {
         userBuy.setWxname(tUserBuy.getWxname());
         tUserBuyService.update(userBuy);
         return new TResult(false, TGlobal.do_success,userBuy);
+    }
+
+    @RequestMapping("/getSessionKey")
+    public  TResult getOpenId(String appId,String code,String secret){
+        String response= HttpRequest.sendGet("https://api.weixin.qq.com/sns/jscode2session","appid="+appId+"&secret="+secret+"&js_code="+code+"&grant_type=authorization_code");
+        System.out.println(response);
+        return new TResult(false,TGlobal.do_success,response);
     }
 
 }

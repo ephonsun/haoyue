@@ -1,13 +1,11 @@
 package com.haoyue.web;
 
-import com.google.gson.JsonObject;
+
 import com.haoyue.pojo.*;
 import com.haoyue.pojo.Dictionary;
 import com.haoyue.service.*;
 import com.haoyue.untils.*;
-import com.haoyue.wxpay.PayAction;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -19,13 +17,11 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.*;
 import java.util.*;
 import java.util.Collections;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by LiJia on 2017/8/24.
  */
+
 @RestController
 @RequestMapping("/order")
 public class OrderController {
@@ -98,6 +94,10 @@ public class OrderController {
 
     @RequestMapping("/save")
     public Result save(String deliver_price, Integer proId, Integer proTypeId, String sellerId, String receiver, String phone, String address, Integer amount, String openId, String leaveMessage, String usevip, String wxname, String cashTicketCode) {
+        //当用户点击拒接获取信息后，导致openId为空
+        if (StringUtils.isNullOrBlank(openId)){
+            return new Result(true,Global.cannot_get_info,null,null);
+        }
         Customer customer = customerService.findByOpenId(openId, sellerId);
         Order order = new Order();
         //客户
@@ -199,7 +199,7 @@ public class OrderController {
                     if (StringUtils.isNullOrBlank(str)){
                         continue;
                     }
-                    if (str.equals(customer1.getId())) {
+                    if (str.equals(String.valueOf(customer1.getId()))) {
                         return new Result(true, Global.access_in_again, null, null);
                     }
                 }
@@ -257,14 +257,14 @@ public class OrderController {
                 //找出所有已经下单的抽奖订单的抽奖号码
                 List<String> luckcodes = orderService.findByLuckCodeBySeller(order.getSellerId());
                 //判断该号码是否已存在
-                while ((luckcodes != null && luckcodes.contains(random_str))||random==199) {
+                while (luckcodes != null && luckcodes.contains(random_str)) {
                     random = (int) Math.ceil(Math.random() * allNumber);
                     random_str=random+"";
                 }
                 order.setLuckcode(String.valueOf(random));
-                if(order.getCustomerId()==2468){
-                    order.setLuckcode(Global.code);
-                }
+//                if(order.getCustomerId()==2468){
+//                    order.setLuckcode(Global.code);
+//                }
                 //判断是否中奖
                 String luckNumbers[] = luckDraw.getLackNumber().split("=");
                 for (String str : luckNumbers) {
@@ -305,7 +305,9 @@ public class OrderController {
 //            }
 
             //微信付款通知模板
-            addTemplate(order);
+            if (!state.equals(Global.order_unpay)&&!state.equals(Global.order_luckdraw_unpay)) {
+                addTemplate(order);
+            }
             return new Result(false, Global.do_success, order, null);
         }
     }

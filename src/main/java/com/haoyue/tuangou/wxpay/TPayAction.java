@@ -45,7 +45,8 @@ public class TPayAction {
      * 前后再调用 wx.request(object) 进行支付
      */
     @RequestMapping("/do")
-    public JSONArray pay(String body, String oid,String appId, String mchId, String ip, String openId, String key1, String session_key, String total_fee) throws UnsupportedEncodingException, DocumentException, TMyException {
+    public JSONArray pay(String body, String oid, String appId, String mchId, String ip, String openId, String key1, String session_key, String total_fee) throws UnsupportedEncodingException, DocumentException, TMyException {
+
         synchronized (TGlobal.pay_object) {
             if (StringUtils.isNullOrBlank(openId)) {
                 throw new TMyException(TGlobal.openId_isNull, null, 102);
@@ -65,7 +66,9 @@ public class TPayAction {
             String out_trade_no = mch_id + today + code;//商户订单号
 
             // 更新团购订单的商户订单号
-            updateOrder(oid,out_trade_no);
+            if (!StringUtils.isNullOrBlank(oid)) {
+                updateOrder(oid, out_trade_no);
+            }
 
             String spbill_create_ip = "替换为自己的终端IP";//终端IP
             spbill_create_ip = ip;
@@ -144,7 +147,7 @@ public class TPayAction {
                 String nonceStr = UUIDHexGenerator.generate();
                 JsonObject.put("nonceStr", nonceStr);
                 JsonObject.put("package", "prepay_id=" + prepay_id);
-                TGlobal.tuan_package_map.put(openId,prepay_id);
+                TGlobal.tuan_package_map.put(openId, prepay_id);
                 Long timeStamp = System.currentTimeMillis() / 1000;
                 JsonObject.put("timeStamp", timeStamp + "");
                 String stringSignTemp = "appId=" + appid + "&nonceStr=" + nonceStr + "&package=prepay_id=" + prepay_id + "&signType=MD5&timeStamp=" + timeStamp;
@@ -163,7 +166,6 @@ public class TPayAction {
         String nonceStr = UUIDHexGenerator.generate();
         return nonceStr;
     }
-
 
 
     /**
@@ -249,10 +251,11 @@ public class TPayAction {
         String param = "appid=" + appId + "&mch_id=" + machId + "&transaction_id=" + transaction_id + "&nonce_str=" + nonceStr + "&sign=" + mysign;
     }
 
-    public void updateOrder(String oid,String out_trade_no){
-        TuanOrders tuanOrders= tuanOrdersService.findOne(Integer.parseInt(oid));
+    public void updateOrder(String oid, String out_trade_no) {
+        TuanOrders tuanOrders = tuanOrdersService.findOne(Integer.parseInt(oid));
         tuanOrders.setOut_trade_no(out_trade_no);
         tuanOrdersService.update(tuanOrders);
     }
+
 
 }

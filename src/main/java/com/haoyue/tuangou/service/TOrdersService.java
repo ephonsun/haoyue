@@ -90,8 +90,10 @@ public class TOrdersService {
         QTOrders order = QTOrders.tOrders;
         BooleanBuilder bd = new BooleanBuilder();
         bd.and(order.iscomment.eq(true));
-        bd.and(order.tProducts.id.eq(Integer.parseInt(map.get("id"))));
+        bd.and(order.tProducts.id.eq(Integer.parseInt(map.get("pid"))));
         return tOrdersRepo.findAll(bd.getValue(),  new Sort(Sort.Direction.DESC, "id"));
+
+
     }
 
     public Iterable<TOrders> query(Map<String, String> map) {

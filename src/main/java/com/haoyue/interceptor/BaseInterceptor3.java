@@ -28,12 +28,12 @@ public class BaseInterceptor3 implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse httpServletResponse, Object o) throws Exception {
         System.out.println("BaseInterceptor3====================BaseInterceptor3");
-
         //判断 saleId 和 openId 是否为空
         String saleId=request.getParameter("saleId");
         String openId=request.getParameter("openId");
-        if (StringUtils.isNullOrBlank(saleId)&&StringUtils.isNullOrBlank(openId)){
-            throw new TMyException(TGlobal.have_no_right);
+        String url=request.getRequestURI();
+        if (StringUtils.isNullOrBlank(saleId)&&StringUtils.isNullOrBlank(openId)&&!url.contains("/tusersale")){
+            throw new TMyException(TGlobal.saleid_openid_isnull);
         }
         //检验onlinecode
         if (!StringUtils.isNullOrBlank(request.getParameter("onlinecode"))) {
