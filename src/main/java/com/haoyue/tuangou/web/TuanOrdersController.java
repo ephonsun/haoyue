@@ -41,6 +41,12 @@ public class TuanOrdersController {
     //   &address=收货地址&receiver=收货人&phone=收货人电话&groupCode=房间号
     @RequestMapping("/save")
     public TResult save(TuanOrders tuanOrders, String pid, String protypeId, TDeliver deliver) {
+
+        //判断用户openId是否为空
+        if (StringUtils.isNullOrBlank(tuanOrders.getOpenId())||tuanOrders.getOpenId().equals("undefined")){
+            return new TResult(true,TGlobal.openid_isnull,null);
+        }
+
         TProducts products = tProductsService.findOne(Integer.parseInt(pid));
         TProductsTypes productsTypes = tProductsTypesService.findOne(Integer.parseInt(protypeId));
         synchronized (TGlobal.object2) {
@@ -83,7 +89,7 @@ public class TuanOrdersController {
                     return new TResult(true, TGlobal.tuan_time_too_late, null);
                 }
                 //判断人数
-                if (orders.getJoinNum()+1>orders.getStartNum()){
+                if (orders.getJoinNum() + 1 > orders.getStartNum()) {
                     return new TResult(true, TGlobal.tuan_num_too_late, null);
                 }
                 tuanOrders.setEndDate(orders.getEndDate());
@@ -144,15 +150,14 @@ public class TuanOrdersController {
                     orders.setState(state);
                     tuanOrdersService.update(orders);
                 }
-
+                //微信付款通知
+                addTemplate(orders);
+                //更新tdictionary表
+                TDictionarys tDictionarys = tDictionarysService.findByTodaySaleId(orders.getSaleId());
+                tDictionarys.setTurnover(tDictionarys.getTurnover() + orders.getTotalPrice());
+                tDictionarysService.update(tDictionarys);
             }
         }
-        //微信付款通知
-        addTemplate(orders);
-        //更新tdictionary表
-        TDictionarys tDictionarys= tDictionarysService.findByTodaySaleId(orders.getSaleId());
-        tDictionarys.setTurnover(tDictionarys.getTurnover()+orders.getTotalPrice());
-        tDictionarysService.update(tDictionarys);
         return new TResult(false, TGlobal.do_success, null);
     }
 
@@ -282,13 +287,13 @@ public class TuanOrdersController {
     //人为设置拼团成功，根据房间号
     //   /tuan/tuanorders/setsuccess?groupCode=团购号&saleId=123
     @RequestMapping("/setsuccess")
-    public TResult setSuccessByGroupCode(String groupCode,String saleId){
-        List<TuanOrders> list= tuanOrdersService.findByGroupCode(groupCode);
-        if (list!=null&&list.size()!=0){
-            if (!list.get(0).getSaleId().equals(saleId)){
+    public TResult setSuccessByGroupCode(String groupCode, String saleId) {
+        List<TuanOrders> list = tuanOrdersService.findByGroupCode(groupCode);
+        if (list != null && list.size() != 0) {
+            if (!list.get(0).getSaleId().equals(saleId)) {
                 return new TResult(true, TGlobal.have_no_right, null);
             }
-            for (TuanOrders orders:list){
+            for (TuanOrders orders : list) {
                 orders.setIsover(true);
                 orders.setState(TGlobal.tuan_order_success);
                 tuanOrdersService.update(orders);

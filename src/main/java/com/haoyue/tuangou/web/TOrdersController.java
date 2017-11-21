@@ -44,6 +44,10 @@ public class TOrdersController {
     //   前台做下单量和库存量对比
     @RequestMapping("/save")
     public TResult save(TOrders tOrders, String pid, String ptypeId, TDeliver tdeliver) {
+        //判断用户openId是否为空
+        if (StringUtils.isNullOrBlank(tOrders.getOpenId())||tOrders.getOpenId().equals("undefined")){
+            return new TResult(true,TGlobal.openid_isnull,null);
+        }
         TOrders orders = new TOrders();
         // 加入线程锁，避免code重复
         synchronized (TGlobal.object) {

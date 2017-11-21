@@ -95,7 +95,7 @@ public class OrderController {
     @RequestMapping("/save")
     public Result save(String deliver_price, Integer proId, Integer proTypeId, String sellerId, String receiver, String phone, String address, Integer amount, String openId, String leaveMessage, String usevip, String wxname, String cashTicketCode) {
         //当用户点击拒接获取信息后，导致openId为空
-        if (StringUtils.isNullOrBlank(openId)){
+        if (StringUtils.isNullOrBlank(openId)||openId.equals("undefined")){
             return new Result(true,Global.cannot_get_info,null,null);
         }
         Customer customer = customerService.findByOpenId(openId, sellerId);
@@ -292,17 +292,6 @@ public class OrderController {
                 luckDraw.setJoiners(luckDraw.getJoiners()+","+order.getCustomerId());
                 luckDrawService.update(luckDraw);
             }
-
-            // 如果中奖则转待发货订单
-//            if (order.getIsLuckDraw() == true && order.getIsLuck() == true) {
-//                order.setState(Global.order_unsend);
-//                orderService.update(order);
-//            }
-            //未中奖转已完成订单
-//            if (order.getIsLuckDraw() == true && order.getIsLuck() == false) {
-//                order.setState(Global.order_finsh);
-//                orderService.update(order);
-//            }
 
             //微信付款通知模板
             if (!state.equals(Global.order_unpay)&&!state.equals(Global.order_luckdraw_unpay)) {

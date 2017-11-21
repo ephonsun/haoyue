@@ -98,7 +98,7 @@ public class TUserSaleController {
         return iterable;
     }
 
-    // http://localhost:8080/tuan/tusersale/get_phonecode?id=1
+    // http://localhost:8080/tuan/tusersale/phonecode?id=1
     @RequestMapping("/phonecode")
     public TResult getphonecode(TUserSale sale,String saleId) {
         sale.setId(Integer.parseInt(saleId));

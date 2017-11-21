@@ -33,8 +33,8 @@ public class TProducts {
     private String deliver;
     private boolean isTuan=false;
     private boolean active=true;
-    private int tuanNumbers;
-    private int tuanTimes;
+    private int tuanNumbers;//开团人数
+    private int tuanTimes;//团购时间
     private int saleNum;
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:SS", timezone="GMT+8")
     @Temporal(TemporalType.TIMESTAMP)

@@ -24,17 +24,21 @@ public class TProductsTypesService {
     }
 
     public void update(TProductsTypes tProductsTypes) {
+
         TProductsTypes producttype=tProductsTypesRepo.findOne(tProductsTypes.getId());
+
         if (!StringUtils.isNullOrBlank(tProductsTypes.getNewPrice()+"")){
             producttype.setNewPrice(tProductsTypes.getNewPrice());
         }
+
         if (!StringUtils.isNullOrBlank(tProductsTypes.getAmount()+"")){
             producttype.setAmount(tProductsTypes.getAmount());
         }
+
         if (tProductsTypes.getIsActive()==false){
             producttype.setIsActive(false);
-
         }
+
         tProductsTypesRepo.save(producttype);
     }
 

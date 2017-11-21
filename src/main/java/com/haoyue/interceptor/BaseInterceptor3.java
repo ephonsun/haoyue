@@ -32,6 +32,9 @@ public class BaseInterceptor3 implements HandlerInterceptor {
         String saleId=request.getParameter("saleId");
         String openId=request.getParameter("openId");
         String url=request.getRequestURI();
+//        if(!url.contains("/tuan")){
+//            return true;
+//        }
         if (StringUtils.isNullOrBlank(saleId)&&StringUtils.isNullOrBlank(openId)&&!url.contains("/tusersale")){
             throw new TMyException(TGlobal.saleid_openid_isnull);
         }

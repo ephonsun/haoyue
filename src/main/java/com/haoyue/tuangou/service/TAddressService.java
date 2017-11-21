@@ -5,6 +5,8 @@ import com.haoyue.tuangou.repo.TAddressRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * Created by LiJia on 2017/11/13.
  */
@@ -14,8 +16,8 @@ public class TAddressService {
     @Autowired
     private TAddressRepo addressRepo;
 
-    public TAddress findByOpenIdAndSaleId(String openId, String saleId) {
-        TAddress address=addressRepo.findByOpenIdAndSaleId(openId,saleId);
+    public List<TAddress> findByOpenIdAndSaleId(String openId, String saleId) {
+        List<TAddress> address=addressRepo.findByOpenIdAndSaleId(openId,saleId);
         return address;
     }
 

@@ -2,6 +2,8 @@ package com.haoyue.tuangou.web;
 
 import com.haoyue.tuangou.pojo.TProductsTypes;
 import com.haoyue.tuangou.service.TProductsTypesService;
+import com.haoyue.tuangou.utils.TGlobal;
+import com.haoyue.tuangou.utils.TResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,7 +19,8 @@ public class TProductsTypesController {
 
 
     @RequestMapping("/update")
-    public void update(TProductsTypes tProductsTypes,String saleId) {
+    public TResult update(TProductsTypes tProductsTypes, String saleId) {
         tProductsTypesService.update(tProductsTypes);
+        return new TResult(false, TGlobal.do_success,null);
     }
 }

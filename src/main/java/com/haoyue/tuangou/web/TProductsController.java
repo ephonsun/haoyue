@@ -246,7 +246,7 @@ public class TProductsController {
         return new TResult(false, TGlobal.do_success, ownerList);
     }
 
-    // /tuan/product/tuanorders?pid=当前查询的商品Id&saleId=12
+    // /tuan/product/recommend?pid=当前查询的商品Id&saleId=12
     @RequestMapping("/recommend")
     public TResult recommend(String saleId, String pid) {
         List<TProducts> result = new ArrayList<>();
@@ -256,8 +256,6 @@ public class TProductsController {
             result = tProductsService.recommend2(saleId);
         }
         return new TResult(false, TGlobal.do_success, result);
-
-
     }
 
 

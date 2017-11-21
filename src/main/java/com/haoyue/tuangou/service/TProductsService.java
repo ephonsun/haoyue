@@ -44,6 +44,10 @@ public class TProductsService {
                 else if (name.equals("active")){
                     bd.and(products.active.eq(Boolean.valueOf(value)));
                 }
+                else if (name.equals("pname")){
+                    value=value.trim();
+                    bd.and(products.pname.contains(value));
+                }
             }
         }
         return tProductsRepo.findAll(bd.getValue(),new PageRequest(pageNumber,pageSize,new Sort(Sort.Direction.DESC,"id")));
