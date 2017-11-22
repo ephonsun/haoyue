@@ -45,7 +45,7 @@ public class TPayAction {
      * 前后再调用 wx.request(object) 进行支付
      */
     @RequestMapping("/do")
-    public JSONArray pay(String body, String oid, String appId, String mchId, String ip, String openId, String key1, String session_key, String total_fee) throws UnsupportedEncodingException, DocumentException, TMyException {
+    public JSONArray pay(String body, String ordercode, String appId, String mchId, String ip, String openId, String key1, String session_key, String total_fee) throws UnsupportedEncodingException, DocumentException, TMyException {
 
         synchronized (TGlobal.pay_object) {
             if (StringUtils.isNullOrBlank(openId)) {
@@ -63,11 +63,11 @@ public class TPayAction {
             String nonce_str = UUIDHexGenerator.generate();//随机字符串
             String today = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
             String code = PayUtil.createCode(8);
-            String out_trade_no = mch_id + today + code;//商户订单号
+            String out_trade_no = ordercode;//商户订单号=订单号
 
             // 更新团购订单的商户订单号
-            if (!StringUtils.isNullOrBlank(oid)) {
-                updateOrder(oid, out_trade_no);
+            if (ordercode.startsWith("666")) {
+                updateOrder(ordercode, out_trade_no);
             }
 
             String spbill_create_ip = "替换为自己的终端IP";//终端IP
@@ -251,8 +251,8 @@ public class TPayAction {
         String param = "appid=" + appId + "&mch_id=" + machId + "&transaction_id=" + transaction_id + "&nonce_str=" + nonceStr + "&sign=" + mysign;
     }
 
-    public void updateOrder(String oid, String out_trade_no) {
-        TuanOrders tuanOrders = tuanOrdersService.findOne(Integer.parseInt(oid));
+    public void updateOrder(String ordercode, String out_trade_no) {
+        TuanOrders tuanOrders = tuanOrdersService.findByCode(ordercode);
         tuanOrders.setOut_trade_no(out_trade_no);
         tuanOrdersService.update(tuanOrders);
     }

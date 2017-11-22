@@ -85,7 +85,7 @@ public class TuanOrdersController {
                 Iterator<TuanOrders> iterator = iterable.iterator();
                 TuanOrders orders = iterator.next();
                 //判断时间
-                if (orders.getStartDate().before(date)) {
+                if (orders.getEndDate().before(date)) {
                     return new TResult(true, TGlobal.tuan_time_too_late, null);
                 }
                 //判断人数
@@ -96,6 +96,12 @@ public class TuanOrdersController {
                 tuanOrders.setStartDate(orders.getStartDate());
                 tuanOrders.setOwner(orders.getOwner());
                 tuanOrders.setOwnerpic(orders.getOwnerpic());
+                tuanOrders.setJoinNum(orders.getJoinNum());
+                // 判断该用户是否已经参加了当前房间的本次团购
+                List<String> openids= tuanOrdersService.findOpenIdsByGroupCode(groupcode);
+                if (openids.contains(tuanOrders.getOpenId())){
+                    return new TResult(true, TGlobal.have_joined_in, null);
+                }
             }
 
             tuanOrders.setCode(TGlobal.tuan_ordercode_begin + date.getTime());
@@ -109,7 +115,7 @@ public class TuanOrdersController {
     @RequestMapping("/changestate")
     public TResult changeState(String oid, String state) {
         TuanOrders orders = null;
-        synchronized (TGlobal.object2) {
+        synchronized (TGlobal.object4) {
             orders = tuanOrdersService.findOne(Integer.parseInt(oid));
             //付款
             if (state.equals(TGlobal.tuan_order_tuaning)) {
@@ -126,7 +132,7 @@ public class TuanOrdersController {
                     for (TuanOrders tuanOrders : list) {
                         tuanOrders.setJoinNum(tuanOrders.getJoinNum() + 1);
                         tuanOrders.setIsover(true);
-                        if (!tuanOrders.getState().equals(TGlobal.tuan_order_unpay)) {
+                        if (!tuanOrders.getState().equals(TGlobal.tuan_order_unpay)||tuanOrders.getId()==Integer.parseInt(oid)) {
                             tuanOrders.setState(TGlobal.tuan_order_success);
                             //更新商品销量
                             TProducts tProducts = tuanOrders.gettProducts();
@@ -173,6 +179,7 @@ public class TuanOrdersController {
     }
 
     //   /tuan/tuanorders/list?saleId=12&state=【待发货团购订单，待收货团购订单】
+    //  卖家已完成   /tuan/tuanorders/list?saleId=12&state=已完成团购订单&showsale=true
     @RequestMapping("/list")
     public TResult list(@RequestParam Map<String, String> map, @RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize) {
         Iterable<TuanOrders> iterable = tuanOrdersService.list(map, pageNumber, pageSize);
@@ -216,15 +223,16 @@ public class TuanOrdersController {
     }
 
 
-    //   /tuan/tuanorders/tuaning_list?saleId=12
+    //   http://localhost:8080/tuan/tuanorders/tuaning_list?saleId=2
     @RequestMapping("/tuaning_list")
     public TResult tuaningList(String saleId) {
-        //所有正在拼团的商品
+        //所有开启拼团的商品
         List<TProducts> productsList = tProductsService.findByTuanProduct(saleId);
         //遍历商品集合获得正在拼团的房主订单
         List<TuanOrdersResponse> tuanOrdersResponseList = new ArrayList<>();
         List<TuanOrdersResponse> result = new ArrayList<>();
         for (TProducts products : productsList) {
+            // 查询正在拼团未结束的房主订单
             Iterable<TuanOrders> iterable = tuanOrdersService.findTuanOrdersByTProducts(products.getId(), saleId, "yes");
             TuanOrdersResponse tuanOrdersResponse = new TuanOrdersResponse();
             tuanOrdersResponse.setProducts(products);
@@ -232,11 +240,21 @@ public class TuanOrdersController {
             tuanOrdersResponse.setAmount(getIterableLength(iterable));
             tuanOrdersResponseList.add(tuanOrdersResponse);
         }
-        //根据拼团房间数排序
+        //返回结果集根据拼团房间数排序
         tuanOrdersResponseList.stream()
                 .sorted((TuanOrdersResponse p1, TuanOrdersResponse p2) -> (p1.getAmount() - p2.getAmount()))
                 .forEach((TuanOrdersResponse p) -> result.add(p));
-        return new TResult(false, TGlobal.do_success, result);
+
+        //过滤amount=0的结果集
+        List<TuanOrdersResponse> result2=new ArrayList<>();
+        for (TuanOrdersResponse response:result){
+            if (response.getAmount()==0){
+                continue;
+            }
+            result2.add(response);
+        }
+
+        return new TResult(false, TGlobal.do_success, result2);
     }
 
     public int getIterableLength(Iterable iterable) {
@@ -246,6 +264,7 @@ public class TuanOrdersController {
         }
         Iterator iterator = iterable.iterator();
         while (iterator.hasNext()) {
+            iterator.next();
             count++;
         }
         return count;
@@ -300,6 +319,13 @@ public class TuanOrdersController {
             }
         }
         return new TResult(false, TGlobal.do_success, null);
+    }
+
+    //   /tuan/tuanorders/findone/groupcode?groupcode=团购号&saleId=123
+    @RequestMapping("/findone/groupcode")
+    public TResult findByGroupCode(String saleId,String groupcode){
+        List<TuanOrders> list= tuanOrdersService.findByGroupCode(groupcode);
+        return new TResult(false, TGlobal.do_success, list);
     }
 
 

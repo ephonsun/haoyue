@@ -84,6 +84,9 @@ public class TuanOrdersService {
                 else if(name.equals("isOver")){
                     bd.and(tuanorders.isover.eq(Boolean.valueOf(value)));
                 }
+                else if(name.equals("showsale")){
+                    bd.and(tuanorders.showsale.eq(true));
+                }
             }
         }
 
@@ -99,6 +102,8 @@ public class TuanOrdersService {
              bd.and(tuanorders.isowner.eq(true));
         }
         bd.and(tuanorders.state.eq(TGlobal.tuan_order_tuaning));
+        bd.and(tuanorders.isover.eq(false));
+        bd.and(tuanorders.endDate.after(new Date()));
         return tuanOrdersRepo.findAll(bd.getValue());
     }
 
@@ -110,6 +115,7 @@ public class TuanOrdersService {
         bd.and(tuanorders.openId.eq(openId));
         bd.and(tuanorders.state.eq(TGlobal.tuan_order_tuaning));
         bd.and(tuanorders.isover.eq(false));
+        bd.and(tuanorders.endDate.after(new Date()));
         return tuanOrdersRepo.findAll(bd.getValue(),new Sort(Sort.Direction.DESC,"id"));
     }
 
@@ -128,7 +134,7 @@ public class TuanOrdersService {
         BooleanBuilder bd = new BooleanBuilder();
         bd.and(tuanorders.saleId.eq(saleId));
         bd.and(tuanorders.openId.eq(openId));
-        bd.and(tuanorders.state.eq(TGlobal.tuan_order_success));
+        bd.and(tuanorders.state.eq(TGlobal.tuan_order_finsh));
         bd.and(tuanorders.isover.eq(true));
         bd.and(tuanorders.showbuy.eq(true));
         return tuanOrdersRepo.findAll(bd.getValue(),new Sort(Sort.Direction.DESC,"id"));
@@ -193,5 +199,23 @@ public class TuanOrdersService {
 
     public TuanOrders findByOut_trade_no(String out_trade_no) {
         return tuanOrdersRepo.findByOut_trade_no(out_trade_no);
+    }
+
+    public List<String> findOpenIdsByGroupCode(String groupcode) {
+        return tuanOrdersRepo.findOpenIdsByGroupCode(groupcode);
+    }
+
+    public TuanOrders findByCode(String ordercode) {
+        return tuanOrdersRepo.findByCode(ordercode);
+    }
+
+    public Iterable<TuanOrders> unreceive(String saleId, String openId) {
+        QTuanOrders tuanorders = QTuanOrders.tuanOrders;
+        BooleanBuilder bd = new BooleanBuilder();
+        bd.and(tuanorders.saleId.eq(saleId));
+        bd.and(tuanorders.openId.eq(openId));
+        bd.and(tuanorders.state.eq(TGlobal.tuan_order_unreive));
+        bd.and(tuanorders.isover.eq(true));
+        return tuanOrdersRepo.findAll(bd.getValue(),new Sort(Sort.Direction.DESC,"id"));
     }
 }

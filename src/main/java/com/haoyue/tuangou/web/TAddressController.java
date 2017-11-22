@@ -36,4 +36,15 @@ public class TAddressController {
         return new TResult(false, TGlobal.do_success,tAddress);
     }
 
+    // http://localhost:8080/tuan/taddress/del?openId=12&addressId=地址ID
+    @RequestMapping("/del")
+    public TResult  del(String addressId,String openId){
+        TAddress address= addressService.findOne(Integer.parseInt(addressId));
+        if (!address.getOpenId().equals(openId)){
+            return new TResult(true,TGlobal.have_no_right,null);
+        }
+        addressService.del(address);
+        return new TResult(false, TGlobal.do_success,null);
+    }
+
 }

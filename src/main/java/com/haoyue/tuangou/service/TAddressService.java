@@ -24,4 +24,12 @@ public class TAddressService {
     public void save(TAddress tAddress) {
         addressRepo.save(tAddress);
     }
+
+    public TAddress findOne(int id) {
+        return addressRepo.findOne(id);
+    }
+
+    public void del(TAddress address) {
+        addressRepo.delete(address);
+    }
 }

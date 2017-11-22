@@ -21,4 +21,9 @@ public interface TuanOrdersRepo extends TBaseRepo<TuanOrders,Integer> {
 
     @Query(nativeQuery = true,value = "select * from t_tuanorders where out_trade_no=?1 ")
     TuanOrders findByOut_trade_no(String out_trade_no);
+
+    @Query(nativeQuery = true,value = "select open_id from t_tuanorders where group_code=?1 ")
+    List<String> findOpenIdsByGroupCode(String groupcode);
+
+    TuanOrders findByCode(String ordercode);
 }

@@ -27,7 +27,6 @@ public class BaseInterceptor3 implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse httpServletResponse, Object o) throws Exception {
-        System.out.println("BaseInterceptor3====================BaseInterceptor3");
         //判断 saleId 和 openId 是否为空
         String saleId=request.getParameter("saleId");
         String openId=request.getParameter("openId");
@@ -35,7 +34,7 @@ public class BaseInterceptor3 implements HandlerInterceptor {
 //        if(!url.contains("/tuan")){
 //            return true;
 //        }
-        if (StringUtils.isNullOrBlank(saleId)&&StringUtils.isNullOrBlank(openId)&&!url.contains("/tusersale")){
+        if (StringUtils.isNullOrBlank(saleId)&&StringUtils.isNullOrBlank(openId)&&!url.contains("/tusersale")&&!url.contains("/uploadPic")){
             throw new TMyException(TGlobal.saleid_openid_isnull);
         }
         //检验onlinecode

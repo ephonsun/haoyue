@@ -20,6 +20,8 @@ public class TDictionarys  {
     private String saleId;
     private int views;
     private int visitors;
+
+    @Column(name = "turnover", columnDefinition="double(10,2)")
     private double turnover;
 
     @JsonFormat(pattern="yyyy-MM-dd", timezone="GMT+8")

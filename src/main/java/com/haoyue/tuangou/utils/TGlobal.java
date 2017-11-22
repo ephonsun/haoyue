@@ -41,6 +41,7 @@ public class TGlobal {
     //上传文件
     public static String space_not_enough="存储空间不够";
     public static int max_FileSzie=1048576; // 1G
+    public static Object object5=new Object();
 
     //商品上传
     public static String pro_isNull_blank="请确认颜色、尺码、价格、库存不为空";
@@ -53,7 +54,7 @@ public class TGlobal {
     public static String order_unreceive="待收货订单";
     public static String order_finsh="已完成订单";
     public static String ordercode_begin="888";
-    public static Object object=new Object();
+    public static Object object=new Object();//普通订单保存锁
     public static String openid_isnull="请设置允许获取信息后再下单";
 
     //团购订单
@@ -66,7 +67,10 @@ public class TGlobal {
     public static String tuan_ordercode_begin="666";
     public static String tuan_num_too_late="人数已满，你来晚了一步";
     public static String tuan_time_too_late="结束时间已到，你来晚了一步";
-    public static Object object2=new Object();
+    public static String have_joined_in="你已参加当前团购！";
+    public static Object object2=new Object();//保存团购订单锁
+    public static Object object4=new Object();//更新团购订单锁
+
 
     //支付
     public static Object pay_object=new Object();
@@ -75,14 +79,5 @@ public class TGlobal {
     public static String notify_url="https://www.cslapp.com/tuan/pay/notify";
     public static String common_pay_url="https://api.mch.weixin.qq.com/pay/unifiedorder";//统一下单url
     public static Map<String,String> tuan_package_map=new HashMap<>();
-
-    public static  List<String> getUrls(){
-     List<String> urls=new ArrayList<>();
-        urls.add("/tusersale");
-        return urls;
-    }
-
-
-
 
 }

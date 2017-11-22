@@ -123,7 +123,7 @@ public class TUserSaleController {
         Iterable<TUserSale> iterable = tUserSaleService.findOne(sale);
         Iterator<TUserSale> iterator = iterable.iterator();
         TUserSale tUserSale = iterator.next();
-        double size_kb=0;
+        int size_kb=0;
         String url="";
         StringBuffer stringBuffer=new StringBuffer();
         // 循环获得每个文件
@@ -131,7 +131,7 @@ public class TUserSaleController {
             for (int i=0;i<files.length;i++) {
                 MultipartFile multipartFile=files[i];
                 //校验存储空间是否够用
-                size_kb = (double) multipartFile.getSize() / 1024;
+                size_kb =(int)multipartFile.getSize() / 1024;
                 if ((size_kb+tUserSale.getUploadFile())>=tUserSale.getMaxFile()){
                     return new TResult(true, TGlobal.space_not_enough, null);
                 }else {

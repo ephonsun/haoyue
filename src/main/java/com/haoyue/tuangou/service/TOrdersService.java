@@ -52,6 +52,8 @@ public class TOrdersService {
                     bd.and(orders.state.eq(value));
                 } else if (name.equals("code")) {
                     bd.and(orders.code.eq(value));
+                }else if (name.equals("showsale")) {
+                    bd.and(orders.showsale.eq(true));
                 }
 
             }

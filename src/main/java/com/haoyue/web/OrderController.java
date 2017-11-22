@@ -559,4 +559,17 @@ public class OrderController {
         template.setToUser(customerService.findOpenIdById(order.getCustomerId()+""));
         getTemplate(template);
     }
+
+
+//    // http://localhost:8080/order/test?sellerId=1
+//    //  192.168.23.1
+//    @RequestMapping("/test")
+//    public String test(){
+//        //获取项目根路径
+//        String relativelyPath = System.getProperty("user.dir");
+//        String url=relativelyPath+"/files/122jpg.jpg";
+//        String result=url.replace("\\","/");
+//        File file=new File(url);
+//        return "<img src='"+result+"'/>";
+//    }
 }

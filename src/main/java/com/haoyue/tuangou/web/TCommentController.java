@@ -63,27 +63,30 @@ public class TCommentController {
         return new TResult(false, TGlobal.do_success, null);
     }
 
-    // /tuan/tcomment/uploadpic?files=xxx
-    @RequestMapping("/uploadpic")
-    public TResult uploadPics(MultipartFile[] files) {
-        if (files.length != 0) {
-            StringBuffer stringBuffer = new StringBuffer();
-            String url = "";
-            for (int i = 0; i < files.length; i++) {
-                MultipartFile file = files[i];
-                TOSSClientUtil tossClientUtil = new TOSSClientUtil();
-                try {
-                    url = tossClientUtil.uploadImg2Oss(file);
-                } catch (MyException e) {
-                    e.printStackTrace();
+    // /tuan/tcomment/uploadPic?files=xxx
+    @RequestMapping("/uploadPic")
+    public TResult uploadPics(MultipartFile[] files,String saleId) throws InterruptedException {
+        synchronized (TGlobal.object5) {
+            //线程休眠100ms
+            Thread.sleep(100);
+            if (files.length != 0) {
+                StringBuffer stringBuffer = new StringBuffer();
+                for (int i = 0; i < files.length; i++) {
+                    MultipartFile file = files[i];
+                    TOSSClientUtil tossClientUtil = new TOSSClientUtil();
+                    try {
+                        String url = tossClientUtil.uploadImg2Oss(file);
+                        stringBuffer.append(TGlobal.aliyun_href + url);
+                    } catch (MyException e) {
+                        e.printStackTrace();
+                    }
+                    if (i != files.length - 1) {
+                        stringBuffer.append(",");
+                    }
                 }
-                stringBuffer.append(url);
-                if (i != files.length - 1) {
-                    stringBuffer.append(",");
-                }
-
+                System.out.println(stringBuffer.toString());
+                return new TResult(false, TGlobal.do_success, stringBuffer.toString());
             }
-            return new TResult(false, TGlobal.do_success, stringBuffer.toString());
         }
         return new TResult(false, TGlobal.do_success, null);
     }

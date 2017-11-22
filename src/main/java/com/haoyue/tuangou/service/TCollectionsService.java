@@ -25,4 +25,8 @@ public class TCollectionsService {
     public void update(TCollections tCollections) {
         tCollectionsRepo.save(tCollections);
     }
+
+    public void delByCollectionIdAndPid(Integer cid, Integer pid) {
+        tCollectionsRepo.delByCollectionIdAndPid(cid,pid);
+    }
 }

@@ -41,8 +41,8 @@ public class TuanOrders {
     private int hours;//团购时间
     private boolean isowner=false;//是否房主
     private boolean isover=false;
-    private boolean showbuy=false;
-    private boolean showsale=false;
+    private boolean showbuy=true;
+    private boolean showsale=true;
     private boolean iscomment=false;
 
     @OneToOne

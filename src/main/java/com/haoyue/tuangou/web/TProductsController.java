@@ -38,7 +38,8 @@ public class TProductsController {
      * @return /tuan/product/save?saleId=1&pname=商品名&style=款号&types=分类&indexPic=主图&detailPic=详情图
      * &parameters=商品参数&deliver=快递模板ID或者null&tuanNumbers=拼团人数&tuanTimes=拼团时间
      * &tprotypes=黄色,M,100,88,66,99=黑色,L,100,88,66,99
-     */
+     *
+     * */
     @RequestMapping("/save")
     public TResult save(TProducts tProducts, String tprotypes) {
         //先保存商品
@@ -113,7 +114,7 @@ public class TProductsController {
         Iterable<TUserSale> iterable = tUserSaleService.findOne(sale);
         Iterator<TUserSale> iterator = iterable.iterator();
         TUserSale tUserSale = iterator.next();
-        double size_kb = 0;
+        int size_kb = 0;
         String url = "";
         StringBuffer stringBuffer = new StringBuffer();
         // 循环获得每个文件
@@ -121,7 +122,7 @@ public class TProductsController {
             for (int i = 0; i < files.length; i++) {
                 MultipartFile multipartFile = files[i];
                 //校验存储空间是否够用
-                size_kb = (double) multipartFile.getSize() / 1024;
+                size_kb = (int) multipartFile.getSize() / 1024;
                 if ((size_kb + tUserSale.getUploadFile()) >= tUserSale.getMaxFile()) {
                     return new TResult(true, TGlobal.space_not_enough, null);
                 } else {
@@ -179,8 +180,8 @@ public class TProductsController {
             return new TResult(true, TGlobal.have_no_right, null);
         }
         //下架、上架
-        products.setIsActive(tProducts.getIsActive());
-        tProductsService.update(tProducts);
+        products.setActive(tProducts.getActive());
+        tProductsService.update(products);
         return new TResult(false, TGlobal.do_success, null);
     }
 

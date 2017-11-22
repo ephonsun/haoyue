@@ -29,7 +29,7 @@ public class TProducts {
 
     @Lob
     @Column(columnDefinition = "TEXT")
-    private String parameters;
+    private String parameters;//参数
     private String deliver;
     private boolean isTuan=false;
     private boolean active=true;
@@ -49,11 +49,11 @@ public class TProducts {
         this.saleNum = saleNum;
     }
 
-    public boolean getIsActive() {
+    public boolean getActive() {
         return active;
     }
 
-    public void setIsActive(boolean active) {
+    public void setActive(boolean active) {
         this.active = active;
     }
 

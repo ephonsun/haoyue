@@ -82,7 +82,6 @@ public class TOrdersController {
     //   /tuan/torders/changestate?oid=订单ID&state=【待发货订单 已完成订单】
     @RequestMapping("/changestate")
     public TResult changeState(String oid, String state) {
-
         TOrders orders = tOrdersService.findOne(Integer.parseInt(oid));
         orders.setState(state);
         // 付款成功转待发货订单
@@ -124,6 +123,7 @@ public class TOrdersController {
 
     //   卖家-普通订单-未发货 /tuan/torders/list?saleId=12&state=待发货订单
     //   卖家-普通订单-已发货 /tuan/torders/list?saleId=12&state=待收货订单
+    //   卖家-普通订单-已完成 /tuan/torders/list?saleId=12&state=已完成订单&showsale=true
     @RequestMapping("/list")
     public TResult list(@RequestParam Map<String, String> map, @RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize) {
         Iterable<TOrders> iterable = tOrdersService.list(map, pageNumber, pageSize);
@@ -203,7 +203,7 @@ public class TOrdersController {
         String unreceive= "unreceive";
         Iterable<TOrders> iterable1 = tOrdersService.clist(saleId, openId, unreceive);
         //团购订单待收货
-        Iterable<TuanOrders> iterable2 = tuanOrdersService.unsend(saleId, openId);
+        Iterable<TuanOrders> iterable2 = tuanOrdersService.unreceive(saleId, openId);
         //抽出两个结果集的ID和创建时间，放进TMixOrders
         List<TMixOrders> list = new ArrayList<>();
         Iterator<TOrders> iterator = iterable1.iterator();
@@ -247,7 +247,7 @@ public class TOrdersController {
     }
 
 
-    //   /tuan/torders/finsh?saleId=12&openId=21
+    //  已完成订单 /tuan/torders/finsh?saleId=12&openId=21
     @RequestMapping("/finsh")
     public TResult finsh(String saleId, String openId){
         //普通订单已完成

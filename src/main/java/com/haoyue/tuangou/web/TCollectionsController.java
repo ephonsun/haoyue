@@ -52,6 +52,10 @@ public class TCollectionsController {
             newlist.addAll(oldlist);
             newlist.add(tProductsService.findOne(Integer.parseInt(pid)));
             collections.setProductses(newlist);
+            //删除旧的数据
+            for (TProducts products:oldlist) {
+                tCollectionsService.delByCollectionIdAndPid(collections.getId(),products.getId());
+            }
         }
         collections.setUpdateDate(date);
         tCollectionsService.save(collections);

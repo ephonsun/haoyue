@@ -23,8 +23,8 @@ public class TUserSale {
     private String pass;
     private String email;
     private String phone;
-    private double uploadFile;
-    private double maxFile;
+    private int uploadFile;
+    private int maxFile;
     private String lunbo;
     private String lunbo_products;//轮播图对应商品编号
     private String onlineCode;
@@ -124,19 +124,19 @@ public class TUserSale {
         this.phone = phone;
     }
 
-    public double getUploadFile() {
+    public int getUploadFile() {
         return uploadFile;
     }
 
-    public void setUploadFile(double uploadFile) {
+    public void setUploadFile(int uploadFile) {
         this.uploadFile = uploadFile;
     }
 
-    public double getMaxFile() {
+    public int getMaxFile() {
         return maxFile;
     }
 
-    public void setMaxFile(double maxFile) {
+    public void setMaxFile(int maxFile) {
         this.maxFile = maxFile;
     }
 
