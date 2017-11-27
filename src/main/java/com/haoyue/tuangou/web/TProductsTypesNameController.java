@@ -33,6 +33,4 @@ public class TProductsTypesNameController {
         tProductsTypesNameService.update2(tProductsTypesName);
     }
 
-
-
 }

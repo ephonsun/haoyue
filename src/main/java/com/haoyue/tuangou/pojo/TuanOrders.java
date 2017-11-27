@@ -27,6 +27,7 @@ public class TuanOrders {
     private String wxname;
     private String wxpic;
     private String state;
+    private int amount;
 
     @OneToOne
     private TProducts tProducts;
@@ -44,6 +45,7 @@ public class TuanOrders {
     private boolean showbuy=true;
     private boolean showsale=true;
     private boolean iscomment=false;
+    private boolean ispayback=false;//是否退款
 
     @OneToOne
     private TComment comment;
@@ -58,7 +60,23 @@ public class TuanOrders {
     @Column(updatable=false)
     private Date endDate;//结束日期
 
+    public int getAmount() {
+        return amount;
+    }
+
+    public void setAmount(int amount) {
+        this.amount = amount;
+    }
+
     private String out_trade_no;//后期退款时候的凭证
+
+    public boolean getIspayback() {
+        return ispayback;
+    }
+
+    public void setIspayback(boolean ispayback) {
+        this.ispayback = ispayback;
+    }
 
     public String getOut_trade_no() {
         return out_trade_no;

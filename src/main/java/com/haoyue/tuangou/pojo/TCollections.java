@@ -20,7 +20,7 @@ public class TCollections {
     private String cid;
     private String saleId;
 
-    @OneToMany
+    @ManyToMany
     private List<TProducts> productses;
 
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:SS", timezone="GMT+8")

@@ -151,4 +151,8 @@ public class TProductsService {
         }
         return result;
     }
+
+    public void delPtypes(Integer pid) {
+        tProductsRepo.delPtypes(pid);
+    }
 }

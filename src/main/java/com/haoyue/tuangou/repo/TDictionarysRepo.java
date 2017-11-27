@@ -16,4 +16,6 @@ public interface TDictionarysRepo extends TBaseRepo<TDictionarys,Integer> {
 
     @Query(nativeQuery = true,value = "select * from t_dictionarys order by id desc limit 1")
     TDictionarys findByLastOne();
+
+    TDictionarys findBySaleIdAndCreateDate(String saleId, Date date);
 }

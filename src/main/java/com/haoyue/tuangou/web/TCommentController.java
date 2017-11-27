@@ -7,6 +7,7 @@ import com.haoyue.tuangou.pojo.TuanOrders;
 import com.haoyue.tuangou.service.TCommentService;
 import com.haoyue.tuangou.service.TOrdersService;
 import com.haoyue.tuangou.service.TuanOrdersService;
+import com.haoyue.tuangou.utils.StringUtils;
 import com.haoyue.tuangou.utils.TGlobal;
 import com.haoyue.tuangou.utils.TOSSClientUtil;
 import com.haoyue.tuangou.utils.TResult;
@@ -99,8 +100,8 @@ public class TCommentController {
         Iterable<TuanOrders> iterable2 = tuanOrdersService.comments(map, pageNumber, pageSize);
         List<TComment> list = new ArrayList<>();
         List<TComment> sortlist = new ArrayList<>();
-        list.addAll(getComments1(iterable));
-        list.addAll(getComments2(iterable2));
+        list.addAll(getComments1(iterable,"yes"));
+        list.addAll(getComments2(iterable2,"yes"));
         list.stream()
                 .sorted((p1, p2) -> p1.getCreateDate().compareTo(p2.getCreateDate()))
                 .forEach(p -> sortlist.add(p));
@@ -116,8 +117,8 @@ public class TCommentController {
         List<TComment> list = new ArrayList<>();
         List<TComment> sortlist = new ArrayList<>();
         List<TComment> result = new ArrayList<>();
-        list.addAll(getComments1(iterable));
-        list.addAll(getComments2(iterable2));
+        list.addAll(getComments1(iterable,null));
+        list.addAll(getComments2(iterable2,null));
         list.stream()
                 .sorted((p1, p2) -> p1.getCreateDate().compareTo(p2.getCreateDate()))
                 .forEach(p -> sortlist.add(p));
@@ -156,20 +157,30 @@ public class TCommentController {
     }
 
 
-    public List<TComment> getComments1(Iterable<TOrders> iterable) {
+    public List<TComment> getComments1(Iterable<TOrders> iterable,String str) {
         Iterator<TOrders> iterator = iterable.iterator();
         List<TComment> list = new ArrayList<>();
         while (iterator.hasNext()) {
-            list.add(iterator.next().getComment());
+            TOrders orders=iterator.next();
+            TComment comment=orders.getComment();
+            if (!StringUtils.isNullOrBlank(str)) {
+                comment.settProducts(null);
+            }
+            list.add(comment);
         }
         return list;
     }
 
-    public List<TComment> getComments2(Iterable<TuanOrders> iterable) {
+    public List<TComment> getComments2(Iterable<TuanOrders> iterable,String str) {
         Iterator<TuanOrders> iterator = iterable.iterator();
         List<TComment> list = new ArrayList<>();
         while (iterator.hasNext()) {
-            list.add(iterator.next().getComment());
+            TuanOrders tuanOrders=iterator.next();
+            TComment comment=tuanOrders.getComment();
+            if (!StringUtils.isNullOrBlank(str)) {
+                comment.settProducts(null);
+            }
+            list.add(comment);
         }
         return list;
     }

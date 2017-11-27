@@ -44,7 +44,7 @@ public class TDeliverController {
     }
 
 
-    //  团购订单发货 /tuan/tdeliver/update?id=物流ID&dcode=单号&dname=物流名&saleId=123&oid=团购订单ID
+    //  团购订单发货 /tuan/tdeliver/update_tuan?id=物流ID&dcode=单号&dname=物流名&saleId=123&oid=团购订单ID
     @RequestMapping("/update_tuan")
     public TResult update_tuan(TDeliver deliver, String saleId,String oid){
         TDeliver tDeliver=tDeliverService.findOne(deliver.getId());

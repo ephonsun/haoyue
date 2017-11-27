@@ -25,8 +25,9 @@ public class TSuperAdminController {
     private TuanOrdersService tuanOrdersService;
 
     /**
-     * 定时器，产品部署好之后，需要手动出发该定时器
+     * 定时器，产品部署好之后，需要手动触发该定时器
      * http://localhost:8080/tuan/admin/timer?key=abcdefg&saleId=1
+     * https://www.cslapp.com/tuan/admin/timer?key=abcdefg&saleId=1
      */
     @RequestMapping("/timer")
     public String timer(String key) {

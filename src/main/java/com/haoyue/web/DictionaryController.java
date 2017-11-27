@@ -81,7 +81,6 @@ public class DictionaryController {
                 visitors.setSellerId(sellerId1);
                 visitors.setOpenId(openId);
                 visitors.setNum(1);
-                visitorsService.save(visitors);
                 //同步代码块
                 synchronized (this) {
                     Dictionary dictionary = dictionaryService.findByDateAndSellerId(new Date(), Integer.parseInt(sellerId));
@@ -94,8 +93,8 @@ public class DictionaryController {
                 }
             }else {
                 visitors.setNum(visitors.getNum()+1);
-                visitorsService.update(visitors);
             }
+            visitorsService.update(visitors);
             return new Result(false, Global.do_success, null, null);
         }else {
             Visitors visitors= visitorsService.findByProductIdAndOpenId(Integer.parseInt(proId),openId);

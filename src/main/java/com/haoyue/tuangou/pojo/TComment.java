@@ -29,6 +29,8 @@ public class TComment {
     private String wxpic;
     private String openId;
     private String saleId;
+    @Lob
+    @Column(columnDefinition = "TEXT")
     private String pics;//评论图片
     private String replay;//卖家回复
     private String level;//评论等级 1 好评 2 中评 3 差评

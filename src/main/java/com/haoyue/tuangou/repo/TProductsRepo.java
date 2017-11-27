@@ -1,7 +1,9 @@
 package com.haoyue.tuangou.repo;
 
 import com.haoyue.tuangou.pojo.TProducts;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -15,4 +17,9 @@ public interface TProductsRepo extends TBaseRepo<TProducts,Integer> {
 
     @Query(nativeQuery = true,value = "select id from t_products where  sale_id=?1 and active=true")
     List<Integer> findPidsBySaleId(String saleId);
+
+    @Modifying
+    @Transactional
+    @Query(nativeQuery = true,value = "delete from t_products_products_types where tproducts_id=?1 ")
+    void delPtypes(Integer pid);
 }

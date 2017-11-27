@@ -37,11 +37,11 @@ public class TOrdersController {
     @Autowired
     private TDictionarysService tDictionarysService;
 
-
     //   /tuan/torders/save?pid=商品ID&ptypeId=商品分类ID&amount=购买数量&productPrice=下单的商品价格
     //    &deliverPrice=快递费用,免邮则0&openId=12&saleId=12&wxname=微信名&wxpic=微信头像
     //    &address=收货地址&receiver=收货人&phone=收货人电话
     //   前台做下单量和库存量对比
+
     @RequestMapping("/save")
     public TResult save(TOrders tOrders, String pid, String ptypeId, TDeliver tdeliver) {
         //判断用户openId是否为空
@@ -67,6 +67,7 @@ public class TOrdersController {
             orders.setState(TGlobal.order_unpay);
             orders.setCode(TGlobal.ordercode_begin + new Date().getTime());
         }
+
 
         //物流
         tdeliver.setCreateDate(new Date());

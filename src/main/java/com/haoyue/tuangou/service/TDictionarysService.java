@@ -43,7 +43,7 @@ public class TDictionarysService {
         TDictionarys tDictionarys=tDictionarysRepo.findByLastOne();
         Date date=new Date();
         //添加当日数据
-        if (!StringUtils.getYMD(date).equals(tDictionarys.getCreateDate())){
+        if (tDictionarys==null||!StringUtils.getYMD(date).equals(tDictionarys.getCreateDate())){
             List<Integer> ids= tUserSaleRepo.findAllIds();
             for (Integer id:ids){
                 TDictionarys dictionarys=new TDictionarys();
@@ -64,5 +64,9 @@ public class TDictionarysService {
         int pageNumber=0;
         int pageSize=37;
         return tDictionarysRepo.findAll(bd.getValue(),new PageRequest(pageNumber,pageSize,new Sort(Sort.Direction.DESC,"id")));
+    }
+
+    public TDictionarys findBySaleIdAndCreateDate(String saleId, Date date) {
+        return tDictionarysRepo.findBySaleIdAndCreateDate(saleId,date);
     }
 }

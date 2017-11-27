@@ -218,4 +218,26 @@ public class TuanOrdersService {
         bd.and(tuanorders.isover.eq(true));
         return tuanOrdersRepo.findAll(bd.getValue(),new Sort(Sort.Direction.DESC,"id"));
     }
+
+    public Iterable<TuanOrders> findUnPayBacks(Map<String, String> map, int pageNumber, int pageSize) {
+        QTuanOrders tuanorders = QTuanOrders.tuanOrders;
+        BooleanBuilder bd = new BooleanBuilder();
+        bd.and(tuanorders.isover.eq(true));
+        bd.and(tuanorders.state.eq(TGlobal.tuan_order_tuaning));
+        for (String key:map.keySet()){
+            String value=map.get(key);
+            if (!StringUtils.isNullOrBlank(value)){
+                if (key.equals("saleId")){
+                    bd.and(tuanorders.saleId.eq(value));
+                }
+                if (key.equals("openId")){
+                    bd.and(tuanorders.openId.eq(value));
+                }
+                if (key.equals("ispayback")){
+                    bd.and(tuanorders.ispayback.eq(Boolean.valueOf(value)));
+                }
+            }
+        }
+        return tuanOrdersRepo.findAll(bd.getValue(), new PageRequest(pageNumber,pageSize,new Sort(Sort.Direction.DESC, "id")));
+    }
 }

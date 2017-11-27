@@ -187,45 +187,49 @@ public class TuanOrdersController {
         Map<String, List<TuanOrders>> map1 = new HashMap<>();
         Map<String, List<TuanOrders>> map2 = new HashMap<>();
         Map<TProducts, List<TuanOrders>> map3 = new HashMap<>();
-        String code = "";
-        // 首先结果集封装成 key(code)-value(List<TuanOrders>)形式
+        String groupcode = "";
+        // 首先结果集封装成 key(groupcode)-value(List<TuanOrders>)形式
         while (iterator.hasNext()) {
             TuanOrders tuanOrders = iterator.next();
-            code = tuanOrders.getCode();
-            List<TuanOrders> values = map1.get(code);
+            groupcode = tuanOrders.getGroupCode();
+            List<TuanOrders> values = map1.get(groupcode);
             if (values == null) {
                 values = new ArrayList<>();
             }
             values.add(tuanOrders);
-            map1.put(code, values);
+            map1.put(groupcode, values);
         }
         // 再次封装结果 key(pid)-value(List<TuanOrders>)形式
         for (String key : map1.keySet()) {
             List<TuanOrders> list = map1.get(key);
             String pid = list.get(0).gettProducts().getId() + "";
-            if (map2.get(pid) == null) {
+            if (map2.get(pid)==null||map2.get(pid).size()==0) {
                 map2.put(pid, list);
             } else {
                 List<TuanOrders> newlist = new ArrayList<>();
-                List<TuanOrders> oldlist = map2.get(code);
+                List<TuanOrders> oldlist = map2.get(pid);
                 newlist.addAll(oldlist);
                 newlist.addAll(list);
                 map2.put(pid, newlist);
             }
         }
-        // 最后封装结果 key(TProducts)-value(List<TuanOrders>)形式
+        // 最后封装结果 Response返回封装
+        List<Response> responses=new ArrayList<>();
         for (String key : map2.keySet()) {
             TProducts tProducts = tProductsService.findOne(Integer.parseInt(key));
-            map3.put(tProducts, map2.get(key));
+            Response response=new Response();
+            response.setProducts(tProducts);
+            response.setTuanOrdersList(map2.get(key));
+            responses.add(response);
         }
 
-        return new TResult(false, TGlobal.do_success, map3);
+        return new TResult(false, TGlobal.do_success, responses);
     }
 
 
     //   http://localhost:8080/tuan/tuanorders/tuaning_list?saleId=2
     @RequestMapping("/tuaning_list")
-    public TResult tuaningList(String saleId) {
+    public TResult tuaningList(String saleId,@RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize) {
         //所有开启拼团的商品
         List<TProducts> productsList = tProductsService.findByTuanProduct(saleId);
         //遍历商品集合获得正在拼团的房主订单
@@ -254,6 +258,21 @@ public class TuanOrdersController {
             result2.add(response);
         }
 
+//        if (result2.size()<=pageSize){
+//            return new TResult(false, "1", result2);
+//        }
+//        else {
+//            int pageNumbers=(result2.size()/pageSize)+1;
+//            if (pageNumber==0){
+//                return new TResult(false, pageNumbers+"", result2.subList(0,pageSize));
+//            }else {
+//                if ((pageNumber+1)*pageSize>result2.size()){
+//                    return new TResult(false, pageNumbers+"", result2.subList(pageNumber*pageSize,result2.size()));
+//                }
+//                return new TResult(false, pageNumbers+"", result2.subList(pageNumber*pageSize,(pageNumber+1)*pageSize));
+//            }
+//        }
+
         return new TResult(false, TGlobal.do_success, result2);
     }
 
@@ -269,6 +288,7 @@ public class TuanOrdersController {
         }
         return count;
     }
+
 
     //   /tuan/tuanorders/tuaning_clist?saleId=12&openId=12
     @RequestMapping("/tuaning_clist")
@@ -287,8 +307,9 @@ public class TuanOrdersController {
         }
         tuanOrders.setState(TGlobal.tuan_order_finsh);
         tuanOrdersService.update(tuanOrders);
-        return new TResult(true, TGlobal.do_success, null);
+        return new TResult(false, TGlobal.do_success, null);
     }
+
 
     //   /tuan/tuanorders/buydel?oid=订单ID&openId=12
     @RequestMapping("/buydel")
@@ -321,6 +342,7 @@ public class TuanOrdersController {
         return new TResult(false, TGlobal.do_success, null);
     }
 
+
     //   /tuan/tuanorders/findone/groupcode?groupcode=团购号&saleId=123
     @RequestMapping("/findone/groupcode")
     public TResult findByGroupCode(String saleId,String groupcode){
@@ -328,6 +350,33 @@ public class TuanOrdersController {
         return new TResult(false, TGlobal.do_success, list);
     }
 
+
+    //   /tuan/tuanorders/findone/oid=1213&saleId=1212
+    @RequestMapping("/findone")
+    public TResult findOne(String oid,String saleId){
+        TuanOrders tuanOrders= tuanOrdersService.findOne(Integer.parseInt(oid));
+        return new TResult(false, TGlobal.do_success, tuanOrders);
+    }
+
+    // 卖家查询需要退款的团购订单列表 /tuan/tuanorders/unpaybacks?saleId=123&ispayback=false&pageNumber=0&pageSize=10
+    // 买家查询自己拼团失败未退款的订单 /tuan/tuanorders/unpaybacks?saleId=123&openId=121&ispayback=false
+    @RequestMapping("/unpaybacks")
+    public TResult getUnPayBacks(@RequestParam Map<String, String> map, @RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize){
+        Iterable<TuanOrders> iterable= tuanOrdersService.findUnPayBacks(map,pageNumber,pageSize);
+        return new TResult(false, TGlobal.do_success, iterable);
+    }
+
+    //  更新订单退款状态   /tuan/tuanorders/payback？saleId=1&oid=订单ID
+    @RequestMapping("/payback")
+    public TResult updatePayBack(String saleId,String oid){
+       TuanOrders tuanOrders= tuanOrdersService.findOne(Integer.parseInt(oid));
+        if (!tuanOrders.getSaleId().equals(saleId)){
+            return new TResult(true,TGlobal.have_no_right,null);
+        }
+        tuanOrders.setIspayback(true);
+        tuanOrdersService.update(tuanOrders);
+        return new TResult(false, TGlobal.do_success, tuanOrders);
+    }
 
     public void addTemplate(TuanOrders order) {
         List<TemplateResponse> list = new ArrayList<>();
@@ -387,4 +436,25 @@ public class TuanOrdersController {
         TGlobal.tuan_package_map.remove(template.getToUser());
     }
 
+}
+
+class Response{
+    private TProducts products;
+    private List<TuanOrders> tuanOrdersList;
+
+    public TProducts getProducts() {
+        return products;
+    }
+
+    public void setProducts(TProducts products) {
+        this.products = products;
+    }
+
+    public List<TuanOrders> getTuanOrdersList() {
+        return tuanOrdersList;
+    }
+
+    public void setTuanOrdersList(List<TuanOrders> tuanOrdersList) {
+        this.tuanOrdersList = tuanOrdersList;
+    }
 }

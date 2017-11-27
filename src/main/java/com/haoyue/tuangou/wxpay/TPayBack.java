@@ -2,11 +2,14 @@ package com.haoyue.tuangou.wxpay;
 
 import com.haoyue.pojo.Seller;
 import com.haoyue.service.SellerService;
+import com.haoyue.tuangou.pojo.TDictionarys;
 import com.haoyue.tuangou.pojo.TUserSale;
 import com.haoyue.tuangou.pojo.TuanOrders;
+import com.haoyue.tuangou.service.TDictionarysService;
 import com.haoyue.tuangou.service.TPayBackDealService;
 import com.haoyue.tuangou.service.TUserSaleService;
 import com.haoyue.tuangou.service.TuanOrdersService;
+import com.haoyue.tuangou.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,6 +35,8 @@ public class TPayBack {
     private TPayDealService tPayDealService;
     @Autowired
     private TPayBackDealService tPayBackDealService;
+    @Autowired
+    private TDictionarysService tDictionarysService;
 
     /**
      * 申请退款
@@ -97,6 +102,13 @@ public class TPayBack {
             if (returnCode.equals("SUCCESS")) {
                 String resultCode = map.get("result_code").toString();
                 if (resultCode.equals("SUCCESS")) {
+                    //如果成功更新订单 ispayback
+                    tuanOrders.setIspayback(true);
+                    tuanOrdersService.update(tuanOrders);
+                    //更新数据表交易额
+                    TDictionarys dictionarys= tDictionarysService.findBySaleIdAndCreateDate(tuanOrders.getSaleId(), StringUtils.getYMD(tuanOrders.getStartDate()));
+                    dictionarys.setTurnover(dictionarys.getTurnover()-tuanOrders.getTotalPrice());
+                    tDictionarysService.update(dictionarys);
                     result.put("status", "success");
                 } else {
                     result.put("status", "fail");
@@ -106,7 +118,6 @@ public class TPayBack {
             }
             //保存退款信息
             backNotify(map);
-
         } catch (Exception e) {
             e.printStackTrace();
             result.put("status", "fail");

@@ -54,7 +54,6 @@ public class TPayAction {
             if (ip.equals("undefined")) {
                 throw new TMyException(TGlobal.ip_unright, null, 103);
             }
-
             //body = new String(body.getBytes("UTF-8"), "ISO-8859-1");
             String appid = "替换为自己的小程序ID";//小程序ID
             appid = appId;
@@ -64,12 +63,10 @@ public class TPayAction {
             String today = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
             String code = PayUtil.createCode(8);
             String out_trade_no = ordercode;//商户订单号=订单号
-
             // 更新团购订单的商户订单号
             if (ordercode.startsWith("666")) {
                 updateOrder(ordercode, out_trade_no);
             }
-
             String spbill_create_ip = "替换为自己的终端IP";//终端IP
             spbill_create_ip = ip;
             String notify_url = TGlobal.notify_url;//通知地址
@@ -189,6 +186,7 @@ public class TPayAction {
         }
         String returnCode = (String) map.get("return_code");
         if ("SUCCESS".equals(returnCode)) {
+            System.out.println("success");
             //验证签名是否正确
 //            if(PayUtil.verify(PayUtil.createLinkString(map), (String)map.get("sign"), WxPayConfig.key, "utf-8")){
 //                /**此处添加自己的业务逻辑代码start**/
@@ -206,6 +204,7 @@ public class TPayAction {
         } else {
             resXml = "<xml>" + "<return_code><![CDATA[FAIL]]></return_code>"
                     + "<return_msg><![CDATA[报文为空]]></return_msg>" + "</xml> ";
+            System.out.println("fail");
         }
 
         //将每次支付结果通知信息保存到数据库

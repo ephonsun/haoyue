@@ -50,6 +50,8 @@ public class TProductsController {
             if (!tProductsService.findOne(tProducts.getId()).getSaleId().equals(tProducts.getSaleId())) {
                 return new TResult(true, TGlobal.have_no_right, null);
             }
+            //清空之前关联的商品分类
+            tProductsService.delPtypes(tProducts.getId());
         }
         //是否团购
         if (!StringUtils.isNullOrBlank(tProducts.getTuanNumbers() + "") && !StringUtils.isNullOrBlank(tProducts.getTuanTimes() + "")) {
@@ -109,7 +111,7 @@ public class TProductsController {
     // http://localhost:8080/tuan/product/uploadPic?saleId=1&files=121211221
     // /tuan/product/uploadPic?id=卖家ID&files=需要上传的所有图片
     @RequestMapping("/uploadPic")
-    public Object uploadFile(MultipartFile[] files, TUserSale sale, String saleId) {
+    public Object uploadFile(MultipartFile[] file, TUserSale sale, String saleId) {
         sale.setId(Integer.parseInt(saleId));
         Iterable<TUserSale> iterable = tUserSaleService.findOne(sale);
         Iterator<TUserSale> iterator = iterable.iterator();
@@ -118,9 +120,9 @@ public class TProductsController {
         String url = "";
         StringBuffer stringBuffer = new StringBuffer();
         // 循环获得每个文件
-        if (files != null && files.length != 0) {
-            for (int i = 0; i < files.length; i++) {
-                MultipartFile multipartFile = files[i];
+        if (file!= null && file.length != 0) {
+            for (int i = 0; i < file.length; i++) {
+                MultipartFile multipartFile = file[i];
                 //校验存储空间是否够用
                 size_kb = (int) multipartFile.getSize() / 1024;
                 if ((size_kb + tUserSale.getUploadFile()) >= tUserSale.getMaxFile()) {
@@ -139,14 +141,14 @@ public class TProductsController {
                 //拼接返回的图片地址
                 url = TGlobal.aliyun_href + url;
                 stringBuffer.append(url);
-                if (i != files.length - 1) {
+                if (i != file.length - 1) {
                     stringBuffer.append(",");
                 }
             }
         }
         //更新sale的存储空间
         tUserSaleService.update(tUserSale);
-        if (files==null||files.length==0){
+        if (file==null||file.length==0){
             System.out.println("files为空");
         }
         System.out.println(stringBuffer.toString());
@@ -244,7 +246,7 @@ public class TProductsController {
         TProductsTuanResponse response = new TProductsTuanResponse();
         response.setAmount(count);
         response.setTuanOrdersList(ownerList);
-        return new TResult(false, TGlobal.do_success, ownerList);
+        return new TResult(false, TGlobal.do_success, response);
     }
 
     // /tuan/product/recommend?pid=当前查询的商品Id&saleId=12
