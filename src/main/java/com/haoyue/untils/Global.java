@@ -18,6 +18,7 @@ public class Global {
     public static Integer pageNumber=0;//默认第一页
     public static String alery_done="不可重复操作";
     public static List<String> excel_urls=new ArrayList<>();//存放excel存储路径，每天定时清空oss上的excel文件
+    public static Object object3=new Object();//执行dictionarys表更新
 
     //注册
     public static String appid_exist="appid已经存在";
@@ -118,6 +119,7 @@ public class Global {
 
     // 付款package
     public static Map<String,String> package_map=new HashMap<>();
+
 
     //非拦截地址
     public static List<String> urls(){

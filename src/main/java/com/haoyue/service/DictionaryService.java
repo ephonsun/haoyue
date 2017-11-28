@@ -154,22 +154,25 @@ public class DictionaryService {
     }
 
     public void addEachDay2() {
+
         List<Integer> ids = sellerRepo.findIds();
         Date date = StringUtils.getYMD(new Date());
-        for (Integer id : ids) {
-            //判断新添加数据存不存在
-            if (dictionaryRepo.findBySellerIdAndCreateDateAndProductIdIsNull(id, date) != null) {
-                continue;
+        // addViews和addVisitors可导致并发执行的情况
+        synchronized (Global.object3) {
+            for (Integer id : ids) {
+                //判断新添加数据存不存在
+                if (dictionaryRepo.findBySellerIdAndCreateDateAndProductIdIsNull(id, date) != null) {
+                    continue;
+                }
+                Dictionary dictionary = new Dictionary();
+                dictionary.setTurnover(0.0);
+                dictionary.setVisitors(0);
+                dictionary.setViews(0);
+                dictionary.setBuyers(0);
+                dictionary.setSellerId(id);
+                dictionary.setCreateDate(date);
+                dictionaryRepo.save(dictionary);
             }
-            Dictionary dictionary = new Dictionary();
-            dictionary.setTurnover(0.0);
-            dictionary.setVisitors(0);
-            dictionary.setViews(0);
-            dictionary.setBuyers(0);
-            dictionary.setSellerId(id);
-            dictionary.setCreateDate(date);
-
-            dictionaryRepo.save(dictionary);
         }
         //每日清空 visitors 表
         visitorsService.delAll();
