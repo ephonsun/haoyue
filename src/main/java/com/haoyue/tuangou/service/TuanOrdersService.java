@@ -159,6 +159,9 @@ public class TuanOrdersService {
                 if (key.equals("code")){
                     bd.and(tuanorders.code.contains(value));
                 }
+                if (key.equals("saleId")){
+                    bd.and(tuanorders.saleId.eq(value));
+                }
                 if (key.equals("startDate")){
                     try {
                         from=StringUtils.formatStrToDate((map.get("startDate")));
