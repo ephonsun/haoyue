@@ -20,6 +20,7 @@ public class TDictionarys  {
     private String saleId;
     private int views;
     private int visitors;
+    private int buyers;
 
     @Column(name = "turnover", columnDefinition="double(10,2)")
     private double turnover;
@@ -29,6 +30,13 @@ public class TDictionarys  {
     @Column(updatable=false)
     private Date createDate;//创建日期
 
+    public int getBuyers() {
+        return buyers;
+    }
+
+    public void setBuyers(int buyers) {
+        this.buyers = buyers;
+    }
 
     public Integer getId() {
         return id;

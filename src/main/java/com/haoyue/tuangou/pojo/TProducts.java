@@ -41,6 +41,16 @@ public class TProducts {
     @Column(updatable=false)
     private Date createDate;//创建日期
 
+    private boolean isFree=false;//是否0元购
+
+    public boolean getIsFree() {
+        return isFree;
+    }
+
+    public void setIsFree(boolean free) {
+        isFree = free;
+    }
+
     public int getSaleNum() {
         return saleNum;
     }

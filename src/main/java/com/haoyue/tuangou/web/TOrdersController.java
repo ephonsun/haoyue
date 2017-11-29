@@ -36,6 +36,8 @@ public class TOrdersController {
     private TuanOrdersService tuanOrdersService;
     @Autowired
     private TDictionarysService tDictionarysService;
+    @Autowired
+    private TFreeShoppingService tFreeShoppingService;
 
     //   /tuan/torders/save?pid=商品ID&ptypeId=商品分类ID&amount=购买数量&productPrice=下单的商品价格
     //    &deliverPrice=快递费用,免邮则0&openId=12&saleId=12&wxname=微信名&wxpic=微信头像
@@ -98,9 +100,19 @@ public class TOrdersController {
             tProductsTypesService.save(productsTypes);
             //微信通知
             addTemplate(orders);
+            // TODO: 2017/11/28 零元购通知
+           // addTemplate2(orders);
+            //// TODO: 2017/11/28 存储零元购信息  失效日期
+//            TFreeShopping freeShopping=new TFreeShopping();
+//            freeShopping.setCreateDate(new Date());
+//            freeShopping.setOpenId(orders.getOpenId());
+//            freeShopping.setOrderCode1(orders.getCode());
+//            freeShopping.setSaleId(orders.getSaleId());
+//            tFreeShoppingService.save(freeShopping);
             //更新tdictionary表
             TDictionarys tDictionarys= tDictionarysService.findByTodaySaleId(orders.getSaleId());
             tDictionarys.setTurnover(tDictionarys.getTurnover()+orders.getTotalPrice());
+            tDictionarys.setBuyers(tDictionarys.getBuyers()+1);
             tDictionarysService.update(tDictionarys);
         }
         tOrdersService.update(orders);
@@ -299,7 +311,51 @@ public class TOrdersController {
     }
 
 
+    //付款通知
     public void addTemplate(TOrders order){
+        List<TemplateResponse> list=new ArrayList<>();
+        TemplateResponse templateResponse1=new TemplateResponse();
+        templateResponse1.setColor("#000000");
+        templateResponse1.setName("keyword1");
+        templateResponse1.setValue(order.gettProducts().getPname());
+        list.add(templateResponse1);
+
+        TemplateResponse templateResponse2=new TemplateResponse();
+        templateResponse2.setColor("#000000");
+        templateResponse2.setName("keyword2");
+        templateResponse2.setValue(order.getWxname());
+        list.add(templateResponse2);
+
+        TemplateResponse templateResponse3=new TemplateResponse();
+        templateResponse3.setColor("#000000");
+        templateResponse3.setName("keyword3");
+        templateResponse3.setValue(order.getTotalPrice()+"");
+        list.add(templateResponse3);
+
+        TemplateResponse templateResponse4=new TemplateResponse();
+        templateResponse4.setColor("#000000");
+        templateResponse4.setName("keyword4");
+        templateResponse4.setValue("微信支付");
+        list.add(templateResponse4);
+
+        TemplateResponse templateResponse5=new TemplateResponse();
+        templateResponse5.setColor("#000000");
+        templateResponse5.setName("keyword5");
+        String date= com.haoyue.untils.StringUtils.formDateToStr(new Date());
+        templateResponse5.setValue(date);
+        list.add(templateResponse5);
+
+        Template template=new Template();
+        template.setTemplateId("Z_Xg6rYdQgci4FP_aOjTvZHXeC5BSs99EwARD6NJXWk");
+        template.setTemplateParamList(list);
+        template.setTopColor("#000000");
+        template.setPage("pages/index/index");
+        template.setToUser(order.getOpenId());
+        getTemplate(template);
+    }
+
+    //零元购通知
+    public void addTemplate2(TOrders order){
         List<TemplateResponse> list=new ArrayList<>();
         TemplateResponse templateResponse1=new TemplateResponse();
         templateResponse1.setColor("#000000");
@@ -354,7 +410,7 @@ public class TOrdersController {
         String url="https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token="+access_token+"&form_id="+form_id;
         String result= CommonUtil.httpRequest(url,"POST",template.toJSON());
         //删除该key-value
-        TGlobal.tuan_package_map.remove(template.getToUser());
+        //TGlobal.tuan_package_map.remove(template.getToUser());
     }
 
 

@@ -118,7 +118,7 @@ public class TProductsService {
         //如果多余四个商品，推荐剩余商品中的三个
         for (int i=0;i<3;i++){
             int id=(int)Math.floor(Math.random()*ids.size());
-            while (newids.contains(id)||id==Integer.parseInt(pid)){
+            while (newids.contains(id)||id==Integer.parseInt(pid)||id==0){
                 id=(int)Math.floor(Math.random()*ids.size());
             }
             newids.add(id);

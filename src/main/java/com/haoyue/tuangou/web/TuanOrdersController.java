@@ -56,7 +56,6 @@ public class TuanOrdersController {
             deliver.setSaleId1(tuanOrders.getSaleId());
             deliver.setOpenId1(tuanOrders.getOpenId());
             tDeliverService.save(deliver);
-
             tuanOrders.settDeliver(deliver);
             tuanOrders.setState(TGlobal.tuan_order_unpay);
             tuanOrders.setStartNum(products.getTuanNumbers());
@@ -64,7 +63,6 @@ public class TuanOrdersController {
             tuanOrders.settProducts(products);
             tuanOrders.settProductsTypes(productsTypes);
             tuanOrders.setHours(products.getTuanTimes());
-
             //房主
             if (tuanOrders.getIsowner()) {
                 tuanOrders.setOwner(tuanOrders.getWxname());
@@ -103,7 +101,6 @@ public class TuanOrdersController {
                     return new TResult(true, TGlobal.have_joined_in, null);
                 }
             }
-
             tuanOrders.setCode(TGlobal.tuan_ordercode_begin + date.getTime());
             tuanOrdersService.save(tuanOrders);
         }
@@ -161,6 +158,7 @@ public class TuanOrdersController {
                 //更新tdictionary表
                 TDictionarys tDictionarys = tDictionarysService.findByTodaySaleId(orders.getSaleId());
                 tDictionarys.setTurnover(tDictionarys.getTurnover() + orders.getTotalPrice());
+                tDictionarys.setBuyers(tDictionarys.getBuyers()+1);
                 tDictionarysService.update(tDictionarys);
             }
         }
@@ -439,6 +437,7 @@ public class TuanOrdersController {
 }
 
 class Response{
+
     private TProducts products;
     private List<TuanOrders> tuanOrdersList;
 

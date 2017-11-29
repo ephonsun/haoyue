@@ -29,7 +29,7 @@ public class TUserSale {
     private String lunbo_products;//轮播图对应商品编号
     private String onlineCode;
     private String authority;
-    private String identification;
+    private String identification;//认证
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:SS", timezone="GMT+8")
     @Temporal(TemporalType.TIMESTAMP)
     @Column(updatable=false)

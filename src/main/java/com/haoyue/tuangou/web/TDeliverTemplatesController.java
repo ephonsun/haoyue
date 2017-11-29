@@ -63,7 +63,7 @@ public class TDeliverTemplatesController {
     @RequestMapping("/del_templates")
     public TResult del_templates(TDeliverTemplates templates){
         TDeliverTemplates tDeliverTemplates=templatesService.findOne(templates.getId());
-        if (templates.getSaleId()!=tDeliverTemplates.getSaleId()){
+        if (!templates.getSaleId().equals(tDeliverTemplates.getSaleId())){
             return new TResult(true, TGlobal.have_no_right,null);
         }
         templatesService.del(tDeliverTemplates);
@@ -81,11 +81,11 @@ public class TDeliverTemplatesController {
         return new TResult(false, TGlobal.do_success,null);
     }
 
-    //   /tuan/tdelivertemplates/update_template?saleId=卖家Id&id=12&destinationAddress=安徽，江苏&price=首件运费&count=首件数&morePrice=增加运费&moreCount=增加运费
+    //   http://localhost:8080/tuan/tdelivertemplates/update_template?saleId=2&id=2&destinationAddress=安徽，江苏&price=8&count=8&morePrice=8&moreCount=8
     @RequestMapping("/update_template")
     public TResult update_template(TDeliverTemplate template){
         TDeliverTemplate deliverTemplate=templateService.findOne(template.getId());
-        if (template.getSaleId()!=deliverTemplate.getSaleId()){
+        if (!template.getSaleId().equals(deliverTemplate.getSaleId())){
             return new TResult(true, TGlobal.have_no_right,null);
         }
         deliverTemplate.setDestinationAddress(template.getDestinationAddress());
