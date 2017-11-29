@@ -67,6 +67,7 @@ public class TGlobal {
     public static String tuan_ordercode_begin="666";
     public static String tuan_num_too_late="1001";
     public static String tuan_time_too_late="结束时间已到，你来晚了一步";
+    public static String tuan_times_nums_illegal="当前商品开团人数或时间异常";
     public static String have_joined_in="你已参加当前团购！";
     public static Object object2=new Object();//保存团购订单锁
     public static Object object4=new Object();//更新团购订单锁

@@ -44,7 +44,7 @@ public class TProductsTypes {
         return active;
     }
 
-    public void setIsActive(boolean active) {
+    public void setActive(boolean active) {
         this.active = active;
     }
 

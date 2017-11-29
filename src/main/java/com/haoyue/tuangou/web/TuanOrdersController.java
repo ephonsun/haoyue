@@ -48,6 +48,10 @@ public class TuanOrdersController {
         }
 
         TProducts products = tProductsService.findOne(Integer.parseInt(pid));
+        //判断商品团购时间和人数是否正常
+        if (products.getTuanNumbers()==0||products.getTuanTimes()==0){
+            return new TResult(true, TGlobal.tuan_times_nums_illegal, null);
+        }
         TProductsTypes productsTypes = tProductsTypesService.findOne(Integer.parseInt(protypeId));
         synchronized (TGlobal.object2) {
             Date date = new Date();

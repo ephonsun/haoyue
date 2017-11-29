@@ -111,18 +111,18 @@ public class TProductsService {
                 if (id==Integer.parseInt(pid)){
                     continue;
                 }
-                result.add(findOne(id));
+                result.add(findOne(ids.get(id)));
             }
             return result;
         }
         //如果多余四个商品，推荐剩余商品中的三个
         for (int i=0;i<3;i++){
             int id=(int)Math.floor(Math.random()*ids.size());
-            while (newids.contains(id)||id==Integer.parseInt(pid)||id==0){
+            while (newids.contains(id)||id==Integer.parseInt(pid)){
                 id=(int)Math.floor(Math.random()*ids.size());
             }
             newids.add(id);
-            result.add(findOne(id));
+            result.add(findOne(ids.get(id)));
         }
         return result;
     }
@@ -137,7 +137,7 @@ public class TProductsService {
         List<Integer> newids=new ArrayList<>();
         if (ids.size()<=3){
             for (Integer id:ids){
-                result.add(findOne(id));
+                result.add(findOne(ids.get(id)));
             }
             return result;
         }
@@ -147,7 +147,7 @@ public class TProductsService {
                 id=(int)Math.floor(Math.random()*ids.size());
             }
             newids.add(id);
-            result.add(findOne(id));
+            result.add(findOne(ids.get(id)));
         }
         return result;
     }
@@ -155,4 +155,5 @@ public class TProductsService {
     public void delPtypes(Integer pid) {
         tProductsRepo.delPtypes(pid);
     }
+
 }

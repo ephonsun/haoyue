@@ -103,12 +103,7 @@ public class TOrdersController {
             // TODO: 2017/11/28 零元购通知
            // addTemplate2(orders);
             //// TODO: 2017/11/28 存储零元购信息  失效日期
-//            TFreeShopping freeShopping=new TFreeShopping();
-//            freeShopping.setCreateDate(new Date());
-//            freeShopping.setOpenId(orders.getOpenId());
-//            freeShopping.setOrderCode1(orders.getCode());
-//            freeShopping.setSaleId(orders.getSaleId());
-//            tFreeShoppingService.save(freeShopping);
+            //freeorder(orders);
             //更新tdictionary表
             TDictionarys tDictionarys= tDictionarysService.findByTodaySaleId(orders.getSaleId());
             tDictionarys.setTurnover(tDictionarys.getTurnover()+orders.getTotalPrice());
@@ -117,6 +112,15 @@ public class TOrdersController {
         }
         tOrdersService.update(orders);
         return new TResult(false, TGlobal.do_success, orders);
+    }
+
+    public void freeorder(TOrders orders){
+        TFreeShopping freeShopping = new TFreeShopping();
+        freeShopping.setCreateDate(new Date());
+        freeShopping.setOpenId(orders.getOpenId());
+        freeShopping.setOrderCode1(orders.getCode());
+        freeShopping.setSaleId(orders.getSaleId());
+        tFreeShoppingService.save(freeShopping);
     }
 
     //   /tuan/torders/del?oid=订单ID&【openId 买家删除订单   saleId 卖家删除订单】

@@ -36,7 +36,7 @@ public class TProductsTypesService {
         }
 
         if (tProductsTypes.getIsActive()==false){
-            producttype.setIsActive(false);
+            producttype.setActive(false);
         }
 
         tProductsTypesRepo.save(producttype);
