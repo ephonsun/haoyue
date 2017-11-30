@@ -69,6 +69,9 @@ public class OrderService {
                     bd.and(order.state.ne(Global.order_luckdraw_unpay));
                     flag = true;
                 }
+                if (name.equals("active")){
+                    bd.and(order.active.eq(Boolean.valueOf(value)));
+                }
                 if (name.equals("luck")) {
                     bd.and(order.isLuck.eq(true));
                 }
@@ -101,11 +104,12 @@ public class OrderService {
                     bd.and(order.sellerId.eq(Integer.parseInt(value)));
                 }
                 if (name.equals("active")) {
-                    bd.and(order.active.eq(true));
+                    bd.and(order.active.eq(Boolean.valueOf(value)));
                 }
                 if (name.equals("luckdraw")) {
                     bd.and(order.isLuckDraw.eq(true));
                 }
+
             }
         }
         return orderRepo.findAll(bd.getValue());

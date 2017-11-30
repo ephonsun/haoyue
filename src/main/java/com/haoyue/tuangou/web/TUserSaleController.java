@@ -111,16 +111,17 @@ public class TUserSaleController {
         return iterable;
     }
 
-    // http://localhost:8080/tuan/tusersale/phonecode?id=1
+    // http://localhost:8080/tuan/tusersale/phonecode?phone=1221212
     @RequestMapping("/phonecode")
-    public TResult getphonecode(TUserSale sale,String saleId) {
-        sale.setId(Integer.parseInt(saleId));
-        Iterable<TUserSale> iterable = tUserSaleService.findOne(sale);
-        Iterator<TUserSale> iterator = iterable.iterator();
-        TUserSale tUserSale = iterator.next();
+    public TResult getphonecode(String phone,String saleId) {
+        // 修改密码 找回密码
+        if (StringUtils.isNullOrBlank(phone)){
+            TUserSale tUserSale=tUserSaleService.findOneById(Integer.parseInt(saleId));
+            phone=tUserSale.getPhone();
+        }
         String phonecode = StringUtils.getPhoneCode();
         try {
-            TSendCode.sendSms(tUserSale.getPhone(), phonecode);
+            TSendCode.sendSms(phone, phonecode);
         } catch (ClientException e) {
             e.printStackTrace();
         }
@@ -187,6 +188,7 @@ public class TUserSaleController {
         result.add(iterable1);
         return new TResult(false, TGlobal.do_success,result);
     }
+
 
 
 }

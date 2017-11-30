@@ -34,7 +34,7 @@ public class BaseInterceptor3 implements HandlerInterceptor {
 //        if(!url.contains("/tuan")){
 //            return true;
 //        }
-        if (StringUtils.isNullOrBlank(saleId)&&StringUtils.isNullOrBlank(openId)&&!url.contains("/tusersale")&&!url.contains("/uploadPic")&&!url.contains("/pay")){
+        if (StringUtils.isNullOrBlank(saleId)&&StringUtils.isNullOrBlank(openId)&&!url.contains("/tusersale")&&!url.contains("/uploadPic")&&!url.contains("/pay")&&!url.contains("/phonecode")){
             throw new TMyException(TGlobal.saleid_openid_isnull);
         }
         //检验onlinecode

@@ -7,6 +7,7 @@ import java.util.Date;
 
 /**
  * Created by LiJia on 2017/11/29.
+ * 存储访问通知formId实体类
  */
 @Entity
 @Table(name = "wx_template")
@@ -15,7 +16,6 @@ public class WxTemplate {
     @Id
     @GeneratedValue
     private Integer id;
-
     private String sellerId;
     private String openId;
     private String formId;

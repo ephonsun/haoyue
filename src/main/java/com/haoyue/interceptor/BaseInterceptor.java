@@ -23,7 +23,6 @@ import java.util.Map;
 
 public class BaseInterceptor implements HandlerInterceptor {
 
-    //private final static Logger logger = LoggerFactory.getLogger(BaseInterceptor.class);
     @Autowired
     private SellerService sellerService;
 

@@ -47,10 +47,14 @@ public class OrderController {
     @Autowired
     private LuckDrawService luckDrawService;
 
+
+
+    // /order/list?pageNumber&pageSize&sellerId&state&active=true
     @RequestMapping("/list")
     public Result list(@RequestParam Map<String, String> map, @RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize) {
         return new Result(false, "", orderService.list(map, pageNumber, pageSize), map.get("token"));
     }
+
 
     @RequestMapping("/del")
     public Result del(Integer id, String openId) {
@@ -64,19 +68,29 @@ public class OrderController {
         return new Result(false, Global.do_success, openId);
     }
 
+
+    //  卖家后台取消待付款 /order/cancel?id=订单ID&sellerId=12
+    //  小程序取消待付款  /order/cancel?id=订单ID&openId=12
     @RequestMapping("/cancel")
-    public Result cancel(Integer id, String openId) {
+    public Result cancel(Integer id, String openId,String sellerId) {
         Order order = orderService.findOne(id);
-        Integer sellerId = order.getSellerId();
-        Customer customer = customerService.findByOpenId(openId, sellerId + "");
-        if (customer.getId() != order.getCustomerId()) {
-            return new Result(true, Global.have_no_right, openId);
+        if (order.getSellerId()!=Integer.parseInt(sellerId)){
+            return new Result(true, Global.have_no_right, null);
+        }
+        if (!StringUtils.isNullOrBlank(openId)) {
+            Integer sellerId1 = order.getSellerId();
+            Customer customer = customerService.findByOpenId(openId, sellerId1 + "");
+            if (customer.getId() != order.getCustomerId()) {
+                return new Result(true, Global.have_no_right, openId);
+            }
         }
         order.setActive(false);
         orderService.update(order);
         return new Result(false, Global.do_success, null, null);
     }
 
+
+    // /order/clist?sellerId&openId&state&active=true
     @RequestMapping("/clist")
     public Result clist(@RequestParam Map<String, String> map) {
         String openId = map.get("openId");

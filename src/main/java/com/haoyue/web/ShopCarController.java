@@ -14,10 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by LiJia on 2017/9/4.
@@ -64,14 +61,20 @@ public class ShopCarController {
         return new Result(false,Global.do_success,null,null);
     }
 
+    // formId
     @RequestMapping("/save")
-    public Result save(Integer proId,String openId,ShopCarDetail shopCarDetail,Integer sellerId,String wxname){
+    public Result save(Integer proId,String openId,ShopCarDetail shopCarDetail,Integer sellerId,String wxname,String formId){
         ShopCar shopCar=new ShopCar();
         Customer customer=customerService.findByOpenId(openId,sellerId+"");
         shopCar.setCustomerId(customer.getId());
         shopCar.setSellerId(sellerId);
         shopCar.setCreateDate(new Date());
         shopCar.setWxname(wxname);
+        shopCar.setOpenId(openId);
+        shopCar.setFormId(formId);
+        Calendar calendar=Calendar.getInstance();
+        calendar.add(Calendar.DATE,7);
+        shopCar.setEndDate(calendar.getTime());
        return new Result(false,Global.do_success,shopCarService.save(shopCar,proId,shopCarDetail) ,null);
     }
 

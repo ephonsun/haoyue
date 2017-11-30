@@ -21,6 +21,8 @@ public class ShopCar {
     private Integer customerId;
     private String  wxname;
     private Integer sellerId;
+    private String  formId;
+    private String  openId;
 
     @ManyToMany
     private List<Products> productses;
@@ -32,6 +34,45 @@ public class ShopCar {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(updatable = false)
     private Date createDate;//创建日期
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:SS", timezone = "GMT+8")
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(updatable = false)
+    private Date endDate;//formid失效日期
+
+    private boolean active=true;//formid是否失效
+
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
+
+    public boolean getActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public String getOpenId() {
+        return openId;
+    }
+
+    public void setOpenId(String openId) {
+        this.openId = openId;
+    }
+
+    public String getFormId() {
+        return formId;
+    }
+
+    public void setFormId(String formId) {
+        this.formId = formId;
+    }
 
     public String getWxname() {
         return wxname;
