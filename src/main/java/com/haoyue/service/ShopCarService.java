@@ -1,10 +1,10 @@
 package com.haoyue.service;
 
-import com.haoyue.pojo.Products;
-import com.haoyue.pojo.QShopCar;
-import com.haoyue.pojo.ShopCar;
-import com.haoyue.pojo.ShopCarDetail;
+import com.haoyue.pojo.*;
 import com.haoyue.repo.ShopCarRepo;
+import com.haoyue.untils.CommonUtil;
+import com.haoyue.untils.Global;
+import com.haoyue.untils.HttpRequest;
 import com.haoyue.untils.StringUtils;
 import com.querydsl.core.BooleanBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -130,5 +130,89 @@ public class ShopCarService {
 
     public List<ShopCar> findBySellerIdAndCreateDate(String sellerId, Date from, Date end) {
         return  shopCarRepo.findBySellerIdAndCreateDate(sellerId,from,end);
+    }
+
+
+    public void sendCustomerWxTemplate(Integer protypeId,Integer sellerId) {
+        //刷新shopcar里的所有formId状态
+        shopCarRepo.updateActiveFalseByDate(new Date());
+        //取出所有没有过期的formId关联的订单
+        List<ShopCar>  shopcars = shopCarRepo.findActiveIsTrue(sellerId);
+        for (ShopCar shopcar:shopcars){
+            //判断protypeId是否一样
+            if (shopcar.getShopCarDetails()!=null) {
+                if (shopcar.getShopCarDetails().get(0).getProdutsType().getId() == protypeId) {
+                    String pname=shopcar.getProductses().get(0).getPname();
+                    int pid=shopcar.getProductses().get(0).getId();
+                    //发送模板信息
+                    if (StringUtils.isNullOrBlank(shopcar.getFormId())){
+                        //formId2
+                        addTemplate(pid,pname,shopcar.getOpenId(), shopcar.getShopCarDetails().get(0).getProdutsType(), shopcar.getFormId2());
+                        shopcar.setFormId2(null);
+                        shopCarRepo.updateFormId2(shopcar.getId());
+                    }else {
+                        //formId
+                        addTemplate(pid,pname,shopcar.getOpenId(), shopcar.getShopCarDetails().get(0).getProdutsType(), shopcar.getFormId());
+                        shopcar.setFormId(null);
+                        shopCarRepo.updateFormId(shopcar.getId());
+                    }
+                    if (StringUtils.isNullOrBlank(shopcar.getFormId())&&StringUtils.isNullOrBlank(shopcar.getFormId2())) {
+                        //更新shop.active=false formId formId2 已过期或已被使用
+                        shopCarRepo.updateActiveFalse(shopcar.getId());
+                    }
+                }
+            }
+        }
+    }
+
+
+    public void getTemplate(Template template,String formId){
+        //模板信息通知用户
+        //获取 access_token
+        String access_token_url="https://api.weixin.qq.com/cgi-bin/token";
+        String param1="grant_type=client_credential&appid=wxe46b9aa1b768e5fe&secret=8bcdb74a9915b5685fa0ec37f6f25b24";
+        String access_token= HttpRequest.sendPost(access_token_url,param1);
+        access_token=access_token.substring(access_token.indexOf(":")+2,access_token.indexOf(",")-1);
+        //发送模板信息
+        template.setForm_id(formId);
+        String url="https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token="+access_token+"&form_id="+formId;
+        String result= CommonUtil.httpRequest(url,"POST",template.toJSON());
+    }
+
+    public void addTemplate(int pid,String pname,String openId,ProdutsType ptype,String formId){
+
+        List<TemplateResponse> list=new ArrayList<>();
+        TemplateResponse templateResponse1=new TemplateResponse();
+        templateResponse1.setColor("#000000");
+        templateResponse1.setName("keyword1");
+        templateResponse1.setValue(String.valueOf(ptype.getPriceNew()));
+        list.add(templateResponse1);
+
+        TemplateResponse templateResponse2=new TemplateResponse();
+        templateResponse2.setColor("#000000");
+        templateResponse2.setName("keyword2");
+        templateResponse2.setValue(pname);
+        list.add(templateResponse2);
+
+        TemplateResponse templateResponse3=new TemplateResponse();
+        templateResponse3.setColor("#000000");
+        templateResponse3.setName("keyword3");
+        templateResponse3.setValue("pages/details/details?id="+pid+"&ptypeId="+ptype.getId());
+        list.add(templateResponse3);
+
+        TemplateResponse templateResponse4=new TemplateResponse();
+        templateResponse4.setColor("#000000");
+        templateResponse4.setName("keyword4");
+        templateResponse4.setValue("近期好价");
+        list.add(templateResponse4);
+
+
+        Template template=new Template();
+        template.setTemplateId("HsbxE0x_CqdmCu6u0hhYtGB4Ry2f_R9M96KBLLxWbUM");
+        template.setTemplateParamList(list);
+        template.setTopColor("#000000");
+        template.setPage("pages/details/details?id="+pid+"&ptypeId="+ptype.getId());
+        template.setToUser(openId);
+        getTemplate(template,formId);
     }
 }

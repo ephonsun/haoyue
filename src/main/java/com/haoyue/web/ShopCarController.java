@@ -61,9 +61,9 @@ public class ShopCarController {
         return new Result(false,Global.do_success,null,null);
     }
 
-    // formId
+    // formId formId2
     @RequestMapping("/save")
-    public Result save(Integer proId,String openId,ShopCarDetail shopCarDetail,Integer sellerId,String wxname,String formId){
+    public Result save(Integer proId,String openId,ShopCarDetail shopCarDetail,Integer sellerId,String wxname,String formId,String formId2){
         ShopCar shopCar=new ShopCar();
         Customer customer=customerService.findByOpenId(openId,sellerId+"");
         shopCar.setCustomerId(customer.getId());
@@ -72,6 +72,7 @@ public class ShopCarController {
         shopCar.setWxname(wxname);
         shopCar.setOpenId(openId);
         shopCar.setFormId(formId);
+        shopCar.setFormId2(formId2);
         Calendar calendar=Calendar.getInstance();
         calendar.add(Calendar.DATE,7);
         shopCar.setEndDate(calendar.getTime());

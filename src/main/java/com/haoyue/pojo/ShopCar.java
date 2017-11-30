@@ -22,6 +22,7 @@ public class ShopCar {
     private String  wxname;
     private Integer sellerId;
     private String  formId;
+    private String  formId2;
     private String  openId;
 
     @ManyToMany
@@ -41,6 +42,14 @@ public class ShopCar {
     private Date endDate;//formid失效日期
 
     private boolean active=true;//formid是否失效
+
+    public String getFormId2() {
+        return formId2;
+    }
+
+    public void setFormId2(String formId2) {
+        this.formId2 = formId2;
+    }
 
     public Date getEndDate() {
         return endDate;
