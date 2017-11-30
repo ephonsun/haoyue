@@ -90,6 +90,19 @@ public class TUserSaleController {
         }
     }
 
+
+    // http://localhost:8080/tuan/tusersale/forgetpass?phone=122121&newpass=12121
+    @RequestMapping("/forgetpass")
+    public TResult forgetPass(String phone ,String newpass){
+        TUserSale userSale= tUserSaleService.findByPhone(phone);
+        if (userSale==null){
+            return new TResult(true,TGlobal.phone_notright,null);
+        }
+        userSale.setPass(newpass);
+        tUserSaleService.update2(userSale);
+        return new TResult(false,TGlobal.do_success,null);
+    }
+
     public Iterable<TUserSale> hidepass(Iterable<TUserSale> iterable){
         Iterator<TUserSale> iterator=iterable.iterator();
         while (iterator.hasNext()){

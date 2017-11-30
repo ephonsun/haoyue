@@ -19,4 +19,6 @@ public interface TUserSaleRepo extends TBaseRepo<TUserSale,Integer> {
     List<Integer> findAllIds();
 
     List<TUserSale> findByOnlineCode(String onlinecode);
+
+    TUserSale findByPhone(String phone);
 }

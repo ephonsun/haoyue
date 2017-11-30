@@ -145,4 +145,8 @@ public class TUserSaleService {
     public List<TUserSale> findByOnlineCode(String onlinecode) {
         return tUserSaleRepo.findByOnlineCode(onlinecode);
     }
+
+    public TUserSale findByPhone(String phone) {
+        return tUserSaleRepo.findByPhone(phone);
+    }
 }
