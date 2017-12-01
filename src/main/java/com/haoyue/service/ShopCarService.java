@@ -145,6 +145,9 @@ public class ShopCarService {
                     String pname=shopcar.getProductses().get(0).getPname();
                     int pid=shopcar.getProductses().get(0).getId();
                     //发送模板信息
+                    if (shopcar.getFormId().equals("the formId is a mock one")||shopcar.getFormId2().equals("the formId is a mock one")){
+                        continue;
+                    }
                     if (StringUtils.isNullOrBlank(shopcar.getFormId())){
                         //formId2
                         addTemplate(pid,pname,shopcar.getOpenId(), shopcar.getShopCarDetails().get(0).getProdutsType(), shopcar.getFormId2());
@@ -206,7 +209,6 @@ public class ShopCarService {
         templateResponse4.setValue("近期好价");
         list.add(templateResponse4);
 
-
         Template template=new Template();
         template.setTemplateId("HsbxE0x_CqdmCu6u0hhYtGB4Ry2f_R9M96KBLLxWbUM");
         template.setTemplateParamList(list);
@@ -214,5 +216,6 @@ public class ShopCarService {
         template.setPage("pages/details/details?id="+pid+"&ptypeId="+ptype.getId());
         template.setToUser(openId);
         getTemplate(template,formId);
+
     }
 }
