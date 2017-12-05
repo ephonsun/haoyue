@@ -112,6 +112,7 @@ public class Global {
     public static String accessKeySecret = "pXTOa9qMzha20WKKTzl6DNDGQglNpB";
     public static String signName="苏州皓月科技";
     public static String TemplateCode="SMS_91140162";
+    public static String TemplateCode2="SMS_115765225";
 
     //微信支付
     public static String notify_url="https://www.cslapp.com/pay/notify";//通知地址

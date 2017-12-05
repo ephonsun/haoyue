@@ -1,6 +1,7 @@
 package com.haoyue.web;
 
 
+import com.aliyuncs.exceptions.ClientException;
 import com.haoyue.pojo.*;
 import com.haoyue.pojo.Dictionary;
 import com.haoyue.service.*;
@@ -46,6 +47,8 @@ public class OrderController {
     private CashTicketService cashTicketService;
     @Autowired
     private LuckDrawService luckDrawService;
+    @Autowired
+    private SellerService sellerService;
 
 
 
@@ -457,6 +460,23 @@ public class OrderController {
             order1.setTotalPrice(order.getTotalPrice());
         }
         orderService.update(order1);
+        return new Result(false, Global.do_success, null, null);
+    }
+
+    // http://localhost:8080/order/remind_deliver?sellerId=1&oid=140
+    // 提醒卖家发货
+    @RequestMapping("/remind_deliver")
+    public Result remindDeliver(String sellerId,String oid){
+        Order order= orderService.findOne(Integer.parseInt(oid));
+        String wxname=order.getWxname();
+        String code=order.getOrderCode();
+        String phone=sellerService.findOne(Integer.parseInt(sellerId)).getSellerPhone();
+        phone="18715161200";
+        try {
+            SendCode.sendSms2(phone,code,wxname);
+        } catch (ClientException e) {
+            e.printStackTrace();
+        }
         return new Result(false, Global.do_success, null, null);
     }
 

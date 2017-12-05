@@ -29,6 +29,8 @@ public class ProductsService {
     private ProdutsTypeRepo produtsTypeRepo;
     @Autowired
     private PtypeNamesService ptypeNamesService;
+    @Autowired
+    private ShopCarService shopCarService;
 
     public Products save(Products products) throws IOException {
 
@@ -205,7 +207,12 @@ public class ProductsService {
         else if (!StringUtils.isNullOrBlank(map.get("discount"))) {
             ProdutsType ptype = produtsTypeRepo.findOne(Integer.parseInt(map.get("ptypeId")));
             ptype.setISDiscount(true);
+            double olddiscount=ptype.getDiscountPrice();
             ptype.setDiscountPrice(Double.valueOf(map.get("discount")));
+            //降价
+            if (olddiscount!=0&&olddiscount>ptype.getDiscountPrice()){
+                //shopCarService.sendCustomerWxTemplate(ptype.getId(),ptype.getSellerId());
+            }
             produtsTypeRepo.save(ptype);
         }
 
@@ -237,5 +244,4 @@ public class ProductsService {
     public List<Products> findBySellerIdAndCreateDate(String sellerId, Date date) {
         return productsRepo.findBySellerIdAndCreateDate(sellerId,date);
     }
-
 }

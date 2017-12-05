@@ -348,16 +348,7 @@ public class SellerController {
         return new Result(false, Global.do_success, null, null);
     }
 
-    /**
-     * 微信小程序练习api
-     *
-     * @return
-     */
-    @RequestMapping("/test")
-    public Object test(HttpServletRequest request) {
 
-        return "hhhhhh</br>hhhhhhhhhh</br>aaaaaaa";
-    }
 
     /**
      * 离线操作
@@ -373,5 +364,10 @@ public class SellerController {
         return new Result(false, Global.do_success, null, null);
     }
 
+    // /seller/test?sellerId=1&test=数据
+    @RequestMapping("/test")
+    public void test(String test){
+        System.out.println(test);
+    }
 
 }

@@ -55,11 +55,6 @@ public class ProdutsTypeController {
             old.setAmount(produtsType.getAmount());
         }
         if (produtsType.getPriceNew()!=null){
-            //是否降价
-            if (produtsType.getPriceNew()<old.getPriceNew()){
-                //通知加入购物车的用户
-               //shopCarService.sendCustomerWxTemplate(produtsType.getId(),produtsType.getSellerId());
-            }
             old.setPriceOld(old.getPriceNew());
             old.setPriceNew(produtsType.getPriceNew());
         }

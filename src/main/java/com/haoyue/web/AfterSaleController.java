@@ -16,6 +16,7 @@ import java.util.Date;
 
 /**
  * Created by LiJia on 2017/9/20.
+ * 售后
  */
 
 @RestController
@@ -64,5 +65,6 @@ public class AfterSaleController {
         afterSaleService.update(afterSale);
         return new Result(false,Global.do_success,null,null);
     }
+
 
 }

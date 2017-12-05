@@ -144,7 +144,8 @@ public class ShopCarService {
                 if (shopcar.getShopCarDetails().get(0).getProdutsType().getId() == protypeId) {
                     String pname=shopcar.getProductses().get(0).getPname();
                     int pid=shopcar.getProductses().get(0).getId();
-                    //发送模板信息
+                    //发送模板信息 过滤掉 the formId is a mock one 和 undefined
+                    // ||shopcar.getFormId().equals("undefined")||shopcar.getFormId2().equals("undefined")
                     if (shopcar.getFormId().equals("the formId is a mock one")||shopcar.getFormId2().equals("the formId is a mock one")){
                         continue;
                     }
@@ -188,7 +189,7 @@ public class ShopCarService {
         TemplateResponse templateResponse1=new TemplateResponse();
         templateResponse1.setColor("#000000");
         templateResponse1.setName("keyword1");
-        templateResponse1.setValue(String.valueOf(ptype.getPriceNew()));
+        templateResponse1.setValue(String.valueOf(ptype.getDiscountPrice()));
         list.add(templateResponse1);
 
         TemplateResponse templateResponse2=new TemplateResponse();
@@ -198,9 +199,9 @@ public class ShopCarService {
         list.add(templateResponse2);
 
         TemplateResponse templateResponse3=new TemplateResponse();
-        templateResponse3.setColor("#000000");
+        templateResponse3.setColor("#0000ff");
         templateResponse3.setName("keyword3");
-        templateResponse3.setValue("pages/details/details?id="+pid+"&ptypeId="+ptype.getId());
+        templateResponse3.setValue("点击进入");
         list.add(templateResponse3);
 
         TemplateResponse templateResponse4=new TemplateResponse();
