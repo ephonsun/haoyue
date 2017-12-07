@@ -22,4 +22,7 @@ public interface TProductsRepo extends TBaseRepo<TProducts,Integer> {
     @Transactional
     @Query(nativeQuery = true,value = "delete from t_products_products_types where tproducts_id=?1 ")
     void delPtypes(Integer pid);
+
+    @Query(nativeQuery = true,value = "select * from t_products where types=?1 and sale_id=?2 and active=true ")
+    List<TProducts> findByTypesAndSaleId(String typename, String saleId);
 }

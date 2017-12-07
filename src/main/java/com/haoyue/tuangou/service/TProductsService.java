@@ -156,4 +156,7 @@ public class TProductsService {
         tProductsRepo.delPtypes(pid);
     }
 
+    public List<TProducts> findByTypesAndSaleId(String typename, String saleId) {
+        return tProductsRepo.findByTypesAndSaleId(typename,saleId);
+    }
 }

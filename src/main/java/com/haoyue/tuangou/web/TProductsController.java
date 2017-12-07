@@ -38,8 +38,7 @@ public class TProductsController {
      * @return /tuan/product/save?saleId=1&pname=商品名&style=款号&types=分类&indexPic=主图&detailPic=详情图
      * &parameters=商品参数&deliver=快递模板ID或者null&tuanNumbers=拼团人数&tuanTimes=拼团时间&isFree=true/fasle
      * &tprotypes=黄色,M,100,88,66,99=黑色,L,100,88,66,99
-     *
-     * */
+     */
     @RequestMapping("/save")
     public TResult save(TProducts tProducts, String tprotypes) {
         //先保存商品
@@ -54,7 +53,7 @@ public class TProductsController {
             tProductsService.delPtypes(tProducts.getId());
         }
         //是否团购
-        if (tProducts.getTuanNumbers()==0&&tProducts.getTuanNumbers()==0) {
+        if (tProducts.getTuanNumbers() == 0 && tProducts.getTuanNumbers() == 0) {
             tProducts.setIsTuan(true);
         }
         tProductsService.save(tProducts);
@@ -120,7 +119,7 @@ public class TProductsController {
         String url = "";
         StringBuffer stringBuffer = new StringBuffer();
         // 循环获得每个文件
-        if (file!= null && file.length != 0) {
+        if (file != null && file.length != 0) {
             for (int i = 0; i < file.length; i++) {
                 MultipartFile multipartFile = file[i];
                 //校验存储空间是否够用
@@ -148,7 +147,7 @@ public class TProductsController {
         }
         //更新sale的存储空间
         tUserSaleService.update(tUserSale);
-        if (file==null||file.length==0){
+        if (file == null || file.length == 0) {
             System.out.println("files为空");
         }
         System.out.println(stringBuffer.toString());
@@ -159,13 +158,13 @@ public class TProductsController {
     @RequestMapping("/list")
     public TResult list(@RequestParam Map<String, String> map, @RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize) {
         Iterable<TProducts> iterable = tProductsService.list(map, pageNumber, pageSize);
-        Iterator<TProducts> iterator=iterable.iterator();
-        while (iterator.hasNext()){
-            TProducts products=iterator.next();
-            List<TProductsTypes> productsTypes= products.getProductsTypes();
-            List<TProductsTypes> list=new ArrayList<>();
-            for (TProductsTypes types:productsTypes){
-                if (types.getIsActive()){
+        Iterator<TProducts> iterator = iterable.iterator();
+        while (iterator.hasNext()) {
+            TProducts products = iterator.next();
+            List<TProductsTypes> productsTypes = products.getProductsTypes();
+            List<TProductsTypes> list = new ArrayList<>();
+            for (TProductsTypes types : productsTypes) {
+                if (types.getIsActive()) {
                     list.add(types);
                 }
             }
@@ -184,6 +183,28 @@ public class TProductsController {
         //下架、上架
         products.setActive(tProducts.getActive());
         tProductsService.update(products);
+        //下架更新商品分类名称
+        if (products.getActive() == false) {
+            TProductsTypesName typesName = tProductsTypesNameService.findBySaleId(products.getSaleId());
+            String typename = products.getTypes();
+            List<TProducts> productsList = tProductsService.findByTypesAndSaleId(typename, products.getSaleId());
+            //当前分类只对应一个商品
+            if (productsList == null) {
+                String old = typesName.getTypes();
+                String news = old.replace(typename + ",", "");
+                typesName.setTypes(news);
+                tProductsTypesNameService.update2(typesName);
+            }
+        }
+        //上架更新商品分类名称
+        if (products.getActive()){
+            TProductsTypesName typesName = tProductsTypesNameService.findBySaleId(products.getSaleId());
+            String typename = products.getTypes();
+            if (!typesName.getTypes().contains(typename)){
+                typesName.setTypes(typesName.getTypes()+","+typename);
+                tProductsTypesNameService.update2(typesName);
+            }
+        }
         return new TResult(false, TGlobal.do_success, null);
     }
 
@@ -232,7 +253,7 @@ public class TProductsController {
     // /tuan/product/tuanorders?pid=商品Id&saleId=12
     @RequestMapping("/tuanorders")
     public TResult findTuanOrdersByPid(Integer pid, String saleId) {
-        Iterable<TuanOrders> iterable = tuanOrdersService.findTuanOrdersByTProducts(pid, saleId,null);
+        Iterable<TuanOrders> iterable = tuanOrdersService.findTuanOrdersByTProducts(pid, saleId, null);
         Iterator<TuanOrders> iterator = iterable.iterator();
         List<TuanOrders> ownerList = new ArrayList<>();
         int count = 0;

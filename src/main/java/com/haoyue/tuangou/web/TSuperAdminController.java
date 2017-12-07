@@ -71,7 +71,6 @@ public class TSuperAdminController {
     Runnable runnable3 = new Runnable() {
         public void run() {
             System.out.println("刷新团购红包状态定时器执行了。。。。");
-            // // TODO: 2017/12/7  发送模板消息
             redPacketService.flush();
         }
     };
@@ -81,7 +80,6 @@ public class TSuperAdminController {
     Runnable runnable4 = new Runnable() {
         public void run() {
             System.out.println("刷新团购优惠券状态定时器执行了。。。。");
-            // // TODO: 2017/12/7  发送模板消息
             couponService.flush();
         }
     };
