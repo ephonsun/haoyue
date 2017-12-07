@@ -21,7 +21,12 @@ public class TProducts {
     private String pname;
     private String style;
     private String types;
+    @Lob
+    @Column(columnDefinition = "TEXT")
     private String indexPic;
+
+    @Lob
+    @Column(columnDefinition = "TEXT")
     private String detailPic;
 
     @OneToMany(cascade = CascadeType.ALL)

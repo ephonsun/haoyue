@@ -55,6 +55,7 @@ public class TGlobal {
     public static String order_unreceive="待收货订单";
     public static String order_finsh="已完成订单";
     public static String ordercode_begin="888";
+    public static String already_delay="你已确认过延迟";
     public static Object object=new Object();//普通订单保存锁
     public static String openid_isnull="请设置允许获取信息后再下单";
 

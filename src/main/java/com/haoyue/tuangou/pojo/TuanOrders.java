@@ -46,6 +46,7 @@ public class TuanOrders {
     private boolean showsale=true;
     private boolean iscomment=false;
     private boolean ispayback=false;//是否退款
+    private boolean isdelay=false;//是否延迟收货
 
     @OneToOne
     private TComment comment;
@@ -59,6 +60,14 @@ public class TuanOrders {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(updatable=false)
     private Date endDate;//结束日期
+
+    public boolean getIsdelay() {
+        return isdelay;
+    }
+
+    public void setIsdelay(boolean isdelay) {
+        this.isdelay = isdelay;
+    }
 
     public int getAmount() {
         return amount;

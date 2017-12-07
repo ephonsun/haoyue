@@ -28,6 +28,10 @@ public class TDictionarysService {
     private TUserSaleRepo tUserSaleRepo;
     @Autowired
     private TVisitorsRepo tVisitorsRepo;
+    @Autowired
+    private TOrdersService ordersService;
+    @Autowired
+    private TuanOrdersService tuanOrdersService;
 
     public TDictionarys findByTodaySaleId(String saleId) {
         Date now=new Date();
@@ -53,6 +57,9 @@ public class TDictionarysService {
             }
             //删除visitor
             tVisitorsRepo.delAll();
+            //每天刷新自动收货
+            ordersService.autofinsh();
+            tuanOrdersService.autofinsh();
         }
 
     }

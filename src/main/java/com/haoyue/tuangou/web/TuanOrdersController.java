@@ -395,6 +395,22 @@ public class TuanOrdersController {
         return new TResult(false, TGlobal.do_success, tuanOrders);
     }
 
+    //   /tuan/tuanorders/delay?openId=122&oid=订单ID
+    @RequestMapping("/delay")
+    public TResult delay(String openId,String oid){
+        TuanOrders orders= tuanOrdersService.findOne(Integer.parseInt(oid));
+        if (!orders.getOpenId().equals(openId)){
+            return new TResult(true,TGlobal.have_no_right,null);
+        }
+        if (orders.getIsdelay()){
+            return new TResult(true,TGlobal.already_delay,null);
+        }
+        orders.setIsdelay(true);
+        tuanOrdersService.save(orders);
+        return new TResult(false,TGlobal.do_success,null);
+    }
+
+
     public void addTemplate(TuanOrders order) {
         List<TemplateResponse> list = new ArrayList<>();
         TemplateResponse templateResponse1 = new TemplateResponse();
@@ -452,6 +468,8 @@ public class TuanOrdersController {
         //删除该key-value
         TGlobal.tuan_package_map.remove(template.getToUser());
     }
+
+
 
 }
 

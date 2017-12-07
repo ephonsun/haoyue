@@ -243,4 +243,24 @@ public class TuanOrdersService {
         }
         return tuanOrdersRepo.findAll(bd.getValue(), new PageRequest(pageNumber,pageSize,new Sort(Sort.Direction.DESC, "id")));
     }
+
+
+    // 系统自动收货 20 天
+    public void autofinsh(){
+        List<TuanOrders>  list=tuanOrdersRepo.findByState(TGlobal.tuan_order_unreive);
+        Date date=new Date();
+        for (TuanOrders tuanOrder:list){
+            long start=tuanOrder.gettDeliver().getSendDate().getTime();
+            //延迟收货 7 日
+            if (tuanOrder.getIsdelay()){
+                start+=3600*24*7*1000;
+            }
+            if (date.getTime()-start>3600*24*20*1000){
+                tuanOrder.setState(TGlobal.tuan_order_finsh);
+                save(tuanOrder);
+            }
+        }
+    }
+
+
 }

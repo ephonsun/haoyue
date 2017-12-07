@@ -449,5 +449,21 @@ public class TOrdersController {
         return new TResult(false,TGlobal.do_success,null);
     }
 
+
+    //   /tuan/torders/delay?openId=122&oid=订单ID
+    @RequestMapping("/delay")
+    public TResult delay(String openId,String oid){
+        TOrders orders= tOrdersService.findOne(Integer.parseInt(oid));
+        if (!orders.getOpenId().equals(openId)){
+            return new TResult(true,TGlobal.have_no_right,null);
+        }
+        if (orders.getIsdelay()){
+            return new TResult(true,TGlobal.already_delay,null);
+        }
+        orders.setIsdelay(true);
+        tOrdersService.save(orders);
+        return new TResult(false,TGlobal.do_success,null);
+    }
+
 }
 

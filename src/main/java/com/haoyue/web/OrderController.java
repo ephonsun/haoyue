@@ -471,7 +471,6 @@ public class OrderController {
         String wxname=order.getWxname();
         String code=order.getOrderCode();
         String phone=sellerService.findOne(Integer.parseInt(sellerId)).getSellerPhone();
-        phone="18715161200";
         try {
             SendCode.sendSms2(phone,code,wxname);
         } catch (ClientException e) {

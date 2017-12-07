@@ -30,6 +30,19 @@ public class TDeliver {
     @Column(updatable = false)
     private Date createDate;//创建日期
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:SS", timezone = "GMT+8")
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(updatable = false)
+    private Date sendDate;//发货日期
+
+    public Date getSendDate() {
+        return sendDate;
+    }
+
+    public void setSendDate(Date sendDate) {
+        this.sendDate = sendDate;
+    }
+
     public Integer getId() {
         return id;
     }

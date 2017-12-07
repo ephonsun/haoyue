@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -142,4 +143,24 @@ public class TOrdersService {
         bd.and(order.saleId.eq(map.get("saleId")));
         return tOrdersRepo.findAll(bd.getValue(),  new Sort(Sort.Direction.DESC, "id"));
     }
+
+    // 系统自动确认收货 20 天
+    public void autofinsh(){
+        Date date=new Date();
+        List<TOrders>  list= tOrdersRepo.findByState(TGlobal.order_unreceive);
+        for (TOrders order:list){
+            long start=order.gettDeliver().getSendDate().getTime();
+            //延迟收货 7 日
+            if (order.getIsdelay()){
+                start+=3600*24*7*1000;
+            }
+            if (date.getTime()-start>3600*1000*24*20){
+                order.setState(TGlobal.order_finsh);
+                save(order);
+            }
+        }
+    }
+
+
+
 }

@@ -44,8 +44,17 @@ public class TOrders {
     private boolean showbuy=true;
     private boolean showsale=true;
     private boolean iscomment=false;
+    private boolean isdelay=false;//是否延迟收货
     @OneToOne
     private TComment comment;
+
+    public boolean getIsdelay() {
+        return isdelay;
+    }
+
+    public void setIsdelay(boolean isdelay) {
+        this.isdelay = isdelay;
+    }
 
     public TComment getComment() {
         return comment;

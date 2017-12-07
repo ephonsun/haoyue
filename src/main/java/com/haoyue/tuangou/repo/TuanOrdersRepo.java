@@ -26,4 +26,6 @@ public interface TuanOrdersRepo extends TBaseRepo<TuanOrders,Integer> {
     List<String> findOpenIdsByGroupCode(String groupcode);
 
     TuanOrders findByCode(String ordercode);
+
+    List<TuanOrders> findByState(String tuan_order_unreive);
 }

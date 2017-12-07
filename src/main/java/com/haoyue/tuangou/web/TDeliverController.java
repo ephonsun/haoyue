@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Date;
+
 /**
  * Created by LiJia on 2017/11/9.
  */
@@ -35,6 +37,7 @@ public class TDeliverController {
         }
         tDeliver.setDcode(deliver.getDcode());
         tDeliver.setDname(deliver.getDname());
+        tDeliver.setSendDate(new Date());
         tDeliverService.save(tDeliver);
         //修改订单状态
         TOrders orders=tOrdersService.findOne(Integer.parseInt(oid));
@@ -53,6 +56,7 @@ public class TDeliverController {
         }
         tDeliver.setDcode(deliver.getDcode());
         tDeliver.setDname(deliver.getDname());
+        tDeliver.setSendDate(new Date());
         tDeliverService.save(tDeliver);
         //修改订单状态
         TuanOrders orders=tuanOrdersService.findOne(Integer.parseInt(oid));
