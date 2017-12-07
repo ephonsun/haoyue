@@ -174,6 +174,7 @@ public class TProductsController {
     }
 
     // /tuan/product/update?id=商品Id&active=true/false
+    // http://localhost:8080/tuan/product/update?id=1&active=false
     @RequestMapping("/update")
     public TResult update(TProducts tProducts) {
         TProducts products = tProductsService.findOne(tProducts.getId());
@@ -183,28 +184,42 @@ public class TProductsController {
         //下架、上架
         products.setActive(tProducts.getActive());
         tProductsService.update(products);
+
+        TProductsTypesName typesName = tProductsTypesNameService.findBySaleId(products.getSaleId());
+        String typename = products.getTypes();
+        String old = typesName.getTypes();
+        String names[]=old.split(",");
+        String news="";
         //下架更新商品分类名称
-        if (products.getActive() == false) {
-            TProductsTypesName typesName = tProductsTypesNameService.findBySaleId(products.getSaleId());
-            String typename = products.getTypes();
+        if (!products.getActive()) {
             List<TProducts> productsList = tProductsService.findByTypesAndSaleId(typename, products.getSaleId());
             //当前分类只对应一个商品
-            if (productsList == null) {
-                String old = typesName.getTypes();
-                String news = old.replace(typename + ",", "");
-                typesName.setTypes(news);
-                tProductsTypesNameService.update2(typesName);
+            if (productsList == null||productsList.size()==0) {
+                for (int i=0;i<names.length;i++){
+                    if (names[i].equals(typename)){
+                        names[i]="";
+                    }
+                    if (!StringUtils.isNullOrBlank(names[i])){
+                        news+=","+names[i];
+                    }
+                }
+                typesName.setTypes(news.substring(1));
             }
         }
         //上架更新商品分类名称
         if (products.getActive()){
-            TProductsTypesName typesName = tProductsTypesNameService.findBySaleId(products.getSaleId());
-            String typename = products.getTypes();
-            if (!typesName.getTypes().contains(typename)){
+            boolean flag=false;
+            for (String name:names){
+                if (name.equals(typename)){
+                    flag=true;
+                }
+            }
+            if (!flag){
                 typesName.setTypes(typesName.getTypes()+","+typename);
-                tProductsTypesNameService.update2(typesName);
             }
         }
+        tProductsTypesNameService.update2(typesName);
+
         return new TResult(false, TGlobal.do_success, null);
     }
 
