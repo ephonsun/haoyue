@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.transaction.Transactional;
 import java.util.*;
 
 /**
@@ -31,16 +32,19 @@ public class TuanOrdersController {
     private TDeliverService tDeliverService;
     @Autowired
     private TDictionarysService tDictionarysService;
+    @Autowired
+    private TCouponService tCouponService;
 
 
     //   自己创建团购   /tuan/tuanorders/save?pid=商品ID&protypeId=商品分类ID&openId=1&saleId=1
     //   &wxname=微信名称&wxpic=微信头像&productPrice=商品价格&deliverPrice=快递费用
-    //   &address=收货地址&receiver=收货人&phone=收货人电话&isowner=true
+    //   &address=收货地址&receiver=收货人&phone=收货人电话&isowner=true&couponId=优惠券ID
     //   参团     /tuan/tuanorders/save?pid=商品ID&protypeId=商品分类ID&openId=1&saleId=1
     //   &wxname=微信名称&wxpic=微信头像&productPrice=商品价格&deliverPrice=快递费用
-    //   &address=收货地址&receiver=收货人&phone=收货人电话&groupCode=房间号
+    //   &address=收货地址&receiver=收货人&phone=收货人电话&groupCode=房间号&couponId=优惠券ID
     @RequestMapping("/save")
-    public TResult save(TuanOrders tuanOrders, String pid, String protypeId, TDeliver deliver) {
+    @Transactional
+    public TResult save(TuanOrders tuanOrders, String pid, String protypeId, TDeliver deliver,String couponId) {
 
         //判断用户openId是否为空
         if (StringUtils.isNullOrBlank(tuanOrders.getOpenId())||tuanOrders.getOpenId().equals("undefined")){
@@ -104,6 +108,17 @@ public class TuanOrdersController {
                 if (openids.contains(tuanOrders.getOpenId())){
                     return new TResult(true, TGlobal.have_joined_in, null);
                 }
+            }
+            //是否使用优惠券
+            if (!StringUtils.isNullOrBlank(couponId)){
+                TCoupon coupon= tCouponService.findOne(Integer.parseInt(couponId));
+                if (coupon.getEndDate().before(new Date())){
+                    return new TResult(true, TGlobal.coupon_expire, null);
+                }
+                tuanOrders.setTotalPrice(tuanOrders.getTotalPrice()-coupon.getMoney());
+                //更新优惠券信息
+                coupon.setIsuse(true);
+                tCouponService.save(coupon);
             }
             tuanOrders.setCode(TGlobal.tuan_ordercode_begin + date.getTime());
             tuanOrdersService.save(tuanOrders);
@@ -426,7 +441,7 @@ public class TuanOrdersController {
         //模板信息通知用户
         //获取 access_token
         String access_token_url = "https://api.weixin.qq.com/cgi-bin/token";
-        String param1 = "grant_type=client_credential&appid=wxe46b9aa1b768e5fe&secret=8bcdb74a9915b5685fa0ec37f6f25b24";
+        String param1="grant_type=client_credential&appid=wxf80175142f3214e1&secret=e0251029d53d21e84a650681af6139b1";
         String access_token = HttpRequest.sendPost(access_token_url, param1);
         access_token = access_token.substring(access_token.indexOf(":") + 2, access_token.indexOf(",") - 1);
         //发送模板信息

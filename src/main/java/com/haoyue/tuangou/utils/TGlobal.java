@@ -82,4 +82,12 @@ public class TGlobal {
     public static String common_pay_url="https://api.mch.weixin.qq.com/pay/unifiedorder";//统一下单url
     public static Map<String,String> tuan_package_map=new HashMap<>();
 
+    //红包
+    public static String haved_open="你已帮房主拆过一次了";
+    public static String redpacket_is_end="当前红包已失效";
+    public static String redpacket_not_open="红包活动未开启";
+    public static Object object6=new Object();
+
+    //优惠券
+    public static String coupon_expire="优惠券已经过期";
 }

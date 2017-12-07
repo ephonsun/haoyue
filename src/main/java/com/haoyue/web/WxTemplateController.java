@@ -32,6 +32,4 @@ public class WxTemplateController {
         return new Result(false, Global.do_success,null,null);
     }
 
-
-
 }

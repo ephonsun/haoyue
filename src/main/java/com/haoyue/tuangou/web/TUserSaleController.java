@@ -186,9 +186,18 @@ public class TUserSaleController {
         Iterable<TProducts> iterable1= tProductsService.index(sale.getId());
         result.add(tUserSale.getLunbo());
         result.add(iterable1);
+        result.add(tUserSale.getRedpacket());
         return new TResult(false, TGlobal.do_success,result);
     }
 
+    // http://localhost:8080/tuan/tusersale/redpacket?saleId=12&redpacket=[ 开启 true 关闭 false]
+    @RequestMapping("/redpacket")
+    public TResult updateRedpacket(String saleId,boolean redpacket){
+        TUserSale tUserSale= tUserSaleService.findOneById(Integer.parseInt(saleId));
+        tUserSale.setRedpacket(redpacket);
+        tUserSaleService.update2(tUserSale);
+        return new TResult(false, TGlobal.do_success,null);
+    }
 
 
 }

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.transaction.Transactional;
 import java.util.*;
 
 /**
@@ -38,14 +39,17 @@ public class TOrdersController {
     private TDictionarysService tDictionarysService;
     @Autowired
     private TFreeShoppingService tFreeShoppingService;
+    @Autowired
+    private TCouponService tcouponService;
 
     //   /tuan/torders/save?pid=商品ID&ptypeId=商品分类ID&amount=购买数量&productPrice=下单的商品价格
     //    &deliverPrice=快递费用,免邮则0&openId=12&saleId=12&wxname=微信名&wxpic=微信头像
-    //    &address=收货地址&receiver=收货人&phone=收货人电话
+    //    &address=收货地址&receiver=收货人&phone=收货人电话&couponId=优惠券ID
     //   前台做下单量和库存量对比
 
     @RequestMapping("/save")
-    public TResult save(TOrders tOrders, String pid, String ptypeId, TDeliver tdeliver) {
+    @Transactional
+    public TResult save(TOrders tOrders, String pid, String ptypeId, TDeliver tdeliver,String couponId) {
         //判断用户openId是否为空
         if (StringUtils.isNullOrBlank(tOrders.getOpenId())||tOrders.getOpenId().equals("undefined")){
             return new TResult(true,TGlobal.openid_isnull,null);
@@ -66,6 +70,17 @@ public class TOrdersController {
             orders.settProducts(tProducts);
             orders.settProductsTypes(tProductsTypes);
             orders.setTotalPrice(orders.getDeliverPrice() + orders.getProductPrice() * orders.getAmount());
+            //是否使用优惠券
+            if (!StringUtils.isNullOrBlank(couponId)){
+                TCoupon coupon= tcouponService.findOne(Integer.parseInt(couponId));
+                if (coupon.getEndDate().before(new Date())){
+                    return new TResult(true, TGlobal.coupon_expire, null);
+                }
+                orders.setTotalPrice(orders.getTotalPrice()-coupon.getMoney());
+                //更新优惠券信息
+                coupon.setIsuse(true);
+                tcouponService.save(coupon);
+            }
             orders.setState(TGlobal.order_unpay);
             orders.setCode(TGlobal.ordercode_begin + new Date().getTime());
         }
@@ -405,7 +420,7 @@ public class TOrdersController {
         //模板信息通知用户
         //获取 access_token
         String access_token_url="https://api.weixin.qq.com/cgi-bin/token";
-        String param1="grant_type=client_credential&appid=wxe46b9aa1b768e5fe&secret=8bcdb74a9915b5685fa0ec37f6f25b24";
+        String param1="grant_type=client_credential&appid=wxf80175142f3214e1&secret=e0251029d53d21e84a650681af6139b1";
         String access_token= HttpRequest.sendPost(access_token_url,param1);
         access_token=access_token.substring(access_token.indexOf(":")+2,access_token.indexOf(",")-1);
         //发送模板信息

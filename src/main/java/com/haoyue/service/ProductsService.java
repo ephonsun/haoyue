@@ -22,7 +22,6 @@ import java.util.Map;
  */
 @Service
 public class ProductsService {
-
     @Autowired
     private ProductsRepo productsRepo;
     @Autowired
@@ -211,7 +210,7 @@ public class ProductsService {
             ptype.setDiscountPrice(Double.valueOf(map.get("discount")));
             //降价
             if (olddiscount!=0&&olddiscount>ptype.getDiscountPrice()){
-                //shopCarService.sendCustomerWxTemplate(ptype.getId(),ptype.getSellerId());
+                shopCarService.sendCustomerWxTemplate(ptype.getId(),ptype.getSellerId());
             }
             produtsTypeRepo.save(ptype);
         }

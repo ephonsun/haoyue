@@ -1,7 +1,10 @@
 package com.haoyue.tuangou.web;
 
 import com.haoyue.tuangou.pojo.TDictionarys;
+import com.haoyue.tuangou.pojo.TRedPacket;
+import com.haoyue.tuangou.service.TCouponService;
 import com.haoyue.tuangou.service.TDictionarysService;
+import com.haoyue.tuangou.service.TRedPacketService;
 import com.haoyue.tuangou.service.TuanOrdersService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +26,10 @@ public class TSuperAdminController {
     private TDictionarysService dictionarysService;
     @Autowired
     private TuanOrdersService tuanOrdersService;
+    @Autowired
+    private TRedPacketService redPacketService;
+    @Autowired
+    private TCouponService couponService;
 
     /**
      * 定时器，产品部署好之后，需要手动触发该定时器
@@ -35,7 +42,9 @@ public class TSuperAdminController {
             ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
             // 第二个参数为首次执行的延时时间，第三个参数为定时执行的间隔时间
             service.scheduleAtFixedRate(runnable, 60, 3600, TimeUnit.SECONDS);
-            service.scheduleAtFixedRate(runnable2, 60, 300, TimeUnit.SECONDS);
+            service.scheduleAtFixedRate(runnable2, 120, 300, TimeUnit.SECONDS);
+            service.scheduleAtFixedRate(runnable3, 180, 300, TimeUnit.SECONDS);
+            service.scheduleAtFixedRate(runnable4, 240, 300, TimeUnit.SECONDS);
             return "ok";
         }
         return "data_no_right";
@@ -57,5 +66,25 @@ public class TSuperAdminController {
             tuanOrdersService.flush();
         }
     };
+
+    //红包定时器 一个小时刷新一次
+    Runnable runnable3 = new Runnable() {
+        public void run() {
+            System.out.println("刷新团购红包状态定时器执行了。。。。");
+            // // TODO: 2017/12/7  发送模板消息
+            redPacketService.flush();
+        }
+    };
+
+
+    //优惠券定时器  一个小时刷新一次
+    Runnable runnable4 = new Runnable() {
+        public void run() {
+            System.out.println("刷新团购优惠券状态定时器执行了。。。。");
+            // // TODO: 2017/12/7  发送模板消息
+            couponService.flush();
+        }
+    };
+
 
 }

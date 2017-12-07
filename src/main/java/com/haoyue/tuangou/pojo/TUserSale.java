@@ -34,7 +34,15 @@ public class TUserSale {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(updatable=false)
     private Date createDate;//创建日期
+    private boolean redpacket=false;//红包
 
+    public boolean getRedpacket() {
+        return redpacket;
+    }
+
+    public void setRedpacket(boolean redpacket) {
+        this.redpacket = redpacket;
+    }
 
     public String getMachId() {
         return machId;
