@@ -97,7 +97,7 @@ public class TRedPacketController {
                 }
             }
         }
-        return new TResult(true, TGlobal.do_success, null);
+        return new TResult(true, TGlobal.do_success, redPacket);
     }
 
     // 指定用户的红包列表 /tuan/redpacket/list?openId=123&saleId=123&[isover=true/false]

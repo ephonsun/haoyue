@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonObject;
 import com.haoyue.untils.*;
 //import io.goeasy.GoEasy;
+import io.goeasy.GoEasy;
 import org.dom4j.DocumentException;
 import org.json.JSONObject;
 import org.json.simple.JSONArray;
@@ -186,6 +187,9 @@ public class HaoyueApplicationTests {
     public void f10() {
         String relativelyPath = System.getProperty("user.dir");
         System.out.println(relativelyPath);
+        System.out.println(System.currentTimeMillis());
+        System.out.println(System.currentTimeMillis());
+
     }
 
     @Test
@@ -217,8 +221,8 @@ public class HaoyueApplicationTests {
 //   System.out.println(decoded);
 //   Arrays.asList( "a", "b", "d" ).forEach((String e) -> System.out.println(e));
 
-//        dog dog1=new dog("dogA","red");
-//        dog dog2=new dog("dogB","black");
+//  dog dog1=new dog("dogA","red");
+//  dog dog2=new dog("dogB","black");
 //        dog dog3=new dog("dogC","yellow");
 //
 //        List<dog> list=new ArrayList<>();
@@ -247,7 +251,6 @@ public class HaoyueApplicationTests {
                 "Roger Federer", "Andy Murray",
                 "Tomas Berdych", "Juan Martin Del Potro",
                 "Richard Gasquet", "John Isner"};
-
         //javaProgrammers.forEach((Person p)->System.out.print(p.getFirstName()));
         //javaProgrammers.forEach((Person p)->p.setSalary((int)(p.getSalary()*0.3)+p.getSalary()));
         //javaProgrammers.forEach((Person p)->System.out.println(p.getSalary()));
@@ -285,7 +288,6 @@ public class HaoyueApplicationTests {
 
     @Test
     public void f15() {
-
         try {
             FileInputStream fileInputStream = new FileInputStream(new File("D:/hou.txt"));
             FileOutputStream fileOutputStream = new FileOutputStream(new File("D:/hou123.txt"));
@@ -303,7 +305,7 @@ public class HaoyueApplicationTests {
                 System.out.println(charset.decode(buffer));
                 buffer.flip();
                 fileChannel2.write(buffer);//它们的作用是让ochanel写入pos - limit之间的数据
-
+                // 2100
             }
             fileInputStream.close();
             fileOutputStream.close();
@@ -317,6 +319,17 @@ public class HaoyueApplicationTests {
 
     @Test
     public void f16() {
+        GoEasy goEasy = new GoEasy("BC-b368734ade974a11937b2b82c5dc6433");
+        goEasy.publish("channel1", "HelloHello!");
+    }
+
+    @Test
+    public void f18() {
+        List<String> list = new ArrayList<>();
+        list.add("11");
+        list.add("111");
+        System.out.println(list.contains("11"));
+        System.out.println(list.contains("1"));
 
     }
 
@@ -354,6 +367,27 @@ public class HaoyueApplicationTests {
 //        GoEasy goEasy = new GoEasy("rest-hangzhou.goeasy.io","BC-b368734ade974a11937b2b82c5dc6433");
 //        goEasy.publish("channel1","HelloHello!");
         //"http(s)://<REST Host>”
+    }
+
+    @Test
+    public void f20() {
+        String relativelyPath = System.getProperty("user.dir");
+        String url = relativelyPath + "/files/122jpg.jpg";
+        System.out.println(url.replace("\\", "/"));
+    }
+
+
+    @Test
+    public  void f21() {
+        System.out.println(15/10);
+    }
+
+    @Test
+    public void f22(){
+     //test,test1,test2,test3,test4,test5
+        String old="test,test1,test2,test3,test4,test5";
+        String news=old.replace("test1,","");
+        System.out.println(news);
     }
 
 }
@@ -419,3 +453,22 @@ class Person {
         this.age = age;
     }
 }
+
+class fu{
+    private int age;
+    protected void show(){
+
+    }
+}
+
+class son extends fu{
+    public void show(){
+        //
+    }
+    public synchronized void ha(){
+        //
+    }
+}
+
+
+
