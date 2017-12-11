@@ -65,14 +65,20 @@ public class DelievrController {
                 }
             }
         }
+        //顺丰快递的计价方式为重量计费
+        if (deliver.getDname().contains("顺丰")){
+            if (!deliver.getPrice_type().equals("重量")){
+                return new Result(true, Global.weight_required, null, null);
+            }
+        }
         String lines[] = null;
         lines = delivers.split("-");
 
         String line[] = null;
         String destination = null;
-        int account = deliver.getAccount();
+        double account = deliver.getAccount();
         double price = deliver.getPrice();
-        int more_account = deliver.getMore_account();
+        double more_account = deliver.getMore_account();
         double more_price = deliver.getMore_price();
         //默认运费，收货地区找不到买家地址
         String dname = deliver.getDname();

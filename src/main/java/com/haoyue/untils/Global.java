@@ -75,6 +75,7 @@ public class Global {
     public static String more_account_unright="请确保所有续件数、续件体积、续件重量数格式正确";
     public static String more_price_unright="请确保所有续费邮费价格式正确";
     public static String template_exist="已经存在相同物流名的模板";
+    public static String weight_required="顺丰快递的计价方式须为重量计费";
 
     //商品添加
     public static String discount_price_unright="折扣价输入不正确";

@@ -21,8 +21,8 @@ public class Deliver {
     private String sellerId;
     private String origin_address;//发货地址
     private String destination;//接收地址片区
-    private int account;// 初始件数 初始重量  初始体积
-    private int more_account;//增加件数  增加重量 增加体积
+    private double account;// 初始件数 初始重量  初始体积
+    private double more_account;//增加件数  增加重量 增加体积
     private double more_price;//增加邮费
     private String price_type;//计价方式  件数 重量 体积
 
@@ -61,19 +61,19 @@ public class Deliver {
         this.price_type = price_type;
     }
 
-    public int getAccount() {
+    public double getAccount() {
         return account;
     }
 
-    public void setAccount(int account) {
+    public void setAccount(double account) {
         this.account = account;
     }
 
-    public int getMore_account() {
+    public double getMore_account() {
         return more_account;
     }
 
-    public void setMore_account(int more_account) {
+    public void setMore_account(double more_account) {
         this.more_account = more_account;
     }
 
