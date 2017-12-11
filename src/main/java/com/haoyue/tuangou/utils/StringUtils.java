@@ -70,6 +70,11 @@ public class StringUtils {
         return simpleDateFormat.parse(str);
     }
 
+    public static Date formatStrToDate2(String str) throws ParseException {
+        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        return simpleDateFormat.parse(str);
+    }
+
     public static String formDateToStr(Date date){
         SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return sdf.format(date);

@@ -44,21 +44,26 @@ public class TuanOrdersController {
     //   &address=收货地址&receiver=收货人&phone=收货人电话&groupCode=房间号&couponId=优惠券ID
     @RequestMapping("/save")
     @Transactional
-    public TResult save(TuanOrders tuanOrders, String pid, String protypeId, TDeliver deliver,String couponId) {
+    public  TResult  save(TuanOrders tuanOrders, String pid, String protypeId, TDeliver deliver,String couponId) {
 
+        Date date = new Date();
         //判断用户openId是否为空
         if (StringUtils.isNullOrBlank(tuanOrders.getOpenId())||tuanOrders.getOpenId().equals("undefined")){
             return new TResult(true,TGlobal.openid_isnull,null);
         }
 
         TProducts products = tProductsService.findOne(Integer.parseInt(pid));
+        //判断当前时间是否在团购时间之内
+        if (date.before(products.getStartDate())||date.after(products.getEndDate())||products.getIsEnd()==true){
+            return new TResult(true,TGlobal.date_not_between_tuandate,null);
+        }
         //判断商品团购时间和人数是否正常
         if (products.getTuanNumbers()==0||products.getTuanTimes()==0){
             return new TResult(true, TGlobal.tuan_times_nums_illegal, null);
         }
         TProductsTypes productsTypes = tProductsTypesService.findOne(Integer.parseInt(protypeId));
         synchronized (TGlobal.object2) {
-            Date date = new Date();
+
             //物流
             deliver.setCreateDate(date);
             deliver.setSaleId1(tuanOrders.getSaleId());
@@ -246,7 +251,7 @@ public class TuanOrdersController {
 
     //   http://localhost:8080/tuan/tuanorders/tuaning_list?saleId=2
     @RequestMapping("/tuaning_list")
-    public TResult tuaningList(String saleId,@RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize) {
+    public TResult tuaningList(String saleId) {
         //所有开启拼团的商品
         List<TProducts> productsList = tProductsService.findByTuanProduct(saleId);
         //遍历商品集合获得正在拼团的房主订单

@@ -46,7 +46,42 @@ public class TProducts {
     @Column(updatable=false)
     private Date createDate;//创建日期
 
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:SS", timezone="GMT+8")
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(updatable=false)
+    private Date startDate;//团购开始日期
+
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:SS", timezone="GMT+8")
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(updatable=false)
+    private Date endDate;//团购结束日期
+
     private boolean isFree=false;//是否开启0元购
+    private boolean isEnd=false;
+
+    public boolean getIsEnd() {
+        return isEnd;
+    }
+
+    public void setIsEnd(boolean end) {
+        isEnd = end;
+    }
+
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
 
     public boolean getIsFree() {
         return isFree;

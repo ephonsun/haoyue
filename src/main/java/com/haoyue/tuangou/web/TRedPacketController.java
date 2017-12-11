@@ -230,6 +230,5 @@ public class TRedPacketController {
         String url="https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token="+access_token+"&form_id="+formId;
         String result= CommonUtil.httpRequest(url,"POST",template.toJSON());
     }
-
-
+    
 }

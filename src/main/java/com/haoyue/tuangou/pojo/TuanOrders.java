@@ -40,6 +40,7 @@ public class TuanOrders {
     private double deliverPrice;
     private double totalPrice;
     private int hours;//团购时间
+    private String formId;
     private boolean isowner=false;//是否房主
     private boolean isover=false;
     private boolean showbuy=true;
@@ -47,6 +48,8 @@ public class TuanOrders {
     private boolean iscomment=false;
     private boolean ispayback=false;//是否退款
     private boolean isdelay=false;//是否延迟收货
+    private String out_trade_no;//后期退款时候的凭证
+
 
     @OneToOne
     private TComment comment;
@@ -60,6 +63,14 @@ public class TuanOrders {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(updatable=false)
     private Date endDate;//结束日期
+
+    public String getFormId() {
+        return formId;
+    }
+
+    public void setFormId(String formId) {
+        this.formId = formId;
+    }
 
     public boolean getIsdelay() {
         return isdelay;
@@ -77,7 +88,7 @@ public class TuanOrders {
         this.amount = amount;
     }
 
-    private String out_trade_no;//后期退款时候的凭证
+
 
     public boolean getIspayback() {
         return ispayback;

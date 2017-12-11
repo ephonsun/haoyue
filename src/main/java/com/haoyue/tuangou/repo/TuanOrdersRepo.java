@@ -28,4 +28,12 @@ public interface TuanOrdersRepo extends TBaseRepo<TuanOrders,Integer> {
     TuanOrders findByCode(String ordercode);
 
     List<TuanOrders> findByState(String tuan_order_unreive);
+
+    @Modifying
+    @Transactional
+    @Query(nativeQuery = true,value = "update t_tuanorders set isover=true  where t_products_id=?1 and state='正在拼团团购订单' ")
+    void updateEndByPid(Integer id);
+
+    @Query(nativeQuery = true,value = "select * from t_tuanorders where t_products_id=?1 and state='正在拼团团购订单'")
+    List<TuanOrders>  findTuaningByPid(Integer id);
 }

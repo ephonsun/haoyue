@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.transaction.Transactional;
+import java.text.ParseException;
 import java.util.*;
 
 /**
@@ -40,7 +42,19 @@ public class TProductsController {
      * &tprotypes=黄色,M,100,88,66,99=黑色,L,100,88,66,99&isFree=true/false
      */
     @RequestMapping("/save")
-    public TResult save(TProducts tProducts, String tprotypes) {
+    @Transactional
+    public TResult save(TProducts tProducts, String tprotypes,String start_date,String end_date) {
+
+        //拼团时间范围
+        try {
+            Date endDate=StringUtils.formatStrToDate2(end_date);
+            Date startDate=StringUtils.formatStrToDate2(start_date);
+            tProducts.setStartDate(startDate);
+            tProducts.setEndDate(endDate);
+        } catch (ParseException e) {
+            return new TResult(true, TGlobal.date_format_wrong, null);
+        }
+
         //先保存商品
         Date date = new Date();
         if (tProducts.getId() == null) {
@@ -52,8 +66,9 @@ public class TProductsController {
             //清空之前关联的商品分类
             tProductsService.delPtypes(tProducts.getId());
         }
+
         //是否团购
-        if (tProducts.getTuanNumbers() == 0 && tProducts.getTuanNumbers() == 0) {
+        if (tProducts.getTuanNumbers() != 0 && tProducts.getTuanTimes() != 0) {
             tProducts.setIsTuan(true);
         }
         tProductsService.save(tProducts);

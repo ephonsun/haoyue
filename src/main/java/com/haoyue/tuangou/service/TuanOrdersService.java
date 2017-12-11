@@ -1,10 +1,11 @@
 package com.haoyue.tuangou.service;
 
-import com.haoyue.tuangou.pojo.QTuanOrders;
-import com.haoyue.tuangou.pojo.TuanOrders;
+import com.haoyue.tuangou.pojo.*;
 import com.haoyue.tuangou.repo.TuanOrdersRepo;
+import com.haoyue.tuangou.utils.CommonUtil;
 import com.haoyue.tuangou.utils.StringUtils;
 import com.haoyue.tuangou.utils.TGlobal;
+import com.haoyue.tuangou.wxpay.HttpRequest;
 import com.querydsl.core.BooleanBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -12,6 +13,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -260,6 +262,66 @@ public class TuanOrdersService {
                 save(tuanOrder);
             }
         }
+    }
+
+
+
+    public void updateEndByPid(Integer id) {
+       List<TuanOrders> list= tuanOrdersRepo.findTuaningByPid(id);
+       tuanOrdersRepo.updateEndByPid(id);
+        for (TuanOrders orders:list) {
+            addTemplate(orders);
+        }
+    }
+
+    //拼团失败通知
+    public void addTemplate(TuanOrders order){
+        List<TemplateResponse> list=new ArrayList<>();
+        TemplateResponse templateResponse1=new TemplateResponse();
+        templateResponse1.setColor("#000000");
+        templateResponse1.setName("keyword1");
+        templateResponse1.setValue(order.gettProducts().getPname());
+        list.add(templateResponse1);
+
+        TemplateResponse templateResponse2=new TemplateResponse();
+        templateResponse2.setColor("#000000");
+        templateResponse2.setName("keyword2");
+        templateResponse2.setValue(String.valueOf(order.getTotalPrice()));
+        list.add(templateResponse2);
+
+        TemplateResponse templateResponse3=new TemplateResponse();
+        templateResponse3.setColor("#000000");
+        templateResponse3.setName("keyword3");
+        templateResponse3.setValue(TGlobal.tuan_nums_not_enough);
+        list.add(templateResponse3);
+
+        TemplateResponse templateResponse4=new TemplateResponse();
+        templateResponse4.setColor("#000000");
+        templateResponse4.setName("keyword4");
+        templateResponse4.setValue(TGlobal.tuan_comment);
+        list.add(templateResponse4);
+
+        Template template=new Template();
+        template.setTemplateId("7mODyYjSYGbOxECnEyaKw9cLPiogmwjLvoIg8Tdi72I");
+        template.setTemplateParamList(list);
+        template.setTopColor("#000000");
+        template.setPage("pages/index/index");
+        template.setToUser(order.getOpenId());
+        getTemplate(template,order);
+    }
+
+    public void getTemplate(Template template,TuanOrders orders){
+        //模板信息通知用户
+        //获取 access_token
+        String access_token_url="https://api.weixin.qq.com/cgi-bin/token";
+        String param1="grant_type=client_credential&appid=wxf80175142f3214e1&secret=e0251029d53d21e84a650681af6139b1";
+        String access_token= HttpRequest.sendPost(access_token_url,param1);
+        access_token=access_token.substring(access_token.indexOf(":")+2,access_token.indexOf(",")-1);
+        //发送模板信息
+        String form_id=orders.getFormId();
+        template.setForm_id(form_id);
+        String url="https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token="+access_token+"&form_id="+form_id;
+        String result= CommonUtil.httpRequest(url,"POST",template.toJSON());
     }
 
 

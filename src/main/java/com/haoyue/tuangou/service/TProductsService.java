@@ -12,6 +12,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -23,6 +24,8 @@ public class TProductsService {
 
     @Autowired
     private TProductsRepo tProductsRepo;
+    @Autowired
+    private TuanOrdersService tuanOrdersService;
 
     public void save(TProducts tProducts) {
         tProductsRepo.save(tProducts);
@@ -159,4 +162,17 @@ public class TProductsService {
     public List<TProducts> findByTypesAndSaleId(String typename, String saleId) {
         return tProductsRepo.findByTypesAndSaleId(typename,saleId);
     }
+
+    public void autoFlushEnd(){
+        List<TProducts> list= tProductsRepo.findByEndDateAndIsEnd(new Date());
+        if (list!=null&&list.size()!=0){
+            for (TProducts products:list){
+                //刷新 isend 属性
+                tProductsRepo.updateEnd(products.getId());
+                //刷新团购订单状态
+                tuanOrdersService.updateEndByPid(products.getId());
+            }
+        }
+    }
+
 }

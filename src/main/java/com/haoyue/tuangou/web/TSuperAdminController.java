@@ -2,10 +2,7 @@ package com.haoyue.tuangou.web;
 
 import com.haoyue.tuangou.pojo.TDictionarys;
 import com.haoyue.tuangou.pojo.TRedPacket;
-import com.haoyue.tuangou.service.TCouponService;
-import com.haoyue.tuangou.service.TDictionarysService;
-import com.haoyue.tuangou.service.TRedPacketService;
-import com.haoyue.tuangou.service.TuanOrdersService;
+import com.haoyue.tuangou.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,6 +27,8 @@ public class TSuperAdminController {
     private TRedPacketService redPacketService;
     @Autowired
     private TCouponService couponService;
+    @Autowired
+    private TProductsService productsService;
 
     /**
      * 定时器，产品部署好之后，需要手动触发该定时器
@@ -81,6 +80,14 @@ public class TSuperAdminController {
         public void run() {
             System.out.println("刷新团购优惠券状态定时器执行了。。。。");
             couponService.flush();
+        }
+    };
+
+    //团购商品定时器  一个小时刷新一次
+    Runnable runnable5 = new Runnable() {
+        public void run() {
+            System.out.println("刷新团购商品状态定时器执行了。。。。");
+            productsService.autoFlushEnd();
         }
     };
 
