@@ -112,6 +112,7 @@ public class TUserSaleController {
     }
 
     // http://localhost:8080/tuan/tusersale/phonecode?phone=1221212
+    //  获取手机验证码  /tuan/tusersale/phonecode？saleId=12
     @RequestMapping("/phonecode")
     public TResult getphonecode(String phone,String saleId) {
         // 修改密码 找回密码

@@ -74,7 +74,7 @@ public class TGlobal {
     public static String have_joined_in="你已参加当前团购！";
     public static String date_not_between_tuandate="当前时间不在团购时间内";
     public static String tuan_nums_not_enough="开团人数未达到";
-    public static String tuan_comment="您的付款金额将在1个工作日内退回,敬请留意";
+    public static String tuan_comment="您的退款将在24小时内退回,敬请留意";
     public static Object object2=new Object();//保存团购订单锁
     public static Object object4=new Object();//更新团购订单锁
 

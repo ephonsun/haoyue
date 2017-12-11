@@ -241,6 +241,7 @@ public class SellerController {
         return new Result(false, Global.oldPass_unRigt, token);
     }
 
+    // /seller/getPhoneCode?token=卖家Id
     @RequestMapping("/getPhoneCode")
     public Result forgetPass(String phone, String token) {
         if (StringUtils.isNullOrBlank(phone)) {

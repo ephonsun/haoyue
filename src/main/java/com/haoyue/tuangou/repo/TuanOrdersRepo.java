@@ -36,4 +36,12 @@ public interface TuanOrdersRepo extends TBaseRepo<TuanOrders,Integer> {
 
     @Query(nativeQuery = true,value = "select * from t_tuanorders where t_products_id=?1 and state='正在拼团团购订单'")
     List<TuanOrders>  findTuaningByPid(Integer id);
+
+    @Query(nativeQuery = true,value = "select * from t_tuanorders where isover=true and state='正在拼团团购订单' and ispayback=false")
+    List<TuanOrders>  findUnPayback();
+
+    @Modifying
+    @Transactional
+    @Query(nativeQuery = true,value = "update t_tuanorders set ispayback=true  where id=?1")
+    void updatePayback(Integer id);
 }

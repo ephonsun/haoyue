@@ -41,9 +41,10 @@ public class TSuperAdminController {
             ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
             // 第二个参数为首次执行的延时时间，第三个参数为定时执行的间隔时间
             service.scheduleAtFixedRate(runnable, 60, 3600, TimeUnit.SECONDS);
-            service.scheduleAtFixedRate(runnable2, 120, 300, TimeUnit.SECONDS);
-            service.scheduleAtFixedRate(runnable3, 180, 300, TimeUnit.SECONDS);
-            service.scheduleAtFixedRate(runnable4, 240, 300, TimeUnit.SECONDS);
+            service.scheduleAtFixedRate(runnable2, 120, 600, TimeUnit.SECONDS);
+            service.scheduleAtFixedRate(runnable3, 240, 600, TimeUnit.SECONDS);
+            service.scheduleAtFixedRate(runnable4, 360, 3600, TimeUnit.SECONDS);
+            service.scheduleAtFixedRate(runnable5, 420, 3600, TimeUnit.SECONDS);
             return "ok";
         }
         return "data_no_right";
@@ -58,15 +59,17 @@ public class TSuperAdminController {
         }
     };
 
-    //团购单定时器 一分钟刷新一次
+    //团购单定时器 10分钟刷新一次
     Runnable runnable2 = new Runnable() {
         public void run() {
             System.out.println("刷新团购订单状态定时器执行了。。。。");
             tuanOrdersService.flush();
+            //自动退款
+            tuanOrdersService.autoPayback();
         }
     };
 
-    //红包定时器 一个小时刷新一次
+    //红包定时器 10分钟刷新一次
     Runnable runnable3 = new Runnable() {
         public void run() {
             System.out.println("刷新团购红包状态定时器执行了。。。。");
@@ -90,6 +93,8 @@ public class TSuperAdminController {
             productsService.autoFlushEnd();
         }
     };
+
+
 
 
 }

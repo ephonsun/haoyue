@@ -23,11 +23,20 @@ public class TPayBackDeal  {
     private String out_trade_no;//可关联团购订单
     private String refund_id;//微信退款单号
     private String refund_fee;//申请退款金额
+    private String settlement_refund_fee;//退款金额
     private String saleId;
 
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:SS", timezone="GMT+8")
     @Temporal(TemporalType.TIMESTAMP)
     private Date date;
+
+    public String getSettlement_refund_fee() {
+        return settlement_refund_fee;
+    }
+
+    public void setSettlement_refund_fee(String settlement_refund_fee) {
+        this.settlement_refund_fee = settlement_refund_fee;
+    }
 
     public Integer getId() {
         return id;

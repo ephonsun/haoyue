@@ -45,7 +45,7 @@ public class TPayBack {
      */
     // https://www.cslapp.com/tuan/payback/test?sellerId=3&out_trade_no=14878628022017111615363948647073&transaction_id=4200000037201711165033853205&fe=1
     @RequestMapping("/do")
-    public Object refund(String saleId, String user, String oid, int fe) {
+    public Object refund(String saleId,  String oid, int fe) {
         //获取卖家的基本信息
         TUserSale sale = tUserSaleService.findOneById(Integer.parseInt(saleId));
         String appId = sale.getAppId();
@@ -112,15 +112,18 @@ public class TPayBack {
                     result.put("status", "success");
                 } else {
                     result.put("status", "fail");
+                    return "fail";
                 }
             } else {
                 result.put("status", "fail");
+                return "fail";
             }
             //保存退款信息
             backNotify(map);
         } catch (Exception e) {
             e.printStackTrace();
             result.put("status", "fail");
+            return "fail";
         }
         return result;
     }
@@ -136,6 +139,7 @@ public class TPayBack {
         payBackDeal.setRefund_id(String.valueOf(map.get("refund_id")));
         payBackDeal.setTransaction_id(String.valueOf(map.get("transaction_id")));
         payBackDeal.setResult_code(String.valueOf(map.get("result_code")));
+        payBackDeal.setSettlement_refund_fee(String.valueOf(map.get("settlement_refund_fee")));
         //根据 out_trade_no 获取团购订单
         TuanOrders tuanOrders= tuanOrdersService.findByOut_trade_no(payBackDeal.getOut_trade_no());
         payBackDeal.setSaleId(tuanOrders.getSaleId());
