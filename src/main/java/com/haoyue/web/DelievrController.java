@@ -113,9 +113,9 @@ public class DelievrController {
 
             //dname = line[0];
             destination = line[0];
-            account = Integer.parseInt(line[1]);
-            price = Integer.parseInt(line[2]);
-            more_account = Integer.parseInt(line[3]);
+            account = Double.parseDouble(line[1]);
+            price = Double.parseDouble(line[2]);
+            more_account = Double.parseDouble(line[3]);
             more_price = Double.valueOf(line[4]);
 
             newdeliver.setOrigin_address(deliver.getOrigin_address());

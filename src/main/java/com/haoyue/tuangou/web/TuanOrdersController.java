@@ -54,8 +54,10 @@ public class TuanOrdersController {
 
         TProducts products = tProductsService.findOne(Integer.parseInt(pid));
         //判断当前时间是否在团购时间之内
-        if (date.before(products.getStartDate())||date.after(products.getEndDate())||products.getIsEnd()==true){
-            return new TResult(true,TGlobal.date_not_between_tuandate,null);
+        if (products.getStartDate()!=null&&products.getEndDate()!=null) {
+            if (date.before(products.getStartDate()) || date.after(products.getEndDate()) || products.getIsEnd() == true) {
+                return new TResult(true, TGlobal.date_not_between_tuandate, null);
+            }
         }
         //判断商品团购时间和人数是否正常
         if (products.getTuanNumbers()==0||products.getTuanTimes()==0){

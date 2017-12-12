@@ -89,7 +89,7 @@ public class TOrdersService {
         return tOrdersRepo.findAll(bd.getValue(), new Sort(Sort.Direction.DESC, "id"));
     }
 
-    public Iterable<TOrders> comments(Map<String, String> map, int pageNumber, int pageSize) {
+    public Iterable<TOrders> comments(Map<String, String> map) {
         QTOrders order = QTOrders.tOrders;
         BooleanBuilder bd = new BooleanBuilder();
         bd.and(order.iscomment.eq(true));

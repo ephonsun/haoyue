@@ -48,12 +48,10 @@ public class TProducts {
 
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:SS", timezone="GMT+8")
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(updatable=false)
     private Date startDate;//团购开始日期
 
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:SS", timezone="GMT+8")
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(updatable=false)
     private Date endDate;//团购结束日期
 
     private boolean isFree=false;//是否开启0元购

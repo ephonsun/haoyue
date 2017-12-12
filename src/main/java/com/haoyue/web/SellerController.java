@@ -350,7 +350,6 @@ public class SellerController {
     }
 
 
-
     /**
      * 离线操作
      *
@@ -369,6 +368,7 @@ public class SellerController {
     @RequestMapping("/test")
     public void test(String test){
         System.out.println(test);
+        System.out.println(System.currentTimeMillis());
     }
 
 }

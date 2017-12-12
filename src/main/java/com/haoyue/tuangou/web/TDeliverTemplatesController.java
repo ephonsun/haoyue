@@ -36,6 +36,11 @@ public class TDeliverTemplatesController {
         if (templates1!=null&&templates1.getId()!=null){
             return new TResult(true,TGlobal.deliver_template_exist,null);
         }
+        if (templates.getDname().contains("顺丰")){
+            if (!templates.getPriceType().equals("重量")){
+                return new TResult(true,TGlobal.weight_required,null);
+            }
+        }
         //新建模板
         Date date=new Date();
         templates.setCreateDate(date);

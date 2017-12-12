@@ -93,11 +93,12 @@ public class TCommentController {
     }
 
     // 查看某个商品的评论
-    // /tuan/tcomment/product?pid=商品ID
+     // https://www.cslapp.com/tuan/tcomment/product?pid=32&saleId=8
+     // /tuan/tcomment/product?pid=商品ID
     @RequestMapping("/product")
-    public TResult product(@RequestParam Map<String, String> map, @RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize) {
-        Iterable<TOrders> iterable = ordersService.comments(map, pageNumber, pageSize);
-        Iterable<TuanOrders> iterable2 = tuanOrdersService.comments(map, pageNumber, pageSize);
+    public TResult product(@RequestParam Map<String, String> map) {
+        Iterable<TOrders> iterable = ordersService.comments(map);
+        Iterable<TuanOrders> iterable2 = tuanOrdersService.comments(map);
         List<TComment> list = new ArrayList<>();
         List<TComment> sortlist = new ArrayList<>();
         list.addAll(getComments1(iterable,"yes"));
@@ -109,7 +110,7 @@ public class TCommentController {
     }
 
 
-    //  评论列表 /tuan/tcomment/list?saleId=123
+    //  评论列表  http://www.cslapp.com/tuan/tcomment/list?saleId=123
     @RequestMapping("/list")
     public TResult list(@RequestParam Map<String, String> map, @RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize) {
         Iterable<TOrders> iterable = ordersService.commentslist(map);

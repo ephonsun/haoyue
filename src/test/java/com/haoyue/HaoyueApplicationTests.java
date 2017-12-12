@@ -390,6 +390,19 @@ public class HaoyueApplicationTests {
         System.out.println(news);
     }
 
+    @Test
+    public void f23()  {
+        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        String str="2017-12-08 10:10";
+        Date date= null;
+        try {
+            date = simpleDateFormat.parse(str);
+        } catch (ParseException e) {
+            System.out.println("时间格式不正确");
+        }
+        System.out.println(date.toLocaleString());
+    }
+
 }
 
 class Person {

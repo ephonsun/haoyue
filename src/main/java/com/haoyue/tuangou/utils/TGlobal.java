@@ -15,6 +15,7 @@ public class TGlobal {
     public static String do_fail="操作失败";
     public static String have_no_right="无权操作";
     public static String deliver_template_exist="快递模板已经存在";
+    public static String weight_required="顺丰快递的计价方式须为重量计费";
     public static Object object3=new Object();
 
     //分页

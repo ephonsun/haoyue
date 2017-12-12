@@ -136,7 +136,7 @@ public class TuanOrdersService {
         return tuanOrdersRepo.findAll(bd.getValue(), new Sort(Sort.Direction.DESC, "id"));
     }
 
-    public Iterable<TuanOrders> comments(Map<String, String> map, int pageNumber, int pageSize) {
+    public Iterable<TuanOrders> comments(Map<String, String> map) {
         QTuanOrders tuanorders = QTuanOrders.tuanOrders;
         BooleanBuilder bd = new BooleanBuilder();
         bd.and(tuanorders.iscomment.eq(true));

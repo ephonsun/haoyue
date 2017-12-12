@@ -46,15 +46,16 @@ public class TProductsController {
     public TResult save(TProducts tProducts, String tprotypes,String start_date,String end_date) {
 
         //拼团时间范围
-        try {
-            Date endDate=StringUtils.formatStrToDate2(end_date);
-            Date startDate=StringUtils.formatStrToDate2(start_date);
-            tProducts.setStartDate(startDate);
-            tProducts.setEndDate(endDate);
-        } catch (ParseException e) {
-            return new TResult(true, TGlobal.date_format_wrong, null);
+        if (!StringUtils.isNullOrBlank(start_date)) {
+            try {
+                Date endDate = StringUtils.formatStrToDate2(end_date);
+                Date startDate = StringUtils.formatStrToDate2(start_date);
+                tProducts.setStartDate(startDate);
+                tProducts.setEndDate(endDate);
+            } catch (ParseException e) {
+                return new TResult(true, TGlobal.date_format_wrong, null);
+            }
         }
-
         //先保存商品
         Date date = new Date();
         if (tProducts.getId() == null) {
