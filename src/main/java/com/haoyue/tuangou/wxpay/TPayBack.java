@@ -45,7 +45,7 @@ public class TPayBack {
      */
     // https://www.cslapp.com/tuan/payback/test?sellerId=3&out_trade_no=14878628022017111615363948647073&transaction_id=4200000037201711165033853205&fe=1
     @RequestMapping("/do")
-    public Object refund(String saleId,  String oid, int fe) {
+    public Object refund(String saleId,  String oid, String fe) {
         //获取卖家的基本信息
         TUserSale sale = tUserSaleService.findOneById(Integer.parseInt(saleId));
         String appId = sale.getAppId();
@@ -63,7 +63,7 @@ public class TPayBack {
         String transaction_id = tPayDealService.findByOut_trade_no(out_trade_no).getTransaction_id();
 
         DecimalFormat df = new DecimalFormat("######0");
-        String fee = String.valueOf(df.format(fe));
+        String fee = String.valueOf(df.format(Double.valueOf(fe)));
         SortedMap<String, String> packageParams = new TreeMap<>();
         packageParams.put("appid", appId);
         packageParams.put("mch_id", mchId);//微信支付分配的商户号

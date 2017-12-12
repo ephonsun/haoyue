@@ -41,8 +41,8 @@ public class TSuperAdminController {
             ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
             // 第二个参数为首次执行的延时时间，第三个参数为定时执行的间隔时间
             service.scheduleAtFixedRate(runnable, 60, 3600, TimeUnit.SECONDS);
-            service.scheduleAtFixedRate(runnable2, 120, 600, TimeUnit.SECONDS);
-            service.scheduleAtFixedRate(runnable3, 240, 600, TimeUnit.SECONDS);
+            service.scheduleAtFixedRate(runnable2, 120, 300, TimeUnit.SECONDS);
+            service.scheduleAtFixedRate(runnable3, 240, 300, TimeUnit.SECONDS);
             service.scheduleAtFixedRate(runnable4, 360, 3600, TimeUnit.SECONDS);
            // service.scheduleAtFixedRate(runnable5, 420, 3600, TimeUnit.SECONDS);
             return "ok";

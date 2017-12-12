@@ -336,13 +336,13 @@ public class TOrdersController {
         TemplateResponse templateResponse1=new TemplateResponse();
         templateResponse1.setColor("#000000");
         templateResponse1.setName("keyword1");
-        templateResponse1.setValue(order.gettProducts().getPname());
+        templateResponse1.setValue(order.getCode());
         list.add(templateResponse1);
 
         TemplateResponse templateResponse2=new TemplateResponse();
         templateResponse2.setColor("#000000");
         templateResponse2.setName("keyword2");
-        templateResponse2.setValue(order.getWxname());
+        templateResponse2.setValue(order.gettProducts().getPname());
         list.add(templateResponse2);
 
         TemplateResponse templateResponse3=new TemplateResponse();
@@ -354,18 +354,11 @@ public class TOrdersController {
         TemplateResponse templateResponse4=new TemplateResponse();
         templateResponse4.setColor("#000000");
         templateResponse4.setName("keyword4");
-        templateResponse4.setValue("微信支付");
+        templateResponse4.setValue(StringUtils.formDateToStr(order.getCreateDate()));
         list.add(templateResponse4);
 
-        TemplateResponse templateResponse5=new TemplateResponse();
-        templateResponse5.setColor("#000000");
-        templateResponse5.setName("keyword5");
-        String date= com.haoyue.untils.StringUtils.formDateToStr(new Date());
-        templateResponse5.setValue(date);
-        list.add(templateResponse5);
-
         Template template=new Template();
-        template.setTemplateId("Z_Xg6rYdQgci4FP_aOjTvZHXeC5BSs99EwARD6NJXWk");
+        template.setTemplateId("e4-w5VmQdVU8PABNhB0SBcK-eHu09g4pYtO4t-QmUt8");
         template.setTemplateParamList(list);
         template.setTopColor("#000000");
         template.setPage("pages/index/index");

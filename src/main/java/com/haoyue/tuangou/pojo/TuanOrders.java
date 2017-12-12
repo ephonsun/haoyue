@@ -40,7 +40,7 @@ public class TuanOrders {
     private double deliverPrice;
     private double totalPrice;
     private int hours;//团购时间
-    private String formId;
+    private String formId;//用于模板信息通知
     private boolean isowner=false;//是否房主
     private boolean isover=false;
     private boolean showbuy=true;

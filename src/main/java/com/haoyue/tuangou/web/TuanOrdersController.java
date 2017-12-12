@@ -167,6 +167,8 @@ public class TuanOrdersController {
                             tProductsService.update(tProducts);
                         }
                         tuanOrdersService.update(tuanOrders);
+                        // 拼团成功通知信息
+                        addTemplate2(tuanOrders);
                     }
                 } else {
                     //不开团
@@ -423,13 +425,13 @@ public class TuanOrdersController {
         TemplateResponse templateResponse1 = new TemplateResponse();
         templateResponse1.setColor("#000000");
         templateResponse1.setName("keyword1");
-        templateResponse1.setValue(order.gettProducts().getPname());
+        templateResponse1.setValue(order.getCode());
         list.add(templateResponse1);
 
         TemplateResponse templateResponse2 = new TemplateResponse();
         templateResponse2.setColor("#000000");
         templateResponse2.setName("keyword2");
-        templateResponse2.setValue(order.getWxname());
+        templateResponse2.setValue(order.gettProducts().getPname());
         list.add(templateResponse2);
 
         TemplateResponse templateResponse3 = new TemplateResponse();
@@ -441,18 +443,13 @@ public class TuanOrdersController {
         TemplateResponse templateResponse4 = new TemplateResponse();
         templateResponse4.setColor("#000000");
         templateResponse4.setName("keyword4");
-        templateResponse4.setValue("微信支付");
+        templateResponse4.setValue(StringUtils.formDateToStr(order.getStartDate()));
         list.add(templateResponse4);
 
-        TemplateResponse templateResponse5 = new TemplateResponse();
-        templateResponse5.setColor("#000000");
-        templateResponse5.setName("keyword5");
-        String date = com.haoyue.untils.StringUtils.formDateToStr(new Date());
-        templateResponse5.setValue(date);
-        list.add(templateResponse5);
+
 
         Template template = new Template();
-        template.setTemplateId("Z_Xg6rYdQgci4FP_aOjTvZHXeC5BSs99EwARD6NJXWk");
+        template.setTemplateId("e4-w5VmQdVU8PABNhB0SBcK-eHu09g4pYtO4t-QmUt8");
         template.setTemplateParamList(list);
         template.setTopColor("#000000");
         template.setPage("pages/index/index");
@@ -476,6 +473,62 @@ public class TuanOrdersController {
         TGlobal.tuan_package_map.remove(template.getToUser());
     }
 
+    public void addTemplate2(TuanOrders order) {
+        List<TemplateResponse> list = new ArrayList<>();
+        TemplateResponse templateResponse1 = new TemplateResponse();
+        templateResponse1.setColor("#000000");
+        templateResponse1.setName("keyword1");
+        templateResponse1.setValue(order.getOwner());
+        list.add(templateResponse1);
+
+        TemplateResponse templateResponse2 = new TemplateResponse();
+        templateResponse2.setColor("#000000");
+        templateResponse2.setName("keyword2");
+        templateResponse2.setValue(order.getStartNum()+"");
+        list.add(templateResponse2);
+
+        TemplateResponse templateResponse3 = new TemplateResponse();
+        templateResponse3.setColor("#000000");
+        templateResponse3.setName("keyword3");
+        templateResponse3.setValue(order.gettProducts().getPname());
+        list.add(templateResponse3);
+
+        TemplateResponse templateResponse4 = new TemplateResponse();
+        templateResponse4.setColor("#000000");
+        templateResponse4.setName("keyword4");
+        templateResponse4.setValue(String.valueOf(order.getTotalPrice()));
+        list.add(templateResponse4);
+
+        TemplateResponse templateResponse5 = new TemplateResponse();
+        templateResponse5.setColor("#000000");
+        templateResponse5.setName("keyword5");
+        templateResponse5.setValue(StringUtils.formDateToStr(new Date()));
+        list.add(templateResponse5);
+
+
+        Template template = new Template();
+        template.setTemplateId("3z1pT92QqqkpgcPcABd7BVBN-uhw6K5MYcjXKtrekv4");
+        template.setTemplateParamList(list);
+        template.setTopColor("#000000");
+        template.setPage("pages/index/index");
+        template.setToUser(order.getOpenId());
+        getTemplate2(template,order);
+    }
+
+    public void getTemplate2(Template template,TuanOrders orders) {
+        //模板信息通知用户
+        //获取 access_token
+        String access_token_url = "https://api.weixin.qq.com/cgi-bin/token";
+        String param1="grant_type=client_credential&appid=wxf80175142f3214e1&secret=e0251029d53d21e84a650681af6139b1";
+        String access_token = HttpRequest.sendPost(access_token_url, param1);
+        access_token = access_token.substring(access_token.indexOf(":") + 2, access_token.indexOf(",") - 1);
+        //发送模板信息
+        String form_id = orders.getFormId();
+        template.setForm_id(form_id);
+        String url = "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token=" + access_token + "&form_id=" + form_id;
+        String result = CommonUtil.httpRequest(url, "POST", template.toJSON());
+        System.out.println("拼团成功 result="+result);
+    }
 
 
 }
