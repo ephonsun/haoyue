@@ -317,8 +317,8 @@ public class OrderController {
         }
     }
 
-    // https://www.cslapp.com/order/excel?sellId=3&state=待收货订单
-    // http://localhost:8080/order/excel?sellId=1&state=已完成订单&openId=1
+    // https://www.cslapp.com/order/excel?sellerId=3&state=待收货订单
+    // http://localhost:8080/order/excel?sellerId=1&state=已完成订单&openId=1
     @RequestMapping("/excel")
     public Result excel(String state, String sellerId) throws IOException {
         return orderService.excel(sellerId, state);
@@ -330,6 +330,7 @@ public class OrderController {
             copy.add(iter.next());
         return copy;
     }
+
 
     @RequestMapping("/update")
     public Result update(Order order, String selleId, String changePrice) {

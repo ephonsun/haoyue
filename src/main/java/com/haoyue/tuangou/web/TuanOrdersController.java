@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.transaction.Transactional;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -528,6 +529,24 @@ public class TuanOrdersController {
         String url = "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token=" + access_token + "&form_id=" + form_id;
         String result = CommonUtil.httpRequest(url, "POST", template.toJSON());
         System.out.println("拼团成功 result="+result);
+    }
+
+    //   /tuan/tuanorders/leavemsg?oid=订单ID&saleId=122&leavemsg=卖家留言
+    @RequestMapping("/leavemsg")
+    public TResult leavemsg(String saleId,String oid,String leavemsg){
+        TuanOrders orders=tuanOrdersService.findOne(Integer.parseInt(oid));
+        if (!orders.getSaleId().equals(saleId)){
+            return new TResult(true,TGlobal.have_no_right,null);
+        }
+        orders.setLeavemsg2(leavemsg);
+        tuanOrdersService.update(orders);
+        return new TResult(false,TGlobal.do_success,null);
+    }
+
+    //   /tuan/tuanorders/excel?saleId=1&state=[不填/待付款团购订单/正在拼团团购订单/待发货团购订单/待收货团购订单/已完成团购订单]
+    @RequestMapping("/excel")
+    public TResult excel(String saleId,String state) throws IOException {
+        return tuanOrdersService.excel(saleId,state);
     }
 
 

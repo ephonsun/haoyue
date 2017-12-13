@@ -64,6 +64,25 @@ public class TuanOrders {
     @Column(updatable=false)
     private Date endDate;//结束日期
 
+    private String leavemsg;//买家留言
+    private String leavemsg2;//卖家备注
+
+    public String getLeavemsg() {
+        return leavemsg;
+    }
+
+    public void setLeavemsg(String leavemsg) {
+        this.leavemsg = leavemsg;
+    }
+
+    public String getLeavemsg2() {
+        return leavemsg2;
+    }
+
+    public void setLeavemsg2(String leavemsg2) {
+        this.leavemsg2 = leavemsg2;
+    }
+
     public String getFormId() {
         return formId;
     }

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.transaction.Transactional;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -44,7 +45,7 @@ public class TOrdersController {
 
     //   /tuan/torders/save?pid=商品ID&ptypeId=商品分类ID&amount=购买数量&productPrice=下单的商品价格
     //    &deliverPrice=快递费用,免邮则0&openId=12&saleId=12&wxname=微信名&wxpic=微信头像
-    //    &address=收货地址&receiver=收货人&phone=收货人电话&couponId=优惠券ID
+    //    &address=收货地址&receiver=收货人&phone=收货人电话&couponId=优惠券ID&leavemsg=买家留言
     //   前台做下单量和库存量对比
 
     @RequestMapping("/save")
@@ -456,6 +457,24 @@ public class TOrdersController {
         orders.setIsdelay(true);
         tOrdersService.save(orders);
         return new TResult(false,TGlobal.do_success,null);
+    }
+
+    //   /tuan/torders/leavemsg?oid=订单ID&saleId=122&leavemsg=卖家留言
+    @RequestMapping("/leavemsg")
+    public TResult leavemsg(String saleId,String oid,String leavemsg){
+        TOrders orders=tOrdersService.findOne(Integer.parseInt(oid));
+        if (!orders.getSaleId().equals(saleId)){
+            return new TResult(true,TGlobal.have_no_right,null);
+        }
+        orders.setLeavemsg2(leavemsg);
+        tOrdersService.update(orders);
+        return new TResult(false,TGlobal.do_success,null);
+    }
+
+    //   /tuan/torders/excel?saleId=1&state=[不填/待付款订单/待发货订单/待收货订单/已完成订单]
+    @RequestMapping("/excel")
+    public TResult excel(String saleId,String state) throws IOException {
+        return tOrdersService.excel(saleId,state);
     }
 
 }

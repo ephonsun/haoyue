@@ -17,6 +17,8 @@ public class TGlobal {
     public static String deliver_template_exist="快递模板已经存在";
     public static String weight_required="顺丰快递的计价方式须为重量计费";
     public static Object object3=new Object();
+    public static List<String> excel_urls=new ArrayList<>();//存放excel存储路径，每天定时清空oss上的excel文件
+    public static  String server_busying="服务器正忙，请稍后再试";
 
     //分页
     public static String pagenumber_not_right="页数不正常";

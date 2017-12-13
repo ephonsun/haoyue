@@ -11,4 +11,8 @@ public interface TOrdersRepo extends TBaseRepo<TOrders,Integer> {
     TOrders findByCode(String code);
 
     List<TOrders> findByState(String order_unreceive);
+
+    List<TOrders> findBySaleId(int id);
+
+    List<TOrders> findBySaleIdAndState(int id, String state);
 }
