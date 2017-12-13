@@ -10,8 +10,9 @@ import com.haoyue.tuangou.service.TPayBackDealService;
 import com.haoyue.tuangou.service.TUserSaleService;
 import com.haoyue.tuangou.service.TuanOrdersService;
 import com.haoyue.tuangou.utils.StringUtils;
+import com.haoyue.tuangou.utils.TGlobal;
+import com.haoyue.tuangou.utils.TSendCode;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -97,7 +98,18 @@ public class TPayBack {
             System.out.println("退款结果");
             for (Object name : map.keySet()) {
                 System.out.println(name + "====" + map.get(name));
+                if (name.equals("err_code_des")){
+                    if (((String)map.get(name)).contains("余额不足")){
+                        //  短信通知卖家账户余额不足,同一个卖家,一天只通知一次
+                        List<String> list= TGlobal.sendsms3;
+                        if (!list.contains(saleId)){
+                            TSendCode.sendSms3(sale.getPhone());
+                            TGlobal.sendsms3.add(saleId);
+                        }
+                    }
+                }
             }
+            // err_code_des====基本账户余额不足，请充值后重新发起
             String returnCode = map.get("return_code").toString();
             if (returnCode.equals("SUCCESS")) {
                 String resultCode = map.get("result_code").toString();

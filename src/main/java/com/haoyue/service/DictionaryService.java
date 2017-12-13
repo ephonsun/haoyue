@@ -115,7 +115,7 @@ public class DictionaryService {
 //                flushMembers();
 //            }
             //清空当日生成的excel文件
-            clear_excel();
+            //clear_excel();
         }
     }
 

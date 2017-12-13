@@ -142,17 +142,19 @@ public class TProductsService {
         List<Integer> newids=new ArrayList<>();
         if (ids.size()<=3){
             for (Integer id:ids){
-                result.add(findOne(ids.get(id)));
+                result.add(findOne(id));
             }
             return result;
         }
         for (int i=0;i<3;i++){
-            int id=(int)Math.floor(Math.random()*ids.size());
+            int index=(int)Math.floor(Math.random()*ids.size());
+            int id=ids.get(index);
             while (newids.contains(id)){
-                id=(int)Math.floor(Math.random()*ids.size());
+                index=(int)Math.floor(Math.random()*ids.size());
+                id=ids.get(index);
             }
             newids.add(id);
-            result.add(findOne(ids.get(id)));
+            result.add(findOne(id));
         }
         return result;
     }

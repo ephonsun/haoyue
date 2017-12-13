@@ -296,6 +296,8 @@ public class OrderService {
         cell.setCellValue("卖家备注");
         cell = row.createCell(8);
         cell.setCellValue("买家备注");
+        cell = row.createCell(9);
+        cell.setCellValue("订单状态");
 
         //需要转excel的订单
         List<Order> list=new ArrayList<>();
@@ -360,6 +362,8 @@ public class OrderService {
                 cell.setCellValue(buyComment);
                 cell = row.createCell(8);
                 cell.setCellValue(sellerComment);
+                cell = row.createCell(9);
+                cell.setCellValue(order.getState());
             }
         }
 
@@ -384,7 +388,6 @@ public class OrderService {
         filename = "excel/" + filename;
         try {
             ossClientUtil.uploadFile2OSS(inputStream, filename, null);
-            Global.excel_urls.add("hymarket/" + filename);
         } catch (Exception e) {
             e.printStackTrace();
             return new Result(true, Global.server_busying, null, null);

@@ -57,6 +57,7 @@ public class PayAction {
             appid = appId;
             String mch_id = "替换为自己的商户号";//商户号
             mch_id = mchId;
+            ip=getIpAddr(request);
             String nonce_str = UUIDHexGenerator.generate();//随机字符串
             String today = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
             String code = PayUtil.createCode(8);
@@ -158,6 +159,19 @@ public class PayAction {
         return nonceStr;
     }
 
+    public  String getIpAddr(HttpServletRequest request) {
+        String ip  =  request.getHeader( " x-forwarded-for " );
+        if  (ip  ==   null   ||  ip.length()  ==   0   ||   " unknown " .equalsIgnoreCase(ip)) {
+            ip  =  request.getHeader( " Proxy-Client-IP " );
+        }
+        if  (ip  ==   null   ||  ip.length()  ==   0   ||   " unknown " .equalsIgnoreCase(ip)) {
+            ip  =  request.getHeader( " WL-Proxy-Client-IP " );
+        }
+        if  (ip  ==   null   ||  ip.length()  ==   0   ||   " unknown " .equalsIgnoreCase(ip)) {
+            ip  =  request.getRemoteAddr();
+        }
+        return  ip;
+    }
 
 
     /**

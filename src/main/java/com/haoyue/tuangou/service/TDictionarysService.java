@@ -7,6 +7,7 @@ import com.haoyue.tuangou.repo.TDictionarysRepo;
 import com.haoyue.tuangou.repo.TUserSaleRepo;
 import com.haoyue.tuangou.repo.TVisitorsRepo;
 import com.haoyue.tuangou.utils.StringUtils;
+import com.haoyue.tuangou.utils.TGlobal;
 import com.querydsl.core.BooleanBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -60,6 +61,7 @@ public class TDictionarysService {
             //每天刷新自动收货
             ordersService.autofinsh();
             tuanOrdersService.autofinsh();
+            TGlobal.sendsms3.clear();
         }
 
     }

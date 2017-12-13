@@ -12,7 +12,7 @@ public interface TOrdersRepo extends TBaseRepo<TOrders,Integer> {
 
     List<TOrders> findByState(String order_unreceive);
 
-    List<TOrders> findBySaleId(int id);
+    List<TOrders> findBySaleId(String id);
 
-    List<TOrders> findBySaleIdAndState(int id, String state);
+    List<TOrders> findBySaleIdAndState(String id, String state);
 }

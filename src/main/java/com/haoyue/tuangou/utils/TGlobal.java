@@ -98,4 +98,5 @@ public class TGlobal {
 
     //优惠券
     public static String coupon_expire="优惠券已经过期";
+    public static List<String> sendsms3=new ArrayList<>();
 }

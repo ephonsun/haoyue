@@ -48,7 +48,7 @@ public interface TuanOrdersRepo extends TBaseRepo<TuanOrders,Integer> {
     @Query(nativeQuery = true,value = "select * from  t_tuanorders where isover=false")
     List<TuanOrders> findByIsOver();
 
-    List<TuanOrders> findBySaleId(int i);
+    List<TuanOrders> findBySaleId(String id);
 
-    List<TuanOrders> findBySaleIdAndState(int i, String state);
+    List<TuanOrders> findBySaleIdAndState(String id, String state);
 }

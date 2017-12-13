@@ -195,13 +195,15 @@ public TResult excel(String saleId, String state) throws IOException {
     cell.setCellValue("卖家备注");
     cell = row.createCell(8);
     cell.setCellValue("买家备注");
+    cell = row.createCell(9);
+    cell.setCellValue("订单状态");
 
     //需要转excel的订单
     List<TOrders> list=new ArrayList<>();
     if (StringUtils.isNullOrBlank(state)) {
-        list = tOrdersRepo.findBySaleId(Integer.parseInt(saleId));
+        list = tOrdersRepo.findBySaleId(saleId);
     }else {
-        list = tOrdersRepo.findBySaleIdAndState(Integer.parseInt(saleId),state);
+        list = tOrdersRepo.findBySaleIdAndState(saleId,state);
     }
 
     if (list.size()!=0){
@@ -259,6 +261,8 @@ public TResult excel(String saleId, String state) throws IOException {
             cell.setCellValue(buyComment);
             cell = row.createCell(8);
             cell.setCellValue(sellerComment);
+            cell = row.createCell(9);
+            cell.setCellValue(order.getState());
         }
     }
 
@@ -283,7 +287,6 @@ public TResult excel(String saleId, String state) throws IOException {
     filename = "excel/" + filename;
     try {
         ossClientUtil.uploadFile2OSS(inputStream, filename, null);
-        TGlobal.excel_urls.add("hymarket/" + filename);
     } catch (Exception e) {
         e.printStackTrace();
         return new TResult(true, TGlobal.server_busying, null);

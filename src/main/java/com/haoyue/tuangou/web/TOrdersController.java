@@ -471,7 +471,7 @@ public class TOrdersController {
         return new TResult(false,TGlobal.do_success,null);
     }
 
-    //   /tuan/torders/excel?saleId=1&state=[不填/待付款订单/待发货订单/待收货订单/已完成订单]
+    //   http://localhost:8080/tuan/torders/excel?saleId=1&state=[不填/待付款订单/待发货订单/待收货订单/已完成订单]
     @RequestMapping("/excel")
     public TResult excel(String saleId,String state) throws IOException {
         return tOrdersService.excel(saleId,state);
