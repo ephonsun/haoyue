@@ -51,4 +51,15 @@ public interface TuanOrdersRepo extends TBaseRepo<TuanOrders,Integer> {
     List<TuanOrders> findBySaleId(String id);
 
     List<TuanOrders> findBySaleIdAndState(String id, String state);
+
+    @Modifying
+    @Transactional
+    @Query(nativeQuery = true,value = "update t_tuanorders set wxname=?2 where open_id=?1")
+    void updateWxname(String openId, String wxname);
+
+    @Modifying
+    @Transactional
+    @Query(nativeQuery = true,value = "update t_tuanorders set wxpic=?2 where open_id=?1")
+    void updateWxpic(String openId, String wxpic);
+
 }

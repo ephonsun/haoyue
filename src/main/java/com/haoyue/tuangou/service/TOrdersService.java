@@ -296,4 +296,11 @@ public TResult excel(String saleId, String state) throws IOException {
     return new TResult(false,TGlobal.do_success,TGlobal.aliyun_href + filename);
 }
 
+    public void updateWxname(String openId, String wxname) {
+        tOrdersRepo.updateWxname(openId,wxname);
+    }
+
+    public void updateWxpic(String openId, String wxpic) {
+        tOrdersRepo.updateWxpic(openId,wxpic);
+    }
 }

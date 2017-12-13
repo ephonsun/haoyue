@@ -164,7 +164,10 @@ public class TCommentController {
         while (iterator.hasNext()) {
             TOrders orders=iterator.next();
             TComment comment=orders.getComment();
-            if (comment!=null&&!StringUtils.isNullOrBlank(str)) {
+            if (comment==null){
+                continue;
+            }
+            if (!StringUtils.isNullOrBlank(str)) {
                 comment.settProducts(null);
             }
             list.add(comment);
@@ -178,7 +181,10 @@ public class TCommentController {
         while (iterator.hasNext()) {
             TuanOrders tuanOrders=iterator.next();
             TComment comment=tuanOrders.getComment();
-            if (comment!=null&&!StringUtils.isNullOrBlank(str)) {
+            if (comment==null){
+                continue;
+            }
+            if (!StringUtils.isNullOrBlank(str)) {
                 comment.settProducts(null);
             }
             list.add(comment);

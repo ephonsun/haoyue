@@ -34,4 +34,13 @@ public class TCommentService {
     public void update(TComment comment) {
         commentRepo.save(comment);
     }
+
+    public void updateWxname(String openId,String wxname){
+        commentRepo.updateWxname(openId,wxname);
+    }
+
+    public void updateWxpic(String openId,String wxpic){
+        commentRepo.updateWxname(openId,wxpic);
+    }
+
 }

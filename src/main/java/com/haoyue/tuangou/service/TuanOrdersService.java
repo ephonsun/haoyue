@@ -480,5 +480,11 @@ public class TuanOrdersService {
     }
 
 
+    public void updateWxname(String openId, String wxname) {
+        tuanOrdersRepo.updateWxname(openId,wxname);
+    }
 
+    public void updateWxpic(String openId, String wxname) {
+        tuanOrdersRepo.updateWxpic(openId,wxname);
+    }
 }
