@@ -199,7 +199,9 @@ public class TuanOrdersService {
             if (date.after(orders.getEndDate())){
                 tuanOrdersRepo.flushdata(orders.getId());
                 //通知
-                addTemplate(orders);
+                if(orders.getState().equals(TGlobal.tuan_order_tuaning)) {
+                    addTemplate(orders);
+                }
             }
         }
     }
