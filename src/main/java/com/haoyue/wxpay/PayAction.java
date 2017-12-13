@@ -43,7 +43,7 @@ public class PayAction {
      * 前后再调用 wx.request(object) 进行支付
      */
     @RequestMapping("/do")
-    public JSONArray pay(String body, String appId, String mchId, String ip, String openId,  String key1, String session_key, String total_fee) throws UnsupportedEncodingException, DocumentException, MyException {
+    public JSONArray pay(HttpServletRequest  request,String body, String appId, String mchId, String ip, String openId,  String key1, String session_key, String total_fee) throws UnsupportedEncodingException, DocumentException, MyException {
         synchronized (Global.object) {
             if (StringUtils.isNullOrBlank(openId)) {
                 throw new MyException(Global.openId_isNull, null, 102);

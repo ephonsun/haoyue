@@ -8,6 +8,7 @@ import com.haoyue.repo.DictionaryRepo;
 import com.haoyue.repo.SellerRepo;
 import com.haoyue.repo.VisitorsRepo;
 import com.haoyue.untils.Global;
+import com.haoyue.untils.OSSClientUtil;
 import com.haoyue.untils.Result;
 import com.haoyue.untils.StringUtils;
 import com.querydsl.core.BooleanBuilder;
@@ -110,9 +111,23 @@ public class DictionaryService {
             //每日清空 visitors 表
             visitorsService.delAll();
             //判断年份是否改变,新的一年刷新所有会员信息
-            if (dictionery.getCreateDate().getYear()!=date.getYear()){
-                flushMembers();
+//            if (dictionery.getCreateDate().getYear()!=date.getYear()){
+//                flushMembers();
+//            }
+            //清空当日生成的excel文件
+            clear_excel();
+        }
+    }
+
+    public void clear_excel(){
+        //清空生成的excel文件
+        OSSClientUtil ossClientUtil = new OSSClientUtil();
+        if (Global.excel_urls.size() != 0) {
+            for (String s : Global.excel_urls) {
+                ossClientUtil.delete(s);
             }
+            //清空Global.excel_urls
+            Global.excel_urls.clear();
         }
     }
 

@@ -53,7 +53,7 @@ public class TOrdersService {
                     bd.and(orders.state.eq(value));
                 } else if (name.equals("code")) {
                     bd.and(orders.code.eq(value));
-                }else if (name.equals("showsale")) {
+                } else if (name.equals("showsale")) {
                     bd.and(orders.showsale.eq(true));
                 }
 
@@ -94,46 +94,46 @@ public class TOrdersService {
         BooleanBuilder bd = new BooleanBuilder();
         bd.and(order.iscomment.eq(true));
         bd.and(order.tProducts.id.eq(Integer.parseInt(map.get("pid"))));
-        return tOrdersRepo.findAll(bd.getValue(),  new Sort(Sort.Direction.DESC, "id"));
+        return tOrdersRepo.findAll(bd.getValue(), new Sort(Sort.Direction.DESC, "id"));
     }
 
     public Iterable<TOrders> query(Map<String, String> map) {
         QTOrders order = QTOrders.tOrders;
         BooleanBuilder bd = new BooleanBuilder();
-        Date from=null;
-        Date end=null;
-        for (String key:map.keySet()){
-            String value=map.get(key);
-            if (!StringUtils.isNullOrBlank(value)){
-                if (key.equals("code")){
+        Date from = null;
+        Date end = null;
+        for (String key : map.keySet()) {
+            String value = map.get(key);
+            if (!StringUtils.isNullOrBlank(value)) {
+                if (key.equals("code")) {
                     bd.and(order.code.contains(value));
                 }
-                if (key.equals("saleId")){
+                if (key.equals("saleId")) {
                     bd.and(order.saleId.eq(value));
                 }
-                if (key.equals("startDate")){
+                if (key.equals("startDate")) {
                     try {
-                        from=StringUtils.formatStrToDate((map.get("startDate")));
+                        from = StringUtils.formatStrToDate((map.get("startDate")));
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
                 }
-                if (key.equals("endDate")){
+                if (key.equals("endDate")) {
                     try {
-                        end=StringUtils.formatStrToDate((map.get("endDate")));
+                        end = StringUtils.formatStrToDate((map.get("endDate")));
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
                 }
-                if (from!=null&&end!=null){
-                    bd.and(order.createDate.between(from,end));
+                if (from != null && end != null) {
+                    bd.and(order.createDate.between(from, end));
                 }
-                if (key.equals("wxname")){
+                if (key.equals("wxname")) {
                     bd.and(order.wxname.contains(value));
                 }
             }
         }
-        return tOrdersRepo.findAll(bd.getValue(),  new Sort(Sort.Direction.DESC, "id"));
+        return tOrdersRepo.findAll(bd.getValue(), new Sort(Sort.Direction.DESC, "id"));
     }
 
     public Iterable<TOrders> commentslist(Map<String, String> map) {
@@ -141,26 +141,26 @@ public class TOrdersService {
         BooleanBuilder bd = new BooleanBuilder();
         bd.and(order.iscomment.eq(true));
         bd.and(order.saleId.eq(map.get("saleId")));
-        return tOrdersRepo.findAll(bd.getValue(),  new Sort(Sort.Direction.DESC, "id"));
+        return tOrdersRepo.findAll(bd.getValue(), new Sort(Sort.Direction.DESC, "id"));
     }
 
     // 系统自动确认收货 20 天
-    public void autofinsh(){
-        Date date=new Date();
-        List<TOrders>  list= tOrdersRepo.findByState(TGlobal.order_unreceive);
-        for (TOrders order:list){
-            long start=order.gettDeliver().getSendDate().getTime();
+    public void autofinsh() {
+        Date date = new Date();
+        List<TOrders> list = tOrdersRepo.findByState(TGlobal.order_unreceive);
+        for (TOrders order : list) {
+            long start = order.gettDeliver().getSendDate().getTime();
             //延迟收货 7 日
-            if (order.getIsdelay()){
-                start+=3600*24*7*1000;
+            if (order.getIsdelay()) {
+                start += 3600 * 24 * 7 * 1000;
             }
-            if (date.getTime()-start>3600*1000*24*20){
+            if (date.getTime() - start > 3600 * 1000 * 24 * 20) {
                 order.setState(TGlobal.order_finsh);
                 save(order);
             }
         }
     }
 
-
+// // TODO: 2017/12/13  订单excel
 
 }

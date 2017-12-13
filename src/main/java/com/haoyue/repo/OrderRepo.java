@@ -40,4 +40,8 @@ public interface OrderRepo extends BaseRepo<Order,Integer> {
 
     @Query(nativeQuery = true,value = "select luckcode from orders where seller_id=?1 and is_luck_draw=true and is_luck_draw_end=false")
     List<String> findByLuckCodeBySeller(Integer sellerId);
+
+    List<Order> findBySellerId(Integer sellerId);
+
+    List<Order> findBySellerIdAndState(Integer sellerId, String state);
 }

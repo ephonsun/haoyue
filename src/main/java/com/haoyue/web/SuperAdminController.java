@@ -251,8 +251,6 @@ public class SuperAdminController {
             System.out.println("定时器执行了。。。。");
             //数据表 dictionarys 新增数据
             dictionaryService.addEachDay();
-            //清空一小时内生成的excel文件
-            clear_excel();
             //默认收货 两小时执行一次
             Global.flag=!Global.flag;
             if(Global.flag) {
@@ -278,16 +276,6 @@ public class SuperAdminController {
         }
     }
 
-    public void clear_excel(){
-        //清空一小时内生成的excel文件
-        OSSClientUtil ossClientUtil = new OSSClientUtil();
-        if (Global.excel_urls.size() != 0) {
-            for (String s : Global.excel_urls) {
-                ossClientUtil.delete(s);
-            }
-            //清空Global.excel_urls
-            Global.excel_urls.clear();
-        }
-    }
+
 }
 

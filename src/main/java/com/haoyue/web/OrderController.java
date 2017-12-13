@@ -51,7 +51,6 @@ public class OrderController {
     private SellerService sellerService;
 
 
-
     // /order/list?pageNumber&pageSize&sellerId&state&active=true
     @RequestMapping("/list")
     public Result list(@RequestParam Map<String, String> map, @RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize) {
@@ -75,9 +74,9 @@ public class OrderController {
     //  卖家后台取消待付款 /order/cancel?id=订单ID&sellerId=12
     //  小程序取消待付款  /order/cancel?id=订单ID&openId=12
     @RequestMapping("/cancel")
-    public Result cancel(Integer id, String openId,String sellerId) {
+    public Result cancel(Integer id, String openId, String sellerId) {
         Order order = orderService.findOne(id);
-        if (order.getSellerId()!=Integer.parseInt(sellerId)){
+        if (order.getSellerId() != Integer.parseInt(sellerId)) {
             return new Result(true, Global.have_no_right, null);
         }
         if (!StringUtils.isNullOrBlank(openId)) {
@@ -112,8 +111,8 @@ public class OrderController {
     @RequestMapping("/save")
     public Result save(String deliver_price, Integer proId, Integer proTypeId, String sellerId, String receiver, String phone, String address, Integer amount, String openId, String leaveMessage, String usevip, String wxname, String cashTicketCode) {
         //当用户点击拒接获取信息后，导致openId为空
-        if (StringUtils.isNullOrBlank(openId)||openId.equals("undefined")){
-            return new Result(true,Global.cannot_get_info,null,null);
+        if (StringUtils.isNullOrBlank(openId) || openId.equals("undefined")) {
+            return new Result(true, Global.cannot_get_info, null, null);
         }
         Customer customer = customerService.findByOpenId(openId, sellerId);
         Order order = new Order();
@@ -197,8 +196,8 @@ public class OrderController {
         }
         //是否抽奖订单
         if (products.getIsLuckDraw()) {
-            if (products.getIsLuckDrawEnd()){
-                return new Result(true,Global.luckdraw_end_ornotbegin,null);
+            if (products.getIsLuckDrawEnd()) {
+                return new Result(true, Global.luckdraw_end_ornotbegin, null);
             }
             order.setState(Global.order_luckdraw_unpay);
             order.setIsLuckDraw(true);
@@ -211,9 +210,9 @@ public class OrderController {
             Customer customer1 = customerService.findByOpenId(openId, sellerId);
             String joiner = luckDraw.getJoiners();
             if (!StringUtils.isNullOrBlank(joiner)) {
-                String [] joiners=joiner.split(",");
+                String[] joiners = joiner.split(",");
                 for (String str : joiners) {
-                    if (StringUtils.isNullOrBlank(str)){
+                    if (StringUtils.isNullOrBlank(str)) {
                         continue;
                     }
                     if (str.equals(String.valueOf(customer1.getId()))) {
@@ -270,13 +269,13 @@ public class OrderController {
                 //产生随机中奖号码
                 int allNumber = luckDraw.getAllNumber();
                 int random = (int) Math.ceil(Math.random() * allNumber);
-                String random_str=random+"";
+                String random_str = random + "";
                 //找出所有已经下单的抽奖订单的抽奖号码
                 List<String> luckcodes = orderService.findByLuckCodeBySeller(order.getSellerId());
                 //判断该号码是否已存在
                 while (luckcodes != null && luckcodes.contains(random_str)) {
                     random = (int) Math.ceil(Math.random() * allNumber);
-                    random_str=random+"";
+                    random_str = random + "";
                 }
                 order.setLuckcode(String.valueOf(random));
 //                if(order.getCustomerId()==2468){
@@ -306,137 +305,23 @@ public class OrderController {
                     orderService.updateIsLuckDrawEnd(products.getId());
                 }
                 //增加参与者
-                luckDraw.setJoiners(luckDraw.getJoiners()+","+order.getCustomerId());
+                luckDraw.setJoiners(luckDraw.getJoiners() + "," + order.getCustomerId());
                 luckDrawService.update(luckDraw);
             }
 
             //微信付款通知模板
-            if (!state.equals(Global.order_unpay)&&!state.equals(Global.order_luckdraw_unpay)) {
+            if (!state.equals(Global.order_unpay) && !state.equals(Global.order_luckdraw_unpay)) {
                 addTemplate(order);
             }
             return new Result(false, Global.do_success, order, null);
         }
     }
 
+    // https://www.cslapp.com/order/excel?sellId=3&state=待收货订单
+    // http://localhost:8080/order/excel?sellId=1&state=已完成订单&openId=1
     @RequestMapping("/excel")
-    public Result excel(String state, String token) throws IOException {
-        //根据订单状态选出需要导出excel文件的订单
-        Map<String, String> map = new HashMap<>();
-        map.put("state", state);
-        map.put("sellerId", token);
-        Iterable<Order> iterable = orderService.clist(map);
-
-        //倒序结果集
-        Iterator<Order> itreator = iterable.iterator();
-        List<Order> list = copyIterator(itreator);
-        Collections.reverse(list);
-
-        //2007 及以上excel
-        XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFSheet sheet = workbook.createSheet("sheet1");
-        //第一行
-        XSSFRow row = sheet.createRow(0);
-        Cell cell = row.createCell(0);
-        cell.setCellValue("订单号");
-        cell = row.createCell(1);
-        cell.setCellValue("交易金额");
-        cell = row.createCell(2);
-        cell.setCellValue("返点积分");
-        cell = row.createCell(3);
-        cell.setCellValue("创建时间");
-        cell = row.createCell(4);
-        cell.setCellValue("交易时间");
-        cell = row.createCell(5);
-        cell.setCellValue("收货人");
-        cell = row.createCell(6);
-        cell.setCellValue("联系方式");
-        cell = row.createCell(7);
-        cell.setCellValue("商品标题");
-        cell = row.createCell(8);
-        cell.setCellValue("物流单号");
-        cell = row.createCell(9);
-        cell.setCellValue("物流公司");
-        cell = row.createCell(10);
-        cell.setCellValue("订单状态");
-
-        int row_index = 1;
-        if (list != null && list.size() != 0) {
-            for (int i = 0; i < list.size(); i++) {
-                Order order = list.get(i);
-                if (order == null) {
-                    return new Result(true, Global.data_unexist, null, null);
-                }
-                //校验
-                if (order.getSellerId() != Integer.parseInt(token)) {
-                    return new Result(true, Global.have_no_right, null, null);
-                }
-                //填充数据
-                row = sheet.createRow(row_index++);
-                //订单号
-                cell = row.createCell(0);
-                cell.setCellValue(order.getOrderCode());
-                //交易金额
-                cell = row.createCell(1);
-                cell.setCellValue(order.getTotalPrice() + 0);
-                //返点积分
-                cell = row.createCell(2);
-                cell.setCellValue(0);//暂时默认为 0
-                //创建时间
-                cell = row.createCell(3);
-                cell.setCellValue(StringUtils.formDateToStr(order.getCreateDate()));
-                //交易时间
-                cell = row.createCell(4);
-                cell.setCellValue(order.getPayDate() == null ? "" : StringUtils.formDateToStr(order.getPayDate()));
-                //收货人
-                cell = row.createCell(5);
-                cell.setCellValue(order.getAddress().getReceiver() == null ? "" : order.getAddress().getReceiver());
-                //联系方式
-                cell = row.createCell(6);
-                cell.setCellValue(order.getAddress().getPhone() == null ? "" : order.getAddress().getPhone());
-                //商品标题
-                cell = row.createCell(7);
-                cell.setCellValue(order.getProducts().get(0).getPname());
-                //物流单号
-                cell = row.createCell(8);
-                cell.setCellValue(order.getDeliver().getDcode() == null ? "" : order.getDeliver().getDcode());
-                //物流公司
-                cell = row.createCell(9);
-                cell.setCellValue(order.getDeliver().getDname() == null ? "" : order.getDeliver().getDname());
-                //订单状态
-                cell = row.createCell(10);
-                cell.setCellValue(order.getState());
-            }
-        }
-        //获取项目根路径
-        String relativelyPath = System.getProperty("user.dir");
-        //把excel文件写入 haoyue/excel/ 文件夹下
-        String filename = relativelyPath + "/excel/" + new Date().getTime() + token + ".xlsx";
-        String mkdis = relativelyPath + "/excel/";
-        File file1 = new File(mkdis);
-        if (!file1.isDirectory()) {
-            file1.mkdirs();
-        }
-        FileOutputStream out = new FileOutputStream(
-                new File(filename));
-        workbook.write(out);
-        out.close();
-        //缓存文件
-        File file = new File(filename);
-        //上传到阿里云，并返回文件外链
-        OSSClientUtil ossClientUtil = new OSSClientUtil();
-        FileInputStream inputStream = new FileInputStream(file);
-        filename = filename.substring(filename.lastIndexOf("/") + 1);
-        filename = "excel/" + filename;
-        try {
-            ossClientUtil.uploadFile2OSS(inputStream, filename, null);
-            Global.excel_urls.add("hymarket/" + filename);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new Result(true, Global.server_busying, null, null);
-        }
-        //删除缓存文件
-        file.delete();
-        return new Result(false, Global.do_success, Global.aliyun_href + filename, null);
+    public Result excel(String state, String sellerId) throws IOException {
+        return orderService.excel(sellerId, state);
     }
 
     public static <T> List<T> copyIterator(Iterator<T> iter) {
@@ -466,13 +351,13 @@ public class OrderController {
     // http://localhost:8080/order/remind_deliver?sellerId=1&oid=140
     // 提醒卖家发货
     @RequestMapping("/remind_deliver")
-    public Result remindDeliver(String sellerId,String oid){
-        Order order= orderService.findOne(Integer.parseInt(oid));
-        String wxname=order.getWxname();
-        String code=order.getOrderCode();
-        String phone=sellerService.findOne(Integer.parseInt(sellerId)).getSellerPhone();
+    public Result remindDeliver(String sellerId, String oid) {
+        Order order = orderService.findOne(Integer.parseInt(oid));
+        String wxname = order.getWxname();
+        String code = order.getOrderCode();
+        String phone = sellerService.findOne(Integer.parseInt(sellerId)).getSellerPhone();
         try {
-            SendCode.sendSms2(phone,code,wxname);
+            SendCode.sendSms2(phone, code, wxname);
         } catch (ClientException e) {
             e.printStackTrace();
         }
@@ -534,62 +419,62 @@ public class OrderController {
         }
     }
 
-    public void getTemplate(Template template){
+    public void getTemplate(Template template) {
         //模板信息通知用户
         //获取 access_token
-        String access_token_url="https://api.weixin.qq.com/cgi-bin/token";
-        String param1="grant_type=client_credential&appid=wxe46b9aa1b768e5fe&secret=8bcdb74a9915b5685fa0ec37f6f25b24";
-        String access_token= HttpRequest.sendPost(access_token_url,param1);
-        access_token=access_token.substring(access_token.indexOf(":")+2,access_token.indexOf(",")-1);
+        String access_token_url = "https://api.weixin.qq.com/cgi-bin/token";
+        String param1 = "grant_type=client_credential&appid=wxe46b9aa1b768e5fe&secret=8bcdb74a9915b5685fa0ec37f6f25b24";
+        String access_token = HttpRequest.sendPost(access_token_url, param1);
+        access_token = access_token.substring(access_token.indexOf(":") + 2, access_token.indexOf(",") - 1);
         //发送模板信息
-        String form_id=Global.package_map.get(template.getToUser());
+        String form_id = Global.package_map.get(template.getToUser());
         template.setForm_id(form_id);
-        String url="https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token="+access_token+"&form_id="+form_id;
-        String result=CommonUtil.httpRequest(url,"POST",template.toJSON());
+        String url = "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token=" + access_token + "&form_id=" + form_id;
+        String result = CommonUtil.httpRequest(url, "POST", template.toJSON());
         //刷新 Global.package_map
         Global.package_map.remove(template.getToUser());
     }
 
-    public void addTemplate(Order order){
+    public void addTemplate(Order order) {
 
-        List<TemplateResponse> list=new ArrayList<>();
-        TemplateResponse templateResponse1=new TemplateResponse();
+        List<TemplateResponse> list = new ArrayList<>();
+        TemplateResponse templateResponse1 = new TemplateResponse();
         templateResponse1.setColor("#000000");
         templateResponse1.setName("keyword1");
         templateResponse1.setValue(order.getProducts().get(0).getPname());
         list.add(templateResponse1);
 
-        TemplateResponse templateResponse2=new TemplateResponse();
+        TemplateResponse templateResponse2 = new TemplateResponse();
         templateResponse2.setColor("#000000");
         templateResponse2.setName("keyword2");
         templateResponse2.setValue(order.getWxname());
         list.add(templateResponse2);
 
-        TemplateResponse templateResponse3=new TemplateResponse();
+        TemplateResponse templateResponse3 = new TemplateResponse();
         templateResponse3.setColor("#000000");
         templateResponse3.setName("keyword3");
-        templateResponse3.setValue(order.getTotalPrice()+"");
+        templateResponse3.setValue(order.getTotalPrice() + "");
         list.add(templateResponse3);
 
-        TemplateResponse templateResponse4=new TemplateResponse();
+        TemplateResponse templateResponse4 = new TemplateResponse();
         templateResponse4.setColor("#000000");
         templateResponse4.setName("keyword4");
         templateResponse4.setValue("微信支付");
         list.add(templateResponse4);
 
-        TemplateResponse templateResponse5=new TemplateResponse();
+        TemplateResponse templateResponse5 = new TemplateResponse();
         templateResponse5.setColor("#000000");
         templateResponse5.setName("keyword5");
-        String date=StringUtils.formDateToStr(new Date());
+        String date = StringUtils.formDateToStr(new Date());
         templateResponse5.setValue(date);
         list.add(templateResponse5);
 
-        Template template=new Template();
+        Template template = new Template();
         template.setTemplateId("Z_Xg6rYdQgci4FP_aOjTvZHXeC5BSs99EwARD6NJXWk");
         template.setTemplateParamList(list);
         template.setTopColor("#000000");
         template.setPage("pages/index/index");
-        template.setToUser(customerService.findOpenIdById(order.getCustomerId()+""));
+        template.setToUser(customerService.findOpenIdById(order.getCustomerId() + ""));
         getTemplate(template);
     }
 

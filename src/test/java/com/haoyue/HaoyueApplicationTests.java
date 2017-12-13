@@ -24,6 +24,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Clock;
@@ -379,7 +380,9 @@ public class HaoyueApplicationTests {
 
     @Test
     public  void f21() {
-        System.out.println(15/10);
+        DecimalFormat df = new DecimalFormat("######0");
+        String fee = String.valueOf(df.format(1.0));
+        System.out.println(fee);
     }
 
     @Test

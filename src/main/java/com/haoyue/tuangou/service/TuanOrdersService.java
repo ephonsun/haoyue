@@ -193,13 +193,13 @@ public class TuanOrdersService {
 
     //定时刷新团购订单状态
     public void flush() {
-        List<TuanOrders> list=tuanOrdersRepo.findByIsOver();
-        Date date=new Date();
-        for (TuanOrders orders:list){
-            if (date.after(orders.getEndDate())){
+        List<TuanOrders> list = tuanOrdersRepo.findByIsOver();
+        Date date = new Date();
+        for (TuanOrders orders : list) {
+            if (date.after(orders.getEndDate())) {
                 tuanOrdersRepo.flushdata(orders.getId());
                 //通知
-                if(orders.getState().equals(TGlobal.tuan_order_tuaning)) {
+                if (orders.getState().equals(TGlobal.tuan_order_tuaning)) {
                     addTemplate(orders);
                 }
             }
@@ -325,16 +325,16 @@ public class TuanOrdersService {
         template.setForm_id(form_id);
         String url = "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token=" + access_token + "&form_id=" + form_id;
         String result = CommonUtil.httpRequest(url, "POST", template.toJSON());
-        System.out.println("拼团订单刷新 result="+result);
+        System.out.println("拼团订单刷新 result=" + result);
     }
 
     //待退款订单
     public void autoPayback() {
         List<TuanOrders> list = tuanOrdersRepo.findUnPayback();
-        if (list!=null&&list.size()!=0) {
+        if (list != null && list.size() != 0) {
             for (TuanOrders orders : list) {
                 //拼接参数
-                String param = "saleId=" + orders.getSaleId() + "&oid=" + orders.getId() + "&fe=" + orders.getTotalPrice()*100;
+                String param = "saleId=" + orders.getSaleId() + "&oid=" + orders.getId() + "&fe=" + orders.getTotalPrice() * 100;
                 //退款请求
                 String result = HttpRequest.sendGet("https://www.cslapp.com/tuan/payback/do", param);
                 //退款成功更新ispayback字段   在 t_paybackdeal 表中通过 result_code 判断成功还是失败
@@ -344,6 +344,9 @@ public class TuanOrdersService {
             }
         }
     }
+
+
+    // // TODO: 2017/12/13  订单excel
 
 
 }

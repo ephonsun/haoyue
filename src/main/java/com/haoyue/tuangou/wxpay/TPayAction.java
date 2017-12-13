@@ -45,20 +45,17 @@ public class TPayAction {
      * 前后再调用 wx.request(object) 进行支付
      */
     @RequestMapping("/do")
-    public JSONArray pay(String body, String ordercode, String appId, String mchId, String ip, String openId, String key1, String session_key, String total_fee) throws UnsupportedEncodingException, DocumentException, TMyException {
-
+    public JSONArray pay(HttpServletRequest request,String body, String ordercode, String appId, String mchId, String ip, String openId, String key1, String session_key, String total_fee) throws UnsupportedEncodingException, DocumentException, TMyException {
         synchronized (TGlobal.pay_object) {
             if (StringUtils.isNullOrBlank(openId)) {
                 throw new TMyException(TGlobal.openId_isNull, null, 102);
-            }
-            if (ip.equals("undefined")) {
-                throw new TMyException(TGlobal.ip_unright, null, 103);
             }
             //body = new String(body.getBytes("UTF-8"), "ISO-8859-1");
             String appid = "替换为自己的小程序ID";//小程序ID
             appid = appId;
             String mch_id = "替换为自己的商户号";//商户号
             mch_id = mchId;
+            ip=getIpAddr(request);
             String nonce_str = UUIDHexGenerator.generate();//随机字符串
             String today = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
             String code = PayUtil.createCode(8);
@@ -164,6 +161,19 @@ public class TPayAction {
         return nonceStr;
     }
 
+    public  String getIpAddr(HttpServletRequest request) {
+        String ip  =  request.getHeader( " x-forwarded-for " );
+        if  (ip  ==   null   ||  ip.length()  ==   0   ||   " unknown " .equalsIgnoreCase(ip)) {
+            ip  =  request.getHeader( " Proxy-Client-IP " );
+        }
+        if  (ip  ==   null   ||  ip.length()  ==   0   ||   " unknown " .equalsIgnoreCase(ip)) {
+            ip  =  request.getHeader( " WL-Proxy-Client-IP " );
+        }
+        if  (ip  ==   null   ||  ip.length()  ==   0   ||   " unknown " .equalsIgnoreCase(ip)) {
+            ip  =  request.getRemoteAddr();
+        }
+        return  ip;
+    }
 
     /**
      * 微信支付结果通知

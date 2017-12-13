@@ -114,18 +114,20 @@ public class TProductsService {
                 if (id==Integer.parseInt(pid)){
                     continue;
                 }
-                result.add(findOne(ids.get(id)));
+                result.add(findOne(id));
             }
             return result;
         }
         //如果多余四个商品，推荐剩余商品中的三个
         for (int i=0;i<3;i++){
-            int id=(int)Math.floor(Math.random()*ids.size());
+            int index=(int)Math.floor(Math.random()*ids.size());
+            int id=ids.get(index);
             while (newids.contains(id)||id==Integer.parseInt(pid)){
-                id=(int)Math.floor(Math.random()*ids.size());
+                index=(int)Math.floor(Math.random()*ids.size());
+                id=ids.get(index);
             }
             newids.add(id);
-            result.add(findOne(ids.get(id)));
+            result.add(findOne(id));
         }
         return result;
     }
