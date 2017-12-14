@@ -33,7 +33,6 @@ public class TProductsController {
     @Autowired
     private TuanOrdersService tuanOrdersService;
 
-
     /**
      * @param tProducts
      * @param tprotypes
@@ -56,6 +55,7 @@ public class TProductsController {
                 return new TResult(true, TGlobal.date_format_wrong, null);
             }
         }
+
         //先保存商品
         Date date = new Date();
         if (tProducts.getId() == null) {
@@ -237,6 +237,7 @@ public class TProductsController {
         tProductsTypesNameService.update2(typesName);
         return new TResult(false, TGlobal.do_success, null);
     }
+
 
     // /tuan/product/findone?pid=商品Id&active=true/false
     @RequestMapping("/findone")

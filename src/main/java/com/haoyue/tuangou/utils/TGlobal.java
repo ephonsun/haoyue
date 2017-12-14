@@ -19,6 +19,7 @@ public class TGlobal {
     public static Object object3=new Object();
     public static List<String> excel_urls=new ArrayList<>();//存放excel存储路径，每天定时清空oss上的excel文件
     public static  String server_busying="服务器正忙，请稍后再试";
+    public static  String data_unright="传入数据不正常";
 
     //分页
     public static String pagenumber_not_right="页数不正常";
@@ -62,6 +63,7 @@ public class TGlobal {
     public static String already_delay="你已确认过延迟";
     public static Object object=new Object();//普通订单保存锁
     public static String openid_isnull="请设置允许获取信息后再下单";
+    public static String free_chance="恭喜你获得零元购的机会，点击前往查看！";
 
     //团购订单
     public static String tuan_order_unpay="待付款团购订单";

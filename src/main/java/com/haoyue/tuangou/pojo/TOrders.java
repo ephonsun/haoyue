@@ -49,6 +49,16 @@ public class TOrders {
     private TComment comment;
     private String leavemsg;//买家留言
     private String leavemsg2;//卖家备注
+    private String formId;
+
+
+    public String getFormId() {
+        return formId;
+    }
+
+    public void setFormId(String formId) {
+        this.formId = formId;
+    }
 
     public String getLeavemsg() {
         return leavemsg;

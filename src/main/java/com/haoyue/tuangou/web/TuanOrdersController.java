@@ -164,7 +164,6 @@ public class TuanOrdersController {
                             tProducts.setSaleNum(tProducts.getSaleNum() + 1);
                             //已团量
                             tProducts.setTuanSaleNum(tProducts.getTuanSaleNum()+1);
-
                             TProductsTypes tProductsTypes = tuanOrders.gettProductsTypes();
                             tProductsTypes.setSaleNum(tProductsTypes.getSaleNum() + 1);
                             tProductsTypes.setAmount(tProductsTypes.getAmount() - 1);
@@ -549,8 +548,8 @@ public class TuanOrdersController {
 
     //   /tuan/tuanorders/excel?saleId=1&state=[不填/待付款团购订单/正在拼团团购订单/待发货团购订单/待收货团购订单/已完成团购订单]
     @RequestMapping("/excel")
-    public TResult excel(String saleId,String state) throws IOException {
-        return tuanOrdersService.excel(saleId,state);
+    public TResult excel(String saleId,String oids) throws IOException {
+        return tuanOrdersService.excel(saleId,oids);
     }
 
 

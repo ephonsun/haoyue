@@ -320,8 +320,8 @@ public class OrderController {
     // https://www.cslapp.com/order/excel?sellerId=3&state=待收货订单
     // http://localhost:8080/order/excel?sellerId=1&state=已完成订单&openId=1
     @RequestMapping("/excel")
-    public Result excel(String state, String sellerId) throws IOException {
-        return orderService.excel(sellerId, state);
+    public Result excel( String sellerId,String oids) throws IOException {
+        return orderService.excel(sellerId,oids);
     }
 
     public static <T> List<T> copyIterator(Iterator<T> iter) {

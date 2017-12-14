@@ -170,7 +170,10 @@ public class TOrdersService {
     }
 
 
-public TResult excel(String saleId, String state) throws IOException {
+public TResult excel(String saleId, String oids) throws IOException {
+    if (StringUtils.isNullOrBlank(oids)){
+        return new TResult(true,TGlobal.data_unright,null);
+    }
 
     //2007 及以上excel
     XSSFWorkbook workbook = new XSSFWorkbook();
@@ -196,16 +199,16 @@ public TResult excel(String saleId, String state) throws IOException {
     cell = row.createCell(8);
     cell.setCellValue("买家备注");
     cell = row.createCell(9);
-    cell.setCellValue("订单状态");
+    cell.setCellValue("下单时间");
+    cell = row.createCell(10);
+    cell.setCellValue("是否团购");
 
     //需要转excel的订单
     List<TOrders> list=new ArrayList<>();
-    if (StringUtils.isNullOrBlank(state)) {
-        list = tOrdersRepo.findBySaleId(saleId);
-    }else {
-        list = tOrdersRepo.findBySaleIdAndState(saleId,state);
+    String id[]=oids.split("=");
+    for (int i=0;i<id.length;i++){
+        list.add(findOne(Integer.parseInt(id[i])));
     }
-
     if (list.size()!=0){
         //倒序
         Collections.reverse(list);
@@ -262,7 +265,9 @@ public TResult excel(String saleId, String state) throws IOException {
             cell = row.createCell(8);
             cell.setCellValue(sellerComment);
             cell = row.createCell(9);
-            cell.setCellValue(order.getState());
+            cell.setCellValue(StringUtils.formDateToStr(order.getCreateDate()));
+            cell = row.createCell(10);
+            cell.setCellValue("否");
         }
     }
 

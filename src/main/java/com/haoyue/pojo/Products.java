@@ -59,6 +59,7 @@ public class Products {
     private String model;//款式
     private String designPic;//图案
     private String invoice_type;//发票类型
+    private String suffix;//价格后缀
 
     private int monthSale;//月销量，后台实现总销量代替月销量
     private int thumbsup;//点赞数
@@ -67,6 +68,15 @@ public class Products {
     private boolean isLuckDraw=false;//是否抽奖
     private boolean isLuckDrawEnd=false;
     private int views;
+
+
+    public String getSuffix() {
+        return suffix;
+    }
+
+    public void setSuffix(String suffix) {
+        this.suffix = suffix;
+    }
 
     public int getViews() {
         return views;

@@ -45,7 +45,7 @@ public class TOrdersController {
 
     //   /tuan/torders/save?pid=商品ID&ptypeId=商品分类ID&amount=购买数量&productPrice=下单的商品价格
     //    &deliverPrice=快递费用,免邮则0&openId=12&saleId=12&wxname=微信名&wxpic=微信头像
-    //    &address=收货地址&receiver=收货人&phone=收货人电话&couponId=优惠券ID&leavemsg=买家留言
+    //    &address=收货地址&receiver=收货人&phone=收货人电话&couponId=优惠券ID&leavemsg=买家留言&formId=121212
     //   前台做下单量和库存量对比
 
     @RequestMapping("/save")
@@ -65,6 +65,7 @@ public class TOrdersController {
             orders.setDeliverPrice(tOrders.getDeliverPrice());
             orders.setOpenId(tOrders.getOpenId());
             orders.setSaleId(tOrders.getSaleId());
+            orders.setFormId(tOrders.getFormId());
             orders.setProductPrice(tOrders.getProductPrice());
             TProducts tProducts = tProductsService.findOne(Integer.parseInt(pid));
             TProductsTypes tProductsTypes = tProductsTypesService.findOne(Integer.parseInt(ptypeId));
@@ -364,7 +365,7 @@ public class TOrdersController {
         template.setTopColor("#000000");
         template.setPage("pages/index/index");
         template.setToUser(order.getOpenId());
-        getTemplate(template);
+        getTemplate(template,null);
     }
 
     //零元购通知
@@ -373,13 +374,13 @@ public class TOrdersController {
         TemplateResponse templateResponse1=new TemplateResponse();
         templateResponse1.setColor("#000000");
         templateResponse1.setName("keyword1");
-        templateResponse1.setValue(order.gettProducts().getPname());
+        templateResponse1.setValue(order.getCode());
         list.add(templateResponse1);
 
         TemplateResponse templateResponse2=new TemplateResponse();
         templateResponse2.setColor("#000000");
         templateResponse2.setName("keyword2");
-        templateResponse2.setValue(order.getWxname());
+        templateResponse2.setValue(order.gettProducts().getPname());
         list.add(templateResponse2);
 
         TemplateResponse templateResponse3=new TemplateResponse();
@@ -391,26 +392,26 @@ public class TOrdersController {
         TemplateResponse templateResponse4=new TemplateResponse();
         templateResponse4.setColor("#000000");
         templateResponse4.setName("keyword4");
-        templateResponse4.setValue("微信支付");
+        templateResponse4.setValue(StringUtils.formDateToStr(new Date()));
         list.add(templateResponse4);
 
         TemplateResponse templateResponse5=new TemplateResponse();
         templateResponse5.setColor("#000000");
         templateResponse5.setName("keyword5");
-        String date= com.haoyue.untils.StringUtils.formDateToStr(new Date());
-        templateResponse5.setValue(date);
+        templateResponse5.setValue(TGlobal.free_chance);
         list.add(templateResponse5);
 
         Template template=new Template();
-        template.setTemplateId("Z_Xg6rYdQgci4FP_aOjTvZHXeC5BSs99EwARD6NJXWk");
+        template.setTemplateId("xEjvyAbbN59ybHfrxTKVaIA0WyeM7JE7rweJ5287SFM");
         template.setTemplateParamList(list);
         template.setTopColor("#000000");
         template.setPage("pages/index/index");
         template.setToUser(order.getOpenId());
-        getTemplate(template);
+        String formId=order.getFormId();
+        getTemplate(template,formId);
     }
 
-    public void getTemplate(Template template){
+    public void getTemplate(Template template,String formId){
         //模板信息通知用户
         //获取 access_token
         String access_token_url="https://api.weixin.qq.com/cgi-bin/token";
@@ -418,7 +419,12 @@ public class TOrdersController {
         String access_token= HttpRequest.sendPost(access_token_url,param1);
         access_token=access_token.substring(access_token.indexOf(":")+2,access_token.indexOf(",")-1);
         //发送模板信息
-        String form_id=TGlobal.tuan_package_map.get(template.getToUser());
+        String form_id="";
+        if (StringUtils.isNullOrBlank(formId)) {
+             form_id= TGlobal.tuan_package_map.get(template.getToUser());
+        }else {
+            form_id=formId;
+        }
         template.setForm_id(form_id);
         String url="https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token="+access_token+"&form_id="+form_id;
         String result= CommonUtil.httpRequest(url,"POST",template.toJSON());
@@ -473,9 +479,11 @@ public class TOrdersController {
 
     //   http://localhost:8080/tuan/torders/excel?saleId=1&state=[不填/待付款订单/待发货订单/待收货订单/已完成订单]
     @RequestMapping("/excel")
-    public TResult excel(String saleId,String state) throws IOException {
-        return tOrdersService.excel(saleId,state);
+    public TResult excel(String saleId,String oids) throws IOException {
+        return tOrdersService.excel(saleId,oids);
     }
+
+
 
 }
 
