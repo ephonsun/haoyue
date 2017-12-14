@@ -42,6 +42,7 @@ public class TProducts {
     private int tuanTimes;//团购时间
     private int saleNum;//总销量
     private int tuanSaleNum;//已拼量
+    private String suffix;//价格后缀
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:SS", timezone="GMT+8")
     @Temporal(TemporalType.TIMESTAMP)
     @Column(updatable=false)
@@ -58,6 +59,14 @@ public class TProducts {
     private boolean isFree=false;//是否开启0元购
     private boolean isEnd=false;
 
+
+    public String getSuffix() {
+        return suffix;
+    }
+
+    public void setSuffix(String suffix) {
+        this.suffix = suffix;
+    }
 
     public int getTuanSaleNum() {
         return tuanSaleNum;

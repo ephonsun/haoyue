@@ -39,7 +39,7 @@ public class TProductsController {
      * @param tprotypes
      * @return /tuan/product/save?saleId=1&pname=商品名&style=款号&types=分类&indexPic=主图&detailPic=详情图
      * &parameters=商品参数&deliver=快递模板ID或者null&tuanNumbers=拼团人数&tuanTimes=拼团时间&isFree=true/fasle
-     * &tprotypes=黄色,M,100,88,66,99=黑色,L,100,88,66,99&isFree=true/false
+     * &tprotypes=黄色,M,100,88,66,99=黑色,L,100,88,66,99&isFree=true/false&suffix=价格后缀
      */
     @RequestMapping("/save")
     @Transactional
