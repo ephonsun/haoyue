@@ -40,7 +40,7 @@ public class TCommentService {
     }
 
     public void updateWxpic(String openId,String wxpic){
-        commentRepo.updateWxname(openId,wxpic);
+        commentRepo.updateWxpic(openId,wxpic);
     }
 
 }

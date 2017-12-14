@@ -406,6 +406,20 @@ public class HaoyueApplicationTests {
         System.out.println(date.toLocaleString());
     }
 
+    @Test
+    public void f24(){
+        List<String> list=new ArrayList<>();
+        if (list.contains("1")){
+            System.out.println("111111");
+        }
+        list.add("1");
+        list.add("11");
+        list.add("111");
+        if (list.contains("1")){
+            System.out.println("22222");
+        }
+    }
+
 }
 
 class Person {
