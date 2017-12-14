@@ -40,7 +40,8 @@ public class TProducts {
     private boolean active=true;
     private int tuanNumbers;//开团人数
     private int tuanTimes;//团购时间
-    private int saleNum;
+    private int saleNum;//总销量
+    private int tuanSaleNum;//已拼量
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:SS", timezone="GMT+8")
     @Temporal(TemporalType.TIMESTAMP)
     @Column(updatable=false)
@@ -56,6 +57,15 @@ public class TProducts {
 
     private boolean isFree=false;//是否开启0元购
     private boolean isEnd=false;
+
+
+    public int getTuanSaleNum() {
+        return tuanSaleNum;
+    }
+
+    public void setTuanSaleNum(int tuanSaleNum) {
+        this.tuanSaleNum = tuanSaleNum;
+    }
 
     public boolean getIsEnd() {
         return isEnd;

@@ -160,7 +160,11 @@ public class TuanOrdersController {
                             tuanOrders.setState(TGlobal.tuan_order_success);
                             //更新商品销量
                             TProducts tProducts = tuanOrders.gettProducts();
+                            //总销量
                             tProducts.setSaleNum(tProducts.getSaleNum() + 1);
+                            //已团量
+                            tProducts.setTuanSaleNum(tProducts.getTuanSaleNum()+1);
+
                             TProductsTypes tProductsTypes = tuanOrders.gettProductsTypes();
                             tProductsTypes.setSaleNum(tProductsTypes.getSaleNum() + 1);
                             tProductsTypes.setAmount(tProductsTypes.getAmount() - 1);

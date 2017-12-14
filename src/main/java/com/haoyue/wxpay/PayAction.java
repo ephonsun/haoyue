@@ -48,9 +48,6 @@ public class PayAction {
             if (StringUtils.isNullOrBlank(openId)) {
                 throw new MyException(Global.openId_isNull, null, 102);
             }
-            if (ip.equals("undefined")) {
-                throw new MyException(Global.ip_unright, null, 103);
-            }
 
             //body = new String(body.getBytes("UTF-8"), "ISO-8859-1");
             String appid = "替换为自己的小程序ID";//小程序ID
