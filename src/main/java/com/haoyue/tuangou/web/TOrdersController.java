@@ -362,8 +362,10 @@ public class TOrdersController {
         list.add(templateResponse4);
 
         String message="您的商品很快就飞奔到您手上咯";
+
         String page="pages/index/index";
         if (order.getTotalPrice()>0){
+
             message="恭喜你获得一次0元购的机会，有效期8小时，点击免费挑选...暂未开启";
             page="pages/index/index";
         }
