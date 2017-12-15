@@ -109,7 +109,7 @@ public class TRedPacketController {
         }else {
             list = redPacketService.findBySaleIdAndOpenIdAndIsover(saleId, openId,Boolean.valueOf(isover));
         }
-        return new TResult(true, TGlobal.do_success, list);
+        return new TResult(false, TGlobal.do_success, list);
     }
 
 
@@ -117,7 +117,7 @@ public class TRedPacketController {
     @RequestMapping("/code")
     public TResult findByGroupCode(String groupcode){
         List<TRedPacket> redPackets= redPacketService.findByGroupCode(groupcode);
-        return new TResult(true, TGlobal.do_success, redPackets);
+        return new TResult(false, TGlobal.do_success, redPackets);
     }
 
 

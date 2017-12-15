@@ -231,6 +231,10 @@ public class ProductsService {
         //商品分类更新
         List<String> productses = productsRepo.findBySellerIdAndActive(product.getSellerId());
         PtypeNames ptypeNames = ptypeNamesService.findBySellerId(product.getSellerId() + "");
+        if (ptypeNames==null){
+            ptypeNames=new PtypeNames();
+            ptypeNames.setSellerId(product.getSellerId()+"");
+        }
         StringBuffer stringBuffer = new StringBuffer();
         for (String products : productses) {
             stringBuffer.append(products);
