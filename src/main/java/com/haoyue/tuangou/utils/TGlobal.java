@@ -20,6 +20,7 @@ public class TGlobal {
     public static List<String> excel_urls=new ArrayList<>();//存放excel存储路径，每天定时清空oss上的excel文件
     public static  String server_busying="服务器正忙，请稍后再试";
     public static  String data_unright="传入数据不正常";
+    public static boolean free_flag=false;
 
     //分页
     public static String pagenumber_not_right="页数不正常";
@@ -84,6 +85,8 @@ public class TGlobal {
     public static Object object4=new Object();//更新团购订单锁
 
 
+
+
     //支付
     public static Object pay_object=new Object();
     public static String openId_isNull="openId为空";
@@ -101,4 +104,7 @@ public class TGlobal {
     //优惠券
     public static String coupon_expire="优惠券已经过期";
     public static List<String> sendsms3=new ArrayList<>();
+
+    //零元购
+    public static String free_time_expired="你未获得零元购机会或已机会失效";
 }

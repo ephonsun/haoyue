@@ -29,6 +29,8 @@ public class TSuperAdminController {
     private TCouponService couponService;
     @Autowired
     private TProductsService productsService;
+    @Autowired
+    private TFreeShoppingService freeShoppingService;
 
     /**
      * 定时器，产品部署好之后，需要手动触发该定时器
@@ -91,10 +93,10 @@ public class TSuperAdminController {
         public void run() {
             System.out.println("刷新团购商品状态定时器执行了。。。。");
             productsService.autoFlushEnd();
+            System.out.println("刷新零元购状态定时器执行了。。。。");
+            freeShoppingService.autoFlush();
         }
     };
-
-
 
 
 }

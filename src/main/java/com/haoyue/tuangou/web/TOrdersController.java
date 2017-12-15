@@ -117,10 +117,8 @@ public class TOrdersController {
             tProductsTypesService.save(productsTypes);
             //微信通知
             addTemplate(orders);
-            // TODO: 2017/11/28 零元购通知
-           // addTemplate2(orders);
             //// TODO: 2017/11/28 存储零元购信息  失效日期
-            //freeorder(orders);
+            freeorder(orders);
             //更新tdictionary表
             TDictionarys tDictionarys= tDictionarysService.findByTodaySaleId(orders.getSaleId());
             tDictionarys.setTurnover(tDictionarys.getTurnover()+orders.getTotalPrice());
@@ -132,8 +130,12 @@ public class TOrdersController {
     }
 
     public void freeorder(TOrders orders){
+        Date date=new Date();
+        Calendar calendar=Calendar.getInstance();
+        calendar.add(Calendar.HOUR,8);
         TFreeShopping freeShopping = new TFreeShopping();
-        freeShopping.setCreateDate(new Date());
+        freeShopping.setCreateDate(date);
+        freeShopping.setEndDate(calendar.getTime());
         freeShopping.setOpenId(orders.getOpenId());
         freeShopping.setOrderCode1(orders.getCode());
         freeShopping.setSaleId(orders.getSaleId());
@@ -359,57 +361,28 @@ public class TOrdersController {
         templateResponse4.setValue(StringUtils.formDateToStr(order.getCreateDate()));
         list.add(templateResponse4);
 
+        String message="您的商品很快就飞奔到您手上咯";
+        String page="pages/index/index";
+        if (order.getTotalPrice()>0){
+            message="恭喜你获得一次0元购的机会，有效期8小时，点击免费挑选...暂未开启";
+            page="pages/index/index";
+        }
+        TemplateResponse templateResponse5 = new TemplateResponse();
+        templateResponse5.setColor("#000000");
+        templateResponse5.setName("keyword5");
+        templateResponse5.setValue(message);
+        list.add(templateResponse5);
+
         Template template=new Template();
-        template.setTemplateId("e4-w5VmQdVU8PABNhB0SBcK-eHu09g4pYtO4t-QmUt8");
+        template.setTemplateId("e4-w5VmQdVU8PABNhB0SBYF4D-0kvFC-bRBuD5nWpUE");
         template.setTemplateParamList(list);
         template.setTopColor("#000000");
-        template.setPage("pages/index/index");
+        template.setPage(page);
         template.setToUser(order.getOpenId());
         getTemplate(template,null);
     }
 
-    //零元购通知
-    public void addTemplate2(TOrders order){
-        List<TemplateResponse> list=new ArrayList<>();
-        TemplateResponse templateResponse1=new TemplateResponse();
-        templateResponse1.setColor("#000000");
-        templateResponse1.setName("keyword1");
-        templateResponse1.setValue(order.getCode());
-        list.add(templateResponse1);
 
-        TemplateResponse templateResponse2=new TemplateResponse();
-        templateResponse2.setColor("#000000");
-        templateResponse2.setName("keyword2");
-        templateResponse2.setValue(order.gettProducts().getPname());
-        list.add(templateResponse2);
-
-        TemplateResponse templateResponse3=new TemplateResponse();
-        templateResponse3.setColor("#000000");
-        templateResponse3.setName("keyword3");
-        templateResponse3.setValue(order.getTotalPrice()+"");
-        list.add(templateResponse3);
-
-        TemplateResponse templateResponse4=new TemplateResponse();
-        templateResponse4.setColor("#000000");
-        templateResponse4.setName("keyword4");
-        templateResponse4.setValue(StringUtils.formDateToStr(new Date()));
-        list.add(templateResponse4);
-
-        TemplateResponse templateResponse5=new TemplateResponse();
-        templateResponse5.setColor("#000000");
-        templateResponse5.setName("keyword5");
-        templateResponse5.setValue(TGlobal.free_chance);
-        list.add(templateResponse5);
-
-        Template template=new Template();
-        template.setTemplateId("xEjvyAbbN59ybHfrxTKVaIA0WyeM7JE7rweJ5287SFM");
-        template.setTemplateParamList(list);
-        template.setTopColor("#000000");
-        template.setPage("pages/index/index");
-        template.setToUser(order.getOpenId());
-        String formId=order.getFormId();
-        getTemplate(template,formId);
-    }
 
     public void getTemplate(Template template,String formId){
         //模板信息通知用户

@@ -189,6 +189,27 @@ public class TProductsController {
         return new TResult(false, TGlobal.do_success, iterable);
     }
 
+    //   零元购商品列表  /tuan/product/free_list?saleId=123
+    @RequestMapping("/free_list")
+    public TResult freeProducts(@RequestParam Map<String, String> map){
+
+        Iterable<TProducts> iterable =tProductsService.freeproducts(map);
+        Iterator<TProducts> iterator = iterable.iterator();
+        while (iterator.hasNext()) {
+            TProducts products = iterator.next();
+            List<TProductsTypes> productsTypes = products.getProductsTypes();
+            List<TProductsTypes> list = new ArrayList<>();
+            for (TProductsTypes types : productsTypes) {
+                if (types.getIsActive()) {
+                    list.add(types);
+                }
+            }
+            products.setProductsTypes(list);
+        }
+        return new TResult(false, TGlobal.do_success, iterable);
+    }
+
+
     // /tuan/product/update?id=商品Id&active=true/false
     // http://localhost:8080/tuan/product/update?id=1&active=false
     @RequestMapping("/update")

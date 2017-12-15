@@ -50,7 +50,10 @@ public class TProductsService {
                 else if (name.equals("pname")){
                     value=value.trim();
                     bd.and(products.pname.contains(value));
+                }else if (name.equals("isfree")){
+                    bd.and(products.isFree.eq(true));
                 }
+
             }
         }
         return tProductsRepo.findAll(bd.getValue(),new PageRequest(pageNumber,pageSize,new Sort(Sort.Direction.DESC,"id")));
@@ -179,4 +182,12 @@ public class TProductsService {
         }
     }
 
+    public Iterable<TProducts> freeproducts(Map<String, String> map) {
+        QTProducts products=QTProducts.tProducts;
+        BooleanBuilder bd=new BooleanBuilder();
+        bd.and(products.saleId.eq(String.valueOf(map.get("saleId"))));
+        bd.and(products.active.eq(true));
+        bd.and(products.isFree.eq(true));
+        return tProductsRepo.findAll(bd.getValue(),new Sort(Sort.Direction.DESC,"id"));
+    }
 }
