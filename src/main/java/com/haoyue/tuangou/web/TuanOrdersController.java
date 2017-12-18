@@ -504,16 +504,20 @@ public class TuanOrdersController {
         template.setTopColor("#000000");
         template.setPage(page);
         template.setToUser(order.getOpenId());
-        getTemplate(template);
+        getTemplate(template,order.getSaleId());
     }
 
-    public void getTemplate(Template template) {
+    public void getTemplate(Template template,String saleId) {
         //模板信息通知用户
         //获取 access_token
-        String access_token_url = "https://api.weixin.qq.com/cgi-bin/token";
-        String param1 = "grant_type=client_credential&appid=wxf80175142f3214e1&secret=e0251029d53d21e84a650681af6139b1";
-        String access_token = HttpRequest.sendPost(access_token_url, param1);
-        access_token = access_token.substring(access_token.indexOf(":") + 2, access_token.indexOf(",") - 1);
+        String access_token=TGlobal.access_tokens.get(saleId);
+        if (StringUtils.isNullOrBlank(access_token)) {
+            String access_token_url = "https://api.weixin.qq.com/cgi-bin/token";
+            String param1 = "grant_type=client_credential&appid=wxf80175142f3214e1&secret=e0251029d53d21e84a650681af6139b1";
+            access_token = HttpRequest.sendPost(access_token_url, param1);
+            access_token = access_token.substring(access_token.indexOf(":") + 2, access_token.indexOf(",") - 1);
+            TGlobal.access_tokens.put(saleId,access_token);
+        }
         //发送模板信息
         String form_id = TGlobal.tuan_package_map.get(template.getToUser());
         template.setForm_id(form_id);
@@ -568,10 +572,14 @@ public class TuanOrdersController {
     public void getTemplate2(Template template, TuanOrders orders) {
         //模板信息通知用户
         //获取 access_token
-        String access_token_url = "https://api.weixin.qq.com/cgi-bin/token";
-        String param1 = "grant_type=client_credential&appid=wxf80175142f3214e1&secret=e0251029d53d21e84a650681af6139b1";
-        String access_token = HttpRequest.sendPost(access_token_url, param1);
-        access_token = access_token.substring(access_token.indexOf(":") + 2, access_token.indexOf(",") - 1);
+        String access_token=TGlobal.access_tokens.get(orders.getSaleId());
+        if (StringUtils.isNullOrBlank(access_token)) {
+            String access_token_url = "https://api.weixin.qq.com/cgi-bin/token";
+            String param1 = "grant_type=client_credential&appid=wxf80175142f3214e1&secret=e0251029d53d21e84a650681af6139b1";
+            access_token = HttpRequest.sendPost(access_token_url, param1);
+            access_token = access_token.substring(access_token.indexOf(":") + 2, access_token.indexOf(",") - 1);
+            TGlobal.access_tokens.put(orders.getSaleId(),access_token);
+        }
         //发送模板信息
         String form_id = orders.getFormId();
         template.setForm_id(form_id);

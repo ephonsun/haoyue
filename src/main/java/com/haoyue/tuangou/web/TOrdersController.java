@@ -362,10 +362,8 @@ public class TOrdersController {
         list.add(templateResponse4);
 
         String message="您的商品很快就飞奔到您手上咯";
-
         String page="pages/index/index";
         if (order.getTotalPrice()>0){
-
             message="恭喜你获得一次0元购的机会，有效期8小时，点击免费挑选...暂未开启";
             page="pages/index/index";
         }
@@ -381,18 +379,22 @@ public class TOrdersController {
         template.setTopColor("#000000");
         template.setPage(page);
         template.setToUser(order.getOpenId());
-        getTemplate(template,null);
+        getTemplate(template,null,order.getSaleId());
     }
 
 
 
-    public void getTemplate(Template template,String formId){
+    public void getTemplate(Template template,String formId,String saleId){
         //模板信息通知用户
         //获取 access_token
-        String access_token_url="https://api.weixin.qq.com/cgi-bin/token";
-        String param1="grant_type=client_credential&appid=wxf80175142f3214e1&secret=e0251029d53d21e84a650681af6139b1";
-        String access_token= HttpRequest.sendPost(access_token_url,param1);
-        access_token=access_token.substring(access_token.indexOf(":")+2,access_token.indexOf(",")-1);
+        String access_token=TGlobal.access_tokens.get(saleId);
+        if (StringUtils.isNullOrBlank(access_token)) {
+            String access_token_url = "https://api.weixin.qq.com/cgi-bin/token";
+            String param1 = "grant_type=client_credential&appid=wxf80175142f3214e1&secret=e0251029d53d21e84a650681af6139b1";
+            access_token = HttpRequest.sendPost(access_token_url, param1);
+            access_token = access_token.substring(access_token.indexOf(":") + 2, access_token.indexOf(",") - 1);
+            TGlobal.access_tokens.put(saleId,access_token);
+        }
         //发送模板信息
         String form_id="";
         if (StringUtils.isNullOrBlank(formId)) {

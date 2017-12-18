@@ -3,6 +3,7 @@ package com.haoyue.tuangou.web;
 import com.haoyue.tuangou.pojo.TDictionarys;
 import com.haoyue.tuangou.pojo.TRedPacket;
 import com.haoyue.tuangou.service.*;
+import com.haoyue.tuangou.utils.TGlobal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -57,7 +58,9 @@ public class TSuperAdminController {
         public void run() {
             System.out.println("刷新团购dictionarys表定时器执行了。。。。");
             //数据表 dictionarys 新增数据
-           dictionarysService.addEachDay();
+            dictionarysService.addEachDay();
+            //清空 TGlobal.access_tokens
+            TGlobal.access_tokens.clear();
         }
     };
 

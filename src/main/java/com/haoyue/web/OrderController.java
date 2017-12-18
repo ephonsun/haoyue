@@ -420,13 +420,17 @@ public class OrderController {
         }
     }
 
-    public void getTemplate(Template template) {
+    public void getTemplate(Template template,int sellerId) {
         //模板信息通知用户
         //获取 access_token
-        String access_token_url = "https://api.weixin.qq.com/cgi-bin/token";
-        String param1 = "grant_type=client_credential&appid=wxe46b9aa1b768e5fe&secret=8bcdb74a9915b5685fa0ec37f6f25b24";
-        String access_token = HttpRequest.sendPost(access_token_url, param1);
-        access_token = access_token.substring(access_token.indexOf(":") + 2, access_token.indexOf(",") - 1);
+        String access_token =Global.access_tokens.get(String.valueOf(sellerId));
+        if (StringUtils.isNullOrBlank(access_token)) {
+            String access_token_url = "https://api.weixin.qq.com/cgi-bin/token";
+            String param1 = "grant_type=client_credential&appid=wxe46b9aa1b768e5fe&secret=8bcdb74a9915b5685fa0ec37f6f25b24";
+            access_token = HttpRequest.sendPost(access_token_url, param1);
+            access_token = access_token.substring(access_token.indexOf(":") + 2, access_token.indexOf(",") - 1);
+            Global.access_tokens.put(String.valueOf(sellerId),access_token);
+        }
         //发送模板信息
         String form_id = Global.package_map.get(template.getToUser());
         template.setForm_id(form_id);
@@ -476,7 +480,7 @@ public class OrderController {
         template.setTopColor("#000000");
         template.setPage("pages/index/index");
         template.setToUser(customerService.findOpenIdById(order.getCustomerId() + ""));
-        getTemplate(template);
+        getTemplate(template,order.getSellerId());
     }
 
 }

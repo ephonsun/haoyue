@@ -19,6 +19,7 @@ public class Global {
     public static String alery_done="不可重复操作";
     public static List<String> excel_urls=new ArrayList<>();//存放excel存储路径，每天定时清空oss上的excel文件
     public static Object object3=new Object();//执行dictionarys表更新
+    public static Map<String,String> access_tokens=new HashMap<>();//缓存 access_token
 
     //注册
     public static String appid_exist="appid已经存在";

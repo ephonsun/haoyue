@@ -309,6 +309,9 @@ public class TuanOrdersService {
         templateResponse4.setColor("#000000");
         templateResponse4.setName("keyword4");
         templateResponse4.setValue(TGlobal.tuan_comment);
+        if (order.getTotalPrice()==0){
+            templateResponse4.setValue(TGlobal.tuan_comment+"(0元购订单除外)");
+        }
         list.add(templateResponse4);
 
         Template template = new Template();
@@ -323,10 +326,14 @@ public class TuanOrdersService {
     public void getTemplate(Template template, TuanOrders orders) {
         //模板信息通知用户
         //获取 access_token
-        String access_token_url = "https://api.weixin.qq.com/cgi-bin/token";
-        String param1 = "grant_type=client_credential&appid=wxf80175142f3214e1&secret=e0251029d53d21e84a650681af6139b1";
-        String access_token = HttpRequest.sendPost(access_token_url, param1);
-        access_token = access_token.substring(access_token.indexOf(":") + 2, access_token.indexOf(",") - 1);
+        String access_token=TGlobal.access_tokens.get(orders.getSaleId());
+        if (StringUtils.isNullOrBlank(access_token)) {
+            String access_token_url = "https://api.weixin.qq.com/cgi-bin/token";
+            String param1 = "grant_type=client_credential&appid=wxf80175142f3214e1&secret=e0251029d53d21e84a650681af6139b1";
+            access_token = HttpRequest.sendPost(access_token_url, param1);
+            access_token = access_token.substring(access_token.indexOf(":") + 2, access_token.indexOf(",") - 1);
+            TGlobal.access_tokens.put(orders.getSaleId(),access_token);
+        }
         //发送模板信息
         String form_id = orders.getFormId();
         template.setForm_id(form_id);
@@ -340,6 +347,10 @@ public class TuanOrdersService {
         List<TuanOrders> list = tuanOrdersRepo.findUnPayback();
         if (list != null && list.size() != 0) {
             for (TuanOrders orders : list) {
+                //过滤掉零元购订单
+                if (orders.getTotalPrice()==0){
+                    continue;
+                }
                 //拼接参数
                 String param = "saleId=" + orders.getSaleId() + "&oid=" + orders.getId() + "&fe=" + orders.getTotalPrice() * 100;
                 //退款请求

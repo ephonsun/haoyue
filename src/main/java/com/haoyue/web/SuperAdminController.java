@@ -251,6 +251,7 @@ public class SuperAdminController {
             System.out.println("定时器执行了。。。。");
             //数据表 dictionarys 新增数据
             dictionaryService.addEachDay();
+            Global.access_tokens.clear();
             //默认收货 两小时执行一次
             Global.flag=!Global.flag;
             if(Global.flag) {
