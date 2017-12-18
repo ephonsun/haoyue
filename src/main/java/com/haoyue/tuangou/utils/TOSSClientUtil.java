@@ -77,6 +77,27 @@ public class TOSSClientUtil {
         }
     }
 
+    public String uploadImg2Oss_2(MultipartFile file) throws MyException {
+
+        String originalFilename = file.getName();
+        String substring = originalFilename.substring(originalFilename.lastIndexOf(".")).toLowerCase();
+        Calendar cal = Calendar.getInstance();
+        int year = cal.get(Calendar.YEAR);//获取年份
+        int month=cal.get(Calendar.MONTH);//获取月份
+        int day=cal.get(Calendar.DATE);//获取日
+        String name=year+"/"+(month+1)+"/"+ day+"/"+cal.getTimeInMillis()+substring;
+        try {
+            InputStream inputStream=null;
+            if(!file.getOriginalFilename().contains("mp4")&&!file.getOriginalFilename().contains("rmvb")&&!file.getOriginalFilename().contains("avi")){
+                inputStream = file.getInputStream();
+            }
+            this.uploadFile2OSS(inputStream, name,file);
+            return name;
+        } catch (Exception e) {
+            throw new MyException("文件上传失败");
+        }
+    }
+
     /**
      * 获得图片路径
      * 视频和图片文件都可以上传到oss存储，通过外链可以在电脑浏览器中查看图片，却查看不了视频。

@@ -5,13 +5,19 @@ import com.haoyue.tuangou.pojo.*;
 import com.haoyue.tuangou.service.*;
 import com.haoyue.tuangou.utils.*;
 import com.haoyue.tuangou.utils.StringUtils;
+import com.haoyue.tuangou.wxpay.HttpRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.*;
 
@@ -58,8 +64,10 @@ public class TProductsController {
 
         //先保存商品
         Date date = new Date();
+        Boolean issave=false;
         if (tProducts.getId() == null) {
             tProducts.setCreateDate(date);
+            issave=true;
         } else {
             if (!tProductsService.findOne(tProducts.getId()).getSaleId().equals(tProducts.getSaleId())) {
                 return new TResult(true, TGlobal.have_no_right, null);
@@ -115,9 +123,19 @@ public class TProductsController {
             }
             //商品=商品分类
             tProducts.setProductsTypes(list);
+            //保存---设置二维码
+            if (issave){
+                try {
+                    String qrcode_url=tProductsService.qrcode(tProducts.getSaleId(),tProducts.getId()+"");
+                    tProducts.setQrcode(qrcode_url);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
             tProductsService.update(tProducts);
             //更新商品分类名称
             tProductsTypesNameService.update(tProducts.getSaleId(), tProducts.getTypes());
+
         }
         return new TResult(false, TGlobal.do_success, null);
     }
@@ -333,6 +351,9 @@ public class TProductsController {
         }
         return new TResult(false, TGlobal.do_success, result);
     }
+
+
+
 
 
 }

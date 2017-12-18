@@ -1,16 +1,27 @@
 package com.haoyue.tuangou.service;
 
 
+import com.haoyue.Exception.MyException;
 import com.haoyue.tuangou.pojo.QTProducts;
 import com.haoyue.tuangou.pojo.TProducts;
 import com.haoyue.tuangou.repo.TProductsRepo;
+import com.haoyue.tuangou.utils.QRcode;
 import com.haoyue.tuangou.utils.StringUtils;
+import com.haoyue.tuangou.utils.TGlobal;
+import com.haoyue.tuangou.utils.TOSSClientUtil;
+import com.haoyue.tuangou.wxpay.HttpRequest;
 import com.querydsl.core.BooleanBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -189,5 +200,32 @@ public class TProductsService {
         bd.and(products.active.eq(true));
         bd.and(products.isFree.eq(true));
         return tProductsRepo.findAll(bd.getValue(),new Sort(Sort.Direction.DESC,"id"));
+    }
+
+    //生成二维码
+    public String qrcode(String saleId,String pid) throws FileNotFoundException {
+        String access_token= TGlobal.access_tokens.get(saleId);
+        if (StringUtils.isNullOrBlank(access_token)) {
+            String access_token_url = "https://api.weixin.qq.com/cgi-bin/token";
+            String param1 = "grant_type=client_credential&appid=wxf80175142f3214e1&secret=e0251029d53d21e84a650681af6139b1";
+            access_token = HttpRequest.sendPost(access_token_url, param1);
+            access_token = access_token.substring(access_token.indexOf(":") + 2, access_token.indexOf(",") - 1);
+            TGlobal.access_tokens.put(saleId,access_token);
+        }
+        String filename= QRcode.getminiqrQr(access_token,pid);
+        FileInputStream fileInputStream=new FileInputStream(new File(filename));
+        TOSSClientUtil tossClientUtil=new TOSSClientUtil();
+        String url="";
+        try {
+            MultipartFile multi = new MockMultipartFile(pid+".jpg", fileInputStream);
+            url=tossClientUtil.uploadImg2Oss_2(multi);
+            File file=new File(filename);
+            file.delete();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (MyException e) {
+            e.printStackTrace();
+        }
+        return TGlobal.aliyun_href + url;
     }
 }
