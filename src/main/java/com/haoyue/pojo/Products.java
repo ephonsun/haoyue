@@ -68,7 +68,15 @@ public class Products {
     private boolean isLuckDraw=false;//是否抽奖
     private boolean isLuckDrawEnd=false;
     private int views;
+    private String qrcode;//二维码
 
+    public String getQrcode() {
+        return qrcode;
+    }
+
+    public void setQrcode(String qrcode) {
+        this.qrcode = qrcode;
+    }
 
     public String getSuffix() {
         return suffix;

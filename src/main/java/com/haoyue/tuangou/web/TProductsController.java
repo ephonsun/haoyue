@@ -5,7 +5,6 @@ import com.haoyue.tuangou.pojo.*;
 import com.haoyue.tuangou.service.*;
 import com.haoyue.tuangou.utils.*;
 import com.haoyue.tuangou.utils.StringUtils;
-import com.haoyue.tuangou.wxpay.HttpRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -13,10 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.text.ParseException;
 import java.util.*;
 
@@ -48,7 +44,6 @@ public class TProductsController {
     @RequestMapping("/save")
     @Transactional
     public TResult save(TProducts tProducts, String tprotypes,String start_date,String end_date) {
-
         //拼团时间范围
         if (!StringUtils.isNullOrBlank(start_date)) {
             try {

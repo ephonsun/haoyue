@@ -206,11 +206,14 @@ public class TProductsService {
         }
         // d:/haoyue/erweima/1.jpg
         String filename = QRcode.getminiqrQr(access_token, pid);
-        FileInputStream fileInputStream = new FileInputStream(new File(filename));
+        File file=new File(filename);
+        FileInputStream fileInputStream = new FileInputStream(file);
         TOSSClientUtil tossClientUtil = new TOSSClientUtil();
         // hymarket/qrcode/xx.jpg
         filename = "qrcodes/tuan-"+pid+".jpg";
         tossClientUtil.uploadFile2OSS(fileInputStream, filename, null);
+        //删除旧的数据
+        file.delete();
         return filename;
     }
 

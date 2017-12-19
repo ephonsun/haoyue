@@ -3,15 +3,16 @@ package com.haoyue.service;
 import com.haoyue.pojo.*;
 import com.haoyue.repo.ProductsRepo;
 import com.haoyue.repo.ProdutsTypeRepo;
-import com.haoyue.untils.Global;
-import com.haoyue.untils.Result;
-import com.haoyue.untils.StringUtils;
+import com.haoyue.untils.*;
 import com.querydsl.core.BooleanBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
@@ -246,5 +247,28 @@ public class ProductsService {
 
     public List<Products> findBySellerIdAndCreateDate(String sellerId, Date date) {
         return productsRepo.findBySellerIdAndCreateDate(sellerId,date);
+    }
+
+    //生成二维码
+    public String qrcode(String sellerId, String pid) throws FileNotFoundException {
+        String access_token = Global.access_tokens.get(sellerId);
+        if (StringUtils.isNullOrBlank(access_token)) {
+            String access_token_url = "https://api.weixin.qq.com/cgi-bin/token";
+            String param1 = "grant_type=client_credential&appid=wxe46b9aa1b768e5fe&secret=8bcdb74a9915b5685fa0ec37f6f25b24";
+            access_token = HttpRequest.sendPost(access_token_url, param1);
+            access_token = access_token.substring(access_token.indexOf(":") + 2, access_token.indexOf(",") - 1);
+            Global.access_tokens.put(sellerId, access_token);
+        }
+        // d:/haoyue/erweima/1.jpg
+        String filename = QRcode.getminiqrQr(access_token, pid);
+        File file=new File(filename);
+        FileInputStream fileInputStream = new FileInputStream(file);
+        OSSClientUtil tossClientUtil = new OSSClientUtil();
+        // hymarket/qrcode/xx.jpg
+        filename = "qrcodes/"+pid+".jpg";
+        tossClientUtil.uploadFile2OSS(fileInputStream, filename, null);
+        //删除已上传文件
+        file.delete();
+        return filename;
     }
 }

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
 
@@ -143,7 +144,7 @@ public class ProductsController {
     }
 
     @RequestMapping("/save")
-    public Result update_all(Products products, String token, String protypes) {
+    public Result update_all(Products products, String token, String protypes) throws FileNotFoundException {
         boolean flag = false;
         if (products.getId() != null) {
             flag = true;
@@ -229,6 +230,12 @@ public class ProductsController {
             }
         } catch (IOException e) {
             e.printStackTrace();
+        }
+        //更新二维码
+        if (StringUtils.isNullOrBlank(products.getQrcode())){
+            String url=productsService.qrcode(products.getSellerId()+"",products.getId()+"");
+            products.setQrcode(Global.aliyun_href+url);
+            productsService.update(products);
         }
         return new Result(false, Global.do_success, products, null);
     }
