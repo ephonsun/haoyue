@@ -113,7 +113,7 @@ public class TRedPacketController {
     }
 
 
-    //  /tuan/redpacket/code?groupcode=1221
+    //  http://www.cslapp.com/tuan/redpacket/code?groupcode=1513579706624&saleId=8
     @RequestMapping("/code")
     public TResult findByGroupCode(String groupcode){
         List<TRedPacket> redPackets= redPacketService.findByGroupCode(groupcode);

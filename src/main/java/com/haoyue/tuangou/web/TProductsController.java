@@ -7,7 +7,6 @@ import com.haoyue.tuangou.utils.*;
 import com.haoyue.tuangou.utils.StringUtils;
 import com.haoyue.tuangou.wxpay.HttpRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -64,10 +63,8 @@ public class TProductsController {
 
         //先保存商品
         Date date = new Date();
-        Boolean issave=false;
         if (tProducts.getId() == null) {
             tProducts.setCreateDate(date);
-            issave=true;
         } else {
             if (!tProductsService.findOne(tProducts.getId()).getSaleId().equals(tProducts.getSaleId())) {
                 return new TResult(true, TGlobal.have_no_right, null);
@@ -123,16 +120,17 @@ public class TProductsController {
             }
             //商品=商品分类
             tProducts.setProductsTypes(list);
+            TProducts products= tProductsService.update(tProducts);
             //保存---设置二维码
-            if (issave){
+            if (StringUtils.isNullOrBlank(products.getQrcode())){
                 try {
-                    String qrcode_url=tProductsService.qrcode(tProducts.getSaleId(),tProducts.getId()+"");
-                    tProducts.setQrcode(qrcode_url);
+                    String qrcode_url=tProductsService.qrcode(products.getSaleId(),products.getId()+"");
+                    products.setQrcode(TGlobal.aliyun_href+qrcode_url);
+                    tProductsService.update(products);
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
             }
-            tProductsService.update(tProducts);
             //更新商品分类名称
             tProductsTypesNameService.update(tProducts.getSaleId(), tProducts.getTypes());
 
@@ -352,8 +350,10 @@ public class TProductsController {
         return new TResult(false, TGlobal.do_success, result);
     }
 
-
-
-
-
+    // http://localhost:8080/tuan/product/test?pid=1&saleId=1
+    @RequestMapping("/test")
+    public void test(String pid) throws FileNotFoundException {
+       String result= tProductsService.qrcode("1",pid);
+       System.out.println(TGlobal.aliyun_href+result);
+    }
 }

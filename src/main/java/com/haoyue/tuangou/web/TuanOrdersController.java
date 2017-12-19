@@ -218,10 +218,8 @@ public class TuanOrdersController {
                     orders.setState(state);
                     tuanOrdersService.update(orders);
                 }
-
                 //微信付款通知
                 addTemplate(orders);
-
                 //更新tdictionary表
                 TDictionarys tDictionarys = tDictionarysService.findByTodaySaleId(orders.getSaleId());
                 tDictionarys.setTurnover(tDictionarys.getTurnover() + orders.getTotalPrice());

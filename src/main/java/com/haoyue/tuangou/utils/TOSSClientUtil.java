@@ -77,26 +77,6 @@ public class TOSSClientUtil {
         }
     }
 
-    public String uploadImg2Oss_2(MultipartFile file) throws MyException {
-
-        String originalFilename = file.getName();
-        String substring = originalFilename.substring(originalFilename.lastIndexOf(".")).toLowerCase();
-        Calendar cal = Calendar.getInstance();
-        int year = cal.get(Calendar.YEAR);//获取年份
-        int month=cal.get(Calendar.MONTH);//获取月份
-        int day=cal.get(Calendar.DATE);//获取日
-        String name=year+"/"+(month+1)+"/"+ day+"/"+cal.getTimeInMillis()+substring;
-        try {
-            InputStream inputStream=null;
-            if(!file.getOriginalFilename().contains("mp4")&&!file.getOriginalFilename().contains("rmvb")&&!file.getOriginalFilename().contains("avi")){
-                inputStream = file.getInputStream();
-            }
-            this.uploadFile2OSS(inputStream, name,file);
-            return name;
-        } catch (Exception e) {
-            throw new MyException("文件上传失败");
-        }
-    }
 
     /**
      * 获得图片路径
@@ -137,7 +117,6 @@ public class TOSSClientUtil {
         }
 
         try {
-
             objectMetadata.setContentLength(instream.available());
             objectMetadata.setCacheControl("no-cache");
             objectMetadata.setHeader("Pragma", "no-cache");
@@ -148,11 +127,56 @@ public class TOSSClientUtil {
             if (fileName.endsWith(".xlsx")){
                 objectMetadata.setContentDisposition("attachment;filename=" + fileName);
             }
+
             //上传文件
             PutObjectResult putResult = ossClient.putObject(bucketName, filedir + fileName, instream, objectMetadata);
             ret = putResult.getETag();
         } catch (IOException e) {
            System.out.println(e);
+        } finally {
+            try {
+                if (instream != null) {
+                    instream.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return ret;
+    }
+
+
+    public String uploadFile2OSS_2(InputStream instream, String fileName,MultipartFile file) {
+        //创建上传Object的Metadata
+        ObjectMetadata objectMetadata = new ObjectMetadata();
+        String ret = "";
+        if (instream==null&&file!=null){
+            try {
+                instream=file.getInputStream();
+                String strContentType = file.getContentType();
+                objectMetadata.setContentType(strContentType);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        try {
+            objectMetadata.setContentLength(instream.available());
+            objectMetadata.setCacheControl("no-cache");
+            objectMetadata.setHeader("Pragma", "no-cache");
+            if(com.haoyue.untils.StringUtils.isNullOrBlank(objectMetadata.getContentType())) {
+                objectMetadata.setContentType(getcontentType(fileName.substring(fileName.lastIndexOf("."))));
+            }
+            objectMetadata.setContentDisposition("inline;filename=" + fileName);
+            if (fileName.endsWith(".xlsx")){
+                objectMetadata.setContentDisposition("attachment;filename=" + fileName);
+            }
+
+            //上传文件
+            PutObjectResult putResult = ossClient.putObject(bucketName, filedir + fileName, instream, objectMetadata);
+            ret = putResult.getETag();
+        } catch (IOException e) {
+            System.out.println(e);
         } finally {
             try {
                 if (instream != null) {
