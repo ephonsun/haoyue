@@ -32,6 +32,8 @@ public class TSuperAdminController {
     private TProductsService productsService;
     @Autowired
     private TFreeShoppingService freeShoppingService;
+    @Autowired
+    private TWxTemplateService wxTemplateService;
 
     /**
      * 定时器，产品部署好之后，需要手动触发该定时器
@@ -61,6 +63,8 @@ public class TSuperAdminController {
             dictionarysService.addEachDay();
             //清空 TGlobal.access_tokens
             TGlobal.access_tokens.clear();
+            //刷新访问通知active属性，发送通知
+            wxTemplateService.autoFlush();
         }
     };
 

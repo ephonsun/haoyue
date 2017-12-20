@@ -234,6 +234,7 @@ public class SuperAdminController {
 
     /**
      * 定时器，一个小时执行一次,产品部署好之后，需要手动出发该定时器
+     *   http://localhost:8080/super-admin/timer?key=abcdefg&sellerId=1
      */
     @RequestMapping("/timer")
     public String timer(String key) {
@@ -255,8 +256,6 @@ public class SuperAdminController {
 
         }
     };
-
-
 
 
 }

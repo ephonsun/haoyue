@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -21,8 +22,14 @@ public class TWxTemplateController {
 
     @RequestMapping("/save")
     public void save(TWxTemplate wxTemplate){
-        wxTemplate.setCreateDate(new Date());
+        Date date=new Date();
+        Calendar calendar=Calendar.getInstance();
+        calendar.add(Calendar.DATE,7);
+        wxTemplate.setCreateDate(date);
+        wxTemplate.setEndDate(calendar.getTime());
         wxTemplateService.save(wxTemplate);
     }
+
+
 
 }
