@@ -1,9 +1,6 @@
 package com.haoyue.service;
 
-import com.haoyue.pojo.Dictionary;
-import com.haoyue.pojo.Member;
-import com.haoyue.pojo.Products;
-import com.haoyue.pojo.QDictionary;
+import com.haoyue.pojo.*;
 import com.haoyue.repo.DictionaryRepo;
 import com.haoyue.repo.SellerRepo;
 import com.haoyue.repo.VisitorsRepo;
@@ -36,6 +33,8 @@ public class DictionaryService {
     private VisitorsService visitorsService;
     @Autowired
     private MemberService memberService;
+    @Autowired
+    private OrderService orderService;
 
     public Dictionary findByTokenAndName(String token, String name) {
         return null;
@@ -110,6 +109,8 @@ public class DictionaryService {
             }
             //每日清空 visitors 表
             visitorsService.delAll();
+            //默认收货
+            auto_receive();
             //判断年份是否改变,新的一年刷新所有会员信息
 //            if (dictionery.getCreateDate().getYear()!=date.getYear()){
 //                flushMembers();
@@ -117,6 +118,24 @@ public class DictionaryService {
             //清空当日生成的excel文件
             //clear_excel();
         }
+    }
+
+    public void auto_receive(){
+        //待收货
+        List<Order> orders=orderService.findUnDone(Global.order_send);
+        Date now_date=new Date();
+        Date old_date=null;
+        for (Order order:orders){
+            Deliver deliver=order.getDeliver();
+            old_date=deliver.getCreateDate();
+            //判断距离发货日期的时间差
+            if ((now_date.getTime()-old_date.getTime())>1000*60*60*24*15){
+                order.setState(Global.order_finsh);
+                orderService.update(order);
+            }
+        }
+
+
     }
 
     public void clear_excel(){

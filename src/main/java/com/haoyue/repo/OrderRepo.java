@@ -44,4 +44,6 @@ public interface OrderRepo extends BaseRepo<Order,Integer> {
     List<Order> findBySellerId(Integer sellerId);
 
     List<Order> findBySellerIdAndState(Integer sellerId, String state);
+
+
 }

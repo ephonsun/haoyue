@@ -49,6 +49,7 @@ public class DelievrController {
         delievrService.update(deliver);
         order.setDeliver(deliver);
         order.setState(Global.order_send);
+
         orderService.update(order);
         return new Result(false, Global.do_success, order, token);
     }

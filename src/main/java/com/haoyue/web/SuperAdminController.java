@@ -252,30 +252,11 @@ public class SuperAdminController {
             //数据表 dictionarys 新增数据
             dictionaryService.addEachDay();
             Global.access_tokens.clear();
-            //默认收货 两小时执行一次
-            Global.flag=!Global.flag;
-            if(Global.flag) {
-               // auto_receive();
-            }
+
         }
     };
 
-    public void auto_receive(){
-        //待收货
-        List<Order> orders=orderService.findUnDone(Global.order_send);
-        Deliver deliver=new Deliver();
-        Date now_date=new Date();
-        Date old_date=null;
-        for (Order order:orders){
-            deliver=order.getDeliver();
-            old_date=deliver.getCreateDate();
-            //判断距离发货日期的时间差
-            if ((now_date.getTime()-old_date.getTime())>1000*60*60*24*20){
-                order.setState(Global.order_finsh);
-                orderService.update(order);
-            }
-        }
-    }
+
 
 
 }

@@ -75,6 +75,7 @@ public class Order {
     private String luckcode;//抽奖号码
     private boolean isLuck=false;//是否中奖
 
+
     public boolean getIsLuck() {
         return isLuck;
     }
