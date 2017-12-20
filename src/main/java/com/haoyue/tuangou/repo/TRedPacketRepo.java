@@ -35,5 +35,6 @@ public interface TRedPacketRepo extends TBaseRepo<TRedPacket,Integer> {
     @Query(nativeQuery = true,value = "update t_redpacket set isover=true where end_date<?1 and isover=false")
     void flushByDate(Date date);
 
+    @Query(nativeQuery = true,value = "select wxname from  t_redpacket  where group_code=?1 ")
     List<String> findWxnameByGroupCode(String groupCode);
 }

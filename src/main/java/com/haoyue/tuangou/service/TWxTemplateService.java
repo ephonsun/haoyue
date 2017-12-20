@@ -52,7 +52,10 @@ public class TWxTemplateService {
                     continue;
                 }
                 TWxTemplate wxTemplate=list.get(0);
-                if (wxTemplate.getFormId().contains("the formId is a mock one")){
+                if (wxTemplate.getFormId().contains("formId is a mock one")){
+                    continue;
+                }
+                if (wxTemplate.getSaleId().equals("7")){
                     continue;
                 }
                 addTemplate(wxTemplate);

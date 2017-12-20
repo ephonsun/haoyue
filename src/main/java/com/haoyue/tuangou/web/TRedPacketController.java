@@ -40,60 +40,56 @@ public class TRedPacketController {
     //  拆红包  /tuan/redpacket/save?saleId=12&openId=12&wxname=微信名&wxpic=头像&formId=模板ID&formId2=模板ID&groupCode=房主红包的单号&isowener=false&ownerOpenId=房主的openId
     @RequestMapping("/save")
     public TResult save(TRedPacket redPacket, String ownerOpenId) {
-        TUserSale userSale=userSaleService.findOneById(Integer.parseInt(redPacket.getSaleId()));
-        if (userSale.getRedpacket()==false){
+        TUserSale userSale = userSaleService.findOneById(Integer.parseInt(redPacket.getSaleId()));
+        if (userSale.getRedpacket() == false) {
             return new TResult(true, TGlobal.redpacket_not_open, null);
         }
         Date date = new Date();
         Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.DATE, 1);
+        calendar.add(Calendar.DATE, 1);
         redPacket.setCreateDate(date);
         redPacket.setEndDate(calendar.getTime());
         if (StringUtils.isNullOrBlank(redPacket.getGroupCode())) {
             redPacket.setGroupCode(date.getTime() + "");
         }
         redPacket.setMoney(randomMoney(redPacket.getGroupCode()));
-        int sum = 0;
         //查看用户是否已经帮房主拆过红包
         synchronized (TGlobal.object6) {
             if (redPacket.getIsowener() == false) {
-                if (StringUtils.isNullOrBlank(ownerOpenId)) {
-                    List<TRedPacket> list = redPacketService.findByOpenIdAndIsOwener(ownerOpenId, redPacket.getSaleId());
-                    sum = list.size();
+                if (!StringUtils.isNullOrBlank(ownerOpenId)) {
+                    TRedPacket redPacket1 = redPacketService.findByGroupCodeAndIsOwener(redPacket.getGroupCode());
                     //拆过 返回提示
-                    for (TRedPacket tRedPacket : list) {
-                        if (tRedPacket.getOpener().contains(redPacket.getOpenId())) {
-                            return new TResult(true, TGlobal.haved_open, null);
-                        }
+                    if (!StringUtils.isNullOrBlank(redPacket1.getOpener()) && redPacket1.getOpener().contains(redPacket.getOpenId())) {
+                        return new TResult(true, TGlobal.haved_open, null);
                     }
                     //未拆过 更新房主红包的opener
-                    TRedPacket tRedPacket = redPacketService.findByGroupCodeAndIsOwener(redPacket.getGroupCode());
-                    if (tRedPacket.getIsover() == true || date.after(tRedPacket.getEndDate())) {
+                    if (redPacket1.getIsover() == true || date.after(redPacket1.getEndDate())) {
                         return new TResult(true, TGlobal.redpacket_is_end, null);
                     }
-                    tRedPacket.setOpener(tRedPacket.getOpener() + "," + redPacket.getOpenId());
-                    redPacketService.save(tRedPacket);
+                    redPacket1.setOpener(redPacket1.getOpener() + "," + redPacket.getOpenId());
+                    redPacketService.save(redPacket1);
                 }
             }
             redPacketService.save(redPacket);
             //如果红包人数达到4个人
-            if (sum == 3) {
+            int sum = redPacketService.findByGroupCode(redPacket.getGroupCode()).size();
+            if (sum == 4) {
                 //转优惠券
-                List<TCoupon> coupons= tocoupon(redPacket.getGroupCode());
+                List<TCoupon> coupons = tocoupon(redPacket.getGroupCode());
                 //参加者微信名
-                List<String> names= redPacketService.findWxnameByGroupCode(redPacket.getGroupCode());
-                String name="";
-                for (String str:names){
-                    if (!StringUtils.isNullOrBlank(str)){
-                        name=name+","+str;
+                List<String> names = redPacketService.findWxnameByGroupCode(redPacket.getGroupCode());
+                String name = "";
+                for (String str : names) {
+                    if (!StringUtils.isNullOrBlank(str)) {
+                        name = name + "," + str;
                     }
                 }
-                name=name.substring(1);
+                name = name.substring(1);
                 //更新红包状态
                 redPacketService.updateIsoverByGroupCode(redPacket.getGroupCode());
                 //模板信息
-                for (TCoupon coupon:coupons) {
-                    addTemplate(coupon,name);
+                for (TCoupon coupon : coupons) {
+                    addTemplate(coupon, name);
                 }
             }
         }
@@ -102,12 +98,12 @@ public class TRedPacketController {
 
     // 指定用户的红包列表 /tuan/redpacket/list?openId=123&saleId=123&[isover=true/false]
     @RequestMapping("/list")
-    public TResult list(String openId,String saleId,String isover){
-        List<TRedPacket> list=new ArrayList<>();
+    public TResult list(String openId, String saleId, String isover) {
+        List<TRedPacket> list = new ArrayList<>();
         if (StringUtils.isNullOrBlank(isover)) {
-             list = redPacketService.findBySaleIdAndOpenId(saleId, openId);
-        }else {
-            list = redPacketService.findBySaleIdAndOpenIdAndIsover(saleId, openId,Boolean.valueOf(isover));
+            list = redPacketService.findBySaleIdAndOpenId(saleId, openId);
+        } else {
+            list = redPacketService.findBySaleIdAndOpenIdAndIsover(saleId, openId, Boolean.valueOf(isover));
         }
         return new TResult(false, TGlobal.do_success, list);
     }
@@ -115,21 +111,21 @@ public class TRedPacketController {
 
     //  http://www.cslapp.com/tuan/redpacket/code?groupcode=1513579706624&saleId=8
     @RequestMapping("/code")
-    public TResult findByGroupCode(String groupcode){
-        List<TRedPacket> redPackets= redPacketService.findByGroupCode(groupcode);
+    public TResult findByGroupCode(String groupcode) {
+        List<TRedPacket> redPackets = redPacketService.findByGroupCode(groupcode);
         return new TResult(false, TGlobal.do_success, redPackets);
     }
 
 
     // 转优惠券
-    public List<TCoupon> tocoupon(String groupcode){
-        List<TRedPacket> redPackets= redPacketService.findByGroupCode(groupcode);
-        Date date=new Date();
-        Calendar calendar=Calendar.getInstance();
-        calendar.add(Calendar.DATE,4);
-        List<TCoupon> coupons=new ArrayList<>();
-        for (TRedPacket redPacket:redPackets){
-            TCoupon coupon=new TCoupon();
+    public List<TCoupon> tocoupon(String groupcode) {
+        List<TRedPacket> redPackets = redPacketService.findByGroupCode(groupcode);
+        Date date = new Date();
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DATE, 4);
+        List<TCoupon> coupons = new ArrayList<>();
+        for (TRedPacket redPacket : redPackets) {
+            TCoupon coupon = new TCoupon();
             coupon.setCreateDate(date);
             coupon.setMoney(redPacket.getMoney());
             coupon.setActive(true);
@@ -150,7 +146,7 @@ public class TRedPacketController {
     public int randomMoney(String groupcode) {
         int a[] = {5, 10, 15, 20, 25};
         List<TRedPacket> list = redPacketService.findByGroupCode(groupcode);
-        int index = (int) Math.ceil(Math.random() * 5);
+        int index = (int) Math.floor(Math.random() * 5);
         int money = a[index];
         int sum = 0;
         if (list != null) {
@@ -184,51 +180,54 @@ public class TRedPacketController {
     }
 
     //4人拆红包成功通知
-    public void addTemplate(TCoupon coupon,String name){
-        List<TemplateResponse> list=new ArrayList<>();
-        TemplateResponse templateResponse1=new TemplateResponse();
+    public void addTemplate(TCoupon coupon, String name) {
+        List<TemplateResponse> list = new ArrayList<>();
+        TemplateResponse templateResponse1 = new TemplateResponse();
         templateResponse1.setColor("#000000");
         templateResponse1.setName("keyword1");
-        templateResponse1.setValue(String.valueOf(coupon.getMoney())+"元优惠券");
+        templateResponse1.setValue(String.valueOf(coupon.getMoney()) + "元优惠券");
         list.add(templateResponse1);
 
-        TemplateResponse templateResponse2=new TemplateResponse();
+        TemplateResponse templateResponse2 = new TemplateResponse();
         templateResponse2.setColor("#000000");
         templateResponse2.setName("keyword2");
-        templateResponse2.setValue(coupon.getCreateDate().toLocaleString());
+        templateResponse2.setValue(StringUtils.formDateToStr(coupon.getCreateDate()));
         list.add(templateResponse2);
 
-        TemplateResponse templateResponse3=new TemplateResponse();
+        TemplateResponse templateResponse3 = new TemplateResponse();
         templateResponse3.setColor("#000000");
         templateResponse3.setName("keyword3");
-        if (name.contains(coupon.getWxname())){
-            name.replace(coupon.getWxname(),"");
+        if (name.contains(coupon.getWxname())) {
+            name.replace(coupon.getWxname(), "");
         }
-        templateResponse3.setValue("恭喜你和:"+name+" 瓜分红包成功，系统奖励优惠券已到账");
+        templateResponse3.setValue("恭喜你和:" + name + " 瓜分红包成功，系统奖励优惠券已到账");
         list.add(templateResponse3);
 
-
-        Template template=new Template();
+        Template template = new Template();
         template.setTemplateId("iTNVkRceX_5Ze5rNjLvP46hBz-rM_xbHwd1sPFKmR6s");
         template.setTemplateParamList(list);
         template.setTopColor("#000000");
         // todo  定向到优惠券页面
         template.setPage("pages/index/index");
         template.setToUser(coupon.getOpenId());
-        getTemplate(template,coupon.getFormId());
+        getTemplate(template, coupon.getFormId(),coupon.getSaleId());
     }
 
-    public void getTemplate(Template template,String formId){
+    public void getTemplate(Template template, String formId,String saleId) {
         //模板信息通知用户
         //获取 access_token
-        String access_token_url="https://api.weixin.qq.com/cgi-bin/token";
-        String param1="grant_type=client_credential&appid=wxf80175142f3214e1&secret=e0251029d53d21e84a650681af6139b1";
-        String access_token= HttpRequest.sendPost(access_token_url,param1);
-        access_token=access_token.substring(access_token.indexOf(":")+2,access_token.indexOf(",")-1);
-        //发送模板信息
+        String access_token=TGlobal.access_tokens.get(saleId);
+        if (StringUtils.isNullOrBlank(access_token)) {
+            String access_token_url = "https://api.weixin.qq.com/cgi-bin/token";
+            String param1 = "grant_type=client_credential&appid=wxf80175142f3214e1&secret=e0251029d53d21e84a650681af6139b1";
+            access_token = HttpRequest.sendPost(access_token_url, param1);
+            access_token = access_token.substring(access_token.indexOf(":") + 2, access_token.indexOf(",") - 1);
+            TGlobal.access_tokens.put(saleId,access_token);
+        }//发送模板信息
         template.setForm_id(formId);
-        String url="https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token="+access_token+"&form_id="+formId;
-        String result= CommonUtil.httpRequest(url,"POST",template.toJSON());
+        String url = "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token=" + access_token + "&form_id=" + formId;
+        String result = CommonUtil.httpRequest(url, "POST", template.toJSON());
+        System.out.println("红包通知："+result);
     }
-    
+
 }
