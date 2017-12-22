@@ -437,4 +437,12 @@ public class OrderService {
         return orderRepo.findAll(bd.getValue(),new Sort(Sort.Direction.DESC,"id"));
     }
 
+    public Iterable<Order> comments(String sellerId,int pageNumber,int pageSize) {
+        QOrder order = QOrder.order;
+        BooleanBuilder bd = new BooleanBuilder();
+        bd.and(order.state.eq(Global.order_finsh));
+        bd.and(order.comment.isNotNull());
+        bd.and(order.sellerId.eq(Integer.parseInt(sellerId)));
+        return orderRepo.findAll(bd.getValue(),new PageRequest(pageNumber,pageSize,new Sort(Sort.Direction.DESC,"id")));
+    }
 }

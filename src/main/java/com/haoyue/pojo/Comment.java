@@ -18,16 +18,15 @@ public class Comment {
 
     private String level;//好评，中评，差评
     private String message;//评论内容
+    @Lob
+    @Column(columnDefinition="TEXT")
     private String images;//评论晒图
     private Integer orderId;
-    private Integer customerId;//买家id
-    private String customerName;//买家姓名
-
+    private String  openId;
+    private String wxname;
     private Integer sellerId;//卖家ID
-    private String sellerName;//卖家姓名
-
-
     private String reversion;//回复
+    private String pid;
 
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:SS", timezone="GMT+8")
     @Temporal(TemporalType.TIMESTAMP)
@@ -90,20 +89,21 @@ public class Comment {
         this.message = message;
     }
 
-    public Integer getCustomerId() {
-        return customerId;
+
+    public String getOpenId() {
+        return openId;
     }
 
-    public void setCustomerId(Integer customerId) {
-        this.customerId = customerId;
+    public void setOpenId(String openId) {
+        this.openId = openId;
     }
 
-    public String getCustomerName() {
-        return customerName;
+    public String getWxname() {
+        return wxname;
     }
 
-    public void setCustomerName(String customerName) {
-        this.customerName = customerName;
+    public void setWxname(String wxname) {
+        this.wxname = wxname;
     }
 
     public Integer getSellerId() {
@@ -114,11 +114,11 @@ public class Comment {
         this.sellerId = sellerId;
     }
 
-    public String getSellerName() {
-        return sellerName;
+    public String getPid() {
+        return pid;
     }
 
-    public void setSellerName(String sellerName) {
-        this.sellerName = sellerName;
+    public void setPid(String pid) {
+        this.pid = pid;
     }
 }

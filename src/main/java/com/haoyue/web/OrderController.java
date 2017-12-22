@@ -374,6 +374,13 @@ public class OrderController {
         return new Result(false, Global.do_success, iterable, null);
     }
 
+    // http://localhost:8080/order/comments?sellerId=卖家ID&pageNumber=页数（从 0 开始）&pageSize=每页显示条数，默认10
+    @RequestMapping("/comments")
+    public Result commets(String sellerId,@RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize){
+        Iterable<Order> iterable= orderService.comments(sellerId,pageNumber,pageSize);
+        return new Result(false, Global.do_success, iterable, null);
+    }
+
     //每当买家订单付款后会更新该买家的会员信息
     public void saveMember(Order order) {
         String cid = order.getCustomerId() + "";

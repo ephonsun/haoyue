@@ -123,6 +123,9 @@ public class Global {
     // 付款package
     public static Map<String,String> package_map=new HashMap<>();
 
+    //评价
+    public static Object object4=new Object();
+
 
     //非拦截地址
     public static List<String> urls(){
