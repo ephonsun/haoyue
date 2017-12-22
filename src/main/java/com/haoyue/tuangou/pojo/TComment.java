@@ -25,7 +25,8 @@ public class TComment {
     @Lob
     @Column(columnDefinition = "TEXT")
     private String message;
-    private String wxname;
+    private String wxname;//嘴角轻扬30
+    private String cutwxname;//嘴**
     private String wxpic;
     private String openId;
     private String saleId;
@@ -39,6 +40,14 @@ public class TComment {
     @Column(updatable=false)
     private Date createDate;//创建日期
 
+
+    public String getCutwxname() {
+        return cutwxname;
+    }
+
+    public void setCutwxname(String cutwxname) {
+        this.cutwxname = cutwxname;
+    }
 
     public String getLevel() {
         return level;

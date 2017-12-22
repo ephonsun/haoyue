@@ -282,27 +282,27 @@ public class OrderService {
         XSSFSheet sheet = workbook.createSheet("sheet1");
         //第一行 列名
         XSSFRow row = sheet.createRow(0);
-        Cell cell = row.createCell(0);
-        cell.setCellValue("姓名");
-        cell = row.createCell(1);
-        cell.setCellValue("电话");
-        cell = row.createCell(2);
-        cell.setCellValue("款号");
-        cell = row.createCell(3);
-        cell.setCellValue("颜色");
-        cell = row.createCell(4);
-        cell.setCellValue("尺码");
-        cell = row.createCell(5);
-        cell.setCellValue("数量");
-        cell = row.createCell(6);
-        cell.setCellValue("地址");
-        cell = row.createCell(7);
-        cell.setCellValue("卖家备注");
-        cell = row.createCell(8);
-        cell.setCellValue("买家备注");
-        cell = row.createCell(9);
-        cell.setCellValue("下单时间");
 
+        Cell cell = row.createCell(0);
+        cell.setCellValue("下单时间");
+        cell = row.createCell(1);
+        cell.setCellValue("姓名");
+        cell = row.createCell(2);
+        cell.setCellValue("电话");
+        cell = row.createCell(3);
+        cell.setCellValue("款号");
+        cell = row.createCell(4);
+        cell.setCellValue("颜色");
+        cell = row.createCell(5);
+        cell.setCellValue("尺码");
+        cell = row.createCell(6);
+        cell.setCellValue("数量");
+        cell = row.createCell(7);
+        cell.setCellValue("地址");
+        cell = row.createCell(8);
+        cell.setCellValue("卖家备注");
+        cell = row.createCell(9);
+        cell.setCellValue("买家备注");
 
         //需要转excel的订单
         List<Order> list=new ArrayList<>();
@@ -351,25 +351,34 @@ public class OrderService {
                 //填充数据
                 row = sheet.createRow(rowindex++);
                 cell = row.createCell(0);
-                cell.setCellValue(name);
-                cell = row.createCell(1);
-                cell.setCellValue(phone);
-                cell = row.createCell(2);
-                cell.setCellValue(model);
-                cell = row.createCell(3);
-                cell.setCellValue(color);
-                cell = row.createCell(4);
-                cell.setCellValue(size);
-                cell = row.createCell(5);
-                cell.setCellValue(amount);
-                cell = row.createCell(6);
-                cell.setCellValue(address);
-                cell = row.createCell(7);
-                cell.setCellValue(buyComment);
-                cell = row.createCell(8);
-                cell.setCellValue(sellerComment);
-                cell = row.createCell(9);
                 cell.setCellValue(StringUtils.formDateToStr(order.getCreateDate()));
+
+                cell = row.createCell(1);
+                cell.setCellValue(name);
+
+                cell = row.createCell(2);
+                cell.setCellValue(phone);
+
+                cell = row.createCell(3);
+                cell.setCellValue(model);
+
+                cell = row.createCell(4);
+                cell.setCellValue(color);
+
+                cell = row.createCell(5);
+                cell.setCellValue(size);
+
+                cell = row.createCell(6);
+                cell.setCellValue(amount);
+
+                cell = row.createCell(7);
+                cell.setCellValue(address);
+
+                cell = row.createCell(8);
+                cell.setCellValue(buyComment);
+
+                cell = row.createCell(9);
+                cell.setCellValue(sellerComment);
 
             }
         }

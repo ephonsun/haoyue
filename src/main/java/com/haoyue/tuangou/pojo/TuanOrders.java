@@ -24,7 +24,8 @@ public class TuanOrders {
     private String ownerpic;
     private int joinNum;
     private int startNum;//开团人数
-    private String wxname;
+    private String wxname;//嘴角轻扬30
+    private String cutwxname;//嘴**
     private String wxpic;
     private String state;
     private int amount;
@@ -66,6 +67,14 @@ public class TuanOrders {
 
     private String leavemsg;//买家留言
     private String leavemsg2;//卖家备注
+
+    public String getCutwxname() {
+        return cutwxname;
+    }
+
+    public void setCutwxname(String cutwxname) {
+        this.cutwxname = cutwxname;
+    }
 
     public String getLeavemsg() {
         return leavemsg;

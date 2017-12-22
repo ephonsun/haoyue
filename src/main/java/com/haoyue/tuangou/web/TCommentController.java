@@ -38,6 +38,11 @@ public class TCommentController {
     @RequestMapping("/save")
     public TResult save(TComment comment, String oid) {
         comment.setCreateDate(new Date());
+        String wxname=comment.getWxname();
+        if (!StringUtils.isNullOrBlank(wxname)){
+            char first=wxname.charAt(0);
+            comment.setCutwxname(first+"***");
+        }
         commentService.save(comment);
         TOrders orders = ordersService.findOne(Integer.parseInt(oid));
         orders.setComment(comment);
@@ -52,6 +57,11 @@ public class TCommentController {
     // /tuan/tcomment/tuansave?oid=订单ID&wxname=微信名称&wxpic=微信头像&openId=123&saleId=12&pics=评论图片
     @RequestMapping("/tuansave")
     public TResult tuanSave(TComment comment, String oid) {
+        String wxname=comment.getWxname();
+        if (!StringUtils.isNullOrBlank(wxname)){
+            char first=wxname.charAt(0);
+            comment.setCutwxname(first+"***");
+        }
         comment.setCreateDate(new Date());
         commentService.save(comment);
         TuanOrders tuanOrders = tuanOrdersService.findOne(Integer.parseInt(oid));
@@ -106,6 +116,7 @@ public class TCommentController {
         list.stream()
                 .sorted((p1, p2) -> p1.getCreateDate().compareTo(p2.getCreateDate()))
                 .forEach(p -> sortlist.add(p));
+        Collections.reverse(sortlist);
         return new TResult(false, TGlobal.do_success, sortlist);
     }
 

@@ -102,6 +102,11 @@ public class TuanOrdersController {
             tuanOrders.settProducts(products);
             tuanOrders.settProductsTypes(productsTypes);
             tuanOrders.setHours(products.getTuanTimes());
+            String wxname=tuanOrders.getWxname();
+            if (!StringUtils.isNullOrBlank(wxname)){
+                char first=wxname.charAt(0);
+                tuanOrders.setCutwxname(first+"***");
+            }
             //房主
             if (tuanOrders.getIsowner()) {
                 tuanOrders.setOwner(tuanOrders.getWxname());
@@ -151,7 +156,6 @@ public class TuanOrdersController {
                 coupon.setIsuse(true);
                 tCouponService.save(coupon);
             }
-
             tuanOrders.setCode(TGlobal.tuan_ordercode_begin + date.getTime());
             tuanOrdersService.save(tuanOrders);
 
