@@ -302,8 +302,7 @@ public class OrderService {
         cell.setCellValue("买家备注");
         cell = row.createCell(9);
         cell.setCellValue("下单时间");
-        cell = row.createCell(10);
-        cell.setCellValue("是否团购");
+
 
         //需要转excel的订单
         List<Order> list=new ArrayList<>();
@@ -371,8 +370,7 @@ public class OrderService {
                 cell.setCellValue(sellerComment);
                 cell = row.createCell(9);
                 cell.setCellValue(StringUtils.formDateToStr(order.getCreateDate()));
-                cell = row.createCell(10);
-                cell.setCellValue("否");
+
             }
         }
 
@@ -444,5 +442,9 @@ public class OrderService {
         bd.and(order.comment.isNotNull());
         bd.and(order.sellerId.eq(Integer.parseInt(sellerId)));
         return orderRepo.findAll(bd.getValue(),new PageRequest(pageNumber,pageSize,new Sort(Sort.Direction.DESC,"id")));
+    }
+
+    public void autoDone(Integer id) {
+        orderRepo.autoDone(id);
     }
 }

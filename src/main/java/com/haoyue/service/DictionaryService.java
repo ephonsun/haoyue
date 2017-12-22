@@ -95,6 +95,8 @@ public class DictionaryService {
         //每天向dictionary表注入当日新的数据
         Dictionary dictionery = dictionaryRepo.findLast();
         Date date = StringUtils.getYMD(new Date());
+        //默认收货
+        auto_receive();
         if ((!dictionery.getCreateDate().equals(date))) {
             List<Integer> ids = sellerRepo.findIds();
             for (Integer id : ids) {
@@ -109,8 +111,6 @@ public class DictionaryService {
             }
             //每日清空 visitors 表
             visitorsService.delAll();
-            //默认收货
-            auto_receive();
             //判断年份是否改变,新的一年刷新所有会员信息
 //            if (dictionery.getCreateDate().getYear()!=date.getYear()){
 //                flushMembers();
@@ -127,15 +127,16 @@ public class DictionaryService {
         Date old_date=null;
         for (Order order:orders){
             Deliver deliver=order.getDeliver();
+            if (deliver==null){
+                continue;
+            }
             old_date=deliver.getCreateDate();
             //判断距离发货日期的时间差
             if ((now_date.getTime()-old_date.getTime())>1000*60*60*24*15){
-                order.setState(Global.order_finsh);
-                orderService.update(order);
+                //order.setState(Global.order_finsh);
+                orderService.autoDone(order.getId());
             }
         }
-
-
     }
 
     public void clear_excel(){

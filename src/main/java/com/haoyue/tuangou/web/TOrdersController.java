@@ -405,8 +405,9 @@ public class TOrdersController {
         template.setForm_id(form_id);
         String url="https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token="+access_token+"&form_id="+form_id;
         String result= CommonUtil.httpRequest(url,"POST",template.toJSON());
+        System.out.println("团实惠-普通订单微信模板result:"+result);
         //删除该key-value
-        //TGlobal.tuan_package_map.remove(template.getToUser());
+        TGlobal.tuan_package_map.remove(template.getToUser());
     }
 
 

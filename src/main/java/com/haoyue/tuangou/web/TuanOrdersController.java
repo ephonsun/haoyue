@@ -522,6 +522,7 @@ public class TuanOrdersController {
         String result = CommonUtil.httpRequest(url, "POST", template.toJSON());
         //删除该key-value
         TGlobal.tuan_package_map.remove(template.getToUser());
+        System.out.println("团实惠-普通订单微信模板result:"+result);
     }
 
     public void addTemplate2(TuanOrders order) {

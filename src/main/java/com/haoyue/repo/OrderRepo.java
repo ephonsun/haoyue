@@ -46,4 +46,8 @@ public interface OrderRepo extends BaseRepo<Order,Integer> {
     List<Order> findBySellerIdAndState(Integer sellerId, String state);
 
 
+    @Modifying
+    @Transactional
+    @Query(nativeQuery = true,value = "update orders set state='已完成订单' where id=?1")
+    void autoDone(Integer id);
 }

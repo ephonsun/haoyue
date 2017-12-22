@@ -34,7 +34,6 @@ public class Deliver {
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:SS", timezone = "GMT+8")
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(updatable = false)
     private Date createDate;//创建日期
 
     public Date getCreateDate() {

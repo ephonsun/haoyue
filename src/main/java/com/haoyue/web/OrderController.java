@@ -317,7 +317,7 @@ public class OrderController {
         }
     }
 
-    // https://www.cslapp.com/order/excel?sellerId=3&oids=订单号1=订单号2=订单号3=订单号4
+    // https://www.cslapp.com/order/excel?sellerId=3&oids=714=715
     // http://localhost:8080/order/excel?sellerId=1&state=已完成订单&openId=1
     @RequestMapping("/excel")
     public Result excel( String sellerId,String oids) throws IOException {
