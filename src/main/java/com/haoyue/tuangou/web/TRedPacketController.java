@@ -198,7 +198,7 @@ public class TRedPacketController {
         templateResponse3.setColor("#000000");
         templateResponse3.setName("keyword3");
         if (name.contains(coupon.getWxname())) {
-            name.replace(coupon.getWxname(), "");
+            name=name.replace(coupon.getWxname(), "");
         }
         templateResponse3.setValue("恭喜你和:" + name + " 瓜分红包成功，系统奖励优惠券已到账");
         list.add(templateResponse3);

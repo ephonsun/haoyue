@@ -287,15 +287,15 @@ public class OrderService {
         cell = row.createCell(1);
         cell.setCellValue("电话");
         cell = row.createCell(2);
-        cell.setCellValue("地址");
-        cell = row.createCell(3);
         cell.setCellValue("款号");
-        cell = row.createCell(4);
+        cell = row.createCell(3);
         cell.setCellValue("颜色");
-        cell = row.createCell(5);
+        cell = row.createCell(4);
         cell.setCellValue("尺码");
-        cell = row.createCell(6);
+        cell = row.createCell(5);
         cell.setCellValue("数量");
+        cell = row.createCell(6);
+        cell.setCellValue("地址");
         cell = row.createCell(7);
         cell.setCellValue("卖家备注");
         cell = row.createCell(8);
@@ -309,6 +309,9 @@ public class OrderService {
         List<Order> list=new ArrayList<>();
         String[] id=oids.split("=");
         for (int i=0;i<id.length;i++){
+            if (StringUtils.isNullOrBlank(id[i])){
+                continue;
+            }
             list.add(findOne(Integer.parseInt(id[i])));
         }
         if (list.size()!=0){
@@ -353,15 +356,15 @@ public class OrderService {
                 cell = row.createCell(1);
                 cell.setCellValue(phone);
                 cell = row.createCell(2);
-                cell.setCellValue(address);
-                cell = row.createCell(3);
                 cell.setCellValue(model);
-                cell = row.createCell(4);
+                cell = row.createCell(3);
                 cell.setCellValue(color);
-                cell = row.createCell(5);
+                cell = row.createCell(4);
                 cell.setCellValue(size);
-                cell = row.createCell(6);
+                cell = row.createCell(5);
                 cell.setCellValue(amount);
+                cell = row.createCell(6);
+                cell.setCellValue(address);
                 cell = row.createCell(7);
                 cell.setCellValue(buyComment);
                 cell = row.createCell(8);
