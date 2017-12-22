@@ -407,4 +407,34 @@ public class OrderService {
     }
 
 
+    public Iterable<Order> filter(Map<String, String> map) {
+        QOrder order = QOrder.order;
+        BooleanBuilder bd = new BooleanBuilder();
+        bd.and(order.active.eq(true));
+        for (String name : map.keySet()) {
+            String value = (String) map.get(name);
+            if (!(StringUtils.isNullOrBlank(value))) {
+                if (name.equals("ordercode")) {
+                    bd.and(order.orderCode.contains(value));
+                }
+                else if (name.equals("pname")){
+                    bd.and(order.products.any().pname.contains(value));
+                }
+                else if (name.equals("sellerId")){
+                    bd.and(order.sellerId.eq(Integer.parseInt(value)));
+                }
+                else if (name.equals("pcode")){
+                    bd.and(order.products.any().pcode.contains(value));
+                }
+                else if (name.equals("state")){
+                    bd.and(order.state.contains(value));
+                }
+                else if (name.equals("wxname")){
+                    bd.and(order.wxname.contains(value));
+                }
+            }
+        }
+        return orderRepo.findAll(bd.getValue(),new Sort(Sort.Direction.DESC,"id"));
+    }
+
 }

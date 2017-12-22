@@ -365,6 +365,15 @@ public class OrderController {
         return new Result(false, Global.do_success, null, null);
     }
 
+
+    //模糊查询 商品编号 订单编号 订单状态 买家名称 商品名称 买家昵称
+    // http://localhost:8080/order/query?sellerId=卖家ID&ordercode=订单号&pcode=商品号&pname=商品名&state=订单状态&wxname=买家昵称
+    @RequestMapping("/query")
+    public Result query(@RequestParam Map<String, String> map){
+        Iterable<Order> iterable= orderService.filter(map);
+        return new Result(false, Global.do_success, iterable, null);
+    }
+
     //每当买家订单付款后会更新该买家的会员信息
     public void saveMember(Order order) {
         String cid = order.getCustomerId() + "";
