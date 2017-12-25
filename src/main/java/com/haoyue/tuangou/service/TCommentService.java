@@ -1,5 +1,6 @@
 package com.haoyue.tuangou.service;
 
+import com.haoyue.tuangou.pojo.QTComment;
 import com.haoyue.tuangou.pojo.QTOrders;
 import com.haoyue.tuangou.pojo.TComment;
 import com.haoyue.tuangou.pojo.TOrders;
@@ -7,6 +8,7 @@ import com.haoyue.tuangou.repo.TCommentRepo;
 import com.haoyue.tuangou.repo.TOrdersRepo;
 import com.querydsl.core.BooleanBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -43,4 +45,10 @@ public class TCommentService {
         commentRepo.updateWxpic(openId,wxpic);
     }
 
+    public Iterable<TComment> findByProduct(String pid) {
+        QTComment comment=QTComment.tComment;
+        BooleanBuilder bd=new BooleanBuilder();
+        bd.and(comment.tProducts.id.eq(Integer.parseInt(pid)));
+        return commentRepo.findAll(bd.getValue(),new Sort(Sort.Direction.DESC,"id"));
+    }
 }

@@ -117,15 +117,15 @@ public class TProductsController {
             tProducts.setProductsTypes(list);
             TProducts products= tProductsService.update(tProducts);
             //保存---设置二维码
-            if (StringUtils.isNullOrBlank(products.getQrcode())){
-                try {
-                    String qrcode_url=tProductsService.qrcode(products.getSaleId(),products.getId()+"");
-                    products.setQrcode(TGlobal.aliyun_href+qrcode_url);
-                    tProductsService.update(products);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
-            }
+//            if (StringUtils.isNullOrBlank(products.getQrcode())){
+//                try {
+//                    String qrcode_url=tProductsService.qrcode(products.getSaleId(),products.getId()+"");
+//                    products.setQrcode(TGlobal.aliyun_href+qrcode_url);
+//                    tProductsService.update(products);
+//                } catch (FileNotFoundException e) {
+//                    e.printStackTrace();
+//                }
+//            }
             //更新商品分类名称
             tProductsTypesNameService.update(tProducts.getSaleId(), tProducts.getTypes());
 

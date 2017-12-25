@@ -30,6 +30,7 @@ public class TComment {
     private String wxpic;
     private String openId;
     private String saleId;
+    private String ordercode;
     @Lob
     @Column(columnDefinition = "TEXT")
     private String pics;//评论图片
@@ -40,6 +41,14 @@ public class TComment {
     @Column(updatable=false)
     private Date createDate;//创建日期
 
+
+    public String getOrdercode() {
+        return ordercode;
+    }
+
+    public void setOrdercode(String ordercode) {
+        this.ordercode = ordercode;
+    }
 
     public String getCutwxname() {
         return cutwxname;

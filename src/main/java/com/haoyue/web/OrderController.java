@@ -278,9 +278,6 @@ public class OrderController {
                     random_str = random + "";
                 }
                 order.setLuckcode(String.valueOf(random));
-//                if(order.getCustomerId()==2468){
-//                    order.setLuckcode(Global.code);
-//                }
                 //判断是否中奖
                 String luckNumbers[] = luckDraw.getLackNumber().split("=");
                 for (String str : luckNumbers) {
@@ -313,6 +310,7 @@ public class OrderController {
             if (!state.equals(Global.order_unpay) && !state.equals(Global.order_luckdraw_unpay)) {
                 addTemplate(order);
             }
+            orderService.update(order);
             return new Result(false, Global.do_success, order, null);
         }
     }

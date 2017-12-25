@@ -456,4 +456,8 @@ public class OrderService {
     public void autoDone(Integer id) {
         orderRepo.autoDone(id);
     }
+
+    public  List<Order> findUnComment(String openId, String sellerId) {
+        return orderRepo.findUnComment(openId,sellerId);
+    }
 }

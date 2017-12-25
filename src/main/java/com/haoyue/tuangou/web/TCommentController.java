@@ -42,14 +42,17 @@ public class TCommentController {
         if (!StringUtils.isNullOrBlank(wxname)){
             char first=wxname.charAt(0);
             comment.setCutwxname(first+"***");
+        }else {
+            comment.setCutwxname("?***");
         }
         commentService.save(comment);
         TOrders orders = ordersService.findOne(Integer.parseInt(oid));
         orders.setComment(comment);
-        ordersService.update(orders);
         orders.setIscomment(true);
+        ordersService.update(orders);
         comment.settProducts(orders.gettProducts());
         comment.settProductsTypes(orders.gettProductsTypes());
+        comment.setOrdercode(orders.getCode());
         commentService.save(comment);
         return new TResult(false, TGlobal.do_success, null);
     }
@@ -61,6 +64,9 @@ public class TCommentController {
         if (!StringUtils.isNullOrBlank(wxname)){
             char first=wxname.charAt(0);
             comment.setCutwxname(first+"***");
+        }
+        else {
+            comment.setCutwxname("?***");
         }
         comment.setCreateDate(new Date());
         commentService.save(comment);
@@ -107,17 +113,8 @@ public class TCommentController {
      // /tuan/tcomment/product?pid=商品ID
     @RequestMapping("/product")
     public TResult product(@RequestParam Map<String, String> map) {
-        Iterable<TOrders> iterable = ordersService.comments(map);
-        Iterable<TuanOrders> iterable2 = tuanOrdersService.comments(map);
-        List<TComment> list = new ArrayList<>();
-        List<TComment> sortlist = new ArrayList<>();
-        list.addAll(getComments1(iterable,"yes"));
-        list.addAll(getComments2(iterable2,"yes"));
-        list.stream()
-                .sorted((p1, p2) -> p1.getCreateDate().compareTo(p2.getCreateDate()))
-                .forEach(p -> sortlist.add(p));
-        Collections.reverse(sortlist);
-        return new TResult(false, TGlobal.do_success, sortlist);
+        Iterable<TComment> iterable= commentService.findByProduct(map.get("pid"));
+        return new TResult(false, TGlobal.do_success, iterable);
     }
 
 

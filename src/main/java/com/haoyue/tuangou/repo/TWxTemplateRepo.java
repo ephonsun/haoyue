@@ -18,6 +18,11 @@ public interface TWxTemplateRepo extends TBaseRepo<TWxTemplate,Integer>{
     @Query(nativeQuery = true,value = "update t_wx_template set active=false where active=true and end_date<?1")
     void autoFlush(Date date);
 
+    @Modifying
+    @Transactional
+    @Query(nativeQuery = true,value = "update t_wx_template set active=false where form_id like '%mock%'")
+    void autoFlush2();
+
     @Query(nativeQuery = true,value = "select distinct(open_id) from t_wx_template")
     List<String> findDistinctOpenId();
 
@@ -28,4 +33,5 @@ public interface TWxTemplateRepo extends TBaseRepo<TWxTemplate,Integer>{
     @Transactional
     @Query(nativeQuery = true,value = "update t_wx_template set active=false where id=?1")
     void updateActive(Integer id);
+
 }

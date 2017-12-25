@@ -35,6 +35,8 @@ public class CommentController {
     @Autowired
     private OrderService orderService;
 
+
+
     @RequestMapping("/reply")
     public Result reply(Integer id, String token, String message) {
         if (message.length() > 250) {
@@ -54,6 +56,7 @@ public class CommentController {
         comment.setPid(order.getProducts().get(0).getId()+"");
         commentService.save(comment);
         order.setComment(comment);
+        order.setIscomment(true);
         orderService.update(order);
         return new Result(false, Global.do_success, null, null);
     }
@@ -91,6 +94,13 @@ public class CommentController {
         if (list!=null&&list.size()!=0) {
             Collections.reverse(list);
         }
+        return new Result(false, Global.do_success, list, null);
+    }
+
+    //  指定买家待评价订单列表 /comment/uncomments?sellerId=卖家ID&openId=123
+    @RequestMapping("/uncomments")
+    public Result uncomment(String openId,String sellerId){
+        List<Order> list=orderService.findUnComment(openId,sellerId);
         return new Result(false, Global.do_success, list, null);
     }
 

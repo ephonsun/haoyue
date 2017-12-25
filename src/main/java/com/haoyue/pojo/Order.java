@@ -74,7 +74,16 @@ public class Order {
     private String wxname;
     private String luckcode;//抽奖号码
     private boolean isLuck=false;//是否中奖
+    private boolean iscomment=false;
 
+
+    public boolean getIscomment() {
+        return iscomment;
+    }
+
+    public void setIscomment(boolean iscomment) {
+        this.iscomment = iscomment;
+    }
 
     public boolean getIsLuck() {
         return isLuck;

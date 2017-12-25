@@ -36,6 +36,7 @@ public class TWxTemplateService {
     public void autoFlush(){
         Date date=new Date();
         wxTemplateRepo.autoFlush(date);
+        wxTemplateRepo.autoFlush2();
         inform();
     }
 
