@@ -21,7 +21,6 @@ public class TGlobal {
     public static  String server_busying="服务器正忙，请稍后再试";
     public static  String data_unright="传入数据不正常";
     public static boolean free_flag=false;
-    public static Map<String,String> access_tokens=new HashMap<>();
 
     //分页
     public static String pagenumber_not_right="页数不正常";

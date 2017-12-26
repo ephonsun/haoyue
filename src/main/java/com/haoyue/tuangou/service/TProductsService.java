@@ -196,21 +196,19 @@ public class TProductsService {
 
     //生成二维码
     public String qrcode(String saleId, String pid) throws FileNotFoundException {
-        String access_token = TGlobal.access_tokens.get(saleId);
-        if (StringUtils.isNullOrBlank(access_token)) {
-            String access_token_url = "https://api.weixin.qq.com/cgi-bin/token";
-            String param1 = "grant_type=client_credential&appid=wxf80175142f3214e1&secret=e0251029d53d21e84a650681af6139b1";
-            access_token = HttpRequest.sendPost(access_token_url, param1);
-            access_token = access_token.substring(access_token.indexOf(":") + 2, access_token.indexOf(",") - 1);
-            TGlobal.access_tokens.put(saleId, access_token);
-        }
+
+        String access_token_url = "https://api.weixin.qq.com/cgi-bin/token";
+        String param1 = "grant_type=client_credential&appid=wxf80175142f3214e1&secret=e0251029d53d21e84a650681af6139b1";
+        String access_token = HttpRequest.sendPost(access_token_url, param1);
+        access_token = access_token.substring(access_token.indexOf(":") + 2, access_token.indexOf(",") - 1);
+
         // d:/haoyue/erweima/1.jpg
         String filename = QRcode.getminiqrQr(access_token, pid);
-        File file=new File(filename);
+        File file = new File(filename);
         FileInputStream fileInputStream = new FileInputStream(file);
         TOSSClientUtil tossClientUtil = new TOSSClientUtil();
         // hymarket/qrcode/xx.jpg
-        filename = "qrcodes/tuan-"+pid+".jpg";
+        filename = "qrcodes/tuan-" + pid + ".jpg";
         tossClientUtil.uploadFile2OSS(fileInputStream, filename, null);
         //删除旧的数据
         file.delete();

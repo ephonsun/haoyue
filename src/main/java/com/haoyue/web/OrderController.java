@@ -71,8 +71,8 @@ public class OrderController {
     }
 
 
-    //  卖家后台取消待付款 /order/cancel?id=订单ID&sellerId=12
-    //  小程序取消待付款  /order/cancel?id=订单ID&openId=12
+    // // TODO: 2017/12/25 active分为买家和卖家 
+    //  删除已完成订单 ，取消待付款订单  /order/cancel?id=订单ID&openId=12
     @RequestMapping("/cancel")
     public Result cancel(Integer id, String openId, String sellerId) {
         Order order = orderService.findOne(id);
@@ -321,14 +321,6 @@ public class OrderController {
     public Result excel( String sellerId,String oids) throws IOException {
         return orderService.excel(sellerId,oids);
     }
-
-    public static <T> List<T> copyIterator(Iterator<T> iter) {
-        List<T> copy = new ArrayList<T>();
-        while (iter.hasNext())
-            copy.add(iter.next());
-        return copy;
-    }
-
 
     @RequestMapping("/update")
     public Result update(Order order, String selleId, String changePrice) {

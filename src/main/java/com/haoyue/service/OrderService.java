@@ -119,7 +119,7 @@ public class OrderService {
 
             }
         }
-        return orderRepo.findAll(bd.getValue());
+        return orderRepo.findAll(bd.getValue(),new Sort(Sort.Direction.DESC,"id"));
     }
 
     public Order findOne(Integer id) {

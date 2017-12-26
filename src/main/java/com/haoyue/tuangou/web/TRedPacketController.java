@@ -198,7 +198,7 @@ public class TRedPacketController {
         templateResponse3.setColor("#000000");
         templateResponse3.setName("keyword3");
         if (name.contains(coupon.getWxname())) {
-            name=name.replace(coupon.getWxname(), "");
+            name = name.replace(coupon.getWxname(), "");
         }
         templateResponse3.setValue("恭喜你和:" + name + " 瓜分红包成功，系统奖励优惠券已到账");
         list.add(templateResponse3);
@@ -210,24 +210,22 @@ public class TRedPacketController {
         // todo  定向到优惠券页面
         template.setPage("pages/index/index");
         template.setToUser(coupon.getOpenId());
-        getTemplate(template, coupon.getFormId(),coupon.getSaleId());
+        getTemplate(template, coupon.getFormId(), coupon.getSaleId());
     }
 
-    public void getTemplate(Template template, String formId,String saleId) {
+    public void getTemplate(Template template, String formId, String saleId) {
         //模板信息通知用户
         //获取 access_token
-        String access_token=TGlobal.access_tokens.get(saleId);
-        if (StringUtils.isNullOrBlank(access_token)) {
-            String access_token_url = "https://api.weixin.qq.com/cgi-bin/token";
-            String param1 = "grant_type=client_credential&appid=wxf80175142f3214e1&secret=e0251029d53d21e84a650681af6139b1";
-            access_token = HttpRequest.sendPost(access_token_url, param1);
-            access_token = access_token.substring(access_token.indexOf(":") + 2, access_token.indexOf(",") - 1);
-            TGlobal.access_tokens.put(saleId,access_token);
-        }//发送模板信息
+        String access_token_url = "https://api.weixin.qq.com/cgi-bin/token";
+        String param1 = "grant_type=client_credential&appid=wxf80175142f3214e1&secret=e0251029d53d21e84a650681af6139b1";
+        String access_token = HttpRequest.sendPost(access_token_url, param1);
+        access_token = access_token.substring(access_token.indexOf(":") + 2, access_token.indexOf(",") - 1);
+
+        //发送模板信息
         template.setForm_id(formId);
         String url = "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token=" + access_token + "&form_id=" + formId;
         String result = CommonUtil.httpRequest(url, "POST", template.toJSON());
-        System.out.println("红包通知："+result);
+        System.out.println("红包通知：" + result);
     }
 
 }

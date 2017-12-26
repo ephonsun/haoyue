@@ -102,10 +102,10 @@ public class TuanOrdersController {
             tuanOrders.settProducts(products);
             tuanOrders.settProductsTypes(productsTypes);
             tuanOrders.setHours(products.getTuanTimes());
-            String wxname=tuanOrders.getWxname();
-            if (!StringUtils.isNullOrBlank(wxname)){
-                char first=wxname.charAt(0);
-                tuanOrders.setCutwxname(first+"***");
+            String wxname = tuanOrders.getWxname();
+            if (!StringUtils.isNullOrBlank(wxname)) {
+                char first = wxname.charAt(0);
+                tuanOrders.setCutwxname(first + "***");
             }
             //房主
             if (tuanOrders.getIsowner()) {
@@ -487,8 +487,8 @@ public class TuanOrdersController {
         templateResponse4.setValue(StringUtils.formDateToStr(order.getStartDate()));
         list.add(templateResponse4);
 
-        String message="您的商品很快就飞奔到您手上咯";
-        String page="pages/index/index";
+        String message = "您的商品很快就飞奔到您手上咯";
+        String page = "pages/index/index";
 //        if (order.getTotalPrice()>0){
 //            message="恭喜你获得一次0元购的机会，有效期8小时，点击免费挑选...暂未开启";
 //            page="pages/index/index";
@@ -505,20 +505,16 @@ public class TuanOrdersController {
         template.setTopColor("#000000");
         template.setPage(page);
         template.setToUser(order.getOpenId());
-        getTemplate(template,order.getSaleId());
+        getTemplate(template, order.getSaleId());
     }
 
-    public void getTemplate(Template template,String saleId) {
+    public void getTemplate(Template template, String saleId) {
         //模板信息通知用户
         //获取 access_token
-        String access_token=TGlobal.access_tokens.get(saleId);
-        if (StringUtils.isNullOrBlank(access_token)) {
-            String access_token_url = "https://api.weixin.qq.com/cgi-bin/token";
-            String param1 = "grant_type=client_credential&appid=wxf80175142f3214e1&secret=e0251029d53d21e84a650681af6139b1";
-            access_token = HttpRequest.sendPost(access_token_url, param1);
-            access_token = access_token.substring(access_token.indexOf(":") + 2, access_token.indexOf(",") - 1);
-            TGlobal.access_tokens.put(saleId,access_token);
-        }
+        String access_token_url = "https://api.weixin.qq.com/cgi-bin/token";
+        String param1 = "grant_type=client_credential&appid=wxf80175142f3214e1&secret=e0251029d53d21e84a650681af6139b1";
+        String access_token = HttpRequest.sendPost(access_token_url, param1);
+        access_token = access_token.substring(access_token.indexOf(":") + 2, access_token.indexOf(",") - 1);
         //发送模板信息
         String form_id = TGlobal.tuan_package_map.get(template.getToUser());
         template.setForm_id(form_id);
@@ -526,7 +522,7 @@ public class TuanOrdersController {
         String result = CommonUtil.httpRequest(url, "POST", template.toJSON());
         //删除该key-value
         TGlobal.tuan_package_map.remove(template.getToUser());
-        System.out.println("团实惠-团购订单微信模板result:"+result);
+        System.out.println("团实惠-团购订单微信模板result:" + result);
     }
 
     public void addTemplate2(TuanOrders order) {
@@ -574,14 +570,10 @@ public class TuanOrdersController {
     public void getTemplate2(Template template, TuanOrders orders) {
         //模板信息通知用户
         //获取 access_token
-        String access_token=TGlobal.access_tokens.get(orders.getSaleId());
-        if (StringUtils.isNullOrBlank(access_token)) {
-            String access_token_url = "https://api.weixin.qq.com/cgi-bin/token";
-            String param1 = "grant_type=client_credential&appid=wxf80175142f3214e1&secret=e0251029d53d21e84a650681af6139b1";
-            access_token = HttpRequest.sendPost(access_token_url, param1);
-            access_token = access_token.substring(access_token.indexOf(":") + 2, access_token.indexOf(",") - 1);
-            TGlobal.access_tokens.put(orders.getSaleId(),access_token);
-        }
+        String access_token_url = "https://api.weixin.qq.com/cgi-bin/token";
+        String param1 = "grant_type=client_credential&appid=wxf80175142f3214e1&secret=e0251029d53d21e84a650681af6139b1";
+        String access_token = HttpRequest.sendPost(access_token_url, param1);
+        access_token = access_token.substring(access_token.indexOf(":") + 2, access_token.indexOf(",") - 1);
         //发送模板信息
         String form_id = orders.getFormId();
         template.setForm_id(form_id);

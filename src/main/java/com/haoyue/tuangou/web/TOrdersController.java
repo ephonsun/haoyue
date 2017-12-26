@@ -1,8 +1,6 @@
 package com.haoyue.tuangou.web;
 
 
-
-
 import com.haoyue.tuangou.pojo.*;
 import com.haoyue.tuangou.service.*;
 import com.haoyue.tuangou.utils.CommonUtil;
@@ -50,10 +48,10 @@ public class TOrdersController {
 
     @RequestMapping("/save")
     @Transactional
-    public TResult save(TOrders tOrders, String pid, String ptypeId, TDeliver tdeliver,String couponId) {
+    public TResult save(TOrders tOrders, String pid, String ptypeId, TDeliver tdeliver, String couponId) {
         //判断用户openId是否为空
-        if (StringUtils.isNullOrBlank(tOrders.getOpenId())||tOrders.getOpenId().equals("undefined")){
-            return new TResult(true,TGlobal.openid_isnull,null);
+        if (StringUtils.isNullOrBlank(tOrders.getOpenId()) || tOrders.getOpenId().equals("undefined")) {
+            return new TResult(true, TGlobal.openid_isnull, null);
         }
         TOrders orders = new TOrders();
         // 加入线程锁，避免code重复
@@ -73,12 +71,12 @@ public class TOrdersController {
             orders.settProductsTypes(tProductsTypes);
             orders.setTotalPrice(orders.getDeliverPrice() + orders.getProductPrice() * orders.getAmount());
             //是否使用优惠券
-            if (!StringUtils.isNullOrBlank(couponId)){
-                TCoupon coupon= tcouponService.findOne(Integer.parseInt(couponId));
-                if (coupon.getEndDate().before(new Date())){
+            if (!StringUtils.isNullOrBlank(couponId)) {
+                TCoupon coupon = tcouponService.findOne(Integer.parseInt(couponId));
+                if (coupon.getEndDate().before(new Date())) {
                     return new TResult(true, TGlobal.coupon_expire, null);
                 }
-                orders.setTotalPrice(orders.getTotalPrice()-coupon.getMoney());
+                orders.setTotalPrice(orders.getTotalPrice() - coupon.getMoney());
                 //更新优惠券信息
                 coupon.setIsuse(true);
                 tcouponService.save(coupon);
@@ -120,19 +118,19 @@ public class TOrdersController {
             //// TODO: 2017/11/28 存储零元购信息  失效日期
             freeorder(orders);
             //更新tdictionary表
-            TDictionarys tDictionarys= tDictionarysService.findByTodaySaleId(orders.getSaleId());
-            tDictionarys.setTurnover(tDictionarys.getTurnover()+orders.getTotalPrice());
-            tDictionarys.setBuyers(tDictionarys.getBuyers()+1);
+            TDictionarys tDictionarys = tDictionarysService.findByTodaySaleId(orders.getSaleId());
+            tDictionarys.setTurnover(tDictionarys.getTurnover() + orders.getTotalPrice());
+            tDictionarys.setBuyers(tDictionarys.getBuyers() + 1);
             tDictionarysService.update(tDictionarys);
         }
         tOrdersService.update(orders);
         return new TResult(false, TGlobal.do_success, orders);
     }
 
-    public void freeorder(TOrders orders){
-        Date date=new Date();
-        Calendar calendar=Calendar.getInstance();
-        calendar.add(Calendar.HOUR,8);
+    public void freeorder(TOrders orders) {
+        Date date = new Date();
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.HOUR, 8);
         TFreeShopping freeShopping = new TFreeShopping();
         freeShopping.setCreateDate(date);
         freeShopping.setEndDate(calendar.getTime());
@@ -201,30 +199,30 @@ public class TOrdersController {
             tMixOrders.setOid(tOrders.getId());
             list.add(tMixOrders);
         }
-        while (iterator2.hasNext()){
+        while (iterator2.hasNext()) {
             TMixOrders tMixOrders = new TMixOrders();
-            TuanOrders tuanOrders=iterator2.next();
+            TuanOrders tuanOrders = iterator2.next();
             tMixOrders.setOid(tuanOrders.getId());
             tMixOrders.setDate(tuanOrders.getStartDate());
             tMixOrders.setIstuan(true);
             list.add(tMixOrders);
         }
-        if (list.size()==0){
+        if (list.size() == 0) {
             return new TResult(false, TGlobal.do_success, null);
         }
         //对TMixOrders中的数据按照时间排序
-        List<TMixOrders> list2=new ArrayList<>();
+        List<TMixOrders> list2 = new ArrayList<>();
         list.stream()
-                .sorted((p1,p2)->(p1.getDate().compareTo(p2.getDate())))
-                .forEach(p->list2.add(p));
+                .sorted((p1, p2) -> (p1.getDate().compareTo(p2.getDate())))
+                .forEach(p -> list2.add(p));
         //遍历list2，获取订单，封装结果集objects
-        List<Object> objects=new ArrayList<>();
-        for (int i=0;i<list2.size();i++){
-            TMixOrders tMixOrders=list2.get(i);
-            if (tMixOrders.istuan()){
+        List<Object> objects = new ArrayList<>();
+        for (int i = 0; i < list2.size(); i++) {
+            TMixOrders tMixOrders = list2.get(i);
+            if (tMixOrders.istuan()) {
                 //团购订单
                 objects.add(tuanOrdersService.findOne(tMixOrders.getOid()));
-            }else {
+            } else {
                 //普通订单
                 objects.add(tOrdersService.findOne(tMixOrders.getOid()));
             }
@@ -234,9 +232,9 @@ public class TOrdersController {
 
     //   /tuan/torders/unreceive?saleId=12&openId=21
     @RequestMapping("/unreceive")
-    public TResult unreceive(String saleId, String openId){
+    public TResult unreceive(String saleId, String openId) {
         //普通订单待收货
-        String unreceive= "unreceive";
+        String unreceive = "unreceive";
         Iterable<TOrders> iterable1 = tOrdersService.clist(saleId, openId, unreceive);
         //团购订单待收货
         Iterable<TuanOrders> iterable2 = tuanOrdersService.unreceive(saleId, openId);
@@ -251,30 +249,30 @@ public class TOrdersController {
             tMixOrders.setOid(tOrders.getId());
             list.add(tMixOrders);
         }
-        while (iterator2.hasNext()){
+        while (iterator2.hasNext()) {
             TMixOrders tMixOrders = new TMixOrders();
-            TuanOrders tuanOrders=iterator2.next();
+            TuanOrders tuanOrders = iterator2.next();
             tMixOrders.setOid(tuanOrders.getId());
             tMixOrders.setDate(tuanOrders.getStartDate());
             tMixOrders.setIstuan(true);
             list.add(tMixOrders);
         }
-        if (list.size()==0){
+        if (list.size() == 0) {
             return new TResult(false, TGlobal.do_success, null);
         }
         //对TMixOrders中的数据按照时间排序
-        List<TMixOrders> list2=new ArrayList<>();
+        List<TMixOrders> list2 = new ArrayList<>();
         list.stream()
-                .sorted((p1,p2)->(p1.getDate().compareTo(p2.getDate())))
-                .forEach(p->list2.add(p));
+                .sorted((p1, p2) -> (p1.getDate().compareTo(p2.getDate())))
+                .forEach(p -> list2.add(p));
         //遍历list2，获取订单，封装结果集objects
-        List<Object> objects=new ArrayList<>();
-        for (int i=0;i<list2.size();i++){
-            TMixOrders tMixOrders=list2.get(i);
-            if (tMixOrders.istuan()){
+        List<Object> objects = new ArrayList<>();
+        for (int i = 0; i < list2.size(); i++) {
+            TMixOrders tMixOrders = list2.get(i);
+            if (tMixOrders.istuan()) {
                 //团购订单
                 objects.add(tuanOrdersService.findOne(tMixOrders.getOid()));
-            }else {
+            } else {
                 //普通订单
                 objects.add(tOrdersService.findOne(tMixOrders.getOid()));
             }
@@ -285,9 +283,9 @@ public class TOrdersController {
 
     //  已完成订单 /tuan/torders/finsh?saleId=12&openId=21
     @RequestMapping("/finsh")
-    public TResult finsh(String saleId, String openId){
+    public TResult finsh(String saleId, String openId) {
         //普通订单已完成
-        String finsh= "finsh";
+        String finsh = "finsh";
         Iterable<TOrders> iterable1 = tOrdersService.clist(saleId, openId, finsh);
         //团购订单已完成
         Iterable<TuanOrders> iterable2 = tuanOrdersService.finsh(saleId, openId);
@@ -302,30 +300,30 @@ public class TOrdersController {
             tMixOrders.setOid(tOrders.getId());
             list.add(tMixOrders);
         }
-        while (iterator2.hasNext()){
+        while (iterator2.hasNext()) {
             TMixOrders tMixOrders = new TMixOrders();
-            TuanOrders tuanOrders=iterator2.next();
+            TuanOrders tuanOrders = iterator2.next();
             tMixOrders.setOid(tuanOrders.getId());
             tMixOrders.setDate(tuanOrders.getStartDate());
             tMixOrders.setIstuan(true);
             list.add(tMixOrders);
         }
-        if (list.size()==0){
+        if (list.size() == 0) {
             return new TResult(false, TGlobal.do_success, null);
         }
         //对TMixOrders中的数据按照时间排序
-        List<TMixOrders> list2=new ArrayList<>();
+        List<TMixOrders> list2 = new ArrayList<>();
         list.stream()
-                .sorted((p1,p2)->(p1.getDate().compareTo(p2.getDate())))
-                .forEach(p->list2.add(p));
+                .sorted((p1, p2) -> (p1.getDate().compareTo(p2.getDate())))
+                .forEach(p -> list2.add(p));
         //遍历list2，获取订单，封装结果集objects
-        List<Object> objects=new ArrayList<>();
-        for (int i=0;i<list2.size();i++){
-            TMixOrders tMixOrders=list2.get(i);
-            if (tMixOrders.istuan()){
+        List<Object> objects = new ArrayList<>();
+        for (int i = 0; i < list2.size(); i++) {
+            TMixOrders tMixOrders = list2.get(i);
+            if (tMixOrders.istuan()) {
                 //团购订单
                 objects.add(tuanOrdersService.findOne(tMixOrders.getOid()));
-            }else {
+            } else {
                 //普通订单
                 objects.add(tOrdersService.findOne(tMixOrders.getOid()));
             }
@@ -335,34 +333,34 @@ public class TOrdersController {
 
 
     //付款通知
-    public void addTemplate(TOrders order){
-        List<TemplateResponse> list=new ArrayList<>();
-        TemplateResponse templateResponse1=new TemplateResponse();
+    public void addTemplate(TOrders order) {
+        List<TemplateResponse> list = new ArrayList<>();
+        TemplateResponse templateResponse1 = new TemplateResponse();
         templateResponse1.setColor("#000000");
         templateResponse1.setName("keyword1");
         templateResponse1.setValue(order.getCode());
         list.add(templateResponse1);
 
-        TemplateResponse templateResponse2=new TemplateResponse();
+        TemplateResponse templateResponse2 = new TemplateResponse();
         templateResponse2.setColor("#000000");
         templateResponse2.setName("keyword2");
         templateResponse2.setValue(order.gettProducts().getPname());
         list.add(templateResponse2);
 
-        TemplateResponse templateResponse3=new TemplateResponse();
+        TemplateResponse templateResponse3 = new TemplateResponse();
         templateResponse3.setColor("#000000");
         templateResponse3.setName("keyword3");
-        templateResponse3.setValue(order.getTotalPrice()+"");
+        templateResponse3.setValue(order.getTotalPrice() + "");
         list.add(templateResponse3);
 
-        TemplateResponse templateResponse4=new TemplateResponse();
+        TemplateResponse templateResponse4 = new TemplateResponse();
         templateResponse4.setColor("#000000");
         templateResponse4.setName("keyword4");
         templateResponse4.setValue(StringUtils.formDateToStr(order.getCreateDate()));
         list.add(templateResponse4);
 
-        String message="您的商品很快就飞奔到您手上咯";
-        String page="pages/index/index";
+        String message = "您的商品很快就飞奔到您手上咯";
+        String page = "pages/index/index";
 //        if (order.getTotalPrice()>0){
 //            message="恭喜你获得一次0元购的机会，有效期8小时，点击免费挑选...暂未开启";
 //            page="pages/index/index";
@@ -373,39 +371,34 @@ public class TOrdersController {
         templateResponse5.setValue(message);
         list.add(templateResponse5);
 
-        Template template=new Template();
+        Template template = new Template();
         template.setTemplateId("e4-w5VmQdVU8PABNhB0SBYF4D-0kvFC-bRBuD5nWpUE");
         template.setTemplateParamList(list);
         template.setTopColor("#000000");
         template.setPage(page);
         template.setToUser(order.getOpenId());
-        getTemplate(template,null,order.getSaleId());
+        getTemplate(template, null, order.getSaleId());
     }
 
 
-
-    public void getTemplate(Template template,String formId,String saleId){
+    public void getTemplate(Template template, String formId, String saleId) {
         //模板信息通知用户
         //获取 access_token
-        String access_token=TGlobal.access_tokens.get(saleId);
-        if (StringUtils.isNullOrBlank(access_token)) {
-            String access_token_url = "https://api.weixin.qq.com/cgi-bin/token";
-            String param1 = "grant_type=client_credential&appid=wxf80175142f3214e1&secret=e0251029d53d21e84a650681af6139b1";
-            access_token = HttpRequest.sendPost(access_token_url, param1);
-            access_token = access_token.substring(access_token.indexOf(":") + 2, access_token.indexOf(",") - 1);
-            TGlobal.access_tokens.put(saleId,access_token);
-        }
+        String access_token_url = "https://api.weixin.qq.com/cgi-bin/token";
+        String param1 = "grant_type=client_credential&appid=wxf80175142f3214e1&secret=e0251029d53d21e84a650681af6139b1";
+        String access_token = HttpRequest.sendPost(access_token_url, param1);
+        access_token = access_token.substring(access_token.indexOf(":") + 2, access_token.indexOf(",") - 1);
         //发送模板信息
-        String form_id="";
+        String form_id = "";
         if (StringUtils.isNullOrBlank(formId)) {
-             form_id= TGlobal.tuan_package_map.get(template.getToUser());
-        }else {
-            form_id=formId;
+            form_id = TGlobal.tuan_package_map.get(template.getToUser());
+        } else {
+            form_id = formId;
         }
         template.setForm_id(form_id);
-        String url="https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token="+access_token+"&form_id="+form_id;
-        String result= CommonUtil.httpRequest(url,"POST",template.toJSON());
-        System.out.println("团实惠-普通订单微信模板result:"+result);
+        String url = "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token=" + access_token + "&form_id=" + form_id;
+        String result = CommonUtil.httpRequest(url, "POST", template.toJSON());
+        System.out.println("团实惠-普通订单微信模板result:" + result);
         //删除该key-value
         TGlobal.tuan_package_map.remove(template.getToUser());
     }
@@ -414,53 +407,52 @@ public class TOrdersController {
     //卖家后台查询
     //  /tuan/torders/query?order_type=【1 普通订单 2 团购订单】&【code 单号 / startDate,endDate / wxname 买家昵称】
     @RequestMapping("/query")
-    public TResult query(@RequestParam Map<String, String> map){
+    public TResult query(@RequestParam Map<String, String> map) {
 
-        if (map.get("order_type").equals("1")){
-            Iterable<TOrders> iterable= tOrdersService.query(map);
-            return new TResult(false,TGlobal.do_success,iterable);
+        if (map.get("order_type").equals("1")) {
+            Iterable<TOrders> iterable = tOrdersService.query(map);
+            return new TResult(false, TGlobal.do_success, iterable);
         }
-        if (map.get("order_type").equals("2")){
-            Iterable<TuanOrders> iterable= tuanOrdersService.query(map);
-            return new TResult(false,TGlobal.do_success,iterable);
+        if (map.get("order_type").equals("2")) {
+            Iterable<TuanOrders> iterable = tuanOrdersService.query(map);
+            return new TResult(false, TGlobal.do_success, iterable);
         }
-        return new TResult(false,TGlobal.do_success,null);
+        return new TResult(false, TGlobal.do_success, null);
     }
 
 
     //   /tuan/torders/delay?openId=122&oid=订单ID
     @RequestMapping("/delay")
-    public TResult delay(String openId,String oid){
-        TOrders orders= tOrdersService.findOne(Integer.parseInt(oid));
-        if (!orders.getOpenId().equals(openId)){
-            return new TResult(true,TGlobal.have_no_right,null);
+    public TResult delay(String openId, String oid) {
+        TOrders orders = tOrdersService.findOne(Integer.parseInt(oid));
+        if (!orders.getOpenId().equals(openId)) {
+            return new TResult(true, TGlobal.have_no_right, null);
         }
-        if (orders.getIsdelay()){
-            return new TResult(true,TGlobal.already_delay,null);
+        if (orders.getIsdelay()) {
+            return new TResult(true, TGlobal.already_delay, null);
         }
         orders.setIsdelay(true);
         tOrdersService.save(orders);
-        return new TResult(false,TGlobal.do_success,null);
+        return new TResult(false, TGlobal.do_success, null);
     }
 
     //   /tuan/torders/leavemsg?oid=订单ID&saleId=122&leavemsg=卖家留言
     @RequestMapping("/leavemsg")
-    public TResult leavemsg(String saleId,String oid,String leavemsg){
-        TOrders orders=tOrdersService.findOne(Integer.parseInt(oid));
-        if (!orders.getSaleId().equals(saleId)){
-            return new TResult(true,TGlobal.have_no_right,null);
+    public TResult leavemsg(String saleId, String oid, String leavemsg) {
+        TOrders orders = tOrdersService.findOne(Integer.parseInt(oid));
+        if (!orders.getSaleId().equals(saleId)) {
+            return new TResult(true, TGlobal.have_no_right, null);
         }
         orders.setLeavemsg2(leavemsg);
         tOrdersService.update(orders);
-        return new TResult(false,TGlobal.do_success,null);
+        return new TResult(false, TGlobal.do_success, null);
     }
 
     //   http://localhost:8080/tuan/torders/excel?saleId=1&state=[不填/待付款订单/待发货订单/待收货订单/已完成订单]
     @RequestMapping("/excel")
-    public TResult excel(String saleId,String oids) throws IOException {
-        return tOrdersService.excel(saleId,oids);
+    public TResult excel(String saleId, String oids) throws IOException {
+        return tOrdersService.excel(saleId, oids);
     }
-
 
 
 }

@@ -67,7 +67,8 @@ public class Order {
     @Temporal(TemporalType.TIMESTAMP)
     private Date payDate;//支付日期
 
-    private boolean active = true;
+    private boolean active = true;//买家订单active
+    private boolean active_seller=true;//卖家订单active
     private boolean isApplyReturn = false;//是否申请退货
     private boolean isLuckDraw=false;//是否是抽奖订单
     private boolean isLuckDrawEnd=false;//抽奖是否结束
@@ -76,6 +77,14 @@ public class Order {
     private boolean isLuck=false;//是否中奖
     private boolean iscomment=false;
 
+
+    public boolean getIsActive_seller() {
+        return active_seller;
+    }
+
+    public void setActive_seller(boolean active_seller) {
+        this.active_seller = active_seller;
+    }
 
     public boolean getIscomment() {
         return iscomment;

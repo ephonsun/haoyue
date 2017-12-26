@@ -61,8 +61,6 @@ public class TSuperAdminController {
             System.out.println("刷新团购dictionarys表定时器执行了。。。。");
             //数据表 dictionarys 新增数据
             dictionarysService.addEachDay();
-            //清空 TGlobal.access_tokens
-            TGlobal.access_tokens.clear();
             //刷新访问通知active属性，发送通知
             wxTemplateService.autoFlush();
         }

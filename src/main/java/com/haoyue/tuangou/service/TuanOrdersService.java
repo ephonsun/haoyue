@@ -309,8 +309,8 @@ public class TuanOrdersService {
         templateResponse4.setColor("#000000");
         templateResponse4.setName("keyword4");
         templateResponse4.setValue(TGlobal.tuan_comment);
-        if (order.getTotalPrice()==0){
-            templateResponse4.setValue(TGlobal.tuan_comment+"(0元购订单除外)");
+        if (order.getTotalPrice() == 0) {
+            templateResponse4.setValue(TGlobal.tuan_comment + "(0元购订单除外)");
         }
         list.add(templateResponse4);
 
@@ -326,14 +326,10 @@ public class TuanOrdersService {
     public void getTemplate(Template template, TuanOrders orders) {
         //模板信息通知用户
         //获取 access_token
-        String access_token=TGlobal.access_tokens.get(orders.getSaleId());
-        if (StringUtils.isNullOrBlank(access_token)) {
-            String access_token_url = "https://api.weixin.qq.com/cgi-bin/token";
-            String param1 = "grant_type=client_credential&appid=wxf80175142f3214e1&secret=e0251029d53d21e84a650681af6139b1";
-            access_token = HttpRequest.sendPost(access_token_url, param1);
-            access_token = access_token.substring(access_token.indexOf(":") + 2, access_token.indexOf(",") - 1);
-            TGlobal.access_tokens.put(orders.getSaleId(),access_token);
-        }
+        String access_token_url = "https://api.weixin.qq.com/cgi-bin/token";
+        String param1 = "grant_type=client_credential&appid=wxf80175142f3214e1&secret=e0251029d53d21e84a650681af6139b1";
+        String access_token = HttpRequest.sendPost(access_token_url, param1);
+        access_token = access_token.substring(access_token.indexOf(":") + 2, access_token.indexOf(",") - 1);
         //发送模板信息
         String form_id = orders.getFormId();
         template.setForm_id(form_id);
@@ -348,7 +344,7 @@ public class TuanOrdersService {
         if (list != null && list.size() != 0) {
             for (TuanOrders orders : list) {
                 //过滤掉零元购订单
-                if (orders.getTotalPrice()==0){
+                if (orders.getTotalPrice() == 0) {
                     continue;
                 }
                 //拼接参数
@@ -364,10 +360,9 @@ public class TuanOrdersService {
     }
 
 
-
     public TResult excel(String saleId, String oids) throws IOException {
-        if (StringUtils.isNullOrBlank(oids)){
-            return new TResult(true,TGlobal.data_unright,null);
+        if (StringUtils.isNullOrBlank(oids)) {
+            return new TResult(true, TGlobal.data_unright, null);
         }
         //2007 及以上excel
         XSSFWorkbook workbook = new XSSFWorkbook();
@@ -398,44 +393,43 @@ public class TuanOrdersService {
         cell.setCellValue("是否团购");
 
         //需要转excel的订单
-        List<TuanOrders> list=new ArrayList<>();
-        String id[]=oids.split("=");
-        for (int i=0;i<id.length;i++){
+        List<TuanOrders> list = new ArrayList<>();
+        String id[] = oids.split("=");
+        for (int i = 0; i < id.length; i++) {
             list.add(findOne(Integer.parseInt(id[i])));
         }
 
-        if (list.size()!=0){
+        if (list.size() != 0) {
             //倒序
             Collections.reverse(list);
             //行号
-            int rowindex=1;
-            String name="";
-            String phone="";
-            String address="";
-            String model="";
-            String color="";
-            String size="";
-            String amount="";
-            String buyComment="";
-            String sellerComment="";
-            for (TuanOrders order:list){
+            int rowindex = 1;
+            String name = "";
+            String phone = "";
+            String address = "";
+            String model = "";
+            String color = "";
+            String size = "";
+            String amount = "";
+            String buyComment = "";
+            String sellerComment = "";
+            for (TuanOrders order : list) {
 
                 //获取数据
-                name=order.gettDeliver().getReceiver();
-                phone=order.gettDeliver().getPhone();
-                address=order.gettDeliver().getAddress();
-                model=order.gettProducts().getStyle();
-                color=order.gettProductsTypes().getColor();
-                size=order.gettProductsTypes().getSize();
-                amount=String.valueOf(order.getAmount());
-                buyComment=order.getLeavemsg();
-                sellerComment=order.getLeavemsg2();
+                name = order.gettDeliver().getReceiver();
+                phone = order.gettDeliver().getPhone();
+                address = order.gettDeliver().getAddress();
+                model = order.gettProducts().getStyle();
+                color = order.gettProductsTypes().getColor();
+                size = order.gettProductsTypes().getSize();
+                amount = String.valueOf(order.getAmount());
+                buyComment = order.getLeavemsg();
+                sellerComment = order.getLeavemsg2();
                 //校验数据
-                if (StringUtils.isNullOrBlank(name)||StringUtils.isNullOrBlank(phone)||StringUtils.isNullOrBlank(address))
-                {
+                if (StringUtils.isNullOrBlank(name) || StringUtils.isNullOrBlank(phone) || StringUtils.isNullOrBlank(address)) {
                     continue;
                 }
-                if (name.equals("undefined")||phone.equals("undefined")||address.equals("undefined")){
+                if (name.equals("undefined") || phone.equals("undefined") || address.equals("undefined")) {
                     continue;
                 }
 
@@ -469,7 +463,7 @@ public class TuanOrdersService {
         //获取项目根路径
         String relativelyPath = System.getProperty("user.dir");
         //把excel文件写入 haoyue/excel/ 文件夹下
-        String filename = relativelyPath + "/excel/" + new Date().getTime()  + ".xlsx";
+        String filename = relativelyPath + "/excel/" + new Date().getTime() + ".xlsx";
         String mkdis = relativelyPath + "/excel/";
         File file1 = new File(mkdis);
         if (!file1.isDirectory()) {
@@ -493,15 +487,15 @@ public class TuanOrdersService {
         }
         //删除缓存文件
         file.delete();
-        return new TResult(false,TGlobal.do_success,TGlobal.aliyun_href + filename);
+        return new TResult(false, TGlobal.do_success, TGlobal.aliyun_href + filename);
     }
 
 
     public void updateWxname(String openId, String wxname) {
-        tuanOrdersRepo.updateWxname(openId,wxname);
+        tuanOrdersRepo.updateWxname(openId, wxname);
     }
 
     public void updateWxpic(String openId, String wxname) {
-        tuanOrdersRepo.updateWxpic(openId,wxname);
+        tuanOrdersRepo.updateWxpic(openId, wxname);
     }
 }
