@@ -77,6 +77,7 @@ public class CustomerController {
         return new Result(false,Global.do_success,customer,null);
     }
 
+    //  /customer/getSessionKey?appId=小程序ID&code=12&secret=小程序secret
     @RequestMapping("/getSessionKey")
     public  Result getOpenId(String appId,String code,String secret){
         String response= HttpRequest.sendGet("https://api.weixin.qq.com/sns/jscode2session","appid="+appId+"&secret="+secret+"&js_code="+code+"&grant_type=authorization_code");

@@ -41,20 +41,8 @@ public class TUserBuyController {
             userBuy.setGender(tUserBuy.getGender());
             userBuy.setOpenId(tUserBuy.getOpenId());
         }
-        //更新微信名和微信头像
-        if (!tUserBuy.getWxname().equals(userBuy.getWxname())){
-            userBuy.setWxname(tUserBuy.getWxname());
-//            ordersService.updateWxname(userBuy.getOpenId(),tUserBuy.getWxname());
-//            tuanOrdersService.updateWxname(userBuy.getOpenId(),tUserBuy.getWxname());
-//            commentService.updateWxname(userBuy.getOpenId(),tUserBuy.getWxname());
-        }
-        if (tUserBuy.getWxpic().equals(userBuy.getWxpic())){
-            userBuy.setWxpic(tUserBuy.getWxpic());
-//            ordersService.updateWxpic(userBuy.getOpenId(),tUserBuy.getWxpic());
-//            tuanOrdersService.updateWxpic(userBuy.getOpenId(),tUserBuy.getWxpic());
-//            commentService.updateWxpic(userBuy.getOpenId(),tUserBuy.getWxpic());
-        }
-
+        userBuy.setWxname(tUserBuy.getWxname());
+        userBuy.setWxpic(tUserBuy.getWxpic());
         tUserBuyService.update(userBuy);
         return new TResult(false, TGlobal.do_success,userBuy);
     }

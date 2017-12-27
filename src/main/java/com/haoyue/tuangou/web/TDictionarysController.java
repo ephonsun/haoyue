@@ -57,7 +57,6 @@ public class TDictionarysController {
         return new TResult(false, TGlobal.do_success, null);
     }
 
-
     //   /tuan/tdictionary/list?saleId=12
     @RequestMapping("/list")
     public TResult list(String saleId){

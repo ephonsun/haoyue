@@ -49,7 +49,7 @@ public class TSuperAdminController {
             service.scheduleAtFixedRate(runnable2, 120, 300, TimeUnit.SECONDS);
             service.scheduleAtFixedRate(runnable3, 240, 300, TimeUnit.SECONDS);
             service.scheduleAtFixedRate(runnable4, 360, 3600, TimeUnit.SECONDS);
-           // service.scheduleAtFixedRate(runnable5, 420, 3600, TimeUnit.SECONDS);
+            service.scheduleAtFixedRate(runnable5, 420, 3600, TimeUnit.SECONDS);
             return "ok";
         }
         return "data_no_right";

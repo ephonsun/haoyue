@@ -1,9 +1,6 @@
 package com.haoyue.service;
 
-import com.haoyue.pojo.Member;
-import com.haoyue.pojo.Order;
-import com.haoyue.pojo.OrderTotalPrice;
-import com.haoyue.pojo.QOrder;
+import com.haoyue.pojo.*;
 import com.haoyue.repo.OrderRepo;
 import com.haoyue.untils.Global;
 import com.haoyue.untils.OSSClientUtil;
@@ -458,6 +455,7 @@ public class OrderService {
     }
 
     public  List<Order> findUnComment(String openId, String sellerId) {
-        return orderRepo.findUnComment(openId,sellerId);
+        Customer customer= customerService.findByOpenId(openId,sellerId);
+        return orderRepo.findUnComment(customer.getId(),sellerId);
     }
 }

@@ -63,7 +63,6 @@ public class TDictionarysService {
             tuanOrdersService.autofinsh();
             TGlobal.sendsms3.clear();
         }
-
     }
 
     public Iterable<TDictionarys> list(String saleId) {

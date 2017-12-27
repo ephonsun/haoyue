@@ -32,7 +32,6 @@ public class TDeliver {
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:SS", timezone = "GMT+8")
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(updatable = false)
     private Date sendDate;//发货日期
 
     public Date getSendDate() {
