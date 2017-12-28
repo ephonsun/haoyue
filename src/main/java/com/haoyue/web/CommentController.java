@@ -10,16 +10,14 @@ import com.haoyue.service.SellerService;
 import com.haoyue.untils.Global;
 import com.haoyue.untils.OSSClientUtil;
 import com.haoyue.untils.Result;
+import com.haoyue.untils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by LiJia on 2017/8/24.
@@ -36,7 +34,7 @@ public class CommentController {
     private OrderService orderService;
 
 
-
+   //  卖家回复  /comment/reply?id=评论记录的ID&token=卖家ID&message=回复内容
     @RequestMapping("/reply")
     public Result reply(Integer id, String token, String message) {
         if (message.length() > 250) {
@@ -45,7 +43,7 @@ public class CommentController {
         Comment comment = commentService.findOne(id);
         comment.setReversion(message);
         commentService.save(comment);
-        return new Result(false, Global.do_success, token);
+        return new Result(false, Global.do_success,null, token);
     }
 
     //   /comment/save?level=好评/中评/差评&message=评论内容&orderId=订单ID&openId=123&wxname=微信名称&sellerId=卖家ID&images=评论图片外链地址
@@ -54,6 +52,14 @@ public class CommentController {
         Order order=orderService.findOne(comment.getOrderId());
         comment.setCreateDate(new Date());
         comment.setPid(order.getProducts().get(0).getId()+"");
+        String wxname=comment.getWxname();
+        if (!StringUtils.isNullOrBlank(wxname)){
+            char first=wxname.charAt(0);
+            comment.setCutwxname(first+"***");
+        }
+        else {
+            comment.setCutwxname("?***");
+        }
         commentService.save(comment);
         order.setComment(comment);
         order.setIscomment(true);
@@ -65,7 +71,7 @@ public class CommentController {
     @RequestMapping("/uploadPics")
     public Result uploadPics(MultipartFile[] multipartFiles, Integer sellerId) throws MyException {
 
-        Seller seller = sellerService.findOne(sellerId);
+      //  Seller seller = sellerService.findOne(sellerId);
         StringBuffer stringBuffer = new StringBuffer();
         synchronized (Global.object4) {
             try {
@@ -74,15 +80,15 @@ public class CommentController {
                 e.printStackTrace();
             }
             for (MultipartFile multipartFile : multipartFiles) {
-                int kb = (int) (multipartFile.getSize() / 1024);
-                seller.setUploadFileSize(seller.getUploadFileSize() + kb);
+               // int kb = (int) (multipartFile.getSize() / 1024);
+               // seller.setUploadFileSize(seller.getUploadFileSize() + kb);
                 OSSClientUtil ossClientUtil = new OSSClientUtil();
                 String uploadUrl = ossClientUtil.uploadImg2Oss(multipartFile);
                 stringBuffer.append(Global.aliyun_href+uploadUrl);
                 stringBuffer.append(",");
             }
         }
-        sellerService.update2(seller);
+       // sellerService.update2(seller);
         return new Result(false, Global.do_success, stringBuffer.toString(), null);
     }
 
@@ -102,6 +108,13 @@ public class CommentController {
     public Result uncomment(String openId,String sellerId){
         List<Order> list=orderService.findUnComment(openId,sellerId);
         return new Result(false, Global.do_success, list, null);
+    }
+
+    // 卖家后台评论列表   /comment/list?sellerId=卖家ID&pageNumber=当前页，从0开始
+    @RequestMapping("/list")
+    public Result list(@RequestParam Map<String, String> map, @RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize) {
+        Iterable<Order> iterable= orderService.findCommentsBySeller(map,pageNumber,pageSize);
+        return new Result(false, Global.do_success,iterable , null);
     }
 
 }

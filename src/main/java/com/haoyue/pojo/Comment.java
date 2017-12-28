@@ -22,8 +22,13 @@ public class Comment {
     @Column(columnDefinition="TEXT")
     private String images;//评论晒图
     private Integer orderId;
+    // 在和数据库表字段映射时候该字段除外
+    @Transient
+    private Order order;
     private String  openId;
     private String wxname;
+    private String cutwxname;
+    private String wxpic;
     private Integer sellerId;//卖家ID
     private String reversion;//回复
     private String pid;
@@ -32,6 +37,30 @@ public class Comment {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(updatable=false)
     private Date createDate;//创建日期
+
+    public Order getOrder() {
+        return order;
+    }
+
+    public void setOrder(Order order) {
+        this.order = order;
+    }
+
+    public String getCutwxname() {
+        return cutwxname;
+    }
+
+    public void setCutwxname(String cutwxname) {
+        this.cutwxname = cutwxname;
+    }
+
+    public String getWxpic() {
+        return wxpic;
+    }
+
+    public void setWxpic(String wxpic) {
+        this.wxpic = wxpic;
+    }
 
     public String getImages() {
         return images;
