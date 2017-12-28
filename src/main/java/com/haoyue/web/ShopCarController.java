@@ -79,6 +79,7 @@ public class ShopCarController {
        return new Result(false,Global.do_success,shopCarService.save(shopCar,proId,shopCarDetail) ,null);
     }
 
+    // /shopCar/shopcar_by_pro?sellerId=1&pageNumber=页数，从0开始&pageSize=10
     @RequestMapping("/shopcar_by_pro")
     public Result listByProducts(@RequestParam Map<String, String> map,String sellerId,@RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize){
         List<Object> list=shopCarService.listByProducts(map,sellerId);
