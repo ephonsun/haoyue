@@ -94,6 +94,7 @@ public class ShopCarService {
 
     public List<Object> listByProducts(Map<String, String> map, String sellerId) {
         map.put("token", sellerId);
+        map.put("showdate","yes");
         //所有在售商品
         Iterable<Products> iterable = productsService.list(map);
         Iterator<Products> iterator = iterable.iterator();

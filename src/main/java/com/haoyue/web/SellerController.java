@@ -298,6 +298,7 @@ public class SellerController {
         Map<String, String> map = new HashMap<>();
         map.put("token", sellerId + "");
         map.put("active", "true");
+        map.put("showdate","yes");
         Iterable<Products> iterable = productsService.plist(map, Global.pageNumber, pageSize);
         objects.add(iterable);
         objects.add(seller.getLunbo());

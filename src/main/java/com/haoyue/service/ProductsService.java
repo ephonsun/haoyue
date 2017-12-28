@@ -60,37 +60,6 @@ public class ProductsService {
     }
 
 
-//   后期可能会用到
-//    public String desc(String productionDesc) throws IOException {
-//
-//        String[] splits = productionDesc.split("&");
-//        productionDesc = "";
-//        //判断是图片还是文字
-//        for (int i = 0; i < splits.length; i++) {
-//            String str = splits[i];
-//            if (str.contains("base64") && str.contains("data:image")) {
-//                String filename = str.substring(str.indexOf("/") + 1, str.lastIndexOf(";"));
-//                String base64 = str.split(",")[1];
-//                BASE64Decoder decode = new BASE64Decoder();
-//                byte[] b = null;
-//                try {
-//                    b = decode.decodeBuffer(base64);
-//                    String uploadUrl = new QiNiuUpload().upload(b, "." + filename);
-//                    splits[i] = Global.aliyun_href + uploadUrl;
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//            if ((i + 1) == splits.length) {
-//                productionDesc += splits[i];
-//            } else {
-//                productionDesc += splits[i] + "&";
-//            }
-//        }
-//        return productionDesc;
-//    }
-
-
     public Iterable<Products> list(Map<String, String> map) {
 
         QProducts pro = QProducts.products;
@@ -117,6 +86,9 @@ public class ProductsService {
                 if (name.equals("active")){
                     bd.and(pro.active.eq(Boolean.valueOf(value)));
                 }
+                if (name.equals("showdate")){
+                    bd.and(pro.showDate.before(new Date()));
+                }
 
             }
         }
@@ -140,6 +112,13 @@ public class ProductsService {
                 }
                 if (name.equals("active")) {
                     bd.and(pro.active.eq(Boolean.valueOf(value)));
+                }
+                if (name.equals("showdate")){
+                    if (value.equals("yes")){
+                        bd.and(pro.showDate.before(new Date()));
+                    }else {
+                        bd.and(pro.showDate.after(new Date()));
+                    }
                 }
             }
         }

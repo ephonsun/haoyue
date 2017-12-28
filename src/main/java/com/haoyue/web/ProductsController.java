@@ -37,6 +37,10 @@ public class ProductsController {
     @Autowired
     private LuckDrawService luckDrawService;
 
+
+    //  /seller/pro/list?pageNumber=页数(后台默认为0)&pageSize=每页显示数(后台默认为10)&token=1&active=true
+    //  商品列表-在售  追加参数 showdate=yes
+    //   商品列表-预售  追加参数 showdate=no
     @RequestMapping("/list")
     public Result list(@RequestParam Map<String, String> map, @RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize) {
         return new Result(false, "", productsService.plist(map, pageNumber, pageSize), map.get("token"));
@@ -144,7 +148,16 @@ public class ProductsController {
     }
 
     @RequestMapping("/save")
-    public Result update_all(Products products, String token, String protypes) throws FileNotFoundException {
+    public Result update_all(Products products, String token, String protypes,Integer showHours) throws FileNotFoundException {
+        //上线时间
+        if (showHours!=null&&showHours!=0){
+            Calendar calendar=Calendar.getInstance();
+            calendar.add(Calendar.HOUR,showHours);
+            products.setShowDate(calendar.getTime());
+        }else {
+            products.setShowDate(new Date());
+        }
+
         boolean flag = false;
         if (products.getId() != null) {
             flag = true;
@@ -240,45 +253,4 @@ public class ProductsController {
         return new Result(false, Global.do_success, products, null);
     }
 
-//    /**
-//     * 旧版商品保存
-//     *
-//     * @param products
-//     * @param token
-//     * @param dictionaryses 商品分类
-//     * @return
-//     */
-//    @RequestMapping("/save")
-//    public Result save(Products products, String token, String dictionaryses) {
-//        Seller seller = sellerService.findOne(Integer.parseInt(token));
-//        try {
-//            String[] splits = dictionaryses.split("=");
-//            List<ProdutsType> list = new ArrayList<>();
-//            for (String str : splits) {
-//                if (StringUtils.isNullOrBlank(str)) {
-//                    continue;
-//                }
-//                String[] strings = str.split(",");
-//                if (Integer.parseInt(strings[3]) == 0) {
-//                    continue;
-//                }
-//                ProdutsType produtsType = new ProdutsType();
-//                produtsType.setColor(strings[0]);
-//                produtsType.setSize(strings[1]);
-//                produtsType.setPriceNew(Double.valueOf(strings[2]));
-//                produtsType.setAmount(Integer.parseInt(strings[3]));
-//                produtsType.setSellerId(Integer.parseInt(token));
-//                list.add(produtsType);
-//            }
-//            products.setProdutsTypes(list);
-//            products.setSellerId(seller.getSellerId());
-//            productsService.save(products);
-//            //蒋商品信息注入 dictionary
-//            dictionaryService.addProduct(products);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return new Result(false, e.getMessage(), null);
-//        }
-//        return new Result(false, Global.do_success, products.getId(), token);
-//    }
 }

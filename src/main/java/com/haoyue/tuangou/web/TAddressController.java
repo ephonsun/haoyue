@@ -28,7 +28,6 @@ public class TAddressController {
         return new TResult(false, TGlobal.do_success,null);
     }
 
-
     // http://localhost:8080/tuan/taddress/findone?openId=12&saleId=21
     @RequestMapping("/findone")
     public TResult findOne(String openId,String saleId){

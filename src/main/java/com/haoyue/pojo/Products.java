@@ -48,6 +48,11 @@ public class Products {
     @Temporal(TemporalType.DATE)
     @Column(updatable=false)
     private Date createDate;//创建日期
+
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:SS", timezone="GMT+8")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date showDate;//发布日期
+
     private boolean active=true;//是否上架
 
     //宝贝参数
@@ -69,6 +74,15 @@ public class Products {
     private boolean isLuckDrawEnd=false;
     private int views;
     private String qrcode;//二维码
+
+
+    public Date getShowDate() {
+        return showDate;
+    }
+
+    public void setShowDate(Date showDate) {
+        this.showDate = showDate;
+    }
 
     public String getQrcode() {
         return qrcode;
