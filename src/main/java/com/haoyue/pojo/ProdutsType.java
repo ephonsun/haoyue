@@ -30,6 +30,15 @@ public class ProdutsType {
     private boolean Active=true;
     private boolean isDiscount=false;//是否打折
     private Double discountPrice;//折扣价
+    private Double secondKillPrice;//秒杀价
+
+    public Double getSecondKillPrice() {
+        return secondKillPrice;
+    }
+
+    public void setSecondKillPrice(Double secondKillPrice) {
+        this.secondKillPrice = secondKillPrice;
+    }
 
     public boolean getIsDiscount() {
         return isDiscount;

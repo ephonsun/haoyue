@@ -63,6 +63,12 @@ public class StringUtils {
         return nomat;//2017-9-19 16:28:25
     }
 
+    public static Date formatDate2(String str) throws ParseException {
+        SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//20170919162825
+        Date nomat= sdf.parse(str);
+        return nomat;//2017-9-19 16:28:25
+    }
+
     public static String formDateToStr(Date date){
         SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return sdf.format(date);

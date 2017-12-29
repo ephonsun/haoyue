@@ -98,6 +98,7 @@ public class ProductsService {
     public Iterable<Products> plist(Map<String, String> map, int pagenumber, int pagesize) {
         QProducts pro = QProducts.products;
         BooleanBuilder bd = new BooleanBuilder();
+        Date date=new Date();
         for (String name : map.keySet()) {
             String value = (String) map.get(name);
             if (!(StringUtils.isNullOrBlank(value))) {
@@ -110,30 +111,21 @@ public class ProductsService {
                 if (name.equals("ptypename")) {
                     bd.and(pro.ptypeName.contains(value));
                 }
+                // 预售商品放在仓库列表中
                 if (name.equals("active")) {
                     bd.and(pro.active.eq(Boolean.valueOf(value)));
+                    bd.or(pro.showDate.after(date));
                 }
-                if (name.equals("showdate")){
-                    if (value.equals("yes")){
-                        bd.and(pro.showDate.before(new Date()));
-                    }else {
-                        bd.and(pro.showDate.after(new Date()));
-                    }
+                if (name.equals("killproduct")){
+                    bd.and(pro.issecondkill.eq(true));
+                    bd.and(pro.secondKillStart.before(date));
+                    bd.and(pro.secondKillEnd.after(date));
                 }
             }
         }
         return productsRepo.findAll(bd.getValue(), new PageRequest(pagenumber, pagesize, new Sort(Sort.Direction.DESC, new String[]{"monthSale"})));
     }
 
-    public Result downProduct(String id, String token) {
-        Products product = productsRepo.findOne(Integer.parseInt(id));
-        if (product.getSellerId() != Integer.parseInt(token)) {
-            return new Result(true, Global.have_no_right, token);
-        }
-        product.setActive(false);
-        productsRepo.save(product);
-        return new Result(false, Global.do_success, token);
-    }
 
     public Result updateDesc(Map<String, String> map) {
         Products product = null;
@@ -159,6 +151,11 @@ public class ProductsService {
         }
         //商品上架
         else if (!StringUtils.isNullOrBlank(map.get("active_pro"))) {
+            Date date=new Date();
+            //如果商品为预售商品，则直接上架后可购买
+            if (product.getShowDate().after(date)){
+                product.setShowDate(date);
+            }
             product.setActive(true);
             List<ProdutsType> produtsTypes = product.getProdutsTypes();
             for (ProdutsType produtsType : produtsTypes) {
@@ -249,5 +246,9 @@ public class ProductsService {
         //删除已上传文件
         file.delete();
         return filename;
+    }
+
+    public void autoFlush() {
+        productsRepo.autoFlush(new Date());
     }
 }

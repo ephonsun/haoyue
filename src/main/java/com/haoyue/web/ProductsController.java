@@ -11,8 +11,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.transaction.Transactional;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.*;
 
 /**
@@ -38,9 +40,10 @@ public class ProductsController {
     private LuckDrawService luckDrawService;
 
 
-    //  /seller/pro/list?pageNumber=页数(后台默认为0)&pageSize=每页显示数(后台默认为10)&token=1&active=true
+    //  http://localhost:8080/seller/pro/list?token=1&active=false
     //  商品列表-在售  追加参数 showdate=yes
     //   商品列表-预售  追加参数 showdate=no
+    // 秒杀商品列表  追加参数 killproduct=true
     @RequestMapping("/list")
     public Result list(@RequestParam Map<String, String> map, @RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize) {
         return new Result(false, "", productsService.plist(map, pageNumber, pageSize), map.get("token"));
@@ -148,7 +151,8 @@ public class ProductsController {
     }
 
     @RequestMapping("/save")
-    public Result update_all(Products products, String token, String protypes,Integer showHours) throws FileNotFoundException {
+    @Transactional
+    public Result update_all(Products products, String token, String protypes,Integer showHours,String killStart,String killEnd) throws FileNotFoundException, ParseException {
         //上线时间
         if (showHours!=null&&showHours!=0){
             Calendar calendar=Calendar.getInstance();
@@ -156,6 +160,11 @@ public class ProductsController {
             products.setShowDate(calendar.getTime());
         }else {
             products.setShowDate(new Date());
+        }
+        //秒杀
+        if (products.getIssecondkill()){
+            products.setSecondKillStart(StringUtils.formatDate2(killStart));
+            products.setSecondKillEnd(StringUtils.formatDate2(killEnd));
         }
 
         boolean flag = false;
@@ -168,11 +177,27 @@ public class ProductsController {
         List<ProdutsType> produtsTypes = new ArrayList<>();
         for (int i = 0; i < strs.length; i++) {
             String[] strings = strs[i].split(",");
-            String color = strings[0];//颜色
-            String size = strings[1];//尺码
-            String discount = strings[2];//折扣价
-            String price = strings[3];//原价
-            String amount = strings[4];//库存
+            String color=null;
+            String size=null;
+            String discount=null;
+            String price=null;
+            String secondKillPrice="0";
+            String amount=null;
+            if (strings.length==5){
+                color = strings[0];//颜色
+                size = strings[1];//尺码
+                discount = strings[2];//折扣价
+                price = strings[3];//原价
+                amount = strings[4];//库存
+            }else {
+                color = strings[0];//颜色
+                size = strings[1];//尺码
+                discount = strings[2];//折扣价
+                price = strings[3];//原价
+                secondKillPrice=strings[4];//秒杀价
+                amount = strings[5];//库存
+            }
+
             if (amount.equals("0")) {
                 continue;
             }
@@ -193,6 +218,7 @@ public class ProductsController {
             produtsType.setAmount(Integer.parseInt(amount));
             produtsType.setActive(true);
             produtsType.setPriceOld(0.0);
+            produtsType.setSecondKillPrice(Double.valueOf(secondKillPrice));
             produtsType.setSize(size);
             produtsType.setSellerId(Integer.parseInt(token));
             if (produtsType.getDiscountPrice() > produtsType.getPriceNew()) {
@@ -252,5 +278,6 @@ public class ProductsController {
         }
         return new Result(false, Global.do_success, products, null);
     }
+
 
 }

@@ -53,6 +53,15 @@ public class Products {
     @Temporal(TemporalType.TIMESTAMP)
     private Date showDate;//发布日期
 
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:SS", timezone="GMT+8")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date secondKillStart;//秒杀开始日期
+
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:SS", timezone="GMT+8")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date secondKillEnd;//秒杀结束日期
+
+    private boolean issecondkill=false;//是否秒杀
     private boolean active=true;//是否上架
 
     //宝贝参数
@@ -75,6 +84,30 @@ public class Products {
     private int views;
     private String qrcode;//二维码
 
+
+    public boolean getIssecondkill() {
+        return issecondkill;
+    }
+
+    public void setIssecondkill(boolean issecondkill) {
+        this.issecondkill = issecondkill;
+    }
+
+    public Date getSecondKillStart() {
+        return secondKillStart;
+    }
+
+    public void setSecondKillStart(Date secondKillStart) {
+        this.secondKillStart = secondKillStart;
+    }
+
+    public Date getSecondKillEnd() {
+        return secondKillEnd;
+    }
+
+    public void setSecondKillEnd(Date secondKillEnd) {
+        this.secondKillEnd = secondKillEnd;
+    }
 
     public Date getShowDate() {
         return showDate;

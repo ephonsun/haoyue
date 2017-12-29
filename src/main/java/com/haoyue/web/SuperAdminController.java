@@ -252,6 +252,8 @@ public class SuperAdminController {
             System.out.println("定时器执行了。。。。");
             //数据表 dictionarys 新增数据
             dictionaryService.addEachDay();
+            //秒杀商品更新
+            productsService.autoFlush();
             Global.access_tokens.clear();
 
         }
