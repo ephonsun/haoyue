@@ -594,7 +594,7 @@ public class TuanOrdersController {
         return new TResult(false, TGlobal.do_success, null);
     }
 
-    //   /tuan/tuanorders/excel?saleId=1&state=[不填/待付款团购订单/正在拼团团购订单/待发货团购订单/待收货团购订单/已完成团购订单]
+    //   /tuan/tuanorders/excel?saleId=1&oids=订单ID1=订单ID2=订单ID3
     @RequestMapping("/excel")
     public TResult excel(String saleId, String oids) throws IOException {
         return tuanOrdersService.excel(saleId, oids);

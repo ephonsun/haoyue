@@ -62,9 +62,14 @@ public class TPayBack {
 
         //根据 out_trade_no 获取 transaction_id
         String transaction_id = tPayDealService.findByOut_trade_no(out_trade_no).getTransaction_id();
+        String payprice=tPayDealService.findByOut_trade_no(out_trade_no).getTotal_fee();
 
         DecimalFormat df = new DecimalFormat("######0");
         String fee = String.valueOf(df.format(Double.valueOf(fe)));
+        //订单价和支付价不同，以支付价为准
+        if (!fee.equals(payprice)){
+            fee=payprice;
+        }
         SortedMap<String, String> packageParams = new TreeMap<>();
         packageParams.put("appid", appId);
         packageParams.put("mch_id", mchId);//微信支付分配的商户号
@@ -98,12 +103,12 @@ public class TPayBack {
             System.out.println("退款结果");
             for (Object name : map.keySet()) {
                 System.out.println(name + "====" + map.get(name));
-                if (name.equals("err_code_des")){
-                    if (((String)map.get(name)).contains("余额不足")){
+                if (name.equals("result_code")){
+                    if (((String)map.get(name)).contains("FAIL")){
                         //  短信通知卖家账户余额不足,同一个卖家,一天只通知一次
                         List<String> list= TGlobal.sendsms3;
                         if (!list.contains(saleId)){
-                            TSendCode.sendSms3(sale.getPhone());
+                            TSendCode.sendSms3("18715161200");
                             TGlobal.sendsms3.add(saleId);
                         }
                     }

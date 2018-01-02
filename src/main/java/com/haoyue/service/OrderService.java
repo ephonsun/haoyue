@@ -325,12 +325,11 @@ public class OrderService {
             String buyComment="";
             String sellerComment="";
             for (Order order:list){
-
                //获取数据
                 name=order.getAddress().getReceiver();
                 phone=order.getAddress().getPhone();
                 address=order.getAddress().getAddress();
-                model=order.getProducts().get(0).getModel();
+                model=order.getProducts().get(0).getpNumber();
                 color=order.getProdutsTypes().get(0).getColor();
                 size=order.getProdutsTypes().get(0).getSize();
                 amount=String.valueOf(order.getAmount());
@@ -372,10 +371,10 @@ public class OrderService {
                 cell.setCellValue(address);
 
                 cell = row.createCell(8);
-                cell.setCellValue(buyComment);
+                cell.setCellValue(sellerComment);
 
                 cell = row.createCell(9);
-                cell.setCellValue(sellerComment);
+                cell.setCellValue(buyComment);
 
             }
         }
