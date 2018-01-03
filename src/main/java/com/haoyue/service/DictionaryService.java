@@ -72,6 +72,7 @@ public class DictionaryService {
         int month=from.getMonth()-1;
         if(month==-1){
             month=11;
+            from.setYear(to.getYear()-1);
         }
         from.setMonth(month);
         month++;

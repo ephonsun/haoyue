@@ -71,8 +71,7 @@ public class OrderController {
     }
 
 
-    // // TODO: 2017/12/25 active分为买家和卖家 
-    //  删除已完成订单 ，取消待付款订单  /order/cancel?id=订单ID&openId=12
+    //  删除已完成订单 ，取消待付款订单  /order/cancel?id=订单ID&openId=12&sellerId=卖家ID
     @RequestMapping("/cancel")
     public Result cancel(Integer id, String openId, String sellerId) {
         Order order = orderService.findOne(id);
