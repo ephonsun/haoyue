@@ -105,7 +105,7 @@ public class TPayBack {
                 System.out.println(name + "====" + map.get(name));
                 if (name.equals("result_code")){
                     if (((String)map.get(name)).contains("FAIL")){
-                        //  短信通知卖家账户余额不足,同一个卖家,一天只通知一次
+                        //  短信通知卖家退款失败,同一个卖家,一天只通知一次
                         List<String> list= TGlobal.sendsms3;
                         if (!list.contains(saleId)){
                             TSendCode.sendSms3("18715161200");

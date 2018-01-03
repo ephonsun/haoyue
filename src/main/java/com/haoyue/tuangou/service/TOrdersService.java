@@ -261,9 +261,9 @@ public TResult excel(String saleId, String oids) throws IOException {
             cell = row.createCell(6);
             cell.setCellValue(amount);
             cell = row.createCell(7);
-            cell.setCellValue(buyComment);
-            cell = row.createCell(8);
             cell.setCellValue(sellerComment);
+            cell = row.createCell(8);
+            cell.setCellValue(buyComment);
             cell = row.createCell(9);
             cell.setCellValue(StringUtils.formDateToStr(order.getCreateDate()));
             cell = row.createCell(10);
@@ -307,5 +307,9 @@ public TResult excel(String saleId, String oids) throws IOException {
 
     public void updateWxpic(String openId, String wxpic) {
         tOrdersRepo.updateWxpic(openId,wxpic);
+    }
+
+    public List<TOrders> findAlls(String saleId) {
+        return tOrdersRepo.findBySaleId(saleId);
     }
 }

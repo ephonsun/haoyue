@@ -457,4 +457,8 @@ public class OrderService {
         bd.and(order.iscomment.eq(true));
         return orderRepo.findAll(bd.getValue(),new PageRequest(pageNumber,pageSize,new Sort(Sort.Direction.DESC,"id")));
     }
+
+    public List<Order> findBySellerId(String sellerId) {
+        return orderRepo.findBySellerId(Integer.parseInt(sellerId));
+    }
 }

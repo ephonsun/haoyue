@@ -454,6 +454,12 @@ public class TOrdersController {
         return tOrdersService.excel(saleId, oids);
     }
 
+    //   /tuan/torders/alls?saleId=卖家ID
+    @RequestMapping("/alls")
+    public TResult findAlls(String saleId){
+       List<TOrders> list= tOrdersService.findAlls(saleId);
+        return new TResult(false, TGlobal.do_success, list);
+    }
 
 }
 

@@ -92,7 +92,6 @@ public class TuanOrdersService {
                 }
             }
         }
-
         return tuanOrdersRepo.findAll(bd.getValue(), new PageRequest(pageNumber, pageSize, new Sort(Sort.Direction.DESC, "id")));
     }
 
@@ -497,5 +496,9 @@ public class TuanOrdersService {
 
     public void updateWxpic(String openId, String wxname) {
         tuanOrdersRepo.updateWxpic(openId, wxname);
+    }
+
+    public List<TuanOrders> findAlls(String saleId) {
+        return tuanOrdersRepo.findBySaleId(saleId);
     }
 }

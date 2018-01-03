@@ -600,6 +600,13 @@ public class TuanOrdersController {
         return tuanOrdersService.excel(saleId, oids);
     }
 
+    //   /tuan/torders/alls?saleId=卖家ID
+    @RequestMapping("/alls")
+    public TResult findAlls(String saleId){
+        List<TuanOrders> list= tuanOrdersService.findAlls(saleId);
+        return new TResult(false, TGlobal.do_success, list);
+    }
+
 
 }
 

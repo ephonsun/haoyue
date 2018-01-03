@@ -364,6 +364,13 @@ public class OrderController {
         return new Result(false, Global.do_success, iterable, null);
     }
 
+    //    查看指定卖家的所有订单
+    //    /order/alls?sellerId=卖家ID
+    @RequestMapping("/alls")
+    public Result findAll(String sellerId){
+        List<Order> orders= orderService.findBySellerId(sellerId);
+        return new Result(false, Global.do_success, orders, null);
+    }
 
 
     //每当买家订单付款后会更新该买家的会员信息

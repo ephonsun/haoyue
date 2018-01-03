@@ -17,8 +17,6 @@ public interface TOrdersRepo extends TBaseRepo<TOrders,Integer> {
 
     List<TOrders> findBySaleId(String id);
 
-    List<TOrders> findBySaleIdAndState(String id, String state);
-
     @Modifying
     @Transactional
     @Query(nativeQuery = true,value = "update t_orders set wxname=?2 where open_id=?1")
