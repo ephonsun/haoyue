@@ -80,11 +80,6 @@ public class OrderController {
         }
         //买家取消订单 ，买家看不到，卖家看得到
         if (!StringUtils.isNullOrBlank(openId)) {
-            Integer sellerId1 = order.getSellerId();
-            Customer customer = customerService.findByOpenId(openId, sellerId1 + "");
-            if (customer.getId() != order.getCustomerId()) {
-                return new Result(true, Global.have_no_right, openId);
-            }
             order.setActive(false);
         }
         //卖家取消订单，买卖双方都看不到
@@ -367,14 +362,6 @@ public class OrderController {
     public Result query(@RequestParam Map<String, String> map){
         Iterable<Order> iterable= orderService.filter(map);
         return new Result(false, Global.do_success, iterable, null);
-    }
-
-    //    查看指定卖家的所有订单
-    //    /order/alls?sellerId=卖家ID
-    @RequestMapping("/alls")
-    public Result findAll(String sellerId){
-        List<Order> orders= orderService.findBySellerId(sellerId);
-        return new Result(false, Global.do_success, orders, null);
     }
 
 

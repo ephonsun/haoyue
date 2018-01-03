@@ -79,6 +79,16 @@ public class OrderService {
                 if (name.equals("luck")) {
                     bd.and(order.isLuck.eq(true));
                 }
+                if (name.equals("in_three_month")){
+                    Calendar calendar=Calendar.getInstance();
+                    calendar.add(Calendar.MONTH,-3);
+                    bd.and(order.createDate.after(calendar.getTime()));
+                }
+                if (name.equals("out_three_month")){
+                    Calendar calendar=Calendar.getInstance();
+                    calendar.add(Calendar.MONTH,-3);
+                    bd.and(order.createDate.before(calendar.getTime()));
+                }
             }
         }
         if (flag) {
