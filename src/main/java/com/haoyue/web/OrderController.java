@@ -79,14 +79,20 @@ public class OrderController {
         if (order.getSellerId() != Integer.parseInt(sellerId)) {
             return new Result(true, Global.have_no_right, null);
         }
+        //买家取消订单 ，买家看不到，卖家看得到
         if (!StringUtils.isNullOrBlank(openId)) {
             Integer sellerId1 = order.getSellerId();
             Customer customer = customerService.findByOpenId(openId, sellerId1 + "");
             if (customer.getId() != order.getCustomerId()) {
                 return new Result(true, Global.have_no_right, openId);
             }
+            order.setActive(false);
         }
-        order.setActive(false);
+        //卖家取消订单，买卖双方都看不到
+        if (StringUtils.isNullOrBlank(openId)){
+            order.setActive(false);
+            order.setActive_seller(false);
+        }
         orderService.update(order);
         return new Result(false, Global.do_success, null, null);
     }

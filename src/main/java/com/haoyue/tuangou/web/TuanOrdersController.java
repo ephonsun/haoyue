@@ -607,7 +607,6 @@ public class TuanOrdersController {
         return new TResult(false, TGlobal.do_success, list);
     }
 
-
 }
 
 class Response {

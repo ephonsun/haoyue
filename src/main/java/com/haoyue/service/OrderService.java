@@ -74,7 +74,7 @@ public class OrderService {
                     flag = true;
                 }
                 if (name.equals("active")){
-                    bd.and(order.active.eq(Boolean.valueOf(value)));
+                    bd.and(order.active_seller.eq(Boolean.valueOf(value)));
                 }
                 if (name.equals("luck")) {
                     bd.and(order.isLuck.eq(true));
