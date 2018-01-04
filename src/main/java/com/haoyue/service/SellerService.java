@@ -198,5 +198,8 @@ public class SellerService {
         return false;
     }
 
+    public Seller findOneById(int i) {
+        return findOne(i);
+    }
 }
 

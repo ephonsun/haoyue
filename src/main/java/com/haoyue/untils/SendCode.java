@@ -104,6 +104,29 @@ public class SendCode{
         return sendSmsResponse;
     }
 
+    public static SendSmsResponse sendSms3(String phone) throws ClientException {
+
+        //可自助调整超时时间
+        System.setProperty("sun.net.client.defaultConnectTimeout", "10000");
+        System.setProperty("sun.net.client.defaultReadTimeout", "10000");
+
+        //初始化acsClient,暂不支持region化
+        IClientProfile profile = DefaultProfile.getProfile("cn-hangzhou", accessKeyId, accessKeySecret);
+        DefaultProfile.addEndpoint("cn-hangzhou", "cn-hangzhou", product, domain);
+        IAcsClient acsClient = new DefaultAcsClient(profile);
+
+        //组装请求对象-具体描述见控制台-文档部分内容
+        SendSmsRequest request = new SendSmsRequest();
+        //必填:待发送手机号
+        request.setPhoneNumbers(phone);
+        //必填:短信签名-可在短信控制台中找到
+        request.setSignName(Global.signName);
+        //必填:短信模板-可在短信控制台中找到
+        request.setTemplateCode("SMS_116568062");
+        SendSmsResponse sendSmsResponse = acsClient.getAcsResponse(request);
+        return sendSmsResponse;
+    }
+
     public static QuerySendDetailsResponse querySendDetails(String bizId) throws ClientException {
 
         //可自助调整超时时间

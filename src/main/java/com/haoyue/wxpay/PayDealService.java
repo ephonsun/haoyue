@@ -43,4 +43,7 @@ public class PayDealService {
 
     }
 
+    public PayDeal findByOut_trade_no(String out_trade_no) {
+        return payDealRepo.findByOut_trade_no(out_trade_no);
+    }
 }

@@ -34,6 +34,7 @@ public class Seller implements Serializable{
 
     @Column(unique = true)
     private String appId;
+    private String machId;
     private String authority;//权限 0 简易版 1 基础版  2 高级版
 
     private boolean isActive=true;//店铺是否可用
@@ -51,6 +52,14 @@ public class Seller implements Serializable{
     private boolean isMember=false;
     private String mchId;
     private String key1;//支付密匙
+
+    public String getMachId() {
+        return machId;
+    }
+
+    public void setMachId(String machId) {
+        this.machId = machId;
+    }
 
     public String getMchId() {
         return mchId;

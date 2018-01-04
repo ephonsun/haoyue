@@ -89,6 +89,14 @@ public class TuanOrdersService {
                     bd.and(tuanorders.isover.eq(Boolean.valueOf(value)));
                 } else if (name.equals("showsale")) {
                     bd.and(tuanorders.showsale.eq(true));
+                } else if (name.equals("in_three_month")) {
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.add(Calendar.MONTH, -3);
+                    bd.and(tuanorders.startDate.after(calendar.getTime()));
+                } else if (name.equals("out_three_month")) {
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.add(Calendar.MONTH, -3);
+                    bd.and(tuanorders.startDate.before(calendar.getTime()));
                 }
             }
         }

@@ -63,8 +63,15 @@ public class TOrdersService {
                     bd.and(orders.code.eq(value));
                 } else if (name.equals("showsale")) {
                     bd.and(orders.showsale.eq(true));
+                } else if (name.equals("in_three_month")) {
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.add(Calendar.MONTH, -3);
+                    bd.and(orders.createDate.after(calendar.getTime()));
+                } else if (name.equals("out_three_month")) {
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.add(Calendar.MONTH, -3);
+                    bd.and(orders.createDate.before(calendar.getTime()));
                 }
-
             }
         }
 
@@ -170,143 +177,142 @@ public class TOrdersService {
     }
 
 
-public TResult excel(String saleId, String oids) throws IOException {
-    if (StringUtils.isNullOrBlank(oids)){
-        return new TResult(true,TGlobal.data_unright,null);
-    }
-
-    //2007 及以上excel
-    XSSFWorkbook workbook = new XSSFWorkbook();
-    XSSFSheet sheet = workbook.createSheet("sheet1");
-    //第一行 列名
-    XSSFRow row = sheet.createRow(0);
-    Cell cell = row.createCell(0);
-    cell.setCellValue("姓名");
-    cell = row.createCell(1);
-    cell.setCellValue("电话");
-    cell = row.createCell(2);
-    cell.setCellValue("地址");
-    cell = row.createCell(3);
-    cell.setCellValue("款号");
-    cell = row.createCell(4);
-    cell.setCellValue("颜色");
-    cell = row.createCell(5);
-    cell.setCellValue("尺码");
-    cell = row.createCell(6);
-    cell.setCellValue("数量");
-    cell = row.createCell(7);
-    cell.setCellValue("卖家备注");
-    cell = row.createCell(8);
-    cell.setCellValue("买家备注");
-    cell = row.createCell(9);
-    cell.setCellValue("下单时间");
-    cell = row.createCell(10);
-    cell.setCellValue("是否团购");
-
-    //需要转excel的订单
-    List<TOrders> list=new ArrayList<>();
-    String id[]=oids.split("=");
-    for (int i=0;i<id.length;i++){
-        list.add(findOne(Integer.parseInt(id[i])));
-    }
-    if (list.size()!=0){
-        //倒序
-        Collections.reverse(list);
-        //行号
-        int rowindex=1;
-        String name="";
-        String phone="";
-        String address="";
-        String model="";
-        String color="";
-        String size="";
-        String amount="";
-        String buyComment="";
-        String sellerComment="";
-        for (TOrders order:list){
-
-            //获取数据
-            name=order.gettDeliver().getReceiver();
-            phone=order.gettDeliver().getPhone();
-            address=order.gettDeliver().getAddress();
-            model=order.gettProducts().getStyle();
-            color=order.gettProductsTypes().getColor();
-            size=order.gettProductsTypes().getSize();
-            amount=String.valueOf(order.getAmount());
-            buyComment=order.getLeavemsg();
-            sellerComment=order.getLeavemsg2();
-            //校验数据
-            if (StringUtils.isNullOrBlank(name)||StringUtils.isNullOrBlank(phone)||StringUtils.isNullOrBlank(address))
-            {
-                continue;
-            }
-            if (name.equals("undefined")||phone.equals("undefined")||address.equals("undefined")){
-                continue;
-            }
-
-            //填充数据
-            row = sheet.createRow(rowindex++);
-            cell = row.createCell(0);
-            cell.setCellValue(name);
-            cell = row.createCell(1);
-            cell.setCellValue(phone);
-            cell = row.createCell(2);
-            cell.setCellValue(address);
-            cell = row.createCell(3);
-            cell.setCellValue(model);
-            cell = row.createCell(4);
-            cell.setCellValue(color);
-            cell = row.createCell(5);
-            cell.setCellValue(size);
-            cell = row.createCell(6);
-            cell.setCellValue(amount);
-            cell = row.createCell(7);
-            cell.setCellValue(sellerComment);
-            cell = row.createCell(8);
-            cell.setCellValue(buyComment);
-            cell = row.createCell(9);
-            cell.setCellValue(StringUtils.formDateToStr(order.getCreateDate()));
-            cell = row.createCell(10);
-            cell.setCellValue("否");
+    public TResult excel(String saleId, String oids) throws IOException {
+        if (StringUtils.isNullOrBlank(oids)) {
+            return new TResult(true, TGlobal.data_unright, null);
         }
-    }
 
-    //获取项目根路径
-    String relativelyPath = System.getProperty("user.dir");
-    //把excel文件写入 haoyue/excel/ 文件夹下
-    String filename = relativelyPath + "/excel/" + new Date().getTime()  + ".xlsx";
-    String mkdis = relativelyPath + "/excel/";
-    File file1 = new File(mkdis);
-    if (!file1.isDirectory()) {
-        file1.mkdirs();
+        //2007 及以上excel
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        XSSFSheet sheet = workbook.createSheet("sheet1");
+        //第一行 列名
+        XSSFRow row = sheet.createRow(0);
+        Cell cell = row.createCell(0);
+        cell.setCellValue("姓名");
+        cell = row.createCell(1);
+        cell.setCellValue("电话");
+        cell = row.createCell(2);
+        cell.setCellValue("地址");
+        cell = row.createCell(3);
+        cell.setCellValue("款号");
+        cell = row.createCell(4);
+        cell.setCellValue("颜色");
+        cell = row.createCell(5);
+        cell.setCellValue("尺码");
+        cell = row.createCell(6);
+        cell.setCellValue("数量");
+        cell = row.createCell(7);
+        cell.setCellValue("卖家备注");
+        cell = row.createCell(8);
+        cell.setCellValue("买家备注");
+        cell = row.createCell(9);
+        cell.setCellValue("下单时间");
+        cell = row.createCell(10);
+        cell.setCellValue("是否团购");
+
+        //需要转excel的订单
+        List<TOrders> list = new ArrayList<>();
+        String id[] = oids.split("=");
+        for (int i = 0; i < id.length; i++) {
+            list.add(findOne(Integer.parseInt(id[i])));
+        }
+        if (list.size() != 0) {
+            //倒序
+            Collections.reverse(list);
+            //行号
+            int rowindex = 1;
+            String name = "";
+            String phone = "";
+            String address = "";
+            String model = "";
+            String color = "";
+            String size = "";
+            String amount = "";
+            String buyComment = "";
+            String sellerComment = "";
+            for (TOrders order : list) {
+
+                //获取数据
+                name = order.gettDeliver().getReceiver();
+                phone = order.gettDeliver().getPhone();
+                address = order.gettDeliver().getAddress();
+                model = order.gettProducts().getStyle();
+                color = order.gettProductsTypes().getColor();
+                size = order.gettProductsTypes().getSize();
+                amount = String.valueOf(order.getAmount());
+                buyComment = order.getLeavemsg();
+                sellerComment = order.getLeavemsg2();
+                //校验数据
+                if (StringUtils.isNullOrBlank(name) || StringUtils.isNullOrBlank(phone) || StringUtils.isNullOrBlank(address)) {
+                    continue;
+                }
+                if (name.equals("undefined") || phone.equals("undefined") || address.equals("undefined")) {
+                    continue;
+                }
+
+                //填充数据
+                row = sheet.createRow(rowindex++);
+                cell = row.createCell(0);
+                cell.setCellValue(name);
+                cell = row.createCell(1);
+                cell.setCellValue(phone);
+                cell = row.createCell(2);
+                cell.setCellValue(address);
+                cell = row.createCell(3);
+                cell.setCellValue(model);
+                cell = row.createCell(4);
+                cell.setCellValue(color);
+                cell = row.createCell(5);
+                cell.setCellValue(size);
+                cell = row.createCell(6);
+                cell.setCellValue(amount);
+                cell = row.createCell(7);
+                cell.setCellValue(sellerComment);
+                cell = row.createCell(8);
+                cell.setCellValue(buyComment);
+                cell = row.createCell(9);
+                cell.setCellValue(StringUtils.formDateToStr(order.getCreateDate()));
+                cell = row.createCell(10);
+                cell.setCellValue("否");
+            }
+        }
+
+        //获取项目根路径
+        String relativelyPath = System.getProperty("user.dir");
+        //把excel文件写入 haoyue/excel/ 文件夹下
+        String filename = relativelyPath + "/excel/" + new Date().getTime() + ".xlsx";
+        String mkdis = relativelyPath + "/excel/";
+        File file1 = new File(mkdis);
+        if (!file1.isDirectory()) {
+            file1.mkdirs();
+        }
+        FileOutputStream out = new FileOutputStream(new File(filename));
+        workbook.write(out);
+        out.close();
+        //缓存文件
+        File file = new File(filename);
+        //上传到阿里云，并返回文件外链
+        OSSClientUtil ossClientUtil = new OSSClientUtil();
+        FileInputStream inputStream = new FileInputStream(file);
+        filename = filename.substring(filename.lastIndexOf("/") + 1);
+        filename = "excel/" + filename;
+        try {
+            ossClientUtil.uploadFile2OSS(inputStream, filename, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new TResult(true, TGlobal.server_busying, null);
+        }
+        //删除缓存文件
+        file.delete();
+        return new TResult(false, TGlobal.do_success, TGlobal.aliyun_href + filename);
     }
-    FileOutputStream out = new FileOutputStream(new File(filename));
-    workbook.write(out);
-    out.close();
-    //缓存文件
-    File file = new File(filename);
-    //上传到阿里云，并返回文件外链
-    OSSClientUtil ossClientUtil = new OSSClientUtil();
-    FileInputStream inputStream = new FileInputStream(file);
-    filename = filename.substring(filename.lastIndexOf("/") + 1);
-    filename = "excel/" + filename;
-    try {
-        ossClientUtil.uploadFile2OSS(inputStream, filename, null);
-    } catch (Exception e) {
-        e.printStackTrace();
-        return new TResult(true, TGlobal.server_busying, null);
-    }
-    //删除缓存文件
-    file.delete();
-    return new TResult(false,TGlobal.do_success,TGlobal.aliyun_href + filename);
-}
 
     public void updateWxname(String openId, String wxname) {
-        tOrdersRepo.updateWxname(openId,wxname);
+        tOrdersRepo.updateWxname(openId, wxname);
     }
 
     public void updateWxpic(String openId, String wxpic) {
-        tOrdersRepo.updateWxpic(openId,wxpic);
+        tOrdersRepo.updateWxpic(openId, wxpic);
     }
 
     public List<TOrders> findAlls(String saleId) {

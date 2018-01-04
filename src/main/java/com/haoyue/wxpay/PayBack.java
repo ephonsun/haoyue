@@ -1,15 +1,17 @@
-package com.haoyue.tuangou.wxpay;
+package com.haoyue.wxpay;
 
-import com.haoyue.tuangou.pojo.TDictionarys;
-import com.haoyue.tuangou.pojo.TUserSale;
-import com.haoyue.tuangou.pojo.TuanOrders;
-import com.haoyue.tuangou.service.TDictionarysService;
-import com.haoyue.tuangou.service.TPayBackDealService;
-import com.haoyue.tuangou.service.TUserSaleService;
-import com.haoyue.tuangou.service.TuanOrdersService;
-import com.haoyue.tuangou.utils.StringUtils;
-import com.haoyue.tuangou.utils.TGlobal;
-import com.haoyue.tuangou.utils.TSendCode;
+/**
+ * Created by LiJia on 2018/1/4.
+ */
+import com.haoyue.pojo.*;
+import com.haoyue.pojo.Dictionary;
+import com.haoyue.service.DictionaryService;
+import com.haoyue.service.OrderService;
+import com.haoyue.service.PayBackDealService;
+import com.haoyue.service.SellerService;
+import com.haoyue.untils.Global;
+import com.haoyue.untils.SendCode;
+import com.haoyue.untils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,45 +24,45 @@ import java.util.*;
  * 退款操作
  */
 @RestController
-@RequestMapping("/tuan/payback")
-public class TPayBack {
+@RequestMapping("/payback")
+public class PayBack {
 
-
     @Autowired
-    private TUserSaleService tUserSaleService;
+    private SellerService sellerService;
     @Autowired
-    private TuanOrdersService tuanOrdersService;
+    private OrderService orderService;
     @Autowired
-    private TPayDealService tPayDealService;
+    private PayDealService payDealService;
     @Autowired
-    private TPayBackDealService tPayBackDealService;
+    private DictionaryService dictionaryService;
     @Autowired
-    private TDictionarysService tDictionarysService;
+    private PayBackDealService payBackDealService;
 
     /**
      * 申请退款
      *
      * @return
      */
-    // https://www.cslapp.com/tuan/payback/test?sellerId=3&out_trade_no=14878628022017111615363948647073&transaction_id=4200000037201711165033853205&fe=1
+    // https://www.cslapp.com/payback/do?sellerId=3&out_trade_no=14878628022017111615363948647073&transaction_id=4200000037201711165033853205&fe=1
+    //  /payback/do?sellerId=3&oid=订单Id&fe=订单总价
     @RequestMapping("/do")
-    public Object refund(String saleId,  String oid, String fe) {
+    public Object refund(String sellerId,  String oid, String fe) {
         //获取卖家的基本信息
-        TUserSale sale = tUserSaleService.findOneById(Integer.parseInt(saleId));
+        Seller sale = sellerService.findOneById(Integer.parseInt(sellerId));
         String appId = sale.getAppId();
         String mchId = sale.getMachId();
         String key = sale.getKey1();
         Map<String, Object> result = new HashMap<String, Object>();
         String nonceStr = UUIDHexGenerator.generate();
         //获取订单的 out_trade_no
-        TuanOrders tuanOrders = tuanOrdersService.findOne(Integer.parseInt(oid));
-        String out_trade_no = tuanOrders.getOut_trade_no();
+        Order order = orderService.findOne(Integer.parseInt(oid));
+        String out_trade_no = order.getOrderCode();
         String outRefundNo = out_trade_no;
         String outTradeNo = out_trade_no;
 
         //根据 out_trade_no 获取 transaction_id
-        String transaction_id = tPayDealService.findByOut_trade_no(out_trade_no).getTransaction_id();
-        String payprice=tPayDealService.findByOut_trade_no(out_trade_no).getTotal_fee();
+        String transaction_id = payDealService.findByOut_trade_no(out_trade_no).getTransaction_id();
+        String payprice=payDealService.findByOut_trade_no(out_trade_no).getTotal_fee();
 
         DecimalFormat df = new DecimalFormat("######0");
         String fee = String.valueOf(df.format(Double.valueOf(fe)));
@@ -79,7 +81,7 @@ public class TPayBack {
         packageParams.put("refund_fee", fee);//退款金额
         packageParams.put("total_fee", fee);//总金额
         packageParams.put("transaction_id", transaction_id);//微信生成的订单号，在支付通知中有返回
-        String sign = TPayBackUtil.createSign_ChooseWXPay("utf-8", packageParams, key);
+        String sign = PayBackUtil.createSign_ChooseWXPay("utf-8", packageParams, key);
 
         String refundUrl = "https://api.mch.weixin.qq.com/secapi/pay/refund";
         String xmlParam = "<xml>" +
@@ -94,20 +96,20 @@ public class TPayBack {
                 "<transaction_id>" + transaction_id + "</transaction_id>" +
                 "<sign>" + sign + "</sign>" +
                 "</xml>";
-        String resultStr = TPayBackUtil.post(refundUrl, xmlParam);
+        String resultStr = PayBackUtil.post(refundUrl, xmlParam);
         //解析结果
         try {
-            Map map = TPayBackUtil.doXMLParse(resultStr);
+            Map map = PayBackUtil.doXMLParse(resultStr);
             System.out.println("退款结果");
             for (Object name : map.keySet()) {
                 System.out.println(name + "====" + map.get(name));
                 if (name.equals("result_code")){
                     if (((String)map.get(name)).contains("FAIL")){
                         //  短信通知卖家退款失败,同一个卖家,一天只通知一次
-                        List<String> list= TGlobal.sendsms3;
-                        if (!list.contains(saleId)){
-                            TSendCode.sendSms3("18715161200");
-                            TGlobal.sendsms3.add(saleId);
+                        List<String> list= Global.sendsms3;
+                        if (!list.contains(sellerId)){
+                            SendCode.sendSms3("18715161200");
+                            Global.sendsms3.add(sellerId);
                         }
                     }
                 }
@@ -117,13 +119,10 @@ public class TPayBack {
             if (returnCode.equals("SUCCESS")) {
                 String resultCode = map.get("result_code").toString();
                 if (resultCode.equals("SUCCESS")) {
-                    //如果成功更新订单 ispayback
-                    tuanOrders.setIspayback(true);
-                    tuanOrdersService.update(tuanOrders);
                     //更新数据表交易额
-                    TDictionarys dictionarys= tDictionarysService.findBySaleIdAndCreateDate(tuanOrders.getSaleId(), StringUtils.getYMD(tuanOrders.getStartDate()));
-                    dictionarys.setTurnover(dictionarys.getTurnover()-tuanOrders.getTotalPrice());
-                    tDictionarysService.update(dictionarys);
+                    Dictionary dictionarys= dictionaryService.findByDateAndSellerId(StringUtils.getYMD(order.getCreateDate()),Integer.parseInt(sellerId));
+                    dictionarys.setTurnover(dictionarys.getTurnover()-order.getTotalPrice());
+                    dictionaryService.update(dictionarys);
                     result.put("status", "success");
                 } else {
                     result.put("status", "fail");
@@ -134,7 +133,7 @@ public class TPayBack {
                 return "fail";
             }
             //保存退款信息
-            backNotify(map);
+            backNotify(map,sellerId);
         } catch (Exception e) {
             e.printStackTrace();
             result.put("status", "fail");
@@ -144,8 +143,8 @@ public class TPayBack {
     }
 
 
-    public void backNotify(Map map) {
-        TPayBackDeal payBackDeal=new TPayBackDeal();
+    public void backNotify(Map map,String sellerId) {
+        PayBackDeal payBackDeal=new PayBackDeal();
         payBackDeal.setAppid(String.valueOf(map.get("appid")));
         payBackDeal.setDate(new Date());
         payBackDeal.setOut_trade_no(String.valueOf(map.get("out_trade_no")));
@@ -156,9 +155,8 @@ public class TPayBack {
         payBackDeal.setResult_code(String.valueOf(map.get("result_code")));
         payBackDeal.setSettlement_refund_fee(String.valueOf(map.get("settlement_refund_fee")));
         //根据 out_trade_no 获取团购订单
-        TuanOrders tuanOrders= tuanOrdersService.findByOut_trade_no(payBackDeal.getOut_trade_no());
-        payBackDeal.setSaleId(tuanOrders.getSaleId());
-        tPayBackDealService.save(payBackDeal);
+        payBackDeal.setSellerId(sellerId);
+        payBackDealService.save(payBackDeal);
     }
 
 }

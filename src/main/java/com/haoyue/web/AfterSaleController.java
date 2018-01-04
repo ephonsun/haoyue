@@ -1,5 +1,6 @@
 package com.haoyue.web;
 
+import com.haoyue.Exception.MyException;
 import com.haoyue.pojo.AfterSale;
 import com.haoyue.pojo.Dictionary;
 import com.haoyue.pojo.Order;
@@ -7,12 +8,18 @@ import com.haoyue.service.AfterSaleService;
 import com.haoyue.service.DictionaryService;
 import com.haoyue.service.OrderService;
 import com.haoyue.untils.Global;
+import com.haoyue.untils.HttpRequest;
+import com.haoyue.untils.OSSClientUtil;
 import com.haoyue.untils.Result;
+import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
+import java.util.Map;
 
 /**
  * Created by LiJia on 2017/9/20.
@@ -30,7 +37,7 @@ public class AfterSaleController {
     @Autowired
     private DictionaryService dictionaryService;
 
-    //http://localhost:8080/after-sale/save?oid=133&openId=1111&sellerId=1
+    //http://localhost:8080/after-sale/save?oid=133&openId=1111&sellerId=1&message=理由内容&pics=图片地址
     @RequestMapping("/save")
     public Result save(String oid, AfterSale afterSale) {
         Order order=orderService.findOne(Integer.parseInt(oid));
@@ -41,29 +48,67 @@ public class AfterSaleController {
         order.setIsApplyReturn(true);
         orderService.update(order);
         afterSale.setOrder(order);
+        afterSale.setCreateDate(new Date());
+        afterSale.setIsAgree("0");//等待卖家处理
         return new Result(false, Global.do_success, afterSaleService.save(afterSale), null);
     }
 
-    //http://localhost:8080/after-sale/deal?id=4&token=1&isAgree=yes
+
+    //   卖家后台待退款列表 /after-sale/list?pageNumber=页数，从0开始&sellerId=卖家ID(&state=0 待处理/ 1 同意 / 2 拒绝)
+    //  买家查看退款订单  /after-sale/list?pageNumber=页数，从0开始&sellerId=卖家ID&openId=123444
+    // // TODO: 2018/1/3 确认退款操作
+    @RequestMapping("/list")
+    public Result list(@RequestParam Map<String, String> map, @RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize){
+        return new Result(false, Global.do_success,afterSaleService.list(map,pageNumber,pageSize), null);
+    }
+
+
+    //http://localhost:8080/after-sale/deal?id=退款记录ID&sellerId=卖家ID&isAgree=yes/no
     @RequestMapping("/deal")
-    public Result deal(String id,String token,String isAgree){
+    public Result deal(String id,String sellerId,String isAgree){
         AfterSale afterSale=afterSaleService.findOne(id);
-        if (!token.equals(afterSale.getSellerId())){
+        if (!sellerId.equals(afterSale.getSellerId())){
             return new Result(true,Global.have_no_right,null,null);
         }
+        //同意 更新dictionarys表数据
         if (isAgree.equals("yes")){
-            afterSale.setIsAgree("yes");
-            Order order=afterSale.getOrder();
-            Double totalPrice=order.getTotalPrice();
-            Date date=order.getCreateDate();
-            Dictionary dictionary=dictionaryService.findByDateAndSellerId(date,Integer.parseInt(token));
-            dictionary.setTurnover(dictionary.getTurnover()-totalPrice);
-            dictionaryService.update(dictionary);
+            afterSale.setIsAgree("1");
         }else {
-            afterSale.setIsAgree("no");
+            //不同意
+            afterSale.setIsAgree("2");
         }
         afterSaleService.update(afterSale);
+        //退款
+        if (afterSale.getIsAgree().equals("1")){
+            Order order=afterSale.getOrder();
+            //拼接参数
+            String param = "saleId=" + order.getSellerId() + "&oid=" + order.getId() + "&fe=" + order.getTotalPrice() * 100;
+            //退款请求
+            String result = HttpRequest.sendGet("https://www.cslapp.com/payback/do", param);
+            System.out.println("after-sale-result:"+result);
+        }
         return new Result(false,Global.do_success,null,null);
+    }
+
+
+    //  /after-sale/uploadPics?sellerId=卖家ID&multipartFiles=文件
+    @RequestMapping("/uploadPics")
+    public Result uploadPics(MultipartFile[] multipartFiles, Integer sellerId) throws MyException {
+        StringBuffer stringBuffer = new StringBuffer();
+        synchronized (Global.object4) {
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            for (MultipartFile multipartFile : multipartFiles) {
+                OSSClientUtil ossClientUtil = new OSSClientUtil();
+                String uploadUrl = ossClientUtil.uploadImg2Oss(multipartFile);
+                stringBuffer.append(Global.aliyun_href+uploadUrl);
+                stringBuffer.append(",");
+            }
+        }
+        return new Result(false, Global.do_success, stringBuffer.toString(), null);
     }
 
 

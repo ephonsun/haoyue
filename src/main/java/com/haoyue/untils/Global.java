@@ -125,6 +125,7 @@ public class Global {
 
     //评价
     public static Object object4=new Object();
+    public static List<String> sendsms3=new ArrayList<>();//存放退款通知的卖家ID
 
 
     //非拦截地址

@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.haoyue.Exception.MyException;
+import com.haoyue.pojo.Order;
+import com.haoyue.service.OrderService;
 import com.haoyue.untils.Global;
 import com.haoyue.untils.HttpRequest;
 import com.haoyue.untils.Result;
@@ -37,13 +39,15 @@ public class PayAction {
 
     @Autowired
     private PayDealService payDealService;
+    @Autowired
+    private OrderService orderService;
 
     /**
      * 小程序端请求的后台action，后台调用统一下单URL，对返回数据再次签名后，把数据传到前台
      * 前后再调用 wx.request(object) 进行支付
      */
     @RequestMapping("/do")
-    public JSONArray pay(HttpServletRequest  request,String body, String appId, String mchId, String ip, String openId,  String key1, String session_key, String total_fee) throws UnsupportedEncodingException, DocumentException, MyException {
+    public JSONArray pay(HttpServletRequest  request,String body, String appId, String mchId, String ip, String openId,  String key1, String session_key, String total_fee,String oid) throws UnsupportedEncodingException, DocumentException, MyException {
         synchronized (Global.object) {
             if (StringUtils.isNullOrBlank(openId)) {
                 throw new MyException(Global.openId_isNull, null, 102);
@@ -56,9 +60,10 @@ public class PayAction {
             mch_id = mchId;
             ip=getIpAddr(request);
             String nonce_str = UUIDHexGenerator.generate();//随机字符串
-            String today = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
-            String code = PayUtil.createCode(8);
-            String out_trade_no = mch_id + today + code;//商户订单号
+
+            Order order=orderService.findOne(Integer.parseInt(oid));
+            String out_trade_no = order.getOrderCode();//商户订单号=订单号 可避免一单多付
+
             String spbill_create_ip = "替换为自己的终端IP";//终端IP
             spbill_create_ip = ip;
             String notify_url = Global.notify_url;//通知地址
