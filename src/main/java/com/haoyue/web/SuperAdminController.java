@@ -22,6 +22,8 @@ import java.util.concurrent.TimeUnit;
 @RequestMapping("/super-admin")
 public class SuperAdminController {
 
+    // todo 访问通知
+
     @Autowired
     private SuperAdminService superAdminService;
     @Autowired
@@ -255,7 +257,6 @@ public class SuperAdminController {
             //秒杀商品更新
             productsService.autoFlush();
             Global.access_tokens.clear();
-
         }
     };
 

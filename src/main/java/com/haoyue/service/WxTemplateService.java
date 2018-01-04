@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by LiJia on 2017/11/29.
@@ -31,4 +32,11 @@ public class WxTemplateService {
         wxTemplateRepo.updateActive(new Date());
     }
 
+    public List<String> findActive() {
+        return wxTemplateRepo.findActive();
+    }
+
+    public List<WxTemplate> findByOpenId(String openid) {
+        return wxTemplateRepo.findByOpenIdAndActive(openid);
+    }
 }

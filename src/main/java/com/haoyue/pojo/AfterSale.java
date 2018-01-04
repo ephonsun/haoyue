@@ -23,6 +23,7 @@ public class AfterSale {
 
     private String openId;
     private String sellerId;
+    private String formId;
 
     @Lob
     @Column(columnDefinition="TEXT")
@@ -39,6 +40,14 @@ public class AfterSale {
     @Column(updatable = false)
     private Date createDate;//创建日期
 
+
+    public String getFormId() {
+        return formId;
+    }
+
+    public void setFormId(String formId) {
+        this.formId = formId;
+    }
 
     public Date getCreateDate() {
         return createDate;
