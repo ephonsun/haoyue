@@ -56,7 +56,6 @@ public class AfterSaleController {
 
     //   卖家后台待退款列表 /after-sale/list?pageNumber=页数，从0开始&sellerId=卖家ID(&state=0 待处理/ 1 同意 / 2 拒绝)
     //  买家查看退款订单  /after-sale/list?pageNumber=页数，从0开始&sellerId=卖家ID&openId=123444
-    // // TODO: 2018/1/3 确认退款操作
     @RequestMapping("/list")
     public Result list(@RequestParam Map<String, String> map, @RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize){
         return new Result(false, Global.do_success,afterSaleService.list(map,pageNumber,pageSize), null);

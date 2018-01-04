@@ -42,9 +42,9 @@ public class TWxTemplateService {
 
     //访问通知
     public void inform() {
-        // 每日 16:30--18:00 发送访问通知
+        // 每日 11:30--12:30 发送访问通知
         Date date = new Date();
-        if (date.getHours() == 17) {
+        if (date.getHours() == 12) {
             List<String> openIds = wxTemplateRepo.findDistinctOpenId();
             List<TWxTemplate> list = new ArrayList<>();
             for (String openid : openIds) {
@@ -84,7 +84,7 @@ public class TWxTemplateService {
         TemplateResponse templateResponse2 = new TemplateResponse();
         templateResponse2.setColor("#000000");
         templateResponse2.setName("keyword2");
-        templateResponse2.setValue("您已很久没来团实惠啦，快来挑选精品好物吧....");
+        templateResponse2.setValue("关注图实惠，春款超超值团购即将开始！");
         list.add(templateResponse2);
 
         String page = "pages/index/index";
