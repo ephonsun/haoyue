@@ -30,4 +30,8 @@ public interface WxTemplateRepo extends BaseRepo<WxTemplate,Integer> {
 
     @Query(nativeQuery = true,value = "select * from wx_template where open_id=?1 and active=true")
     List<WxTemplate> findByOpenIdAndActive(String openid);
+
+    @Transactional
+    @Query(nativeQuery = true,value = "delete from wx_template where open_id='undefined'")
+    void deleteUndefined();
 }

@@ -126,20 +126,31 @@ public class DictionaryService {
 
     //访问通知
     public void auto_inform() {
-        wxTemplateService.updateActive();
-        List<String> openids = wxTemplateService.findActive();
-        for (String openid : openids) {
-            List<WxTemplate> wxTemplates=wxTemplateService.findByOpenId(openid);
-            for (WxTemplate wxTemplate:wxTemplates){
-                if (wxTemplate.getFormId().contains("mock")){
-                    wxTemplate.setActive(false);
-                    wxTemplateService.save(wxTemplate);
+        Date date=new Date();
+        //  11.30--12.30之间
+        if (date.getHours()==12) {
+            //首先更新一下表数据
+            wxTemplateService.updateActive();
+            //取出 distinct 且 active=true 的 openId
+            List<String> openids = wxTemplateService.findActive();
+            for (String openid : openids) {
+                List<WxTemplate> wxTemplates = wxTemplateService.findByOpenId(openid);
+                //过滤掉未在customer中注册的open_id
+                Customer customer=customerService.findByOpenId(openid,wxTemplates.get(0).getSellerId());
+                if (customer==null){
                     continue;
                 }
-                addTemplate(customerService.findByOpenId(wxTemplate.getOpenId(),wxTemplate.getSellerId()).getWxname(),wxTemplate.getFormId(),wxTemplate.getSellerId());
-                wxTemplate.setActive(false);
-                wxTemplateService.save(wxTemplate);
-                break;
+                for (WxTemplate wxTemplate : wxTemplates) {
+                    if (wxTemplate.getFormId().contains("mock")||wxTemplate.getFormId().contains("undefined")) {
+                        wxTemplate.setActive(false);
+                        wxTemplateService.save(wxTemplate);
+                        continue;
+                    }
+                    addTemplate(customerService.findByOpenId(wxTemplate.getOpenId(), wxTemplate.getSellerId()).getWxname(), wxTemplate.getFormId(), wxTemplate.getOpenId());
+                    wxTemplate.setActive(false);
+                    wxTemplateService.save(wxTemplate);
+                    break;
+                }
             }
         }
     }

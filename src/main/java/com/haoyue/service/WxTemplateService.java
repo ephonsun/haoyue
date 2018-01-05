@@ -27,9 +27,10 @@ public class WxTemplateService {
         wxTemplateRepo.delActiveFalse(sellerId);
     }
 
-    //更新模板信息，是否失效
+    //更新模板信息，是否失效,删除openid=undefined
     public void updateActive(){
         wxTemplateRepo.updateActive(new Date());
+        wxTemplateRepo.deleteUndefined();
     }
 
     public List<String> findActive() {
