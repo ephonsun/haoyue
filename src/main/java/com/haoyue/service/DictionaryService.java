@@ -134,6 +134,9 @@ public class DictionaryService {
             //取出 distinct 且 active=true 的 openId
             List<String> openids = wxTemplateService.findActive();
             for (String openid : openids) {
+                if(openid==null){
+                    continue;
+                }
                 List<WxTemplate> wxTemplates = wxTemplateService.findByOpenId(openid);
                 //过滤掉未在customer中注册的open_id
                 Customer customer=customerService.findByOpenId(openid,wxTemplates.get(0).getSellerId());

@@ -22,8 +22,6 @@ import java.util.concurrent.TimeUnit;
 @RequestMapping("/super-admin")
 public class SuperAdminController {
 
-    // todo 访问通知
-
     @Autowired
     private SuperAdminService superAdminService;
     @Autowired
@@ -243,14 +241,14 @@ public class SuperAdminController {
         if (key.equals("abcdefg")) {
             ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
             // 第二个参数为首次执行的延时时间，第三个参数为定时执行的间隔时间
-            service.scheduleAtFixedRate(runnable, 60, 3600, TimeUnit.SECONDS);
+            service.scheduleAtFixedRate(runnable_1, 60, 3600, TimeUnit.SECONDS);
             Global.timer=true;
             return "ok";
         }
         return "data_no_right";
     }
 
-    Runnable runnable = new Runnable() {
+    Runnable runnable_1 = new Runnable() {
         public void run() {
             System.out.println("定时器执行了。。。。");
             //数据表 dictionarys 新增数据   访问通知
@@ -260,7 +258,6 @@ public class SuperAdminController {
             Global.access_tokens.clear();
         }
     };
-
 
     //  http://www.cslapp.com/super-admin/get_timer?sellerId=1
     @RequestMapping("/get_timer")
