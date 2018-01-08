@@ -107,4 +107,6 @@ public class TGlobal {
 
     //零元购
     public static String free_time_expired="你未获得零元购机会或已机会失效";
+
+    public static boolean timer=false;
 }

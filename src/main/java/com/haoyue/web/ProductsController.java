@@ -152,12 +152,10 @@ public class ProductsController {
 
     @RequestMapping("/save")
     @Transactional
-    public Result update_all(Products products, String token, String protypes,Integer showHours,String killStart,String killEnd) throws FileNotFoundException, ParseException {
+    public Result update_all(Products products, String token, String protypes,String showHours,String killStart,String killEnd) throws FileNotFoundException, ParseException {
         //上线时间
-        if (showHours!=null&&showHours!=0){
-            Calendar calendar=Calendar.getInstance();
-            calendar.add(Calendar.HOUR,showHours);
-            products.setShowDate(calendar.getTime());
+        if (!StringUtils.isNullOrBlank(showHours)){
+            products.setShowDate(StringUtils.formatDate2(showHours));
         }else {
             products.setShowDate(new Date());
         }

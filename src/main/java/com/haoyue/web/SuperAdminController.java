@@ -244,6 +244,7 @@ public class SuperAdminController {
             ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
             // 第二个参数为首次执行的延时时间，第三个参数为定时执行的间隔时间
             service.scheduleAtFixedRate(runnable, 60, 3600, TimeUnit.SECONDS);
+            Global.timer=true;
             return "ok";
         }
         return "data_no_right";
@@ -252,7 +253,7 @@ public class SuperAdminController {
     Runnable runnable = new Runnable() {
         public void run() {
             System.out.println("定时器执行了。。。。");
-            //数据表 dictionarys 新增数据
+            //数据表 dictionarys 新增数据   访问通知
             dictionaryService.addEachDay();
             //秒杀商品更新
             productsService.autoFlush();
@@ -260,6 +261,12 @@ public class SuperAdminController {
         }
     };
 
+
+    //  http://www.cslapp.com/super-admin/get_timer?sellerId=1
+    @RequestMapping("/get_timer")
+    public Result getTimer(){
+        return new Result(false,Global.do_success,Global.timer,null);
+    }
 
 }
 

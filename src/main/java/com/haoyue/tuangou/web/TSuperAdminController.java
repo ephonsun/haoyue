@@ -4,6 +4,7 @@ import com.haoyue.tuangou.pojo.TDictionarys;
 import com.haoyue.tuangou.pojo.TRedPacket;
 import com.haoyue.tuangou.service.*;
 import com.haoyue.tuangou.utils.TGlobal;
+import com.haoyue.tuangou.utils.TResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -50,6 +51,7 @@ public class TSuperAdminController {
             service.scheduleAtFixedRate(runnable3, 240, 300, TimeUnit.SECONDS);
             service.scheduleAtFixedRate(runnable4, 360, 3600, TimeUnit.SECONDS);
             service.scheduleAtFixedRate(runnable5, 420, 3600, TimeUnit.SECONDS);
+            TGlobal.timer=true;
             return "ok";
         }
         return "data_no_right";
@@ -103,5 +105,11 @@ public class TSuperAdminController {
         }
     };
 
+
+    //  https://www.cslapp.com/tuan/admin/get_timer?saleId=1
+    @RequestMapping("/get_timer")
+    public TResult getTimer(){
+        return new TResult(false,TGlobal.do_success,TGlobal.timer);
+    }
 
 }
