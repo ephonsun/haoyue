@@ -83,10 +83,10 @@ public class ProductsService {
                 if (name.equals("ptype")) {
                     bd.and(pro.ptypeName.contains(value));
                 }
-                if (name.equals("active")){
+                if (name.equals("active")) {
                     bd.and(pro.active.eq(Boolean.valueOf(value)));
                 }
-                if (name.equals("showdate")){
+                if (name.equals("showdate")) {
                     bd.and(pro.showDate.before(new Date()));
                 }
 
@@ -98,7 +98,7 @@ public class ProductsService {
     public Iterable<Products> plist(Map<String, String> map, int pagenumber, int pagesize) {
         QProducts pro = QProducts.products;
         BooleanBuilder bd = new BooleanBuilder();
-        Date date=new Date();
+        Date date = new Date();
         for (String name : map.keySet()) {
             String value = (String) map.get(name);
             if (!(StringUtils.isNullOrBlank(value))) {
@@ -116,7 +116,7 @@ public class ProductsService {
                     bd.and(pro.active.eq(Boolean.valueOf(value)));
                     bd.or(pro.showDate.after(date));
                 }
-                if (name.equals("killproduct")){
+                if (name.equals("killproduct")) {
                     bd.and(pro.issecondkill.eq(true));
                     bd.and(pro.secondKillStart.before(date));
                     bd.and(pro.secondKillEnd.after(date));
@@ -151,9 +151,9 @@ public class ProductsService {
         }
         //商品上架
         else if (!StringUtils.isNullOrBlank(map.get("active_pro"))) {
-            Date date=new Date();
+            Date date = new Date();
             //如果商品为预售商品，则直接上架后可购买
-            if (product.getShowDate().after(date)){
+            if (product.getShowDate().after(date)) {
                 product.setShowDate(date);
             }
             product.setActive(true);
@@ -183,11 +183,11 @@ public class ProductsService {
         else if (!StringUtils.isNullOrBlank(map.get("discount"))) {
             ProdutsType ptype = produtsTypeRepo.findOne(Integer.parseInt(map.get("ptypeId")));
             ptype.setISDiscount(true);
-            double olddiscount=ptype.getDiscountPrice();
+            double olddiscount = ptype.getDiscountPrice();
             ptype.setDiscountPrice(Double.valueOf(map.get("discount")));
             //降价
-            if (olddiscount!=0&&olddiscount>ptype.getDiscountPrice()){
-                shopCarService.sendCustomerWxTemplate(ptype.getId(),ptype.getSellerId());
+            if (olddiscount != 0 && olddiscount > ptype.getDiscountPrice()) {
+                shopCarService.sendCustomerWxTemplate(ptype.getId(), ptype.getSellerId());
             }
             produtsTypeRepo.save(ptype);
         }
@@ -208,9 +208,9 @@ public class ProductsService {
         //商品分类更新
         List<String> productses = productsRepo.findBySellerIdAndActive(product.getSellerId());
         PtypeNames ptypeNames = ptypeNamesService.findBySellerId(product.getSellerId() + "");
-        if (ptypeNames==null){
-            ptypeNames=new PtypeNames();
-            ptypeNames.setSellerId(product.getSellerId()+"");
+        if (ptypeNames == null) {
+            ptypeNames = new PtypeNames();
+            ptypeNames.setSellerId(product.getSellerId() + "");
         }
         StringBuffer stringBuffer = new StringBuffer();
         for (String products : productses) {
@@ -222,26 +222,23 @@ public class ProductsService {
     }
 
     public List<Products> findBySellerIdAndCreateDate(String sellerId, Date date) {
-        return productsRepo.findBySellerIdAndCreateDate(sellerId,date);
+        return productsRepo.findBySellerIdAndCreateDate(sellerId, date);
     }
 
     //生成二维码
     public String qrcode(String sellerId, String pid) throws FileNotFoundException {
-        String access_token = Global.access_tokens.get(sellerId);
-        if (StringUtils.isNullOrBlank(access_token)) {
-            String access_token_url = "https://api.weixin.qq.com/cgi-bin/token";
-            String param1 = "grant_type=client_credential&appid=wxe46b9aa1b768e5fe&secret=8bcdb74a9915b5685fa0ec37f6f25b24";
-            access_token = HttpRequest.sendPost(access_token_url, param1);
-            access_token = access_token.substring(access_token.indexOf(":") + 2, access_token.indexOf(",") - 1);
-            Global.access_tokens.put(sellerId, access_token);
-        }
+        String access_token_url = "https://api.weixin.qq.com/cgi-bin/token";
+        String param1 = "grant_type=client_credential&appid=wxe46b9aa1b768e5fe&secret=8bcdb74a9915b5685fa0ec37f6f25b24";
+        String access_token = HttpRequest.sendPost(access_token_url, param1);
+        access_token = access_token.substring(access_token.indexOf(":") + 2, access_token.indexOf(",") - 1);
+
         // d:/haoyue/erweima/1.jpg
         String filename = QRcode.getminiqrQr(access_token, pid);
-        File file=new File(filename);
+        File file = new File(filename);
         FileInputStream fileInputStream = new FileInputStream(file);
         OSSClientUtil tossClientUtil = new OSSClientUtil();
         // hymarket/qrcode/xx.jpg
-        filename = "qrcodes/"+pid+".jpg";
+        filename = "qrcodes/" + pid + ".jpg";
         tossClientUtil.uploadFile2OSS(fileInputStream, filename, null);
         //删除已上传文件
         file.delete();

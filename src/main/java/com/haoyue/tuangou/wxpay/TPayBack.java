@@ -1,12 +1,10 @@
 package com.haoyue.tuangou.wxpay;
 
 import com.haoyue.tuangou.pojo.TDictionarys;
+import com.haoyue.tuangou.pojo.TOrders;
 import com.haoyue.tuangou.pojo.TUserSale;
 import com.haoyue.tuangou.pojo.TuanOrders;
-import com.haoyue.tuangou.service.TDictionarysService;
-import com.haoyue.tuangou.service.TPayBackDealService;
-import com.haoyue.tuangou.service.TUserSaleService;
-import com.haoyue.tuangou.service.TuanOrdersService;
+import com.haoyue.tuangou.service.*;
 import com.haoyue.tuangou.utils.StringUtils;
 import com.haoyue.tuangou.utils.TGlobal;
 import com.haoyue.tuangou.utils.TSendCode;
@@ -36,15 +34,17 @@ public class TPayBack {
     private TPayBackDealService tPayBackDealService;
     @Autowired
     private TDictionarysService tDictionarysService;
+    @Autowired
+    private TOrdersService tOrdersService;
 
     /**
      * 申请退款
      *
      * @return
      */
-    // https://www.cslapp.com/tuan/payback/test?sellerId=3&out_trade_no=14878628022017111615363948647073&transaction_id=4200000037201711165033853205&fe=1
+    // https://www.cslapp.com/tuan/payback/test?saleId=3&out_trade_no=14878628022017111615363948647073&transaction_id=4200000037201711165033853205&fe=1
     @RequestMapping("/do")
-    public Object refund(String saleId,  String oid, String fe) {
+    public Object refund(String saleId, String oid, String fe,String ordercode) {
         //获取卖家的基本信息
         TUserSale sale = tUserSaleService.findOneById(Integer.parseInt(saleId));
         String appId = sale.getAppId();
@@ -52,9 +52,24 @@ public class TPayBack {
         String key = sale.getKey1();
         Map<String, Object> result = new HashMap<String, Object>();
         String nonceStr = UUIDHexGenerator.generate();
-        //获取订单的 out_trade_no
-        TuanOrders tuanOrders = tuanOrdersService.findOne(Integer.parseInt(oid));
-        String out_trade_no = tuanOrders.getOut_trade_no();
+        String out_trade_no="";
+        TuanOrders tuanOrders=null;
+        TOrders tOrders=null;
+        if (StringUtils.isNullOrBlank(oid)) {
+            //获取订单的 out_trade_no
+             tuanOrders = tuanOrdersService.findOne(Integer.parseInt(oid));
+             out_trade_no = tuanOrders.getOut_trade_no();
+        }
+        if (StringUtils.isNullOrBlank(ordercode)){
+            if (ordercode.startsWith("666")){
+                tuanOrders = tuanOrdersService.findByCode(ordercode);
+                out_trade_no = tuanOrders.getOut_trade_no();
+            }else {
+                tOrders=tOrdersService.findByCode(ordercode);
+                out_trade_no = tOrders.getOut_trade_no();
+            }
+        }
+
         String outRefundNo = out_trade_no;
         String outTradeNo = out_trade_no;
 
@@ -118,12 +133,22 @@ public class TPayBack {
                 String resultCode = map.get("result_code").toString();
                 if (resultCode.equals("SUCCESS")) {
                     //如果成功更新订单 ispayback
-                    tuanOrders.setIspayback(true);
-                    tuanOrdersService.update(tuanOrders);
-                    //更新数据表交易额
-                    TDictionarys dictionarys= tDictionarysService.findBySaleIdAndCreateDate(tuanOrders.getSaleId(), StringUtils.getYMD(tuanOrders.getStartDate()));
-                    dictionarys.setTurnover(dictionarys.getTurnover()-tuanOrders.getTotalPrice());
-                    tDictionarysService.update(dictionarys);
+                    if (tuanOrders!=null) {
+                        tuanOrders.setIspayback(true);
+                        tuanOrdersService.update(tuanOrders);
+                        //更新数据表交易额
+                        TDictionarys dictionarys= tDictionarysService.findBySaleIdAndCreateDate(tuanOrders.getSaleId(), StringUtils.getYMD(tuanOrders.getStartDate()));
+                        dictionarys.setTurnover(dictionarys.getTurnover()-tuanOrders.getTotalPrice());
+                        tDictionarysService.update(dictionarys);
+                    }
+                    if (tOrders!=null){
+                        tOrders.setIspayback(true);
+                        tOrdersService.update(tOrders);
+                        //更新数据表交易额
+                        TDictionarys dictionarys= tDictionarysService.findBySaleIdAndCreateDate(tOrders.getSaleId(), StringUtils.getYMD(tOrders.getCreateDate()));
+                        dictionarys.setTurnover(dictionarys.getTurnover()-tOrders.getTotalPrice());
+                        tDictionarysService.update(dictionarys);
+                    }
                     result.put("status", "success");
                 } else {
                     result.put("status", "fail");
@@ -134,7 +159,7 @@ public class TPayBack {
                 return "fail";
             }
             //保存退款信息
-            backNotify(map);
+            backNotify(map,saleId);
         } catch (Exception e) {
             e.printStackTrace();
             result.put("status", "fail");
@@ -144,7 +169,8 @@ public class TPayBack {
     }
 
 
-    public void backNotify(Map map) {
+    //保存退款通知信息
+    public void backNotify(Map map,String saleId) {
         TPayBackDeal payBackDeal=new TPayBackDeal();
         payBackDeal.setAppid(String.valueOf(map.get("appid")));
         payBackDeal.setDate(new Date());
@@ -155,9 +181,7 @@ public class TPayBack {
         payBackDeal.setTransaction_id(String.valueOf(map.get("transaction_id")));
         payBackDeal.setResult_code(String.valueOf(map.get("result_code")));
         payBackDeal.setSettlement_refund_fee(String.valueOf(map.get("settlement_refund_fee")));
-        //根据 out_trade_no 获取团购订单
-        TuanOrders tuanOrders= tuanOrdersService.findByOut_trade_no(payBackDeal.getOut_trade_no());
-        payBackDeal.setSaleId(tuanOrders.getSaleId());
+        payBackDeal.setSaleId(saleId);
         tPayBackDealService.save(payBackDeal);
     }
 

@@ -33,8 +33,6 @@ public class ProductsController {
     @Autowired
     private ThumbsupRepo thumbsupRepo;
     @Autowired
-    private PtypeNamesService ptypeNamesService;
-    @Autowired
     private OrderService orderService;
     @Autowired
     private LuckDrawService luckDrawService;

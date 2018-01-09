@@ -49,8 +49,8 @@ public class TuanOrders {
     private boolean iscomment=false;
     private boolean ispayback=false;//是否退款
     private boolean isdelay=false;//是否延迟收货
+    private boolean isapplyreturn=false;
     private String out_trade_no;//后期退款时候的凭证
-
 
     @OneToOne
     private TComment comment;
@@ -67,6 +67,14 @@ public class TuanOrders {
 
     private String leavemsg;//买家留言
     private String leavemsg2;//卖家备注
+
+    public boolean isapplyreturn() {
+        return isapplyreturn;
+    }
+
+    public void setIsapplyreturn(boolean isapplyreturn) {
+        this.isapplyreturn = isapplyreturn;
+    }
 
     public String getCutwxname() {
         return cutwxname;

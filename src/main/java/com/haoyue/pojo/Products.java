@@ -83,7 +83,15 @@ public class Products {
     private boolean isLuckDrawEnd=false;
     private int views;
     private String qrcode;//二维码
+    private double weight;//重量
 
+    public double getWeight() {
+        return weight;
+    }
+
+    public void setWeight(double weight) {
+        this.weight = weight;
+    }
 
     public boolean getIssecondkill() {
         return issecondkill;

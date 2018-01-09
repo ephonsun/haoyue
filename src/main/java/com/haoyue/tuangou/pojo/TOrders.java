@@ -45,12 +45,39 @@ public class TOrders {
     private boolean showsale=true;
     private boolean iscomment=false;
     private boolean isdelay=false;//是否延迟收货
+    private boolean isapplyreturn=false;
+    private boolean ispayback=false;
     @OneToOne
     private TComment comment;
     private String leavemsg;//买家留言
     private String leavemsg2;//卖家备注
     private String formId;
+    private String out_trade_no;
 
+
+    public boolean getIspayback() {
+        return ispayback;
+    }
+
+    public void setIspayback(boolean ispayback) {
+        this.ispayback = ispayback;
+    }
+
+    public String getOut_trade_no() {
+        return out_trade_no;
+    }
+
+    public void setOut_trade_no(String out_trade_no) {
+        this.out_trade_no = out_trade_no;
+    }
+
+    public boolean getIsapplyreturn() {
+        return isapplyreturn;
+    }
+
+    public void setIsapplyreturn(boolean isapplyreturn) {
+        this.isapplyreturn = isapplyreturn;
+    }
 
     public String getFormId() {
         return formId;

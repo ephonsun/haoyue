@@ -6,7 +6,9 @@ package com.haoyue.tuangou.wxpay;
 
 
 import com.haoyue.tuangou.Exception.TMyException;
+import com.haoyue.tuangou.pojo.TOrders;
 import com.haoyue.tuangou.pojo.TuanOrders;
+import com.haoyue.tuangou.service.TOrdersService;
 import com.haoyue.tuangou.service.TuanOrdersService;
 import com.haoyue.tuangou.utils.StringUtils;
 import com.haoyue.tuangou.utils.TGlobal;
@@ -39,6 +41,8 @@ public class TPayAction {
     private TPayDealService TPayDealService;
     @Autowired
     private TuanOrdersService tuanOrdersService;
+    @Autowired
+    private TOrdersService tOrdersService;
 
     /**
      * 小程序端请求的后台action，后台调用统一下单URL，对返回数据再次签名后，把数据传到前台
@@ -63,6 +67,10 @@ public class TPayAction {
             // 更新团购订单的商户订单号
             if (ordercode.startsWith("666")) {
                 updateOrder(ordercode, out_trade_no);
+            }
+            // 更新普通订单的商户订单号
+            if (ordercode.startsWith("888")) {
+                updateOrder2(ordercode, out_trade_no);
             }
             String spbill_create_ip = "替换为自己的终端IP";//终端IP
             spbill_create_ip = ip;
@@ -264,6 +272,12 @@ public class TPayAction {
         TuanOrders tuanOrders = tuanOrdersService.findByCode(ordercode);
         tuanOrders.setOut_trade_no(out_trade_no);
         tuanOrdersService.update(tuanOrders);
+    }
+
+    public void updateOrder2(String ordercode, String out_trade_no) {
+        TOrders tOrders = tOrdersService.findByCode(ordercode);
+        tOrders.setOut_trade_no(out_trade_no);
+        tOrdersService.update(tOrders);
     }
 
 

@@ -43,7 +43,8 @@ public class TProducts {
     private int saleNum;//总销量
     private int tuanSaleNum;//已拼量
     private String suffix;//价格后缀
-    private String qrcode;
+    private String qrcode;//二维码
+    private double weight;//重量
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:SS", timezone="GMT+8")
     @Temporal(TemporalType.TIMESTAMP)
     @Column(updatable=false)
@@ -60,6 +61,14 @@ public class TProducts {
     private boolean isFree=false;//是否开启0元购
     private boolean isEnd=false;
 
+
+    public double getWeight() {
+        return weight;
+    }
+
+    public void setWeight(double weight) {
+        this.weight = weight;
+    }
 
     public String getQrcode() {
         return qrcode;

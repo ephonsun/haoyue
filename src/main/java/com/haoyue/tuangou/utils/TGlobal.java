@@ -85,8 +85,6 @@ public class TGlobal {
     public static Object object4=new Object();//更新团购订单锁
 
 
-
-
     //支付
     public static Object pay_object=new Object();
     public static String openId_isNull="openId为空";
@@ -107,6 +105,9 @@ public class TGlobal {
 
     //零元购
     public static String free_time_expired="你未获得零元购机会或已机会失效";
+
+    //售后
+    public static Object object7=new Object();
 
     public static boolean timer=false;
 }
