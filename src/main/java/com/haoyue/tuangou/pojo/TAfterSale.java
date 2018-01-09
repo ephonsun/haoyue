@@ -11,7 +11,7 @@ import java.util.Date;
  */
 
 @Entity
-@Table(name = "after_sale")
+@Table(name = "t_after_sale")
 public class TAfterSale {
 
     @Id

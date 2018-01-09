@@ -11,6 +11,7 @@ import java.util.List;
 /**
  * Created by LiJia on 2017/11/29.
  */
+
 public interface WxTemplateRepo extends BaseRepo<WxTemplate,Integer> {
 
 
@@ -35,4 +36,7 @@ public interface WxTemplateRepo extends BaseRepo<WxTemplate,Integer> {
     @Transactional
     @Query(nativeQuery = true,value = "delete from wx_template where open_id='undefined'")
     void deleteUndefined();
+
+    @Query(nativeQuery = true,value = "select distinct(open_id) from wx_template where active=true and button_name=?1")
+    List<String> findActiveAndButtonName(String str);
 }

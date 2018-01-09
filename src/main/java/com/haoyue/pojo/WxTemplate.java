@@ -19,6 +19,7 @@ public class WxTemplate {
     private String sellerId;
     private String openId;
     private String formId;
+    private String buttonName;//来自哪个按钮
     private boolean active=true;
 
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:SS", timezone="GMT+8")
@@ -30,6 +31,15 @@ public class WxTemplate {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(updatable=false)
     private Date endDate;//失效日期
+
+
+    public String getButtonName() {
+        return buttonName;
+    }
+
+    public void setButtonName(String buttonName) {
+        this.buttonName = buttonName;
+    }
 
     public Integer getId() {
         return id;

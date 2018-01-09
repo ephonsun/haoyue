@@ -21,7 +21,7 @@ public class WxTemplateController {
     @Autowired
     private WxTemplateService wxTemplateService;
 
-    //   /wxtemplate/save?sellerId=12&openId=12&formId=12
+    //   /wxtemplate/save?sellerId=12&openId=12&formId=12&buttonName=按钮名
     @RequestMapping("/save")
     private Result save(WxTemplate wxTemplate){
         wxTemplate.setCreateDate(new Date());

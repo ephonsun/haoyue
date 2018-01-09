@@ -23,12 +23,12 @@ public class WxTemplateService {
 
 
     // 删除过期信息
-    public void del(String sellerId){
+    public void del(String sellerId) {
         wxTemplateRepo.delActiveFalse(sellerId);
     }
 
     //更新模板信息，是否失效,删除openid=undefined
-    public void updateActive(){
+    public void updateActive() {
         wxTemplateRepo.updateActive(new Date());
         wxTemplateRepo.deleteUndefined();
     }
@@ -39,5 +39,9 @@ public class WxTemplateService {
 
     public List<WxTemplate> findByOpenId(String openid) {
         return wxTemplateRepo.findByOpenIdAndActive(openid);
+    }
+
+    public List<String> findActiveAndButtonName(String str) {
+        return wxTemplateRepo.findActiveAndButtonName(str);
     }
 }

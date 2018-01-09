@@ -240,8 +240,9 @@ public class SuperAdminController {
     public String timer(String key) {
         if (key.equals("abcdefg")) {
             ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
-            // 第二个参数为首次执行的延时时间，第三个参数为定时执行的间隔时间
+            // 第二个参数为首次执行的延时时间，第三个参数为定时执行的间隔时间 单位/秒
             service.scheduleAtFixedRate(runnable_1, 60, 3600, TimeUnit.SECONDS);
+            service.scheduleAtFixedRate(runnable_2, 60, 1800, TimeUnit.SECONDS);
             Global.timer=true;
             return "ok";
         }
@@ -250,12 +251,21 @@ public class SuperAdminController {
 
     Runnable runnable_1 = new Runnable() {
         public void run() {
-            System.out.println("定时器执行了。。。。");
+            System.out.println("高级版--定时器执行了。。。。");
             //数据表 dictionarys 新增数据   访问通知
             dictionaryService.addEachDay();
             //秒杀商品更新
             productsService.autoFlush();
             Global.access_tokens.clear();
+        }
+    };
+
+    Runnable runnable_2 = new Runnable() {
+        public void run() {
+            System.out.println("高级版--秒杀通知执行了。。。。");
+            dictionaryService.timeKillInform();
+            System.out.println("高级版--预售通知执行了。。。。");
+            dictionaryService.advanceSale();
         }
     };
 

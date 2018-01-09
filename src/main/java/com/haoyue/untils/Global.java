@@ -127,7 +127,14 @@ public class Global {
     public static Object object4=new Object();
     public static List<String> sendsms3=new ArrayList<>();//存放退款通知的卖家ID
     public static boolean timer=false;
+  
 
+    //微信模板信息访问通知
+    public static String wxtemplate_msg1="普通";
+    public static String wxtemplate_msg2="预售";
+    public static String wxtemplate_msg3="秒杀";
+    public static Map<String,String> yushou_map=new HashMap<>();
+    public static Map<String,String> miaosha_map=new HashMap<>();
 
     //非拦截地址
     public static List<String> urls(){

@@ -65,6 +65,7 @@ public class ProductsService {
         QProducts pro = QProducts.products;
         BooleanBuilder bd = new BooleanBuilder();
         bd.and(pro.active.eq(true));
+        Date date=new Date();
         for (String name : map.keySet()) {
             String value = (String) map.get(name);
             if (!(StringUtils.isNullOrBlank(value))) {
@@ -87,7 +88,16 @@ public class ProductsService {
                     bd.and(pro.active.eq(Boolean.valueOf(value)));
                 }
                 if (name.equals("showdate")) {
-                    bd.and(pro.showDate.before(new Date()));
+                    bd.and(pro.showDate.before(date));
+                }
+                if (name.equals("showdate_after")) {
+                    bd.and(pro.showDate.after(date));
+                }
+                if (name.equals("secondKillStart")) {
+                    bd.and(pro.secondKillStart.before(date));
+                }
+                if (name.equals("secondKillEnd")) {
+                    bd.and(pro.secondKillEnd.after(date));
                 }
 
             }

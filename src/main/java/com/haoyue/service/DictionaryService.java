@@ -1,10 +1,14 @@
 package com.haoyue.service;
 
 import com.haoyue.pojo.*;
+import com.haoyue.pojo.Dictionary;
 import com.haoyue.repo.DictionaryRepo;
 import com.haoyue.repo.SellerRepo;
 import com.haoyue.repo.VisitorsRepo;
+import com.haoyue.tuangou.utils.*;
 import com.haoyue.untils.*;
+import com.haoyue.untils.CommonUtil;
+import com.haoyue.untils.StringUtils;
 import com.querydsl.core.BooleanBuilder;
 import org.apache.commons.lang.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,9 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by LiJia on 2017/8/24.
@@ -36,6 +38,8 @@ public class DictionaryService {
     private WxTemplateService wxTemplateService;
     @Autowired
     private CustomerService customerService;
+    @Autowired
+    private ProductsService productsService;
 
     public Dictionary findByTokenAndName(String token, String name) {
         return null;
@@ -126,37 +130,174 @@ public class DictionaryService {
 
     //访问通知
     public void auto_inform() {
-        Date date=new Date();
-        //  11.30--12.30之间
-        if (date.getHours()==12) {
+        if (new Date().getHours() == 12) {
             //首先更新一下表数据
             wxTemplateService.updateActive();
             //取出 distinct 且 active=true 的 openId
             List<String> openids = wxTemplateService.findActive();
             for (String openid : openids) {
-                if(openid==null){
+                //过滤
+                if (openid == null || openid.equals("undefined")) {
                     continue;
                 }
+                //找出指定openId对应的所有active=true 的 WxTemplate
                 List<WxTemplate> wxTemplates = wxTemplateService.findByOpenId(openid);
                 //过滤掉未在customer中注册的open_id
-                Customer customer=customerService.findByOpenId(openid,wxTemplates.get(0).getSellerId());
-                if (customer==null){
+                Customer customer = customerService.findByOpenId(openid, wxTemplates.get(0).getSellerId());
+                if (customer == null) {
                     continue;
                 }
                 for (WxTemplate wxTemplate : wxTemplates) {
-                    if (wxTemplate.getFormId().contains("mock")||wxTemplate.getFormId().contains("undefined")) {
+                    //过滤formId
+                    if (wxTemplate.getFormId().contains("mock") || wxTemplate.getFormId().contains("undefined")) {
                         wxTemplate.setActive(false);
                         wxTemplateService.save(wxTemplate);
                         continue;
                     }
-                    addTemplate(customerService.findByOpenId(wxTemplate.getOpenId(), wxTemplate.getSellerId()).getWxname(), wxTemplate.getFormId(), wxTemplate.getOpenId());
+                    addTemplate(customerService.findByOpenId(wxTemplate.getOpenId(), wxTemplate.getSellerId()).getWxname(), wxTemplate.getFormId(), wxTemplate.getOpenId(), Global.wxtemplate_msg3);
                     wxTemplate.setActive(false);
                     wxTemplateService.save(wxTemplate);
                     break;
                 }
             }
         }
+
     }
+
+    //秒杀通知
+    public void timeKillInform() {
+        //首先更新一下表数据
+        wxTemplateService.updateActive();
+        //取出 distinct 且 active=true buttonName=秒杀 的 openId
+        String str = "秒杀";
+        List<String> openids = wxTemplateService.findActiveAndButtonName(str);
+        for (String openid : openids) {
+            //过滤
+            if (openid == null || openid.equals("undefined")) {
+                continue;
+            }
+            //找出指定openId对应的所有active=true 的 WxTemplate
+            List<WxTemplate> wxTemplates = wxTemplateService.findByOpenId(openid);
+            //过滤掉未在customer中注册的open_id
+            Customer customer = customerService.findByOpenId(openid, wxTemplates.get(0).getSellerId());
+            if (customer == null) {
+                continue;
+            }
+            for (WxTemplate wxTemplate : wxTemplates) {
+                //过滤formId
+                if (wxTemplate.getFormId().contains("mock") || wxTemplate.getFormId().contains("undefined")) {
+                    wxTemplate.setActive(false);
+                    wxTemplateService.save(wxTemplate);
+                    continue;
+                }
+                //获取当前wxTemplate中的sellerId
+                String sellerId = wxTemplate.getSellerId();
+                if (StringUtils.isNullOrBlank(Global.miaosha_map.get(sellerId))) {
+                    //  Global.miaosha_map 中没有当前key=sellerId信息
+                    Map<String, String> map = new HashMap<>();
+                    map.put("token", sellerId);
+                    map.put("active", "true");
+                    map.put("secondKillStart", "yes");
+                    map.put("secondKillEnd", "yes");
+                    Iterable<Products> iterable = productsService.list(map);
+                    //存在在售秒杀商品
+                    if (iterable.iterator().hasNext()) {
+                        //  Global.miaosha_map 中加入当前key=sellerId信息 yes
+                        Global.miaosha_map.put(sellerId, "yes");
+                        addTemplate(customer.getWxname(), wxTemplate.getFormId(), wxTemplate.getOpenId(), Global.wxtemplate_msg3);
+                        wxTemplate.setActive(false);
+                        wxTemplateService.save(wxTemplate);
+                        break;
+                    } else {
+                        //  Global.miaosha_map 中加入当前key=sellerId信息 no
+                        Global.miaosha_map.put(sellerId, "no");
+                        break;
+                    }
+                } else {
+                    //  Global.miaosha_map 中获取当前key=sellerId信息
+                    if (Global.miaosha_map.get(sellerId).equals("yes")) {
+                        // key=sellerId value=yes
+                        addTemplate(customer.getWxname(), wxTemplate.getFormId(), wxTemplate.getOpenId(), Global.wxtemplate_msg3);
+                        wxTemplate.setActive(false);
+                        wxTemplateService.save(wxTemplate);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    //预售通知
+    public void advanceSale() {
+        //首先更新一下表数据
+        wxTemplateService.updateActive();
+        //取出 distinct 且 active=true buttonName=秒杀 的 openId
+        String str = "预售";
+        List<String> openids = wxTemplateService.findActiveAndButtonName(str);
+        for (String openid : openids) {
+            //过滤
+            if (openid == null || openid.equals("undefined")) {
+                continue;
+            }
+            //找出指定openId对应的所有active=true 的 WxTemplate
+            List<WxTemplate> wxTemplates = wxTemplateService.findByOpenId(openid);
+            //过滤掉未在customer中注册的open_id
+            Customer customer = customerService.findByOpenId(openid, wxTemplates.get(0).getSellerId());
+            if (customer == null) {
+                continue;
+            }
+            for (WxTemplate wxTemplate : wxTemplates) {
+                //过滤formId
+                if (wxTemplate.getFormId().contains("mock") || wxTemplate.getFormId().contains("undefined")) {
+                    wxTemplate.setActive(false);
+                    wxTemplateService.save(wxTemplate);
+                    continue;
+                }
+                //获取当前wxTemplate中的sellerId
+                String sellerId = wxTemplate.getSellerId();
+                if (StringUtils.isNullOrBlank(Global.yushou_map.get(sellerId))) {
+                    //  Global.yushou_map 中没有当前key=sellerId信息
+                    Map<String, String> map = new HashMap<>();
+                    map.put("token", sellerId);
+                    map.put("active", "true");
+                    map.put("showdate_after", "yes");
+                    Iterable<Products> iterable = productsService.list(map);
+                    Iterator<Products> iterator=iterable.iterator();
+                    boolean flag=false;
+                    while (iterator.hasNext()){
+                        //即将上架 < 1h
+                        Products products=iterator.next();
+                        if (products.getShowDate().getTime()-new Date().getTime()<3600000){
+                            flag=true;
+                        }
+                    }
+                    //存在预售商品
+                    if (flag) {
+                        //  Global.yushou_map 中加入当前key=sellerId信息 yes
+                        Global.yushou_map.put(sellerId, "yes");
+                        addTemplate(customer.getWxname(), wxTemplate.getFormId(), wxTemplate.getOpenId(), Global.wxtemplate_msg3);
+                        wxTemplate.setActive(false);
+                        wxTemplateService.save(wxTemplate);
+                        break;
+                    } else {
+                        //  Global.yushou_map 中加入当前key=sellerId信息 no
+                        Global.yushou_map.put(sellerId, "no");
+                        break;
+                    }
+                } else {
+                    //  Global.yushou_map 中获取当前key=sellerId信息
+                    if (Global.yushou_map.get(sellerId).equals("yes")) {
+                        // key=sellerId value=yes
+                        addTemplate(customer.getWxname(), wxTemplate.getFormId(), wxTemplate.getOpenId(), Global.wxtemplate_msg3);
+                        wxTemplate.setActive(false);
+                        wxTemplateService.save(wxTemplate);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
 
     public void auto_receive() {
         //待收货
@@ -289,10 +430,10 @@ public class DictionaryService {
         template.setForm_id(formId);
         String url = "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token=" + access_token + "&form_id=" + formId;
         String result = CommonUtil.httpRequest(url, "POST", template.toJSON());
-        System.out.println("高级版访问通知："+result);
+        System.out.println("高级版访问通知：" + result);
     }
 
-    public void addTemplate(String wxname, String formId, String openId) {
+    public void addTemplate(String wxname, String formId, String openId, String message) {
 
         List<TemplateResponse> list = new ArrayList<>();
         TemplateResponse templateResponse1 = new TemplateResponse();
@@ -304,7 +445,7 @@ public class DictionaryService {
         TemplateResponse templateResponse2 = new TemplateResponse();
         templateResponse2.setColor("#000000");
         templateResponse2.setName("keyword2");
-        templateResponse2.setValue("关注女装羊绒大衣，春款超超值购即将开始！");
+        templateResponse2.setValue(message);
         list.add(templateResponse2);
 
         Template template = new Template();
