@@ -21,8 +21,6 @@ public class ProdutsTypeController {
 
     @Autowired
     private ProdutsTypeService produtsTypeService;
-    @Autowired
-    private ShopCarService shopCarService;
 
     @RequestMapping("/list")
     public Result list(@RequestParam Map<String, String> map, @RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "3") int pageSize) {

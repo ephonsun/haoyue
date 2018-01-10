@@ -130,9 +130,9 @@ public class Global {
   
 
     //微信模板信息访问通知
-    public static String wxtemplate_msg1="普通";
-    public static String wxtemplate_msg2="预售";
-    public static String wxtemplate_msg3="秒杀";
+    public static String wxtemplate_msg1="海量春款上新中。。。置顶关注，每天都有大不同哦!";//日常访问通知
+    public static String wxtemplate_msg2="亲爱的，您喜欢的宝贝上架啦，貌似新品有限时折扣！";//预售通知
+    public static String wxtemplate_msg3="置顶关注，限时巨划算怎能错过！";//秒杀通知
     public static Map<String,String> yushou_map=new HashMap<>();
     public static Map<String,String> miaosha_map=new HashMap<>();
 

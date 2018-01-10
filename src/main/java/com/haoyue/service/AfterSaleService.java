@@ -33,7 +33,7 @@ public class AfterSaleService {
         afterSaleRepo.save(afterSale);
     }
 
-    public Object list(Map<String, String> map, int pageNumber, int pageSize) {
+    public Iterable<AfterSale> list(Map<String, String> map, int pageNumber, int pageSize) {
         QAfterSale aftersale=QAfterSale.afterSale;
         BooleanBuilder bd=new BooleanBuilder();
         for (String name : map.keySet()) {

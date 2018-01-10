@@ -266,6 +266,9 @@ public class SuperAdminController {
             dictionaryService.timeKillInform();
             System.out.println("高级版--预售通知执行了。。。。");
             dictionaryService.advanceSale();
+            //清空数据
+            Global.yushou_map.clear();
+            Global.miaosha_map.clear();
         }
     };
 

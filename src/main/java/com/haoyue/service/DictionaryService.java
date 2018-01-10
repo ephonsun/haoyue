@@ -40,6 +40,8 @@ public class DictionaryService {
     private CustomerService customerService;
     @Autowired
     private ProductsService productsService;
+    @Autowired
+    private PtypeNamesService ptypeNamesService;
 
     public Dictionary findByTokenAndName(String token, String name) {
         return null;
@@ -154,7 +156,7 @@ public class DictionaryService {
                         wxTemplateService.save(wxTemplate);
                         continue;
                     }
-                    addTemplate(customerService.findByOpenId(wxTemplate.getOpenId(), wxTemplate.getSellerId()).getWxname(), wxTemplate.getFormId(), wxTemplate.getOpenId(), Global.wxtemplate_msg3);
+                    addTemplate(customerService.findByOpenId(wxTemplate.getOpenId(), wxTemplate.getSellerId()).getWxname(), wxTemplate.getFormId(), wxTemplate.getOpenId(), Global.wxtemplate_msg1,"pages/index/index");
                     wxTemplate.setActive(false);
                     wxTemplateService.save(wxTemplate);
                     break;
@@ -204,7 +206,8 @@ public class DictionaryService {
                     if (iterable.iterator().hasNext()) {
                         //  Global.miaosha_map 中加入当前key=sellerId信息 yes
                         Global.miaosha_map.put(sellerId, "yes");
-                        addTemplate(customer.getWxname(), wxTemplate.getFormId(), wxTemplate.getOpenId(), Global.wxtemplate_msg3);
+                        String pagePath=getPagePath(sellerId,"秒杀");
+                        addTemplate(customer.getWxname(), wxTemplate.getFormId(), wxTemplate.getOpenId(), Global.wxtemplate_msg3,pagePath);
                         wxTemplate.setActive(false);
                         wxTemplateService.save(wxTemplate);
                         break;
@@ -217,7 +220,8 @@ public class DictionaryService {
                     //  Global.miaosha_map 中获取当前key=sellerId信息
                     if (Global.miaosha_map.get(sellerId).equals("yes")) {
                         // key=sellerId value=yes
-                        addTemplate(customer.getWxname(), wxTemplate.getFormId(), wxTemplate.getOpenId(), Global.wxtemplate_msg3);
+                        String pagePath=getPagePath(sellerId,"秒杀");
+                        addTemplate(customer.getWxname(),wxTemplate.getFormId(), wxTemplate.getOpenId(), Global.wxtemplate_msg3,pagePath);
                         wxTemplate.setActive(false);
                         wxTemplateService.save(wxTemplate);
                         break;
@@ -269,13 +273,15 @@ public class DictionaryService {
                         Products products=iterator.next();
                         if (products.getShowDate().getTime()-new Date().getTime()<3600000){
                             flag=true;
+                            System.out.println("yuhsou flag:"+flag);
                         }
                     }
                     //存在预售商品
                     if (flag) {
                         //  Global.yushou_map 中加入当前key=sellerId信息 yes
                         Global.yushou_map.put(sellerId, "yes");
-                        addTemplate(customer.getWxname(), wxTemplate.getFormId(), wxTemplate.getOpenId(), Global.wxtemplate_msg3);
+                        String pagePath=getPagePath(sellerId,"预售");
+                        addTemplate(customer.getWxname(), wxTemplate.getFormId(), wxTemplate.getOpenId(), Global.wxtemplate_msg2,pagePath);
                         wxTemplate.setActive(false);
                         wxTemplateService.save(wxTemplate);
                         break;
@@ -288,7 +294,8 @@ public class DictionaryService {
                     //  Global.yushou_map 中获取当前key=sellerId信息
                     if (Global.yushou_map.get(sellerId).equals("yes")) {
                         // key=sellerId value=yes
-                        addTemplate(customer.getWxname(), wxTemplate.getFormId(), wxTemplate.getOpenId(), Global.wxtemplate_msg3);
+                        String pagePath=getPagePath(sellerId,"预售");
+                        addTemplate(customer.getWxname(), wxTemplate.getFormId(), wxTemplate.getOpenId(), Global.wxtemplate_msg2,pagePath);
                         wxTemplate.setActive(false);
                         wxTemplateService.save(wxTemplate);
                         break;
@@ -298,6 +305,21 @@ public class DictionaryService {
         }
     }
 
+    public String  getPagePath(String sellerId,String key){
+        String pagePath="";
+        String ptypename=ptypeNamesService.findBySellerId(sellerId).getPtypename();
+        String[] ptypenames=ptypename.split(",");
+        for (int i=0;i<ptypenames.length;i++){
+            if (!StringUtils.isNullOrBlank(ptypenames[i])&&ptypenames[i].contains(key)){
+                pagePath="pages/goods/goods?ptypename="+key+"&index="+i;
+            }
+        }
+        if (StringUtils.isNullOrBlank(pagePath)){
+            pagePath="pages/index/index";
+        }
+        System.out.println("pagepath==="+pagePath);
+        return pagePath;
+    }
 
     public void auto_receive() {
         //待收货
@@ -433,7 +455,7 @@ public class DictionaryService {
         System.out.println("高级版访问通知：" + result);
     }
 
-    public void addTemplate(String wxname, String formId, String openId, String message) {
+    public void addTemplate(String wxname, String formId, String openId, String message,String pagePath) {
 
         List<TemplateResponse> list = new ArrayList<>();
         TemplateResponse templateResponse1 = new TemplateResponse();
@@ -452,7 +474,7 @@ public class DictionaryService {
         template.setTemplateId("Foc6pkGtA2FZON2_5nXJxCmFvfIdKWAv5oj6REd_3w4");
         template.setTemplateParamList(list);
         template.setTopColor("#000000");
-        template.setPage("pages/index/index");
+        template.setPage(pagePath);
         template.setToUser(openId);
         getTemplate(template, formId);
     }
