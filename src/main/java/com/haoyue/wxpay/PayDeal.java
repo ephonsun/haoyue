@@ -25,9 +25,18 @@ public class PayDeal {
     private String total_fee;
     private String return_code;
     private String out_trade_no;
+    private String sellerId;
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:SS", timezone="GMT+8")
     @Temporal(TemporalType.TIMESTAMP)
     private Date date;
+
+    public String getSellerId() {
+        return sellerId;
+    }
+
+    public void setSellerId(String sellerId) {
+        this.sellerId = sellerId;
+    }
 
     public String getOut_trade_no() {
         return out_trade_no;

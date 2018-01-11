@@ -26,6 +26,8 @@ public class ShopCarService {
     private ProductsService productsService;
     @Autowired
     private ShopCarDetailService shopCarDetailService;
+    @Autowired
+    private SellerService sellerService;
 
     public ShopCar findOne(Integer id) {
         return shopCarRepo.findOne(id);
@@ -175,17 +177,19 @@ public class ShopCarService {
     }
 
 
-    public void getTemplate(Template template, String formId) {
+    public void getTemplate(Template template, String formId,int sellerId) {
+        Seller seller=sellerService.findOne(sellerId);
         //模板信息通知用户
         //获取 access_token
         String access_token_url = "https://api.weixin.qq.com/cgi-bin/token";
-        String param1 = "grant_type=client_credential&appid=wxe46b9aa1b768e5fe&secret=8bcdb74a9915b5685fa0ec37f6f25b24";
+        String param1 = "grant_type=client_credential&appid="+seller.getAppId()+"&secret="+seller.getSecret();
         String access_token = HttpRequest.sendPost(access_token_url, param1);
         access_token = access_token.substring(access_token.indexOf(":") + 2, access_token.indexOf(",") - 1);
         //发送模板信息
         template.setForm_id(formId);
         String url = "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token=" + access_token + "&form_id=" + formId;
         String result = CommonUtil.httpRequest(url, "POST", template.toJSON());
+        System.out.println("高级版-购物车降价通知："+result);
     }
 
     public void addTemplate(int pid, String pname, String openId, ProdutsType ptype, String formId) {
@@ -216,12 +220,12 @@ public class ShopCarService {
         list.add(templateResponse4);
 
         Template template = new Template();
-        template.setTemplateId("HsbxE0x_CqdmCu6u0hhYtGB4Ry2f_R9M96KBLLxWbUM");
+        template.setTemplateId(sellerService.findOne(ptype.getSellerId()).getTemplate_downprice());
         template.setTemplateParamList(list);
         template.setTopColor("#000000");
         template.setPage("pages/details/details?id=" + pid + "&ptypeId=" + ptype.getId());
         template.setToUser(openId);
-        getTemplate(template, formId);
+        getTemplate(template, formId,ptype.getSellerId());
 
     }
 }

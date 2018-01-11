@@ -83,7 +83,7 @@ public class OrderController {
             order.setActive(false);
         }
         //卖家取消订单，买卖双方都看不到
-        if (StringUtils.isNullOrBlank(openId)){
+        if (StringUtils.isNullOrBlank(openId)) {
             order.setActive(false);
             order.setActive_seller(false);
         }
@@ -318,8 +318,8 @@ public class OrderController {
     // https://www.cslapp.com/order/excel?sellerId=3&oids=714=715
     // http://localhost:8080/order/excel?sellerId=1&state=已完成订单&openId=1
     @RequestMapping("/excel")
-    public Result excel( String sellerId,String oids) throws IOException {
-        return orderService.excel(sellerId,oids);
+    public Result excel(String sellerId, String oids) throws IOException {
+        return orderService.excel(sellerId, oids);
     }
 
     @RequestMapping("/update")
@@ -359,8 +359,8 @@ public class OrderController {
     //模糊查询 商品编号 订单编号 订单状态 买家名称 商品名称 买家昵称
     // http://localhost:8080/order/query?sellerId=卖家ID&ordercode=订单号&pcode=商品号&pname=商品名&state=订单状态&wxname=买家昵称
     @RequestMapping("/query")
-    public Result query(@RequestParam Map<String, String> map){
-        Iterable<Order> iterable= orderService.filter(map);
+    public Result query(@RequestParam Map<String, String> map) {
+        Iterable<Order> iterable = orderService.filter(map);
         return new Result(false, Global.do_success, iterable, null);
     }
 
@@ -420,17 +420,15 @@ public class OrderController {
         }
     }
 
-    public void getTemplate(Template template,int sellerId) {
+    public void getTemplate(Template template, int sellerId) {
+        //获取 appId 和 secret 8bcdb74a9915b5685fa0ec37f6f25b24
+        Seller seller = sellerService.findOne(sellerId);
         //模板信息通知用户
         //获取 access_token
-        String access_token =Global.access_tokens.get(String.valueOf(sellerId));
-        if (StringUtils.isNullOrBlank(access_token)) {
-            String access_token_url = "https://api.weixin.qq.com/cgi-bin/token";
-            String param1 = "grant_type=client_credential&appid=wxe46b9aa1b768e5fe&secret=8bcdb74a9915b5685fa0ec37f6f25b24";
-            access_token = HttpRequest.sendPost(access_token_url, param1);
-            access_token = access_token.substring(access_token.indexOf(":") + 2, access_token.indexOf(",") - 1);
-            Global.access_tokens.put(String.valueOf(sellerId),access_token);
-        }
+        String access_token_url = "https://api.weixin.qq.com/cgi-bin/token";
+        String param1 = "grant_type=client_credential&appid=" + seller.getAppId() + "&secret=" + seller.getSecret();
+        String access_token = HttpRequest.sendPost(access_token_url, param1);
+        access_token = access_token.substring(access_token.indexOf(":") + 2, access_token.indexOf(",") - 1);
         //发送模板信息
         String form_id = Global.package_map.get(template.getToUser());
         template.setForm_id(form_id);
@@ -475,12 +473,12 @@ public class OrderController {
         list.add(templateResponse5);
 
         Template template = new Template();
-        template.setTemplateId("Z_Xg6rYdQgci4FP_aOjTvZHXeC5BSs99EwARD6NJXWk");
+        template.setTemplateId(sellerService.findOne(order.getSellerId()).getTemplate_pay());
         template.setTemplateParamList(list);
         template.setTopColor("#000000");
         template.setPage("pages/index/index");
         template.setToUser(customerService.findOpenIdById(order.getCustomerId() + ""));
-        getTemplate(template,order.getSellerId());
+        getTemplate(template, order.getSellerId());
     }
 
 }

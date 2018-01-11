@@ -471,4 +471,8 @@ public class OrderService {
     public List<Order> findBySellerId(String sellerId) {
         return orderRepo.findBySellerId(Integer.parseInt(sellerId));
     }
+
+    public Order findByOrderCode(String out_trade_no) {
+        return orderRepo.findByOrderCode(out_trade_no);
+    }
 }

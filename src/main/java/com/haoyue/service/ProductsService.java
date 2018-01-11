@@ -197,6 +197,7 @@ public class ProductsService {
             ptype.setDiscountPrice(Double.valueOf(map.get("discount")));
             //降价
             if (olddiscount != 0 && olddiscount > ptype.getDiscountPrice()) {
+                //降价通知
                 shopCarService.sendCustomerWxTemplate(ptype.getId(), ptype.getSellerId());
             }
             produtsTypeRepo.save(ptype);

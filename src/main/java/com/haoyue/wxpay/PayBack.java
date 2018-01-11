@@ -46,11 +46,11 @@ public class PayBack {
     // https://www.cslapp.com/payback/do?sellerId=3&out_trade_no=14878628022017111615363948647073&transaction_id=4200000037201711165033853205&fe=1
     //  /payback/do?sellerId=3&oid=订单Id&fe=订单总价
     @RequestMapping("/do")
-    public Object refund(String sellerId,  String oid, String fe) {
+    public Object refund(String sellerId,String oid, String fe) {
         //获取卖家的基本信息
         Seller sale = sellerService.findOneById(Integer.parseInt(sellerId));
         String appId = sale.getAppId();
-        String mchId = sale.getMachId();
+        String mchId = sale.getMchId();
         String key = sale.getKey1();
         Map<String, Object> result = new HashMap<String, Object>();
         String nonceStr = UUIDHexGenerator.generate();
@@ -96,7 +96,8 @@ public class PayBack {
                 "<transaction_id>" + transaction_id + "</transaction_id>" +
                 "<sign>" + sign + "</sign>" +
                 "</xml>";
-        String resultStr = PayBackUtil.post(refundUrl, xmlParam);
+        //调用退款操作
+        String resultStr = PayBackUtil.post(refundUrl, xmlParam,sale.getFile_payback(),mchId);
         //解析结果
         try {
             Map map = PayBackUtil.doXMLParse(resultStr);
@@ -154,7 +155,6 @@ public class PayBack {
         payBackDeal.setTransaction_id(String.valueOf(map.get("transaction_id")));
         payBackDeal.setResult_code(String.valueOf(map.get("result_code")));
         payBackDeal.setSettlement_refund_fee(String.valueOf(map.get("settlement_refund_fee")));
-        //根据 out_trade_no 获取团购订单
         payBackDeal.setSellerId(sellerId);
         payBackDealService.save(payBackDeal);
     }

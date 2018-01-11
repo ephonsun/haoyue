@@ -42,6 +42,8 @@ public class DictionaryService {
     private ProductsService productsService;
     @Autowired
     private PtypeNamesService ptypeNamesService;
+    @Autowired
+    private SellerService sellerService;
 
     public Dictionary findByTokenAndName(String token, String name) {
         return null;
@@ -156,7 +158,8 @@ public class DictionaryService {
                         wxTemplateService.save(wxTemplate);
                         continue;
                     }
-                    addTemplate(customerService.findByOpenId(wxTemplate.getOpenId(), wxTemplate.getSellerId()).getWxname(), wxTemplate.getFormId(), wxTemplate.getOpenId(), Global.wxtemplate_msg1,"pages/index/index");
+                    Seller seller=sellerService.findOne(Integer.parseInt(wxTemplate.getSellerId()));
+                    addTemplate(customerService.findByOpenId(wxTemplate.getOpenId(), wxTemplate.getSellerId()).getWxname(), wxTemplate.getFormId(), wxTemplate.getOpenId(), Global.wxtemplate_msg1,"pages/index/index",seller.getSellerId(),seller.getTemplate_daily());
                     wxTemplate.setActive(false);
                     wxTemplateService.save(wxTemplate);
                     break;
@@ -207,7 +210,8 @@ public class DictionaryService {
                         //  Global.miaosha_map 中加入当前key=sellerId信息 yes
                         Global.miaosha_map.put(sellerId, "yes");
                         String pagePath=getPagePath(sellerId,"秒杀");
-                        addTemplate(customer.getWxname(), wxTemplate.getFormId(), wxTemplate.getOpenId(), Global.wxtemplate_msg3,pagePath);
+                        Seller seller=sellerService.findOne(Integer.parseInt(sellerId));
+                        addTemplate(customer.getWxname(), wxTemplate.getFormId(), wxTemplate.getOpenId(), Global.wxtemplate_msg3,pagePath,seller.getSellerId(),seller.getTemplate_daily());
                         wxTemplate.setActive(false);
                         wxTemplateService.save(wxTemplate);
                         break;
@@ -221,7 +225,8 @@ public class DictionaryService {
                     if (Global.miaosha_map.get(sellerId).equals("yes")) {
                         // key=sellerId value=yes
                         String pagePath=getPagePath(sellerId,"秒杀");
-                        addTemplate(customer.getWxname(),wxTemplate.getFormId(), wxTemplate.getOpenId(), Global.wxtemplate_msg3,pagePath);
+                        Seller seller=sellerService.findOne(Integer.parseInt(sellerId));
+                        addTemplate(customer.getWxname(),wxTemplate.getFormId(), wxTemplate.getOpenId(), Global.wxtemplate_msg3,pagePath,seller.getSellerId(),seller.getTemplate_daily());
                         wxTemplate.setActive(false);
                         wxTemplateService.save(wxTemplate);
                         break;
@@ -281,7 +286,8 @@ public class DictionaryService {
                         //  Global.yushou_map 中加入当前key=sellerId信息 yes
                         Global.yushou_map.put(sellerId, "yes");
                         String pagePath=getPagePath(sellerId,"预售");
-                        addTemplate(customer.getWxname(), wxTemplate.getFormId(), wxTemplate.getOpenId(), Global.wxtemplate_msg2,pagePath);
+                        Seller seller=sellerService.findOne(Integer.parseInt(sellerId));
+                        addTemplate(customer.getWxname(), wxTemplate.getFormId(), wxTemplate.getOpenId(), Global.wxtemplate_msg2,pagePath,seller.getSellerId(),seller.getTemplate_daily());
                         wxTemplate.setActive(false);
                         wxTemplateService.save(wxTemplate);
                         break;
@@ -295,7 +301,8 @@ public class DictionaryService {
                     if (Global.yushou_map.get(sellerId).equals("yes")) {
                         // key=sellerId value=yes
                         String pagePath=getPagePath(sellerId,"预售");
-                        addTemplate(customer.getWxname(), wxTemplate.getFormId(), wxTemplate.getOpenId(), Global.wxtemplate_msg2,pagePath);
+                        Seller seller=sellerService.findOne(Integer.parseInt(sellerId));
+                        addTemplate(customer.getWxname(), wxTemplate.getFormId(), wxTemplate.getOpenId(), Global.wxtemplate_msg2,pagePath,seller.getSellerId(),seller.getTemplate_daily());
                         wxTemplate.setActive(false);
                         wxTemplateService.save(wxTemplate);
                         break;
@@ -440,11 +447,12 @@ public class DictionaryService {
         dictionaryRepo.save(dictionary);
     }
 
-    public void getTemplate(Template template, String formId) {
+    public void getTemplate(Template template, String formId,int sellerId) {
+        Seller seller=sellerService.findOne(sellerId);
         //模板信息通知用户
         //获取 access_token
         String access_token_url = "https://api.weixin.qq.com/cgi-bin/token";
-        String param1 = "grant_type=client_credential&appid=wxe46b9aa1b768e5fe&secret=8bcdb74a9915b5685fa0ec37f6f25b24";
+        String param1 = "grant_type=client_credential&appid="+seller.getAppId()+"&secret="+seller.getSecret();
         String access_token = HttpRequest.sendPost(access_token_url, param1);
         access_token = access_token.substring(access_token.indexOf(":") + 2, access_token.indexOf(",") - 1);
 
@@ -455,7 +463,7 @@ public class DictionaryService {
         System.out.println("高级版访问通知：" + result);
     }
 
-    public void addTemplate(String wxname, String formId, String openId, String message,String pagePath) {
+    public void addTemplate(String wxname, String formId, String openId, String message,String pagePath,int sellerId,String templateId) {
 
         List<TemplateResponse> list = new ArrayList<>();
         TemplateResponse templateResponse1 = new TemplateResponse();
@@ -471,11 +479,11 @@ public class DictionaryService {
         list.add(templateResponse2);
 
         Template template = new Template();
-        template.setTemplateId("Foc6pkGtA2FZON2_5nXJxCmFvfIdKWAv5oj6REd_3w4");
+        template.setTemplateId(templateId);
         template.setTemplateParamList(list);
         template.setTopColor("#000000");
         template.setPage(pagePath);
         template.setToUser(openId);
-        getTemplate(template, formId);
+        getTemplate(template, formId,sellerId);
     }
 }

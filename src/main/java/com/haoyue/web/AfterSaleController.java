@@ -42,6 +42,9 @@ public class AfterSaleController {
         if (order.getSellerId() != Integer.parseInt(afterSale.getSellerId())) {
             return new Result(true, Global.have_no_right, null, null);
         }
+        if(order.getIsApplyReturn()){
+            return new Result(true, Global.already_apply_payback, null, null);
+        }
         //更新订单是否申请退换货
         order.setIsApplyReturn(true);
         orderService.update(order);
@@ -84,10 +87,18 @@ public class AfterSaleController {
             String result = HttpRequest.sendGet("https://www.cslapp.com/payback/do", param);
             System.out.println("after-sale-result:" + result);
             if (!result.equalsIgnoreCase("fail")) {
-
+                addTemplate(order,afterSale.getFormId());
             }
         }
         return new Result(false, Global.do_success, null, null);
+    }
+
+
+    //  /after-sale/uploadPics?sellerId=卖家ID&id=退款记录Id
+    @RequestMapping("/findone")
+    public Result findOne(String id,String sellerId){
+        AfterSale afterSale= afterSaleService.findOne(id);
+        return new Result(false, Global.do_success, afterSale, null);
     }
 
 

@@ -136,6 +136,10 @@ public class Global {
     public static Map<String,String> yushou_map=new HashMap<>();
     public static Map<String,String> miaosha_map=new HashMap<>();
 
+
+    //申请退款
+    public static String already_apply_payback="你已经申请了退款";
+
     //非拦截地址
     public static List<String> urls(){
         List<String> list=new ArrayList<>();

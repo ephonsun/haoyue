@@ -365,11 +365,4 @@ public class SellerController {
         return new Result(false, Global.do_success, null, null);
     }
 
-    // /seller/test?sellerId=1&test=数据
-    @RequestMapping("/test")
-    public void test(String test){
-        System.out.println(test);
-        System.out.println(System.currentTimeMillis());
-    }
-
 }

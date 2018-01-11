@@ -226,6 +226,8 @@ public class PayAction {
         payDeal.setDate(StringUtils.formatDate(map.get("time_end")));
         payDeal.setAppId(map.get("appid"));
         payDeal.setOut_trade_no(map.get("out_trade_no"));
+        Order order=orderService.findByOrderCode(payDeal.getOut_trade_no());
+        payDeal.setSellerId(order.getSellerId()+"");
         payDealService.save(payDeal);
 
         BufferedOutputStream out = new BufferedOutputStream(
@@ -235,27 +237,11 @@ public class PayAction {
         out.close();
     }
 
-    @RequestMapping("/sendTemplate")
-    public void getTemplate(String openId,String data){
-//        //模板信息通知用户
-//            //获取 access_token
-//        String access_token_url="https://api.weixin.qq.com/cgi-bin/token";
-//        String param1="grant_type=client_credential&appid=wxe46b9aa1b768e5fe&secret=8bcdb74a9915b5685fa0ec37f6f25b24";
-//        String access_token= HttpRequest.sendPost(access_token_url,param1);
-//        access_token=access_token.substring(access_token.indexOf(":")+2,access_token.indexOf(",")-1);
-//            //发送模板信息
-//        String url="https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send";
-//        String form_id=Global.package_map.get(openId);
-//        Global.package_map.remove(openId);
-//        String param2="access_token="+access_token+"&touser="+openId+"&template_id=Z_Xg6rYdQgci4FP_aOjTvZHXeC5BSs99EwARD6NJXWk&form_id"+form_id+"&data="+data;
-//        String result=HttpRequest.sendPost(url,param2);
-//        System.out.println(result);
-    }
 
     /**
      * 支付结果查询
      * 接口留下备用
-     *
+     * 未使用。。
      * @param appId
      * @param machId
      * @param transaction_id 微信支付订单号 transaction_id  从notify通知处 获得

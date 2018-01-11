@@ -1,5 +1,6 @@
 package com.haoyue.wxpay;
 
+import com.haoyue.service.SellerService;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -13,6 +14,7 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.net.ssl.SSLContext;
 import java.io.*;
@@ -25,9 +27,12 @@ import java.util.*;
  */
 public class PayBackUtil {
 
-    //  1487862802 是machId
+    //  1487862802 是mchId
 
-    public static String post(String url, String xmlParam) {
+    @Autowired
+    private SellerService sellerService;
+
+    public static String post(String url, String xmlParam,String file_payback,String mchId) {
         StringBuilder sb = new StringBuilder();
         //获取项目根路径
         String relativelyPath = System.getProperty("user.dir");
@@ -39,17 +44,17 @@ public class PayBackUtil {
             if (!file1.isDirectory()) {
                 file1.mkdirs();
             }
-            FileInputStream instream = new FileInputStream(new File(mkdis+"apiclient_cert.p12"));
+            FileInputStream instream = new FileInputStream(new File(mkdis+file_payback));
             try {
                 //商户ID
-                keyStore.load(instream, "1487862802".toCharArray());
+                keyStore.load(instream, mchId.toCharArray());
             } finally {
                 instream.close();
             }
 
             // 证书
             SSLContext sslcontext = SSLContexts.custom()
-                    .loadKeyMaterial(keyStore, "1487862802".toCharArray())
+                    .loadKeyMaterial(keyStore, mchId.toCharArray())
                     .build();
             // 只允许TLSv1协议
             SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(

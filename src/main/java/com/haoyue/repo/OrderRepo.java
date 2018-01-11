@@ -50,4 +50,6 @@ public interface OrderRepo extends BaseRepo<Order,Integer> {
 
     @Query(nativeQuery = true,value = "select * from orders where customer_id=?1 and seller_id=?2  and state='已完成订单' and iscomment=false")
     List<Order> findUnComment(int cid, String sellerId);
+
+    Order findByOrderCode(String out_trade_no);
 }
