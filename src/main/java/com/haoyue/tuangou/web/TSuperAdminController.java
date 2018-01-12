@@ -41,16 +41,17 @@ public class TSuperAdminController {
      * http://localhost:8080/tuan/admin/timer?key=abcdefg&saleId=1
      * https://www.cslapp.com/tuan/admin/timer?key=abcdefg&saleId=1
      */
+
     @RequestMapping("/timer")
     public String timer(String key) {
         if (key.equals("abcdefg")) {
             ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
             // 第二个参数为首次执行的延时时间，第三个参数为定时执行的间隔时间
-            service.scheduleAtFixedRate(runnable, 60, 3600, TimeUnit.SECONDS);
-            service.scheduleAtFixedRate(runnable2, 120, 300, TimeUnit.SECONDS);
-            service.scheduleAtFixedRate(runnable3, 240, 300, TimeUnit.SECONDS);
-            service.scheduleAtFixedRate(runnable4, 360, 3600, TimeUnit.SECONDS);
-            service.scheduleAtFixedRate(runnable5, 420, 3600, TimeUnit.SECONDS);
+            service.scheduleAtFixedRate(runnable, 120, 3600, TimeUnit.SECONDS);
+            service.scheduleAtFixedRate(runnable2, 150, 300, TimeUnit.SECONDS);
+            service.scheduleAtFixedRate(runnable3, 180, 300, TimeUnit.SECONDS);
+            service.scheduleAtFixedRate(runnable4, 210, 3600, TimeUnit.SECONDS);
+            service.scheduleAtFixedRate(runnable5, 240, 3600, TimeUnit.SECONDS);
             TGlobal.timer=true;
             return "ok";
         }

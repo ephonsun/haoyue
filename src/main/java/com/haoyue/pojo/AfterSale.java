@@ -40,6 +40,25 @@ public class AfterSale {
     @Column(updatable = false)
     private Date createDate;//创建日期
 
+    private boolean active=true;//卖家
+    private boolean active_buyer=true;//买家
+
+
+    public boolean getActive_buyer() {
+        return active_buyer;
+    }
+
+    public void setActive_buyer(boolean active_buyer) {
+        this.active_buyer = active_buyer;
+    }
+
+    public boolean getActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
 
     public String getFormId() {
         return formId;

@@ -93,14 +93,12 @@ public class AfterSaleController {
         return new Result(false, Global.do_success, null, null);
     }
 
-
-    //  /after-sale/uploadPics?sellerId=卖家ID&id=退款记录Id
+    //  /after-sale/findone?sellerId=卖家ID&id=退款记录Id
     @RequestMapping("/findone")
     public Result findOne(String id,String sellerId){
         AfterSale afterSale= afterSaleService.findOne(id);
         return new Result(false, Global.do_success, afterSale, null);
     }
-
 
     //  /after-sale/uploadPics?sellerId=卖家ID&multipartFiles=文件
     @RequestMapping("/uploadPics")
@@ -120,6 +118,23 @@ public class AfterSaleController {
             }
         }
         return new Result(false, Global.do_success, stringBuffer.toString(), null);
+    }
+
+    //  /after-sale/cancel?sellerId=卖家ID&id=申请退款记录Id
+    @RequestMapping("/cancel")
+    public Result cancel(String id,String sellerId,String openId){
+        AfterSale afterSale=afterSaleService.findOne(id);
+        if (!sellerId.equals(afterSale.getSellerId())) {
+            return new Result(true, Global.have_no_right, null, null);
+        }
+        if (StringUtils.isNullOrBlank(openId)) {
+            afterSale.setActive(false);
+        }
+        if (!StringUtils.isNullOrBlank(openId)){
+            afterSale.setActive_buyer(false);
+        }
+        afterSaleService.save(afterSale);
+        return new Result(false, Global.do_success, null, null);
     }
 
     public void getTemplate(Template template, String formId) {

@@ -2,35 +2,31 @@ package com.haoyue;
 
 import com.aliyun.oss.OSSClient;
 import com.aliyun.oss.model.PutObjectResult;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.JsonObject;
+import com.google.common.collect.Maps;
+import com.haoyue.pojo.*;
 import com.haoyue.untils.*;
 //import io.goeasy.GoEasy;
+import com.haoyue.untils.HttpRequest;
 import io.goeasy.GoEasy;
-import org.dom4j.DocumentException;
-import org.json.JSONObject;
-import org.json.simple.JSONArray;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.test.annotation.SystemProfileValueSource;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
 
-import javax.servlet.ServletContext;
 import java.io.*;
-import java.net.URL;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.Clock;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.*;
 
 @RunWith(SpringRunner.class)
@@ -38,7 +34,8 @@ import java.util.*;
 public class HaoyueApplicationTests {
 
     @Test
-    public void contextLoads() {
+    public void contextLoads()
+    {
         System.out.println(new Date().toLocaleString());
     }
 
@@ -232,20 +229,6 @@ public class HaoyueApplicationTests {
 //        list.add(dog3);
 //
 //        list.forEach((dog each)->System.out.print(each));
-        List<Person> javaProgrammers = new ArrayList<Person>() {
-            {
-                add(new Person("Elsdon", "Jaycob", "Java programmer", "male", 43, 2000));
-                add(new Person("Tamsen", "Brittany", "Java programmer", "female", 23, 1500));
-                add(new Person("Floyd", "Donny", "Java programmer", "male", 33, 1800));
-                add(new Person("Sindy", "Jonie", "Java programmer", "female", 32, 1600));
-                add(new Person("Vere", "Hervey", "Java programmer", "male", 22, 1200));
-                add(new Person("Maude", "Jaimie", "Java programmer", "female", 27, 1900));
-                add(new Person("Shawn", "Randall", "Java programmer", "male", 30, 2300));
-                add(new Person("Jayden", "Corrina", "Java programmer", "female", 35, 1700));
-                add(new Person("Palmer", "Dene", "Java programmer", "male", 33, 2000));
-                add(new Person("Addison", "Pam", "Java programmer", "female", 34, 1300));
-            }
-        };
 
         String[] players = {"Rafael Nadal", "Novak Djokovic",
                 "Stanislas Wawrinka", "David Ferrer",
@@ -326,12 +309,9 @@ public class HaoyueApplicationTests {
 
     @Test
     public void f18() {
-        List<String> list = new ArrayList<>();
-        list.add("11");
-        list.add("111");
-        System.out.println(list.contains("11"));
-        System.out.println(list.contains("1"));
-
+        Calendar calendar=Calendar.getInstance();
+        calendar.add(Calendar.MONTH,-3);
+        System.out.println(calendar.getTime().toLocaleString());
     }
 
     class response {
@@ -420,85 +400,138 @@ public class HaoyueApplicationTests {
         }
     }
 
+    @Test
+    public void f25(){
+        String access_token="4_m4SXUmYY-g_E0-eUNsJbJcQkGAA03T0r4bwu3BkmcXsbEHnH-XLx9Ceraa7yy3POH4txYK5X4YKBum3uhIACHDoGCYP0RAW6XFm3ueWBQDl3blwa50TOkhbJ3D8akG_6_AY7FPs7FnW7ycnENUVcAIAFMN";
+        getminiqrQr(access_token,"43");
+    }
+
+    @Test
+    public void f26(){
+        String access_token_url = "https://api.weixin.qq.com/cgi-bin/token";
+        String param1 = "grant_type=client_credential&appid=wxf80175142f3214e1&secret=e0251029d53d21e84a650681af6139b1";
+        String access_token = com.haoyue.tuangou.wxpay.HttpRequest.sendPost(access_token_url, param1);
+        access_token = access_token.substring(access_token.indexOf(":") + 2, access_token.indexOf(",") - 1);
+        System.out.println(access_token);
+    }
+
+    @Test
+    public void f27(){
+        long a=Long.parseLong("1513743237268");
+        System.out.println(a);
+        Date date=new Date(a);
+        System.out.println(date.toLocaleString());
+    }
+
+    @Test
+    public void f28() {
+        String str="ABCDEFA";
+        String str2=str.replace("A","a");
+        System.out.println(str);
+        System.out.println(str2);
+
+    }
+
+
+    @Test
+    public void f29() {
+        HashMap<Integer, Integer> integerHashMap = new HashMap<>();
+        integerHashMap.put(10,12);
+        integerHashMap.put(8,10);
+        integerHashMap.put(12,11);
+        integerHashMap.put(9,8);
+        Set<Map.Entry<Integer, Integer>> entrySet = integerHashMap.entrySet();
+        ArrayList<Map.Entry<Integer, Integer>> arrayList = new ArrayList<>(entrySet);
+        Collections.sort(arrayList, (a,  b) ->{
+            return a.getKey()-b.getKey();
+        });
+        ArrayList<Object> conList = new ArrayList<>();
+        arrayList.forEach(a -> {
+            conList.add(a.getKey());
+            conList.add(a.getValue());
+        });
+        conList.forEach(a ->
+                System.out.print(a +" ")
+        );
+    }
+
+    @Test
+    public void f30(){
+        Map<String,String> map=new HashMap<>();
+        map.put("1","1");
+        map.put("2","2");
+        System.out.println(map.get("1"));
+        map.clear();
+        System.out.println(map.get("1"));
+    }
+
+    @Test
+    public void f31(){
+        int a=10;
+        if (a==10){
+            System.out.println(111);
+        }else if (a==11){
+            System.out.println(2222);
+        }else {
+            System.out.println(333);
+        }
+    }
+
+
+    public Map getminiqrQr(String accessToken,String pid) {
+        RestTemplate rest = new RestTemplate();
+        InputStream inputStream = null;
+        OutputStream outputStream = null;
+        try {
+            String url = "https://api.weixin.qq.com/cgi-bin/wxaapp/createwxaqrcode?access_token="+accessToken;
+            Map<String,Object> param = new HashMap<>();
+            param.put("path", "pages/details/details?id=43");
+            param.put("width", 430);
+            MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+            HttpEntity requestEntity = new HttpEntity(param, headers);
+            ResponseEntity<byte[]> entity = rest.exchange(url, HttpMethod.POST, requestEntity, byte[].class, new Object[0]);
+            byte[] result = entity.getBody();
+            inputStream = new ByteArrayInputStream(result);
+
+            //获取项目根路径
+            String relativelyPath = "c:";
+            String mkdirs=relativelyPath+"/qrcode/";
+            String filename=relativelyPath+"/qrcode/"+pid+".jpg";
+            File filedirs = new File(mkdirs);
+            if (!filedirs.isDirectory()){
+                filedirs.mkdirs();
+            }
+            outputStream = new FileOutputStream(new File(filename));
+            int len = 0;
+            byte[] buf = new byte[1024];
+            while ((len = inputStream.read(buf, 0, 1024)) != -1) {
+                outputStream.write(buf, 0, len);
+            }
+            outputStream.flush();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if(inputStream != null){
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(outputStream != null){
+                try {
+                    outputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return null;
+    }
 }
 
-class Person {
-    private String firstName, lastName, job, gender;
-    private int salary, age;
 
-    public Person(String firstName, String lastName, String job, String gender, int age, int salary) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.job = job;
-        this.gender = gender;
-        this.salary = salary;
-        this.age = age;
-    }
 
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getJob() {
-        return job;
-    }
-
-    public void setJob(String job) {
-        this.job = job;
-    }
-
-    public String getGender() {
-        return gender;
-    }
-
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
-
-    public int getSalary() {
-        return salary;
-    }
-
-    public void setSalary(int salary) {
-        this.salary = salary;
-    }
-
-    public int getAge() {
-        return age;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
-    }
-}
-
-class fu{
-    private int age;
-    protected void show(){
-
-    }
-}
-
-class son extends fu{
-    public void show(){
-        //
-    }
-    public synchronized void ha(){
-        //
-    }
-}
 
 
 

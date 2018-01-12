@@ -241,8 +241,9 @@ public class SuperAdminController {
         if (key.equals("abcdefg")) {
             ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
             // 第二个参数为首次执行的延时时间，第三个参数为定时执行的间隔时间 单位/秒
-            service.scheduleAtFixedRate(runnable_1, 60, 3600, TimeUnit.SECONDS);
-            service.scheduleAtFixedRate(runnable_2, 60, 1800, TimeUnit.SECONDS);
+            //如果定时任务中间发生异常，则后面定时任务不再执行
+            service.scheduleAtFixedRate(runnable_1, 30, 3600, TimeUnit.SECONDS);
+            service.scheduleAtFixedRate(runnable_2, 90, 1800, TimeUnit.SECONDS);
             Global.timer=true;
             return "ok";
         }
@@ -251,12 +252,19 @@ public class SuperAdminController {
 
     Runnable runnable_1 = new Runnable() {
         public void run() {
-            System.out.println("高级版--定时器执行了。。。。");
-            //数据表 dictionarys 新增数据   访问通知
-            dictionaryService.addEachDay();
-            //秒杀商品更新
-            productsService.autoFlush();
-            Global.access_tokens.clear();
+            //try-catch 目的是防止定时任务被取消
+            try {
+                System.out.println("高级版--定时器执行了。。。。");
+                //数据表 dictionarys 新增数据   访问通知
+                dictionaryService.addEachDay();
+                //秒杀商品更新
+                productsService.autoFlush();
+                Global.access_tokens.clear();
+            }
+            catch (Exception e){
+                e.printStackTrace();
+            }
+
         }
     };
 
