@@ -40,7 +40,7 @@ public class BaseInterceptor implements HandlerInterceptor {
         }
         String url = request.getRequestURI();
         //如果是拼多多直接跳过
-        if (url.contains("/tuan")){
+        if (url.contains("/tuan")||url.contains("website")){
             return true;
         }
         //注入service
