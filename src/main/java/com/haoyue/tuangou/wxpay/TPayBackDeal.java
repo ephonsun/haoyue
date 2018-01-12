@@ -20,7 +20,7 @@ public class TPayBackDeal  {
     private String appid;
     private String mch_id;
     private String transaction_id;//微信交易单号
-    private String out_trade_no;//可关联团购订单
+    private String out_trade_no;//可关联订单号
     private String refund_id;//微信退款单号
     private String refund_fee;//申请退款金额
     private String settlement_refund_fee;//退款金额

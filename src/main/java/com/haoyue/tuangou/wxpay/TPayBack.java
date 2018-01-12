@@ -7,9 +7,11 @@ import com.haoyue.tuangou.pojo.TuanOrders;
 import com.haoyue.tuangou.service.*;
 import com.haoyue.tuangou.utils.StringUtils;
 import com.haoyue.tuangou.utils.TGlobal;
+import com.haoyue.tuangou.utils.TResult;
 import com.haoyue.tuangou.utils.TSendCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.text.DecimalFormat;
@@ -185,6 +187,12 @@ public class TPayBack {
         tPayBackDealService.save(payBackDeal);
     }
 
-    //TODO 退款列表
+    // 退款列表
+    @RequestMapping("/list")
+    public TResult list(String saleId, @RequestParam(defaultValue = "0") int pageNumber){
+        // pageSize=10 固定
+        Iterable<TPayBackDeal> iterable= tPayBackDealService.list(saleId,pageNumber);
+        return new TResult(false,TGlobal.do_success,iterable);
+    }
 
 }

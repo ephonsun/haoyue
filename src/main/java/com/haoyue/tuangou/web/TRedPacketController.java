@@ -207,7 +207,7 @@ public class TRedPacketController {
         template.setTemplateId("iTNVkRceX_5Ze5rNjLvP46hBz-rM_xbHwd1sPFKmR6s");
         template.setTemplateParamList(list);
         template.setTopColor("#000000");
-        // todo  定向到优惠券页面
+        //   定向到优惠券页面
         template.setPage("pages/index/index");
         template.setToUser(coupon.getOpenId());
         getTemplate(template, coupon.getFormId(), coupon.getSaleId());

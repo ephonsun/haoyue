@@ -10,10 +10,12 @@ import com.haoyue.service.OrderService;
 import com.haoyue.service.PayBackDealService;
 import com.haoyue.service.SellerService;
 import com.haoyue.untils.Global;
+import com.haoyue.untils.Result;
 import com.haoyue.untils.SendCode;
 import com.haoyue.untils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.text.DecimalFormat;
@@ -157,6 +159,14 @@ public class PayBack {
         payBackDeal.setSettlement_refund_fee(String.valueOf(map.get("settlement_refund_fee")));
         payBackDeal.setSellerId(sellerId);
         payBackDealService.save(payBackDeal);
+    }
+
+    // 退款列表
+    @RequestMapping("/list")
+    public Result list(String saleId, @RequestParam(defaultValue = "0") int pageNumber){
+        // pageSize=10 固定
+        Iterable<PayBackDeal> iterable= payBackDealService.list(saleId,pageNumber);
+        return new Result(false,Global.do_success,iterable,null);
     }
 
 }
