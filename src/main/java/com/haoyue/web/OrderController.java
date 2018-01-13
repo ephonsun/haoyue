@@ -311,6 +311,11 @@ public class OrderController {
                 addTemplate(order);
             }
             orderService.update(order);
+            //更新个人花费总额
+            Customer customer=customerService.findOne(order.getCustomerId());
+            customer.setExpense(customer.getExpense()+order.getTotalPrice());
+            customerService.update(customer);
+            
             return new Result(false, Global.do_success, order, null);
         }
     }

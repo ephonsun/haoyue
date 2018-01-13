@@ -29,9 +29,9 @@ public class MemberController {
     private OrderService orderService;
 
     //  卖家后台会员设置 会员等级-折扣-消费额度
-    //  http://localhost:8080/member/save?sellerId=1&lev-discount=lev1-0.9-1000,lev2-0.8-2000,lev3-0.6-3000
+    //   /member/save?sellerId=卖家ID&lev-discount=lev1-0.9-1000,lev2-0.8-2000,lev3-0.6-3000
     @RequestMapping("/save")
-    public Result update(String sellerId, String lev_discount) {
+    public Result save(String sellerId, String lev_discount) {
         //如果存在删除原来的数据
         List<Member> members = memberService.findBySellerIdAndOpenIdIsNull(sellerId);
         if(members!=null&members.size()!=0){
@@ -57,11 +57,12 @@ public class MemberController {
             memberService.save(member);
             news.add(member);
         }
-        // 更新买家会员信息
-        orderService.getToTalPriceByCustomer(sellerId,news);
+        // 更新买家会员信息 discount leavel
+        memberService.flush(news,sellerId);
         return new Result(false, Global.do_success, null, null);
     }
 
+    //  查看买家会员信息 /member/findOne?sellerId=卖家ID&openId=12345
     @RequestMapping("/findOne")
     public Result findOne(String sellerId, String openId) {
         Member member = memberService.findByOpenIdAndSellerId(openId, sellerId);
@@ -77,10 +78,36 @@ public class MemberController {
         return new Result(false, Global.do_success, discount, null);
     }
 
+
+    //  查看指定卖家店铺会员体系 /member/list?sellerId=卖家Id
     @RequestMapping("/list")
     public Result list(String sellerId) {
-        List<Member> memberList = memberService.list(sellerId);
+        List<Member> memberList = memberService.findBySellerIdAndOpenIdIsNull(sellerId);
         return new Result(false, Global.do_success, memberList, null);
+    }
+
+
+    //   买家领取会员卡  /member/addone?openId=1234&sellerId=卖家ID&discount=折扣&wxname=微信名&leavel=等级
+    @RequestMapping("/addone")
+    public Result addVip(Member member){
+        //判断是否已领当前等级会员卡
+        Member old=memberService.findByOpenIdAndLeavelAndSellerId(member.getOpenId(),member.getLeavel(),member.getSellerId());
+        if (old!=null){
+            return new Result(true, Global.member_exist, null, null);
+        }
+        old=memberService.findByOpenIdAndSellerId(member.getOpenId(),member.getSellerId());
+        if (old!=null){
+            member.setCode(old.getCode());
+            member.setId(old.getId());
+        }
+        member.setCreateDate(new Date());
+        memberService.save(member);
+        //会员号
+        if (StringUtils.isNullOrBlank(member.getCode())) {
+            member.setCode("888" + member.getId());
+            memberService.save(member);
+        }
+        return new Result(false, Global.do_success, null, null);
     }
 
 }

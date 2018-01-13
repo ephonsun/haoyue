@@ -30,4 +30,11 @@ public interface MemberRepo extends BaseRepo<Member,Integer> {
     void delVip();
 
     List<Member> findByOpenIdIsNotNull();
+
+    Member findByOpenIdAndLeavelAndSellerId(String openId, String leavel, String sellerId);
+
+    @Modifying
+    @Transactional
+    @Query(nativeQuery = true,value = "update members set discount=?1 , leavel=?2 where seller_id=?3 and open_id is not null")
+    void flushInfo(String discount, String leavel, String sellerId);
 }

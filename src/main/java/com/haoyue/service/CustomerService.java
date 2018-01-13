@@ -85,4 +85,8 @@ public class CustomerService {
     public String findOpenIdById(String id) {
         return customerRepo.findOne(Integer.parseInt(id)).getOpenId();
     }
+
+    public Customer findOne(Integer customerId) {
+        return customerRepo.findOne(customerId);
+    }
 }

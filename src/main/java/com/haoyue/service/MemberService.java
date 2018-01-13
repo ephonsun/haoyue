@@ -39,12 +39,6 @@ public class MemberService {
         return memberRepo.findBySellerIdAndOpenIdIsNull(sellerId);
     }
 
-
-
-    public List<Member> list(String sellerId) {
-        return memberRepo.findBySellerIdAndOpenIdIsNotNull(sellerId);
-    }
-
     public void updateMemeber(Member member) {
         memberRepo.save(member);
     }
@@ -59,5 +53,19 @@ public class MemberService {
 
     public List<Member> findByOpenIdIsNotNull() {
         return memberRepo.findByOpenIdIsNotNull();
+    }
+
+    public Member findByOpenIdAndLeavelAndSellerId(String openId, String leavel, String sellerId) {
+        return memberRepo.findByOpenIdAndLeavelAndSellerId(openId,leavel,sellerId);
+    }
+
+    public void flush(List<Member> news, String sellerId) {
+        String discount="";
+        String leavel="";
+        for (Member member:news){
+            discount=member.getDiscount();
+            leavel=member.getLeavel();
+            memberRepo.flushInfo(discount,leavel,sellerId);
+        }
     }
 }

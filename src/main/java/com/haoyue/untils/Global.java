@@ -27,7 +27,7 @@ public class Global {
     public static String appid_authority_isnull="appid和权限值不应为空";
 
     //会员
-    public static String member_exist="会员信息已经存在";
+    public static String member_exist="当前会员信息已经存在";
     public static String discount_not_set="店主未设置会员折扣";
 
     //抵用券

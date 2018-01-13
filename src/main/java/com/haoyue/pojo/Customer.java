@@ -22,6 +22,7 @@ public class Customer {
     private String sellerId;//appid
     private String wxname;
     private String wxpic;
+    private double expense;//花费
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:SS", timezone = "GMT+8")
     @Temporal(TemporalType.TIMESTAMP)
@@ -30,6 +31,14 @@ public class Customer {
 
     @OneToMany
     private List<Address> addressList;
+
+    public double getExpense() {
+        return expense;
+    }
+
+    public void setExpense(double expense) {
+        this.expense = expense;
+    }
 
     public String getWxname() {
         return wxname;
