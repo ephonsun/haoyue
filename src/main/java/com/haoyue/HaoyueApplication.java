@@ -7,9 +7,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class HaoyueApplication {
 
 	public static void main(String[] args) {
-
 		//这是master添加的备注
-
+		//这是master1添加的备注
 		SpringApplication.run(HaoyueApplication.class, args);
 	}
 }
