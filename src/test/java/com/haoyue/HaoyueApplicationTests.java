@@ -467,20 +467,12 @@ public class HaoyueApplicationTests {
 
     @Test
     public void f31(){
-        int a=10;
-        if (a==10){
-            System.out.println(111);
-        }else if (a==11){
-            System.out.println(2222);
-        }else {
-            System.out.println(333);
-        }
+
     }
 
     @Test
     public void f32(){
-      String str="abc";
-        System.out.println(str.length());
+
     }
 
     public Map getminiqrQr(String accessToken,String pid) {
