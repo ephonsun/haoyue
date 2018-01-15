@@ -8,7 +8,8 @@ public class HaoyueApplication {
 
 	public static void main(String[] args) {
 		// ye
-		System.out.println("这是ye的代码1");
+		System.out.println("ye");
+		System.out.println("master");
 		SpringApplication.run(HaoyueApplication.class, args);
 	}
 }
