@@ -477,6 +477,11 @@ public class HaoyueApplicationTests {
         }
     }
 
+    @Test
+    public void f32(){
+      String str="abc";
+        System.out.println(str.length());
+    }
 
     public Map getminiqrQr(String accessToken,String pid) {
         RestTemplate rest = new RestTemplate();
