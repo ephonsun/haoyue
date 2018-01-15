@@ -7,6 +7,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class HaoyueApplication {
 
 	public static void main(String[] args) {
+
+		SpringApplication.run(HaoyueApplication.class, args);
+
 		System.out.println("ljljljlj");
 		System.out.println("ljljljlj");
 		System.out.println("ljljljlj");
@@ -14,6 +17,5 @@ public class HaoyueApplication {
 		System.out.println("ljljljlj");
 		System.out.println("ljljljlj");
 
-		SpringApplication.run(HaoyueApplication.class, args);
 	}
 }
