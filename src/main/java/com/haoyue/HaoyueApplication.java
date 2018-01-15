@@ -10,6 +10,7 @@ public class HaoyueApplication {
 		// ye
 		System.out.println("ye");
 		System.out.println("master");
+
 		SpringApplication.run(HaoyueApplication.class, args);
 	}
 }
