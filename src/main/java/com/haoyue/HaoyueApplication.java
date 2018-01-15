@@ -7,10 +7,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class HaoyueApplication {
 
 	public static void main(String[] args) {
-
-
-
-		//这是ye 添加的备注
 		SpringApplication.run(HaoyueApplication.class, args);
 	}
 }
