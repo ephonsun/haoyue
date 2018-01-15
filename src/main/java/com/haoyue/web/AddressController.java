@@ -23,7 +23,7 @@ public class AddressController {
     public Result save(Address address,String openId,String sellerId){
         addressService.save(address,openId,sellerId);
 
-
+        System.out.println("=====================");
         return new Result(false, Global.do_success,null,null);
     }
 
