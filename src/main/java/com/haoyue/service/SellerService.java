@@ -26,9 +26,6 @@ public class SellerService {
     private SellerRepo sellerRepo;
     @Autowired
     private DictionaryService dictionaryService;
-
-
-
     public Seller login(Seller seller) {
 
         //判断用户名、邮箱、手机号登录
