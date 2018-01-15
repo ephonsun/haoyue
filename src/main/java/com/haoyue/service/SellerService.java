@@ -28,6 +28,8 @@ public class SellerService {
     private DictionaryService dictionaryService;
     public Seller login(Seller seller) {
 
+
+
         //判断用户名、邮箱、手机号登录
         Seller seller1 = sellerRepo.findBySellerNameAndSellerPass(seller.getSellerName(), seller.getSellerPass());
         if (seller1 ==null){
