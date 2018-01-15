@@ -63,6 +63,12 @@ public class StringUtils {
         return nomat;//2017-9-19 16:28:25
     }
 
+    public static Date formatDate2(String str) throws ParseException {
+        SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//20170919162825
+        Date nomat= sdf.parse(str);
+        return nomat;//2017-9-19 16:28:25
+    }
+
     public static String formDateToStr(Date date){
         SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return sdf.format(date);
@@ -86,6 +92,43 @@ public class StringUtils {
         Date date=new Date();
         date.setYear(date.getYear()+20);
         return date;
+    }
+
+    public  static  boolean isDiget(String str) {
+        if (StringUtils.isNullOrBlank(str)) {
+            return false;
+        }
+        for (int i = 0; i < str.length(); i++) {
+            if (String.valueOf(str.charAt(i)).equals(".")){
+                continue;
+            }
+            if (!Character.isDigit(str.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static String getPinYinByStr(String str){
+        char[] chars=str.toCharArray();
+        String result="";
+        for(int i=0;i<chars.length;i++){
+            if (String.valueOf(chars[i]).equals(" ")){
+                continue;
+            }
+            if(Character.isDigit(chars[i])){
+                result+=chars[i];
+                continue;
+            }
+            if(chars[i] >= 0x0391 && chars[i]<= 0xFFE5) //中文字符
+            {
+                result+= HanyuPinyinHelper.getFirstLetter(chars[i]+"");
+            }
+            if(chars[i] >=0x0000 && chars[i] <=0x00FF){ //英文字符
+                result+=chars[i];
+            }
+        }
+        return result;
     }
 }
 

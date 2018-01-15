@@ -18,6 +18,8 @@ public class Products {
     @GeneratedValue
     private Integer id;
 
+    private String pcode;//商品编号
+
     private Integer sellerId;//卖家Id
     private String sellerName;//卖家姓名
     private String pname;//商品名
@@ -46,6 +48,20 @@ public class Products {
     @Temporal(TemporalType.DATE)
     @Column(updatable=false)
     private Date createDate;//创建日期
+
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:SS", timezone="GMT+8")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date showDate;//发布日期
+
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:SS", timezone="GMT+8")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date secondKillStart;//秒杀开始日期
+
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:SS", timezone="GMT+8")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date secondKillEnd;//秒杀结束日期
+
+    private boolean issecondkill=false;//是否秒杀
     private boolean active=true;//是否上架
 
     //宝贝参数
@@ -57,11 +73,121 @@ public class Products {
     private String model;//款式
     private String designPic;//图案
     private String invoice_type;//发票类型
+    private String suffix;//价格后缀
 
-    private Integer monthSale;//月销量，后台实现总销量代替月销量
+    private int monthSale;//月销量，后台实现总销量代替月销量
+    private int thumbsup;//点赞数
+    private String dname;
+    private Integer shopcar_count;//被加入购物车数量
+    private boolean isLuckDraw=false;//是否抽奖
+    private boolean isLuckDrawEnd=false;
+    private int views;
+    private String qrcode;//二维码
+    private double weight;//重量
 
-    private Integer thumbsup;//点赞数
+    public double getWeight() {
+        return weight;
+    }
 
+    public void setWeight(double weight) {
+        this.weight = weight;
+    }
+
+    public boolean getIssecondkill() {
+        return issecondkill;
+    }
+
+    public void setIssecondkill(boolean issecondkill) {
+        this.issecondkill = issecondkill;
+    }
+
+    public Date getSecondKillStart() {
+        return secondKillStart;
+    }
+
+    public void setSecondKillStart(Date secondKillStart) {
+        this.secondKillStart = secondKillStart;
+    }
+
+    public Date getSecondKillEnd() {
+        return secondKillEnd;
+    }
+
+    public void setSecondKillEnd(Date secondKillEnd) {
+        this.secondKillEnd = secondKillEnd;
+    }
+
+    public Date getShowDate() {
+        return showDate;
+    }
+
+    public void setShowDate(Date showDate) {
+        this.showDate = showDate;
+    }
+
+    public String getQrcode() {
+        return qrcode;
+    }
+
+    public void setQrcode(String qrcode) {
+        this.qrcode = qrcode;
+    }
+
+    public String getSuffix() {
+        return suffix;
+    }
+
+    public void setSuffix(String suffix) {
+        this.suffix = suffix;
+    }
+
+    public int getViews() {
+        return views;
+    }
+
+    public void setViews(int views) {
+        this.views = views;
+    }
+
+    public boolean getIsLuckDrawEnd() {
+        return isLuckDrawEnd;
+    }
+
+    public void setIsLuckDrawEnd(boolean luckDrawEnd) {
+        isLuckDrawEnd = luckDrawEnd;
+    }
+
+    public boolean getIsLuckDraw() {
+        return isLuckDraw;
+    }
+
+    public void setIsLuckDraw(boolean luckDraw) {
+        isLuckDraw = luckDraw;
+    }
+
+    public Integer getShopcar_count() {
+        return shopcar_count;
+    }
+
+    public void setShopcar_count(Integer shopcar_count) {
+        this.shopcar_count = shopcar_count;
+    }
+
+    public String getPcode() {
+        return pcode;
+    }
+
+    public void setPcode(String pcode) {
+        this.pcode = pcode;
+    }
+
+    public String getDname() {
+        return dname;
+    }
+
+    public void setDname(String dname) {
+        this.dname = dname;
+    }
 
     public String getDeliever_name() {
         return deliever_name;
@@ -79,11 +205,11 @@ public class Products {
         this.invoice_type = invoice_type;
     }
 
-    public Integer getThumbsup() {
+    public int getThumbsup() {
         return thumbsup;
     }
 
-    public void setThumbsup(Integer thumbsup) {
+    public void setThumbsup(int thumbsup) {
         this.thumbsup = thumbsup;
     }
 
@@ -99,7 +225,7 @@ public class Products {
         return monthSale;
     }
 
-    public void setMonthSale(Integer monthSale) {
+    public void setMonthSale(int monthSale) {
         this.monthSale = monthSale;
     }
 
@@ -231,7 +357,6 @@ public class Products {
         this.images = images;
     }
 
-
     public Integer getId() {
         return id;
     }
@@ -247,7 +372,6 @@ public class Products {
     public void setPname(String pname) {
         this.pname = pname;
     }
-
 
     public String getPdesc() {
         return pdesc;

@@ -1,18 +1,16 @@
 package com.haoyue.web;
 
 import com.aliyuncs.exceptions.ClientException;
-import com.haoyue.pojo.Seller;
-import com.haoyue.pojo.SuperAdmin;
+import com.haoyue.pojo.*;
 import com.haoyue.service.*;
 import com.haoyue.untils.*;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.io.*;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -57,16 +55,10 @@ public class SuperAdminController {
         if (!StringUtils.isNullOrBlank(superAdmin.getAdmin_phone())) {
             superAdmin1.setAdmin_phone(superAdmin.getAdmin_phone());
         }
-        superAdmin1 = superAdminService.upadte(superAdmin1);
-        superAdmin1.setAdmin_pass("*******");
-        return new Result(false, Global.do_success, superAdmin1, null);
-    }
-
-    @RequestMapping("/update-pass")
-    public Result update_pass(String id, String newPass) {
-        SuperAdmin superAdmin = superAdminService.findOne(Integer.parseInt(id));
-        superAdmin.setAdmin_pass(newPass);
-        superAdminService.upadte(superAdmin);
+        if (!StringUtils.isNullOrBlank(superAdmin.getAdmin_pass())) {
+            superAdmin1.setAdmin_pass(superAdmin.getAdmin_pass());
+        }
+        superAdminService.upadte(superAdmin1);
         return new Result(false, Global.do_success, null, null);
     }
 
@@ -90,7 +82,6 @@ public class SuperAdminController {
         }
         return new Result(true, Global.do_success, code, null);
     }
-
 
     /**
      * 版本升级
@@ -161,15 +152,34 @@ public class SuperAdminController {
     }
 
     @RequestMapping("/sellers-list")
-    public Result slist(@RequestParam Map<String, String> map, @RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize) {
-        Iterable<Seller> iterable=sellerService.list(map, pageNumber, pageSize);
-        if (!StringUtils.isNullOrBlank(map.get("all"))) {
-            Iterator<Seller> iterator = iterable.iterator();
-            while (iterator.hasNext()) {
-                iterator.next().setSellerPass("******");
-            }
+    public Result slist(@RequestParam Map<String, String> map, @RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize) throws IOException {
+
+        Iterable<Seller> iterable = sellerService.list(map, pageNumber, pageSize);
+        List<Seller> sellerList = new ArrayList<>();
+        Iterator<Seller> iterator = iterable.iterator();
+        while (iterator.hasNext()) {
+            sellerList.add(iterator.next());
         }
-        return new Result(false, Global.do_success,iterable, null);
+        return new Result(false, Global.do_success, iterable, null);
+    }
+
+    /**
+     * 更新用户密码，手机号
+     *
+     * @param seller
+     * @return
+     */
+    @RequestMapping("/seller_update")
+    public Result seller_update(Seller seller) {
+        Seller seller1 = sellerService.findBySellerPhone(seller.getSellerPhone());
+        if (!StringUtils.isNullOrBlank(seller.getSellerPass())) {
+            seller1.setSellerPass(seller.getSellerPass());
+        }
+        if (!StringUtils.isNullOrBlank(seller.getSellerPhone())) {
+            seller1.setSellerPhone(seller.getSellerPhone());
+        }
+        sellerService.update2(seller1);
+        return new Result(false, Global.do_success, null, null);
     }
 
     @RequestMapping("/customer-list")
@@ -196,9 +206,24 @@ public class SuperAdminController {
     }
 
     @RequestMapping("/shopCar-list")
-    public Result shopCarlist(@RequestParam Map<String, String> map, @RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize) {
+    public Object shopCarlist(@RequestParam Map<String, String> map, @RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize) {
+        if (!StringUtils.isNullOrBlank(map.get("show"))) {
+            Iterable<ShopCar> iterable = shopCarService.list(map, pageNumber, pageSize);
+            Iterator<ShopCar> iterator = iterable.iterator();
+            StringBuffer stringBuffer = new StringBuffer();
+            ShopCar shopCar = new ShopCar();
 
-        return new Result(false, Global.do_success, shopCarService.list(map, pageNumber, pageSize), null);
+            while (iterator.hasNext()) {
+                shopCar = iterator.next();
+                stringBuffer.append("</br>");
+                stringBuffer.append("时间：" + shopCar.getCreateDate() + " 商品名:" + shopCar.getProductses().get(0).getPname() + "  件数：" + shopCar.getShopCarDetails().get(0).getAmount());
+                stringBuffer.append("</br>");
+            }
+            return stringBuffer.toString();
+        } else {
+            return new Result(false, Global.do_success, shopCarService.list(map, pageNumber, pageSize), null);
+        }
+
     }
 
     @RequestMapping("/customer-del-all")
@@ -209,31 +234,57 @@ public class SuperAdminController {
 
     /**
      * 定时器，一个小时执行一次,产品部署好之后，需要手动出发该定时器
+     *   http://localhost:8080/super-admin/timer?key=abcdefg&sellerId=1
      */
     @RequestMapping("/timer")
-    public void timer(String key) {
+    public String timer(String key) {
         if (key.equals("abcdefg")) {
             ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
-            // 第二个参数为首次执行的延时时间，第三个参数为定时执行的间隔时间
-            service.scheduleAtFixedRate(runnable, 60, 3600, TimeUnit.SECONDS);
+            // 第二个参数为首次执行的延时时间，第三个参数为定时执行的间隔时间 单位/秒
+            //如果定时任务中间发生异常，则后面定时任务不再执行
+            service.scheduleAtFixedRate(runnable_1, 30, 3600, TimeUnit.SECONDS);
+            service.scheduleAtFixedRate(runnable_2, 90, 1800, TimeUnit.SECONDS);
+            Global.timer=true;
+            return "ok";
         }
+        return "data_no_right";
     }
 
-    Runnable runnable = new Runnable() {
+    Runnable runnable_1 = new Runnable() {
         public void run() {
-            System.out.println("定时器执行了。。。。");
-            //数据表 dictionarys 新增数据
-            dictionaryService.addEachDay();
-            //清空一小时内生成的excel文件
-            OSSClientUtil ossClientUtil = new OSSClientUtil();
-            if (Global.excel_urls.size() != 0) {
-                for (String s : Global.excel_urls) {
-                    ossClientUtil.delete(s);
-                }
-                //清空Global.excel_urls
-                Global.excel_urls.clear();
+            //try-catch 目的是防止定时任务被取消
+            try {
+                System.out.println("高级版--定时器执行了。。。。");
+                //数据表 dictionarys 新增数据   访问通知
+                dictionaryService.addEachDay();
+                //秒杀商品更新
+                productsService.autoFlush();
+                Global.access_tokens.clear();
             }
+            catch (Exception e){
+                e.printStackTrace();
+            }
+
         }
     };
 
+    Runnable runnable_2 = new Runnable() {
+        public void run() {
+            System.out.println("高级版--秒杀通知执行了。。。。");
+            dictionaryService.timeKillInform();
+            System.out.println("高级版--预售通知执行了。。。。");
+            dictionaryService.advanceSale();
+            //清空数据
+            Global.yushou_map.clear();
+            Global.miaosha_map.clear();
+        }
+    };
+
+    //  http://www.cslapp.com/super-admin/get_timer?sellerId=1
+    @RequestMapping("/get_timer")
+    public Result getTimer(){
+        return new Result(false,Global.do_success,Global.timer,null);
+    }
+
 }
+

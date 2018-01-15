@@ -8,11 +8,8 @@ import com.haoyue.pojo.Seller;
  * 卖家工具类
  */
 public class SellerUtils {
-
     public static Seller hidePass(Seller old){
         old.setSellerPass("******");
         return old;
     }
-
-
 }

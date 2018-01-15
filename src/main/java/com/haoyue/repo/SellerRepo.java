@@ -22,4 +22,8 @@ public   interface SellerRepo extends BaseRepo<Seller,Integer> {
     List<Integer> findIds();
 
     Seller findBySellerPhone(String phone);
+
+    List<String> findByOnlineCode(String online_code);
+
+    List<Seller> findByAppId(String appId);
 }

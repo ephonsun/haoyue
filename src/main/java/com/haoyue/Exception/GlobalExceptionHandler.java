@@ -1,5 +1,6 @@
 package com.haoyue.Exception;
 
+import com.haoyue.tuangou.Exception.TMyException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -19,7 +20,18 @@ public class GlobalExceptionHandler {
         r.setMessage(e.getMessage());
         r.setCode(e.getErrcode());
         r.setData(null);
-        r.setUrl(req.getRequestURL().toString());
+        //r.setUrl(req.getRequestURL().toString());
+        return r;
+    }
+
+    @ExceptionHandler(value = TMyException.class)
+    @ResponseBody
+    public ErrorInfo<String> tjsonErrorHandler(HttpServletRequest req, TMyException e) throws Exception {
+        ErrorInfo<String> r = new ErrorInfo<>();
+        r.setMessage(e.getMessage());
+        r.setCode(e.getErrcode());
+        r.setData(null);
+        //r.setUrl(req.getRequestURL().toString());
         return r;
     }
 

@@ -18,9 +18,12 @@ public class AddressController {
     @Autowired
     private AddressService addressService;
 
+
     @RequestMapping("/save")
     public Result save(Address address,String openId,String sellerId){
         addressService.save(address,openId,sellerId);
+
+
         return new Result(false, Global.do_success,null,null);
     }
 

@@ -1,6 +1,9 @@
 package com.haoyue.pojo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import javax.persistence.*;
+import java.util.Date;
 
 /**
  * Created by LiJia on 2017/9/20.
@@ -20,12 +23,66 @@ public class AfterSale {
 
     private String openId;
     private String sellerId;
+    private String formId;
 
     @Lob
     @Column(columnDefinition="TEXT")
     private String message;
 
-    private Boolean isAgree=null;//是否同意 null 等待卖家处理 true 同意 false 不同意
+    @Lob
+    @Column(columnDefinition="TEXT")
+    private String pics;
+
+    private String isAgree;//是否同意 0 等待卖家处理 1 同意 2 不同意
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:SS", timezone = "GMT+8")
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(updatable = false)
+    private Date createDate;//创建日期
+
+    private boolean active=true;//卖家
+    private boolean active_buyer=true;//买家
+
+
+    public boolean getActive_buyer() {
+        return active_buyer;
+    }
+
+    public void setActive_buyer(boolean active_buyer) {
+        this.active_buyer = active_buyer;
+    }
+
+    public boolean getActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public String getFormId() {
+        return formId;
+    }
+
+    public void setFormId(String formId) {
+        this.formId = formId;
+    }
+
+    public Date getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
+    }
+
+    public String getPics() {
+        return pics;
+    }
+
+    public void setPics(String pics) {
+        this.pics = pics;
+    }
 
     public String getOpenId() {
         return openId;
@@ -67,11 +124,11 @@ public class AfterSale {
         this.message = message;
     }
 
-    public Boolean getIsAgree() {
+    public String getIsAgree() {
         return isAgree;
     }
 
-    public void setIsAgree(Boolean agree) {
-        isAgree = agree;
+    public void setIsAgree(String isAgree) {
+        this.isAgree = isAgree;
     }
 }

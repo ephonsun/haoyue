@@ -3,10 +3,7 @@ package com.haoyue.web;
 import com.haoyue.Exception.MyException;
 import com.haoyue.pojo.*;
 import com.haoyue.repo.ThumbsupRepo;
-import com.haoyue.service.DelievrService;
-import com.haoyue.service.DictionaryService;
-import com.haoyue.service.ProductsService;
-import com.haoyue.service.SellerService;
+import com.haoyue.service.*;
 import com.haoyue.untils.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,11 +11,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.transaction.Transactional;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.ParseException;
+import java.util.*;
 
 /**
  * Created by LiJia on 2017/8/22.
@@ -36,13 +33,21 @@ public class ProductsController {
     @Autowired
     private ThumbsupRepo thumbsupRepo;
     @Autowired
-    private DelievrService delievrService;
+    private OrderService orderService;
+    @Autowired
+    private LuckDrawService luckDrawService;
 
+
+    //  http://localhost:8080/seller/pro/list?token=1&active=false
+    //  商品列表-在售  追加参数 showdate=yes
+    //   商品列表-预售  追加参数 showdate=no
+    // 秒杀商品列表  追加参数 killproduct=true
     @RequestMapping("/list")
     public Result list(@RequestParam Map<String, String> map, @RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize) {
         return new Result(false, "", productsService.plist(map, pageNumber, pageSize), map.get("token"));
     }
 
+    // http://localhost:8080/seller/pro/uploadPic?token=1&multipartFiles=12221
     @RequestMapping("/uploadPic")
     public Object uploadPic(MultipartFile[] multipartFiles, String token) throws IOException, MyException {
         Seller seller = sellerService.findOne(Integer.parseInt(token));
@@ -92,11 +97,19 @@ public class ProductsController {
     }
 
     @RequestMapping("/findOne")
-    public Result findOne(Integer pid, String token, String pname, String ptype) {
+    public Result findOne(Integer pid, String token, String pname, String ptype, String pcode) {
         Map<String, String> map = new HashMap<>();
         map.put("pname", pname);
         map.put("ptype", ptype);
         map.put("token", token);
+        if (!StringUtils.isNullOrBlank(pcode)) {
+            Products products = productsService.findByPcode(pcode);
+            if (products.getSellerId() != Integer.parseInt(token)) {
+                return new Result(true, Global.have_no_right, token);
+            }
+            return new Result(false, "", products, token);
+        }
+
         if (!StringUtils.isNullOrBlank(String.valueOf(pid))) {
             Products products = productsService.findOne(pid);
             if (products.getSellerId() != Integer.parseInt(token)) {
@@ -107,6 +120,7 @@ public class ProductsController {
             return new Result(false, Global.do_success, productsService.list(map), null);
         }
     }
+
 
     @RequestMapping("/update")
     public Result update(@RequestParam Map<String, String> map) {
@@ -134,19 +148,60 @@ public class ProductsController {
         }
     }
 
-    @RequestMapping("/newsave")
-    public Result update_all(Products products, String token, String protypes) {
+    @RequestMapping("/save")
+    @Transactional
+    public Result update_all(Products products, String token, String protypes,String showHours,String killStart,String killEnd) throws FileNotFoundException, ParseException {
+        //上线时间
+        if (!StringUtils.isNullOrBlank(showHours)){
+            products.setShowDate(StringUtils.formatDate2(showHours));
+        }else {
+            products.setShowDate(new Date());
+        }
+        //秒杀
+        if (products.getIssecondkill()){
+            products.setSecondKillStart(StringUtils.formatDate2(killStart));
+            products.setSecondKillEnd(StringUtils.formatDate2(killEnd));
+        }
+
+        boolean flag = false;
+        if (products.getId() != null) {
+            flag = true;
+            Products products1 = productsService.findOne(products.getId());
+            products.setPcode(products1.getPcode());
+        }
         String[] strs = protypes.split("=");
         List<ProdutsType> produtsTypes = new ArrayList<>();
         for (int i = 0; i < strs.length; i++) {
             String[] strings = strs[i].split(",");
-            String color = strings[0];//颜色
-            String size = strings[1];//尺码
-            String discount = strings[2];//折扣价
-            String price = strings[3];//原价
-            String amount = strings[4];//库存
+            String color=null;
+            String size=null;
+            String discount=null;
+            String price=null;
+            String secondKillPrice="0";
+            String amount=null;
+            if (strings.length==5){
+                color = strings[0];//颜色
+                size = strings[1];//尺码
+                discount = strings[2];//折扣价
+                price = strings[3];//原价
+                amount = strings[4];//库存
+            }else {
+                color = strings[0];//颜色
+                size = strings[1];//尺码
+                discount = strings[2];//折扣价
+                price = strings[3];//原价
+                secondKillPrice=strings[4];//秒杀价
+                amount = strings[5];//库存
+            }
+
             if (amount.equals("0")) {
                 continue;
+            }
+            if (!StringUtils.isDiget(discount) || discount.equals("0")) {
+                return new Result(true, Global.discount_price_unright, null, null);
+            }
+            if (!StringUtils.isDiget(price)) {
+                return new Result(true, Global.price_is_unright, null, null);
             }
             ProdutsType produtsType = new ProdutsType();
             produtsType.setPriceNew(Double.valueOf(price));
@@ -159,63 +214,66 @@ public class ProductsController {
             produtsType.setAmount(Integer.parseInt(amount));
             produtsType.setActive(true);
             produtsType.setPriceOld(0.0);
+            produtsType.setSecondKillPrice(Double.valueOf(secondKillPrice));
             produtsType.setSize(size);
             produtsType.setSellerId(Integer.parseInt(token));
+            if (produtsType.getDiscountPrice() > produtsType.getPriceNew()) {
+                return new Result(true, Global.price_ls_discountprice);
+            }
             produtsTypes.add(produtsType);
         }
+
         products.setProdutsTypes(produtsTypes);
         products.setSellerId(Integer.parseInt(token));
         products.setSellerName(sellerService.findOne(products.getSellerId()).getSellerName());
 
         try {
+            //抽奖是否结束
+            if (products.getId()!=null&&products.getIsLuckDraw()==false){
+                if (productsService.findOne(products.getId()).getIsLuckDraw()){
+                    products.setIsLuckDrawEnd(true);
+                    LuckDraw luckDraw=luckDrawService.findBySellerId(products.getSellerId()+"");
+                    luckDraw.setJoinNumber(0);
+                    luckDrawService.update(luckDraw);
+                    orderService.updateIsLuckDrawEnd(products.getId());
+                }
+            }
             productsService.save(products);
+            //商品分类更新
+            productsService.update_ptype(products);
+            //设置商品号
+            if (StringUtils.isNullOrBlank(products.getPcode())) {
+                Seller seller = sellerService.findOne(Integer.parseInt(token));
+                String str = StringUtils.getPinYinByStr(seller.getSellerName());
+                String pcode = str + "-" + (Global.count++) + products.getId();
+                boolean f = true;
+                //判断新产生的商品号是否存在
+                while (f) {
+                    Products products1 = productsService.findByPcode(pcode);
+                    if (products1 != null && products1.getPcode() != null) {
+                        pcode = str + "-" + (Global.count++) + products.getId();
+                    } else {
+                        f = false;
+                    }
+                }
+                products.setPcode(str + "-" + (Global.count++) + products.getId());
+                productsService.update(products);
+            }
             //蒋商品信息注入 dictionary
-            dictionaryService.addProduct(products);
+            if (!flag) {
+                dictionaryService.addProduct(products);
+            }
         } catch (IOException e) {
             e.printStackTrace();
+        }
+        //更新二维码
+        if (StringUtils.isNullOrBlank(products.getQrcode())){
+            String url=productsService.qrcode(products.getSellerId()+"",products.getId()+"");
+            products.setQrcode(Global.aliyun_href+url);
+            productsService.update(products);
         }
         return new Result(false, Global.do_success, products, null);
     }
 
-    /**
-     * 旧版商品保存
-     *
-     * @param products
-     * @param token
-     * @param dictionaryses 商品分类
-     * @return
-     */
-    @RequestMapping("/save")
-    public Result save(Products products, String token, String dictionaryses) {
-        Seller seller = sellerService.findOne(Integer.parseInt(token));
-        try {
-            String[] splits = dictionaryses.split("=");
-            List<ProdutsType> list = new ArrayList<>();
-            for (String str : splits) {
-                if (StringUtils.isNullOrBlank(str)) {
-                    continue;
-                }
-                String[] strings = str.split(",");
-                if (Integer.parseInt(strings[3]) == 0) {
-                    continue;
-                }
-                ProdutsType produtsType = new ProdutsType();
-                produtsType.setColor(strings[0]);
-                produtsType.setSize(strings[1]);
-                produtsType.setPriceNew(Double.valueOf(strings[2]));
-                produtsType.setAmount(Integer.parseInt(strings[3]));
-                produtsType.setSellerId(Integer.parseInt(token));
-                list.add(produtsType);
-            }
-            products.setProdutsTypes(list);
-            products.setSellerId(seller.getSellerId());
-            productsService.save(products);
-            //蒋商品信息注入 dictionary
-            dictionaryService.addProduct(products);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new Result(false, e.getMessage(), null);
-        }
-        return new Result(false, Global.do_success, products.getId(), token);
-    }
+
 }

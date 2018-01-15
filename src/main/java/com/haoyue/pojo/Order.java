@@ -67,9 +67,72 @@ public class Order {
     @Temporal(TemporalType.TIMESTAMP)
     private Date payDate;//支付日期
 
-    private boolean active = true;
+    private boolean active = true;//买家订单active
+    private boolean active_seller=true;//卖家订单active
     private boolean isApplyReturn = false;//是否申请退货
+    private boolean isLuckDraw=false;//是否是抽奖订单
+    private boolean isLuckDrawEnd=false;//抽奖是否结束
+    private String wxname;
+    private String luckcode;//抽奖号码
+    private boolean isLuck=false;//是否中奖
+    private boolean iscomment=false;
 
+
+    public boolean getIsActive_seller() {
+        return active_seller;
+    }
+
+    public void setActive_seller(boolean active_seller) {
+        this.active_seller = active_seller;
+    }
+
+    public boolean getIscomment() {
+        return iscomment;
+    }
+
+    public void setIscomment(boolean iscomment) {
+        this.iscomment = iscomment;
+    }
+
+    public boolean getIsLuck() {
+        return isLuck;
+    }
+
+    public void setIsLuck(boolean luck) {
+        isLuck = luck;
+    }
+
+    public boolean getIsLuckDrawEnd() {
+        return isLuckDrawEnd;
+    }
+
+    public void setIsLuckDrawEnd(boolean luckDrawEnd) {
+        isLuckDrawEnd = luckDrawEnd;
+    }
+
+    public String getLuckcode() {
+        return luckcode;
+    }
+
+    public void setLuckcode(String luckcode) {
+        this.luckcode = luckcode;
+    }
+
+    public boolean getIsLuckDraw() {
+        return isLuckDraw;
+    }
+
+    public void setIsLuckDraw(boolean luckDraw) {
+        isLuckDraw = luckDraw;
+    }
+
+    public String getWxname() {
+        return wxname;
+    }
+
+    public void setWxname(String wxname) {
+        this.wxname = wxname;
+    }
 
     public String getLeaveMessage_seller() {
         return leaveMessage_seller;

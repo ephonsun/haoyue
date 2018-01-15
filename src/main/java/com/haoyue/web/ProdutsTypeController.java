@@ -2,6 +2,7 @@ package com.haoyue.web;
 
 import com.haoyue.pojo.ProdutsType;
 import com.haoyue.service.ProdutsTypeService;
+import com.haoyue.service.ShopCarService;
 import com.haoyue.untils.Global;
 import com.haoyue.untils.Result;
 import org.springframework.beans.factory.annotation.Autowired;

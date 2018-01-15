@@ -33,7 +33,8 @@ CREATE TABLE  protypes
 INSERT INTO sellers(seller_name,seller_pass) VALUES ("admin1","admin1");
 INSERT INTO sellers(seller_name,seller_pass) VALUES ("admin2","admin2");
 
-INSERT INTO sellers(seller_name,seller_pass,seller_phone,seller_email) VALUES ("admin","admin",123456,"123456@qq.com");
+INSERT INTO sellers(seller_name,seller_pass,seller_phone,seller_email) VALUES ("admin","admin123","12345678901","123456@qq.com");
+INSERT INTO
 
 -- CREATE INDEX index01
 -- ON sellers (seller_id);

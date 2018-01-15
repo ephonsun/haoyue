@@ -24,6 +24,17 @@
 		<java.version>1.8</java.version>
 	</properties>
 
+	<!--goeasy....-->
+	<!--<repositories>-->
+		<!--<repository>-->
+			<!--<id>goeasy</id>-->
+			<!--<name>goeasy</name>-->
+			<!--<url>-->
+				<!--http://maven.goeasy.io/content/repositories/releases/-->
+			<!--</url>-->
+		<!--</repository>-->
+	<!--</repositories>-->
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -92,6 +103,13 @@
 			<scope>system</scope>
 			<systemPath>${basedir}/src/lib/json-lib.jar</systemPath>
 		</dependency>
+		<dependency>
+			<groupId>goeasy-sdk</groupId>
+			<artifactId>goeasy-sdk</artifactId>
+			<version>1.0</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/src/lib/goeasy-sdk.jar</systemPath>
+		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/com.aliyun/aliyun-java-sdk-core -->
 		<dependency>
@@ -154,6 +172,59 @@
 			<artifactId>poi-ooxml</artifactId>
 			<version>3.16</version>
 		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/com.belerweb/pinyin4j -->
+		<dependency>
+			<groupId>com.belerweb</groupId>
+			<artifactId>pinyin4j</artifactId>
+			<version>2.5.0</version>
+		</dependency>
+
+
+
+
+
+		<!--goeasy-->
+		<!--<dependency>-->
+		<!--<groupId>io.goeasy</groupId>-->
+		<!--<artifactId>goeasy-sdk</artifactId>-->
+		<!--<version>0.3.8</version>-->
+		<!--</dependency>-->
+
+		<!--&lt;!&ndash;   redis缓存   &ndash;&gt;-->
+		<!--<dependency>-->
+			<!--<groupId>org.springframework.boot</groupId>-->
+			<!--<artifactId>spring-boot-starter-redis</artifactId>-->
+		<!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>org.springframework</groupId>-->
+            <!--<artifactId>spring-context-support</artifactId>-->
+        <!--</dependency>-->
+		<!--&lt;!&ndash; https://mvnrepository.com/artifact/org.springframework.data/spring-data-redis &ndash;&gt;-->
+		<!--&lt;!&ndash; https://mvnrepository.com/artifact/org.springframework.data/spring-data-redis &ndash;&gt;-->
+		<!--<dependency>-->
+			<!--<groupId>org.springframework.data</groupId>-->
+			<!--<artifactId>spring-data-redis</artifactId>-->
+			<!--<version>1.7.0.RELEASE</version>-->
+		<!--</dependency>-->
+		<!--&lt;!&ndash; https://mvnrepository.com/artifact/redis.clients/jedis &ndash;&gt;-->
+		<!--<dependency>-->
+			<!--<groupId>redis.clients</groupId>-->
+			<!--<artifactId>jedis</artifactId>-->
+			<!--<version>2.6.2</version>-->
+		<!--</dependency>-->
+
+		<!--&lt;!&ndash; https://mvnrepository.com/artifact/org.apache.commons/commons-pool2 &ndash;&gt;-->
+		<!--<dependency>-->
+			<!--<groupId>org.apache.commons</groupId>-->
+			<!--<artifactId>commons-pool2</artifactId>-->
+			<!--<version>2.4.3</version>-->
+		<!--</dependency>-->
+
+
+
+
+
 
 
 

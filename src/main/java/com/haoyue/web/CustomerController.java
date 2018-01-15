@@ -35,6 +35,7 @@ public class CustomerController {
     //关键词查询 商品分类查询
     @RequestMapping("/proSearch")
     public Result proSearch(@RequestParam Map<String, String> map){
+       // map.put("showdate","yes");
        return new Result(false, Global.do_success,productsService.list(map), map.get("token")) ;
     }
 
@@ -43,9 +44,9 @@ public class CustomerController {
     购物车列表显示物品分类，尺码，颜色
     */
     @RequestMapping("/loginOrReg")
-    public Result save(String openId,String sellerId){
+    public Result save(String openId,String sellerId,String wxname,String wxpic){
 
-       // boolean flag=sellerService.isStop(sellerId);
+        // boolean flag=sellerService.isStop(sellerId);
         Seller seller=sellerService.findOne(Integer.parseInt(sellerId));
         boolean flag=seller.getIsActive();
         boolean isCoupon=seller.getIscoupon();
@@ -66,11 +67,18 @@ public class CustomerController {
             customer.setOpenId(openId);
             customer.setSellerId(sellerId);
             customer.setCreateDate(new Date());
+            customer.setWxname(wxname);
+            customer.setWxpic(wxpic);
             customer=customerService.save(customer);
+        }else {
+            customer.setWxname(wxname);
+            customer.setWxpic(wxpic);
+            customerService.update(customer);
         }
         return new Result(false,Global.do_success,customer,null);
     }
 
+    //  /customer/getSessionKey?appId=小程序ID&code=12&secret=小程序secret
     @RequestMapping("/getSessionKey")
     public  Result getOpenId(String appId,String code,String secret){
         String response= HttpRequest.sendGet("https://api.weixin.qq.com/sns/jscode2session","appid="+appId+"&secret="+secret+"&js_code="+code+"&grant_type=authorization_code");

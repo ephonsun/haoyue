@@ -54,6 +54,10 @@ public class DictionaryController {
     public Result addView(String sellerId,String proId){
         if (proId==null) {
             Dictionary dictionary = dictionaryService.findByDateAndSellerId(new Date(), Integer.parseInt(sellerId));
+            if (dictionary==null){
+                dictionaryService.addEachDay2();
+                dictionary = dictionaryService.findByDateAndSellerId(new Date(), Integer.parseInt(sellerId));
+            }
             dictionary.setViews(dictionary.getViews()==null?0:dictionary.getViews() + 1);
             dictionaryService.update(dictionary);
             return new Result(false, Global.do_success, null, null);
@@ -76,14 +80,21 @@ public class DictionaryController {
                 visitors = new Visitors();
                 visitors.setSellerId(sellerId1);
                 visitors.setOpenId(openId);
-                visitorsService.save(visitors);
+                visitors.setNum(1);
                 //同步代码块
                 synchronized (this) {
                     Dictionary dictionary = dictionaryService.findByDateAndSellerId(new Date(), Integer.parseInt(sellerId));
+                    if (dictionary==null){
+                        dictionaryService.addEachDay2();
+                        dictionary = dictionaryService.findByDateAndSellerId(new Date(), Integer.parseInt(sellerId));
+                    }
                     dictionary.setVisitors(dictionary.getVisitors() == null ? 0 : dictionary.getVisitors() + 1);
                     dictionaryService.update(dictionary);
                 }
+            }else {
+                visitors.setNum(visitors.getNum()+1);
             }
+            visitorsService.update(visitors);
             return new Result(false, Global.do_success, null, null);
         }else {
             Visitors visitors= visitorsService.findByProductIdAndOpenId(Integer.parseInt(proId),openId);

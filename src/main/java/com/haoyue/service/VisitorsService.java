@@ -30,4 +30,8 @@ public class VisitorsService {
     public Visitors findByProductIdAndOpenId(int i, String openId) {
         return visitorsRepo.findByProductIdAndOpenId(i,openId);
     }
+
+    public void update(Visitors visitors) {
+        visitorsRepo.save(visitors);
+    }
 }

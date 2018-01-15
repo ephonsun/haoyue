@@ -19,6 +19,7 @@ public interface TRedPacketRepo extends TBaseRepo<TRedPacket,Integer> {
 
     @Query(nativeQuery = true,value = "select * from t_redpacket where open_id=?1 and sale_id=?2 and isowener=true")
     List<TRedPacket> findByOpenIdAndIsOwener(String ownerOpenId, String saleId);
+    //List<TRedPacket> findByOpenIdAndIsOwener(String ownerOpenId,String saleId);
 
     @Modifying
     @Transactional

@@ -3,6 +3,7 @@ package com.haoyue.pojo;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -12,7 +13,7 @@ import java.util.List;
 //卖家
 @Entity
 @Table(name = "sellers")
-public class Seller {
+public class Seller implements Serializable{
 
     @Id
     @GeneratedValue
@@ -33,7 +34,12 @@ public class Seller {
 
     @Column(unique = true)
     private String appId;
+    private String secret;//8bcdb74a9915b5685fa0ec37f6f25b24
     private String authority;//权限 0 简易版 1 基础版  2 高级版
+    private String template_pay;// 付款通知 Z_Xg6rYdQgci4FP_aOjTvZHXeC5BSs99EwARD6NJXWk
+    private String template_daily;//日常通知 Foc6pkGtA2FZON2_5nXJxCmFvfIdKWAv5oj6REd_3w4
+    private String template_downprice;// 降价通知 HsbxE0x_CqdmCu6u0hhYtGB4Ry2f_R9M96KBLLxWbUM
+    private String file_payback;//退款证书  apiclient_cert.p12
 
     private boolean isActive=true;//店铺是否可用
     private boolean iscoupon=false;//优惠券活动是否开启
@@ -45,6 +51,92 @@ public class Seller {
     private String indexTitle;//首页转发标题
     private String pallTitle;//全部商品转发标题
     private String pdescTitle;//商品详情转发标题
+    private String lunbo;//店铺图片对应的商品编号
+    private String onlineCode;//在线凭证
+    private boolean isMember=false;
+    private String mchId;//商户号
+    private String key1;//支付密匙
+
+
+    public String getTemplate_downprice() {
+        return template_downprice;
+    }
+
+    public void setTemplate_downprice(String template_downprice) {
+        this.template_downprice = template_downprice;
+    }
+
+    public String getFile_payback() {
+        return file_payback;
+    }
+
+    public void setFile_payback(String file_payback) {
+        this.file_payback = file_payback;
+    }
+
+    public String getTemplate_daily() {
+        return template_daily;
+    }
+
+    public void setTemplate_daily(String template_daily) {
+        this.template_daily = template_daily;
+    }
+
+    public String getTemplate_pay() {
+        return template_pay;
+    }
+
+    public void setTemplate_pay(String template_pay) {
+        this.template_pay = template_pay;
+    }
+
+    public String getSecret() {
+        return secret;
+    }
+
+    public void setSecret(String secret) {
+        this.secret = secret;
+    }
+
+    public String getMchId() {
+        return mchId;
+    }
+
+    public void setMchId(String mchId) {
+        this.mchId = mchId;
+    }
+
+    public String getKey1() {
+        return key1;
+    }
+
+    public void setKey1(String key1) {
+        this.key1 = key1;
+    }
+
+    public boolean getIsMember() {
+        return isMember;
+    }
+
+    public void setIsMember(boolean member) {
+        isMember = member;
+    }
+
+    public String getOnlineCode() {
+        return onlineCode;
+    }
+
+    public void setOnlineCode(String onlineCode) {
+        this.onlineCode = onlineCode;
+    }
+
+    public String getLunbo() {
+        return lunbo;
+    }
+
+    public void setLunbo(String lunbo) {
+        this.lunbo = lunbo;
+    }
 
     public boolean getIscoupon() {
         return iscoupon;
@@ -182,4 +274,28 @@ public class Seller {
         this.sellerEmail = sellerEmail;
     }
 
+    @Override
+    public String toString() {
+        return "Seller{" +
+                "sellerId=" + sellerId +
+                ", sellerName='" + sellerName + '\'' +
+                ", sellerPass='" + sellerPass + '\'' +
+                ", sellerPhone='" + sellerPhone + '\'' +
+                ", sellerEmail='" + sellerEmail + '\'' +
+                ", banners='" + banners + '\'' +
+                ", maxFileSize=" + maxFileSize +
+                ", uploadFileSize=" + uploadFileSize +
+                ", videos='" + videos + '\'' +
+                ", appId='" + appId + '\'' +
+                ", authority='" + authority + '\'' +
+                ", isActive=" + isActive +
+                ", iscoupon=" + iscoupon +
+                ", expireDate=" + expireDate +
+                ", indexTitle='" + indexTitle + '\'' +
+                ", pallTitle='" + pallTitle + '\'' +
+                ", pdescTitle='" + pdescTitle + '\'' +
+                ", lunbo='" + lunbo + '\'' +
+                ", onlineCode='" + onlineCode + '\'' +
+                '}';
+    }
 }

@@ -13,6 +13,8 @@ public class MyWebAppConfigurer extends WebMvcConfigurerAdapter {
         // addPathPatterns 用于添加拦截规则
         // excludePathPatterns 用户排除拦截
         registry.addInterceptor(new BaseInterceptor()).addPathPatterns("/**");
+        registry.addInterceptor(new BaseInterceptor3()).addPathPatterns("/tuan/**");
+        registry.addInterceptor(new BaseInterceptor2()).addPathPatterns("/super-admin/**");
         super.addInterceptors(registry);
     }
 

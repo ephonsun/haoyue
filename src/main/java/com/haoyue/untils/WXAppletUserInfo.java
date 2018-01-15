@@ -1,8 +1,6 @@
 package com.haoyue.untils;
 
 import org.apache.tomcat.util.codec.binary.Base64;
-import org.json.simple.JSONObject;
-
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidAlgorithmParameterException;
 
@@ -16,17 +14,6 @@ public class WXAppletUserInfo {
      * 解密用户敏感数据
      */
     public String decodeUserInfo(String encryptedData,String iv,String session_key){
-//        String encryptedData ="";
-//        String iv = "";
-        //String session = getPara("session");
-        //从缓存中获取session_key
-        //获取名称为userInfo的Redis Cache对象
-        //Cache userInfoRedis = Redis.use("userInfo");
-        //Object wxSessionObj = userInfoRedis.get(session);
-//        if(null==wxSessionObj){
-//            renderNull();
-//        }
-        //String wxSessionStr = (String)wxSessionObj;
 
         try {
             byte[] resultByte = AESUtil.instance.decrypt(Base64.decodeBase64(encryptedData), Base64.decodeBase64(session_key), Base64.decodeBase64(iv));
