@@ -29,7 +29,7 @@ public class MemberController {
     private OrderService orderService;
 
     //  卖家后台会员设置 会员等级-折扣-消费额度
-    //   /member/save?sellerId=卖家ID&lev-discount=lev1-0.9-1000,lev2-0.8-2000,lev3-0.6-3000
+    //   /member/save?sellerId=卖家ID&lev_discount=lev1_0.9_1000,lev2_0.8_2000,lev3_0.6_3000
     @RequestMapping("/save")
     public Result save(String sellerId, String lev_discount) {
         //如果存在删除原来的数据
@@ -46,9 +46,9 @@ public class MemberController {
         List<Member> news=new ArrayList<>();
         for (String s : strs) {
             Member member = new Member();
-            lev = s.split("-")[0];
-            discount = s.split("-")[1];
-            total_consume = s.split("-")[2];
+            lev = s.split("_")[0];
+            discount = s.split("_")[1];
+            total_consume = s.split("_")[2];
             member.setLeavel(lev);
             member.setDiscount(discount);
             member.setCreateDate(new Date());
