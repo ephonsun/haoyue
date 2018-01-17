@@ -25,6 +25,12 @@ public class TouristController {
     @RequestMapping("/regist")
     public Result regist(Tourist tourist) {
         tourist.setCreateDate(new Date());
+        if (touristService.findByPhone(tourist.getPhone())!=null){
+            return new Result(true, "当前手机号已存在", null);
+        }
+        if (touristService.findByUsername(tourist.getUsername())!=null){
+            return new Result(true, "当前用户名已经存在", null);
+        }
         touristService.save(tourist);
         return new Result(false, "success", tourist);
     }

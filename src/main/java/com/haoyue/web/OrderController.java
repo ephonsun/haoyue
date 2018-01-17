@@ -103,8 +103,9 @@ public class OrderController {
         return new Result(false, "", orderService.clist(map), map.get("token"));
     }
 
+    //   /order/findOne?oid=订单Id&openId=2221
     @RequestMapping("/findOne")
-    public Result findOne(Integer oid) {
+    public Result findOne(Integer oid,String openId) {
         Order order = orderService.findOne(oid);
         return new Result(false, Global.do_success, order, null);
     }
@@ -160,6 +161,9 @@ public class OrderController {
         order.setAddress(address1);
         //日期
         order.setCreateDate(new Date());
+        Calendar calendar=Calendar.getInstance();
+        calendar.add(Calendar.DATE,3);
+        order.setLatestDate(calendar.getTime());
         //数量
         order.setAmount(amount);
         //发票

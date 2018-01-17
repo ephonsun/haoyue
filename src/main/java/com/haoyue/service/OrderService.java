@@ -475,4 +475,9 @@ public class OrderService {
     public Order findByOrderCode(String out_trade_no) {
         return orderRepo.findByOrderCode(out_trade_no);
     }
+
+    public void unpayFlush() {
+        Date date=new Date();
+        orderRepo.unpayFlush(date);
+    }
 }

@@ -259,7 +259,8 @@ public class SuperAdminController {
                 dictionaryService.addEachDay();
                 //秒杀商品更新
                 productsService.autoFlush();
-                Global.access_tokens.clear();
+                //代付款订单刷新
+                orderService.unpayFlush();
             }
             catch (Exception e){
                 e.printStackTrace();

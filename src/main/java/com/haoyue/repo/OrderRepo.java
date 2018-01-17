@@ -52,4 +52,9 @@ public interface OrderRepo extends BaseRepo<Order,Integer> {
     List<Order> findUnComment(int cid, String sellerId);
 
     Order findByOrderCode(String out_trade_no);
+
+    @Modifying
+    @Transactional
+    @Query(nativeQuery = true,value = "update orders set active=false ,active_seller=false  where latest_date<?1")
+    void unpayFlush(Date date);
 }
