@@ -9,13 +9,5 @@ public class HaoyueApplication {
 	public static void main(String[] args) {
 
 		SpringApplication.run(HaoyueApplication.class, args);
-
-		System.out.println("ljljljlj");
-		System.out.println("ljljljlj");
-		System.out.println("ljljljlj");
-		System.out.println("ljljljlj");
-		System.out.println("ljljljlj");
-		System.out.println("ljljljlj");
-
 	}
 }

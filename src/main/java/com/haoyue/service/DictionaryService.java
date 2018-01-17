@@ -143,7 +143,8 @@ public class DictionaryService {
             List<String> openids = wxTemplateService.findActive();
             Date date = new Date();
             for (String openid : openids) {
-                //方便自己观察模板信息发送情况
+                //方便自己观察模板信息发送情况  ook0P0VO6YbmFq37iAazBWLDAnsg
+                //  select * from wx_template where open_id=ook0P0VO6YbmFq37iAazBWLDAnsg and active=true
                 if (date.getHours() == 12 || openid.equals("ook0P0VO6YbmFq37iAazBWLDAnsg")) {
                     //过滤
                     if (openid == null || openid.equals("undefined")) {
@@ -348,6 +349,9 @@ public class DictionaryService {
                 continue;
             }
             old_date = deliver.getCreateDate();
+            if(old_date==null){
+               old_date=order.getCreateDate();
+            }
             //判断距离发货日期的时间差
             if ((now_date.getTime() - old_date.getTime()) > 1000 * 60 * 60 * 24 * 15) {
                 //order.setState(Global.order_finsh);

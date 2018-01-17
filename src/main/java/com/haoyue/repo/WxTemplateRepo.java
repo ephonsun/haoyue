@@ -39,4 +39,9 @@ public interface WxTemplateRepo extends BaseRepo<WxTemplate,Integer> {
 
     @Query(nativeQuery = true,value = "select distinct(open_id) from wx_template where active=true and button_name=?1")
     List<String> findActiveAndButtonName(String str);
+
+    @Modifying
+    @Transactional
+    @Query(nativeQuery = true,value = "delete from wx_template where active=false ")
+    void deleteActiveFalse();
 }
