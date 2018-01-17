@@ -96,6 +96,14 @@ public class ProductsController {
         return new Result(true, Global.do_success, token);
     }
 
+
+    // /seller/pro/recommend?sellerId=3(&pid=商品ID)
+    @RequestMapping("/recommend")
+    public Result Recommend(String sellerId, String pid) {
+        List<Products> list = productsService.recommend(sellerId, pid);
+        return new Result(false, Global.do_success, list,null);
+    }
+
     @RequestMapping("/findOne")
     public Result findOne(Integer pid, String token, String pname, String ptype, String pcode) {
         Map<String, String> map = new HashMap<>();
@@ -150,15 +158,15 @@ public class ProductsController {
 
     @RequestMapping("/save")
     @Transactional
-    public Result update_all(Products products, String token, String protypes,String showHours,String killStart,String killEnd) throws FileNotFoundException, ParseException {
+    public Result update_all(Products products, String token, String protypes, String showHours, String killStart, String killEnd) throws FileNotFoundException, ParseException {
         //上线时间
-        if (!StringUtils.isNullOrBlank(showHours)){
+        if (!StringUtils.isNullOrBlank(showHours)) {
             products.setShowDate(StringUtils.formatDate2(showHours));
-        }else {
+        } else {
             products.setShowDate(new Date());
         }
         //秒杀
-        if (products.getIssecondkill()){
+        if (products.getIssecondkill()) {
             products.setSecondKillStart(StringUtils.formatDate2(killStart));
             products.setSecondKillEnd(StringUtils.formatDate2(killEnd));
         }
@@ -173,24 +181,24 @@ public class ProductsController {
         List<ProdutsType> produtsTypes = new ArrayList<>();
         for (int i = 0; i < strs.length; i++) {
             String[] strings = strs[i].split(",");
-            String color=null;
-            String size=null;
-            String discount=null;
-            String price=null;
-            String secondKillPrice="0";
-            String amount=null;
-            if (strings.length==5){
+            String color = null;
+            String size = null;
+            String discount = null;
+            String price = null;
+            String secondKillPrice = "0";
+            String amount = null;
+            if (strings.length == 5) {
                 color = strings[0];//颜色
                 size = strings[1];//尺码
                 discount = strings[2];//折扣价
                 price = strings[3];//原价
                 amount = strings[4];//库存
-            }else {
+            } else {
                 color = strings[0];//颜色
                 size = strings[1];//尺码
                 discount = strings[2];//折扣价
                 price = strings[3];//原价
-                secondKillPrice=strings[4];//秒杀价
+                secondKillPrice = strings[4];//秒杀价
                 amount = strings[5];//库存
             }
 
@@ -229,10 +237,10 @@ public class ProductsController {
 
         try {
             //抽奖是否结束
-            if (products.getId()!=null&&products.getIsLuckDraw()==false){
-                if (productsService.findOne(products.getId()).getIsLuckDraw()){
+            if (products.getId() != null && products.getIsLuckDraw() == false) {
+                if (productsService.findOne(products.getId()).getIsLuckDraw()) {
                     products.setIsLuckDrawEnd(true);
-                    LuckDraw luckDraw=luckDrawService.findBySellerId(products.getSellerId()+"");
+                    LuckDraw luckDraw = luckDrawService.findBySellerId(products.getSellerId() + "");
                     luckDraw.setJoinNumber(0);
                     luckDrawService.update(luckDraw);
                     orderService.updateIsLuckDrawEnd(products.getId());
@@ -267,9 +275,9 @@ public class ProductsController {
             e.printStackTrace();
         }
         //更新二维码
-        if (StringUtils.isNullOrBlank(products.getQrcode())){
-            String url=productsService.qrcode(products.getSellerId()+"",products.getId()+"");
-            products.setQrcode(Global.aliyun_href+url);
+        if (StringUtils.isNullOrBlank(products.getQrcode())) {
+            String url = productsService.qrcode(products.getSellerId() + "", products.getId() + "");
+            products.setQrcode(Global.aliyun_href + url);
             productsService.update(products);
         }
         return new Result(false, Global.do_success, products, null);

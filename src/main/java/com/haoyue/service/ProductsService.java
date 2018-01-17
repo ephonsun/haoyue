@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -65,7 +66,7 @@ public class ProductsService {
         QProducts pro = QProducts.products;
         BooleanBuilder bd = new BooleanBuilder();
         bd.and(pro.active.eq(true));
-        Date date=new Date();
+        Date date = new Date();
         for (String name : map.keySet()) {
             String value = (String) map.get(name);
             if (!(StringUtils.isNullOrBlank(value))) {
@@ -259,4 +260,24 @@ public class ProductsService {
     public void autoFlush() {
         productsRepo.autoFlush(new Date());
     }
+
+    public List<Products> recommend(String sellerId, String pid) {
+        List<Products> list = productsRepo.findBySellerIdAndActive(sellerId, true);
+        if (!StringUtils.isNullOrBlank(pid)) {
+            list.remove(findOne(Integer.parseInt(pid)));
+        }
+        List<Products> newlist = new ArrayList<>();
+        int size = list.size();
+        int index = 0;
+        for (int i = 0; i < 4; i++) {
+            index = (int) (Math.random() * size);
+            while (newlist.contains(list.get(index))) {
+                index = (int) (Math.random() * size);
+            }
+            newlist.add(list.get(index));
+        }
+        return newlist;
+    }
+
+
 }
