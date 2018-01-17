@@ -266,6 +266,11 @@ public class ProductsService {
         if (!StringUtils.isNullOrBlank(pid)) {
             list.remove(findOne(Integer.parseInt(pid)));
         }
+        // < = 四个商品
+        if (list.size()<=4){
+            return list;
+        }
+        //  > 四个商品,随机抽取四个商品
         List<Products> newlist = new ArrayList<>();
         int size = list.size();
         int index = 0;

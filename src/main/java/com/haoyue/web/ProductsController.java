@@ -97,7 +97,7 @@ public class ProductsController {
     }
 
 
-    // /seller/pro/recommend?sellerId=3(&pid=商品ID)
+    // http://localhost:8080/seller/pro/recommend?sellerId=3(&pid=商品ID)
     @RequestMapping("/recommend")
     public Result Recommend(String sellerId, String pid) {
         List<Products> list = productsService.recommend(sellerId, pid);
