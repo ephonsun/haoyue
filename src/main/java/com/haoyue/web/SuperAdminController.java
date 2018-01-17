@@ -270,13 +270,18 @@ public class SuperAdminController {
 
     Runnable runnable_2 = new Runnable() {
         public void run() {
-            System.out.println("高级版--秒杀通知执行了。。。。");
-            dictionaryService.timeKillInform();
-            System.out.println("高级版--预售通知执行了。。。。");
-            dictionaryService.advanceSale();
-            //清空数据
-            Global.yushou_map.clear();
-            Global.miaosha_map.clear();
+            try {
+                System.out.println("高级版--秒杀通知执行了。。。。");
+                dictionaryService.timeKillInform();
+                System.out.println("高级版--预售通知执行了。。。。");
+                dictionaryService.advanceSale();
+                //清空数据
+                Global.yushou_map.clear();
+                Global.miaosha_map.clear();
+            }
+            catch (Exception e){
+                e.printStackTrace();
+            }
         }
     };
 

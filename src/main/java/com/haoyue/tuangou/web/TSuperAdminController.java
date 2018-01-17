@@ -61,29 +61,49 @@ public class TSuperAdminController {
     // dictionary定时器 一个小时执行一次
     Runnable runnable = new Runnable() {
         public void run() {
-            System.out.println("刷新团购dictionarys表定时器执行了。。。。");
-            //数据表 dictionarys 新增数据
-            dictionarysService.addEachDay();
-            //刷新访问通知active属性，发送通知
-            wxTemplateService.autoFlush();
+            try {
+                System.out.println("刷新团购dictionarys表定时器执行了。。。。");
+                //数据表 dictionarys 新增数据
+                dictionarysService.addEachDay();
+                //刷新访问通知active属性，发送通知
+                wxTemplateService.autoFlush();
+            }
+            catch (Exception e){
+                System.out.println("刷新团购dictionarys表定时器出错了");
+                e.printStackTrace();
+            }
         }
     };
 
     //团购单定时器 10分钟刷新一次
     Runnable runnable2 = new Runnable() {
         public void run() {
-            System.out.println("刷新团购订单状态定时器执行了。。。。");
-            tuanOrdersService.flush();
-            //自动退款
-            tuanOrdersService.autoPayback();
+            try{
+                System.out.println("刷新团购订单状态定时器执行了。。。。");
+                tuanOrdersService.flush();
+                //自动退款
+                tuanOrdersService.autoPayback();
+            }
+            catch (Exception e){
+                System.out.println("刷新团购订单状态定时器出错了");
+                e.printStackTrace();
+            }
+
         }
     };
 
     //红包定时器 10分钟刷新一次
     Runnable runnable3 = new Runnable() {
         public void run() {
-            System.out.println("刷新团购红包状态定时器执行了。。。。");
-            redPacketService.flush();
+            try{
+                System.out.println("刷新团购红包状态定时器执行了。。。。");
+                redPacketService.flush();
+            }
+            catch (Exception e){
+                System.out.println("刷新团购红包状态定时器出错了");
+                e.printStackTrace();
+            }
+
         }
     };
 
@@ -91,18 +111,32 @@ public class TSuperAdminController {
     //优惠券定时器  一个小时刷新一次
     Runnable runnable4 = new Runnable() {
         public void run() {
-            System.out.println("刷新团购优惠券状态定时器执行了。。。。");
-            couponService.flush();
+            try {
+                System.out.println("刷新团购优惠券状态定时器执行了。。。。");
+                couponService.flush();
+            }
+            catch (Exception e){
+                System.out.println("刷新团购优惠券状态定时器出错了");
+                e.printStackTrace();
+            }
+
         }
     };
 
     //团购商品定时器  一个小时刷新一次
     Runnable runnable5 = new Runnable() {
         public void run() {
-            System.out.println("刷新团购商品状态定时器执行了。。。。");
-            productsService.autoFlushEnd();
-            System.out.println("刷新零元购状态定时器执行了。。。。");
-            freeShoppingService.autoFlush();
+            try {
+                System.out.println("刷新团购商品状态定时器执行了。。。。");
+                productsService.autoFlushEnd();
+                System.out.println("刷新零元购状态定时器执行了。。。。");
+                freeShoppingService.autoFlush();
+            }
+            catch (Exception e){
+                System.out.println("刷新团购商品状态定时器出错了");
+                e.printStackTrace();
+            }
+
         }
     };
 

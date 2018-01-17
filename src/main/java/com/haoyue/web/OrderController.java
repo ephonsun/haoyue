@@ -93,6 +93,7 @@ public class OrderController {
 
 
     // /order/clist?sellerId&openId&state&active=true
+    //  /order/clist?sellerId=122&openId=1221
     @RequestMapping("/clist")
     public Result clist(@RequestParam Map<String, String> map) {
         String openId = map.get("openId");

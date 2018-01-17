@@ -29,6 +29,7 @@ public class TouristController {
         return new Result(false, "success", tourist);
     }
 
+    //  /website/tourist/login?username=1111&password=111
     @RequestMapping("/login")
     public Result login(String username, String password) {
         Tourist tourist = touristService.findByUsernameAndPassword(username, password);
@@ -45,7 +46,7 @@ public class TouristController {
         return new Result(false, "success", iterable);
     }
 
-    //  /website/tourist/findone?id=123
+    //  https://www.cslapp.com/website/tourist/findone?id=123
     @RequestMapping("/findone")
     public Result findOne(int id, String phone, String username) {
         if (id != 0) {

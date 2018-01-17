@@ -31,7 +31,7 @@ public class MemberController {
     //  卖家后台会员设置 会员等级-折扣-消费额度
     //   /member/save?sellerId=卖家ID&lev_discount=lev1_0.9_1000,lev2_0.8_2000,lev3_0.6_3000
     @RequestMapping("/save")
-    public Result save(String sellerId, String lev_discount) {
+    public Result save(String sellerId, String lev_discount,String comment1 ,String comment2,String comment3) {
         //如果存在删除原来的数据
         List<Member> members = memberService.findBySellerIdAndOpenIdIsNull(sellerId);
         if(members!=null&members.size()!=0){
@@ -54,10 +54,13 @@ public class MemberController {
             member.setCreateDate(new Date());
             member.setSellerId(sellerId);
             member.setTotal_consume(total_consume);
+            member.setComment1(comment1);
+            member.setComment2(comment2);
+            member.setComment3(comment3);
             memberService.save(member);
             news.add(member);
         }
-        // 更新买家会员信息 discount leavel
+        // 更新买家会员信息 discount
         memberService.flush(news,sellerId);
         return new Result(false, Global.do_success, null, null);
     }
