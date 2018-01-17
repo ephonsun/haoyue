@@ -52,7 +52,8 @@ public class TopicsController {
         return new Result(false, "success", topics);
     }
 
-    //  /website/topic/list?pageNumber=0
+    //  https://www.cslapp.com/website/topic/list?pageNumber=0
+    //  /website/topic/list?pageNumber=0&userid=当前登录用户的ID
     @RequestMapping("/list")
     public Result list(@RequestParam Map<String, String> map, @RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize) {
         Iterable<Topics> iterable = topicsService.list(map, pageNumber, pageSize);
