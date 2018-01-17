@@ -417,6 +417,33 @@ public class HaoyueApplicationTests {
     @Test
     public void f32(){
 
+        List<Dog> list=new ArrayList<>();
+        Dog dog=new Dog();
+        dog.setName("aaa");
+        list.add(dog);
+
+        if (list.contains(dog)){
+            System.out.println("=====");
+        }
+        else {
+            System.out.println("------");
+        }
+
+
+    }
+
+
+    class Dog {
+
+        private String name;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
     }
 
     public Map getminiqrQr(String accessToken,String pid) {
