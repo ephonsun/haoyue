@@ -103,7 +103,7 @@ public class DictionaryService {
 
     public void addEachDay() {
         //访问通知
-        auto_inform();
+        //auto_inform();
         //默认收货
         auto_receive();
         //每天向dictionary表注入当日新的数据

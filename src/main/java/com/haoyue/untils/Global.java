@@ -138,7 +138,8 @@ public class Global {
 
 
     //申请退款
-    public static String already_apply_payback="你已经申请了退款";
+    public static String already_apply_payback="不可多次申请退款/退货";
+    public static String already_cancel="当前订单不可重复撤销";
 
     //非拦截地址
     public static List<String> urls(){
