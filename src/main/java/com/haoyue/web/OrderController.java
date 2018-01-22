@@ -71,7 +71,7 @@ public class OrderController {
     }
 
 
-    //  删除已完成订单 ，取消待付款订单  /order/cancel?id=订单ID&openId=12&sellerId=卖家ID
+    //  删除已完成订单 ，取消待付款订单,删除待评价订单  /order/cancel?id=订单ID&openId=12&sellerId=卖家ID
     @RequestMapping("/cancel")
     public Result cancel(Integer id, String openId, String sellerId) {
         Order order = orderService.findOne(id);

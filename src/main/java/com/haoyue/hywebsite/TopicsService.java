@@ -37,8 +37,8 @@ public class TopicsService {
     public Iterable<Topics> list(Map<String, String> map, int pageNumber, int pageSize) {
         QTopics topics = QTopics.topics;
         BooleanBuilder bd = new BooleanBuilder();
-        if (map.get("userId")!=null&&!map.get("userId").equals("")) {
-            bd.and(topics.userid.eq(Integer.parseInt(map.get("userId"))));
+        if (map.get("userid")!=null&&!map.get("userid").equals("")) {
+            bd.and(topics.userid.eq(Integer.parseInt(map.get("userid"))));
         } else if (map.get("pid")!=null&&!map.get("pid").equals("")) {
             bd.and(topics.pid.isNotNull());
         } else if (map.get("pid")==null) {

@@ -48,7 +48,7 @@ public interface OrderRepo extends BaseRepo<Order,Integer> {
     @Query(nativeQuery = true,value = "update orders set state='已完成订单' where id=?1")
     void autoDone(Integer id);
 
-    @Query(nativeQuery = true,value = "select * from orders where customer_id=?1 and seller_id=?2  and state='已完成订单' and iscomment=false")
+    @Query(nativeQuery = true,value = "select * from orders where customer_id=?1 and seller_id=?2  and state='已完成订单' and iscomment=false and active=true ")
     List<Order> findUnComment(int cid, String sellerId);
 
     Order findByOrderCode(String out_trade_no);
