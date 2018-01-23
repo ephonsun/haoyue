@@ -85,6 +85,7 @@ public class AfterSaleController {
             if (afterSale.getType().equals("2")) {
                 afterSale.setPages("2");
                 afterSale.setProcess(3);
+                afterSale.setSuccessDate(new Date());
                 str = "卖家同意退款申请," + afterSale.getOrder().getTotalPrice() + "元已经退回买家账户";
             }
 
@@ -118,6 +119,7 @@ public class AfterSaleController {
                 if (!result.equalsIgnoreCase("fail")) {
                     addTemplate(order, afterSale.getFormId());
                 }
+
             }
         }
         return new Result(false, Global.do_success, null, null);
@@ -237,6 +239,7 @@ public class AfterSaleController {
         String str = "卖家已经确认收货并执行系统退款";
         afterSale.setProcess(2);
         afterSale.setPages("7");
+        afterSale.setSuccessDate(new Date());
         afterSaleService.update(afterSale, str);
         //拼接参数
         String param = "saleId=" + afterSale.getSellerId() + "&oid=" + afterSale.getOrder().getId() + "&fe=" + afterSale.getOrder().getTotalPrice() * 100;
