@@ -63,18 +63,17 @@ public class AfterSale {
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:SS", timezone = "GMT+8")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date dealDate;//创建日期
+    private Date dealDate;//卖家处理日期
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:SS", timezone = "GMT+8")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date successDate;//创建日期
+    private Date successDate;//成功日期
 
     private boolean receive = false;//是否收到货
     private boolean cancel = false;//撤销
     private boolean closed = false;//关闭
     private boolean active = true;//卖家
     private boolean active_buyer = true;//买家
-
 
     public Date getSuccessDate() {
         return successDate;

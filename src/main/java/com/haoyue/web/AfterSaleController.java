@@ -81,6 +81,7 @@ public class AfterSaleController {
                 Calendar calendar = Calendar.getInstance();
                 calendar.add(Calendar.DATE, 7);
                 afterSale.setEndDeliverDate(calendar.getTime());
+                afterSale.setReceiveAddress(receiveAddress);
             }
             if (afterSale.getType().equals("2")) {
                 afterSale.setPages("2");
@@ -102,7 +103,6 @@ public class AfterSaleController {
             }
             str = response;
         }
-        afterSale.setReceiveAddress(receiveAddress);
         afterSale.setResponse(response);
         afterSale.setDealDate(new Date());
         afterSaleService.update(afterSale, str);
@@ -175,7 +175,7 @@ public class AfterSaleController {
         return new Result(false, Global.do_success, afterSaleService.messageList(id), null);
     }
 
-    //  /after-sale/sendback?id=申请退款记录Id&dname=快递名&dcode=单号
+    //  /after-sale/sendback?id=申请退款记录Id&dname=快递名&dcode=单号&openId=1
     @RequestMapping("/sendback")
     public void sendback(String id, String dname, String dcode) {
         AfterSale afterSale = afterSaleService.findOne(id);
@@ -199,17 +199,20 @@ public class AfterSaleController {
         }
         //单个订单只能撤销一次
         List<AfterSale> list = afterSaleService.findByOrderId(afterSale.getOrder().getId());
-        for (AfterSale afterSale1 : list) {
-            if (afterSale1.getCancel() == true) {
-                return new Result(true, Global.already_cancel, null, null);
+        if (list != null && list.size() != 0) {
+            for (AfterSale afterSale1 : list) {
+                if (afterSale1.getCancel() == true) {
+                    return new Result(true, Global.already_cancel, null, null);
+                }
             }
         }
         afterSale.setCancel(true);
         afterSaleService.update(afterSale, null);
+
         return new Result(false, Global.do_success, null, null);
     }
 
-    //  /after-sale/update?pics=图片地址&type=[1 退货/退款 2 退款 ]&reason=原因&desc=退款说明&phone=电话&openId=122
+    //  /after-sale/update?pics=图片地址&type=[1 退货/退款 2 退款 ]&reason=原因&desc=退款说明&phone=电话&openId=122&id=121212
     @RequestMapping("/update")
     public Result update(AfterSale afterSale, String again) {
         AfterSale afterSale1 = afterSaleService.findOne(afterSale.getId() + "");
@@ -249,6 +252,16 @@ public class AfterSaleController {
         if (!result.equalsIgnoreCase("fail")) {
             addTemplate(afterSale.getOrder(), afterSale.getFormId());
         }
+        return new Result(false, Global.do_success, null, null);
+    }
+
+    //  /after-sale/update_price?id=申请记录ID&totalPrice=修改后的总价
+    @RequestMapping("/update_price")
+    public Result updatePrice(String id,double totalPrice){
+        AfterSale afterSale=afterSaleService.findOne(id);
+        Order order=afterSale.getOrder();
+        order.setTotalPrice(totalPrice);
+        orderService.update(order);
         return new Result(false, Global.do_success, null, null);
     }
 

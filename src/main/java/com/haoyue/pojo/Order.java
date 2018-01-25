@@ -66,7 +66,7 @@ public class Order {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:SS", timezone = "GMT+8")
     @Temporal(TemporalType.TIMESTAMP)
     @Column(updatable = false)
-    private Date LatestDate;//最晚付款日期  三天
+    private Date latestDate;//最晚付款日期  三天
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:SS", timezone = "GMT+8")
     @Temporal(TemporalType.TIMESTAMP)
@@ -82,13 +82,12 @@ public class Order {
     private boolean isLuck=false;//是否中奖
     private boolean iscomment=false;
 
-
     public Date getLatestDate() {
-        return LatestDate;
+        return latestDate;
     }
 
     public void setLatestDate(Date latestDate) {
-        LatestDate = latestDate;
+        this.latestDate = latestDate;
     }
 
     public boolean getIsActive_seller() {
