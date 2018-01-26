@@ -37,12 +37,17 @@ public class AfterSaleController {
     @RequestMapping("/save")
     public Result save(String oid, AfterSale afterSale) {
         Order order = orderService.findOne(Integer.parseInt(oid));
+        Date date=new Date();
         if (order.getSellerId() != Integer.parseInt(afterSale.getSellerId())) {
             return new Result(true, Global.have_no_right, null, null);
         }
         List<AfterSale> list = afterSaleService.findByOrderId(order.getId());
         if (list != null && list.size() == 2) {
             return new Result(true, Global.already_apply_payback, null, null);
+        }
+        //  订单自发货之日起12日内可以提交申请退款、退货
+        if (date.getTime()-order.getDeliver().getCreateDate().getTime()>3600*24*12*1000){
+            return new Result(true, Global.apply_order_date_expire, null, null);
         }
         //更新订单是否申请退换货
         order.setIsApplyReturn(true);
@@ -52,7 +57,7 @@ public class AfterSaleController {
         afterSale.setIsAgree("0");//等待卖家处理
         afterSale.setPages("1");
 
-        return new Result(false, Global.do_success, afterSaleService.save(afterSale), null);
+        return new Result(false, Global.do_success, afterSaleService.save(afterSale,true), null);
     }
 
 
@@ -105,7 +110,7 @@ public class AfterSaleController {
         }
         afterSale.setResponse(response);
         afterSale.setDealDate(new Date());
-        afterSaleService.update(afterSale, str);
+        afterSaleService.update(afterSale, str,false);
         //退款
         if (afterSale.getType().equals("2")) {
             //退款  更新dictionarys表数据
@@ -165,7 +170,7 @@ public class AfterSaleController {
         if (!StringUtils.isNullOrBlank(openId)) {
             afterSale.setActive_buyer(false);
         }
-        afterSaleService.update(afterSale, null);
+        afterSaleService.update(afterSale, null,false);
         return new Result(false, Global.do_success, null, null);
     }
 
@@ -174,6 +179,7 @@ public class AfterSaleController {
     public Result messageList(int id, String sellerId) {
         return new Result(false, Global.do_success, afterSaleService.messageList(id), null);
     }
+
 
     //  /after-sale/sendback?id=申请退款记录Id&dname=快递名&dcode=单号&openId=1
     @RequestMapping("/sendback")
@@ -186,7 +192,7 @@ public class AfterSaleController {
         calendar.add(Calendar.DATE, 10);
         afterSale.setEndReceiveDate(calendar.getTime());
         String str = "买家已经退货，物流名：" + dname + " ,物流单号:" + dcode;
-        afterSaleService.update(afterSale, str);
+        afterSaleService.update(afterSale, str,true);
     }
 
 
@@ -207,7 +213,7 @@ public class AfterSaleController {
             }
         }
         afterSale.setCancel(true);
-        afterSaleService.update(afterSale, null);
+        afterSaleService.update(afterSale, null,false);
 
         return new Result(false, Global.do_success, null, null);
     }
@@ -229,7 +235,7 @@ public class AfterSaleController {
             afterSale1.setDealDate(null);
             afterSale1.setIsAgree("0");
         }
-        afterSaleService.update(afterSale1, null);
+        afterSaleService.update(afterSale1, null,false);
         return new Result(false, Global.do_success, null, null);
     }
 
@@ -243,7 +249,7 @@ public class AfterSaleController {
         afterSale.setProcess(2);
         afterSale.setPages("7");
         afterSale.setSuccessDate(new Date());
-        afterSaleService.update(afterSale, str);
+        afterSaleService.update(afterSale, str,false);
         //拼接参数
         String param = "saleId=" + afterSale.getSellerId() + "&oid=" + afterSale.getOrder().getId() + "&fe=" + afterSale.getOrder().getTotalPrice() * 100;
         //退款请求
@@ -255,13 +261,15 @@ public class AfterSaleController {
         return new Result(false, Global.do_success, null, null);
     }
 
-    //  /after-sale/update_price?id=申请记录ID&totalPrice=修改后的总价
+    //  /after-sale/update_price?id=申请记录ID&totalPrice=修改后的总价&openId=221
     @RequestMapping("/update_price")
-    public Result updatePrice(String id,double totalPrice){
+    public Result updatePrice(String id,double totalPrice,String openId){
         AfterSale afterSale=afterSaleService.findOne(id);
         Order order=afterSale.getOrder();
+        String str="买家修改了退款金额："+totalPrice+" ,原退款金额："+order.getTotalPrice();
         order.setTotalPrice(totalPrice);
         orderService.update(order);
+        afterSaleService.update(afterSale,str,true);
         return new Result(false, Global.do_success, null, null);
     }
 

@@ -107,9 +107,9 @@ public class Global {
     public static  String bucketname="haoyue";
 
     //阿里云
-    //http://haoyue.oss-cn-beijing.aliyuncs.com/hymarket/2017/10/10/1507615986025.jpg
-    //http://cslapp.com/hymarket/2017/10/10/1507615986025.jpg
-    // http://cslapp.com/hymarket/qrcodes/149.jpg
+    //原始访问地址 http://haoyue.oss-cn-beijing.aliyuncs.com/hymarket/2017/10/10/1507615986025.jpg
+    //替换成皓月域名访问 http://cslapp.com/hymarket/2017/10/10/1507615986025.jpg
+    // 二维码 http://cslapp.com/hymarket/qrcodes/149.jpg
     public static String aliyun_href="http://haoyue.oss-cn-beijing.aliyuncs.com/hymarket/";
     public static String accessKeyId="LTAIRHJkjEByQvQL";
     public static String accessKeySecret = "pXTOa9qMzha20WKKTzl6DNDGQglNpB";
@@ -141,6 +141,7 @@ public class Global {
     //申请退款
     public static String already_apply_payback="不可多次申请退款/退货";
     public static String already_cancel="当前订单不可重复撤销";
+    public static String apply_order_date_expire="当前订单已超过申请退款/货有效期";
 
     //非拦截地址
     public static List<String> urls(){

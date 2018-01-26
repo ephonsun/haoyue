@@ -19,13 +19,40 @@ public class Message  {
     private Integer id;
 
     private int after_sale_id;
-
+    private String wxname;
+    private String wxpic;
+    private String sellerName;
     private String content;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:SS", timezone = "GMT+8")
     @Temporal(TemporalType.TIMESTAMP)
     @Column(updatable = false)
     private Date createDate;//创建日期
+
+
+    public String getSellerName() {
+        return sellerName;
+    }
+
+    public void setSellerName(String sellerName) {
+        this.sellerName = sellerName;
+    }
+
+    public String getWxname() {
+        return wxname;
+    }
+
+    public void setWxname(String wxname) {
+        this.wxname = wxname;
+    }
+
+    public String getWxpic() {
+        return wxpic;
+    }
+
+    public void setWxpic(String wxpic) {
+        this.wxpic = wxpic;
+    }
 
     public Integer getId() {
         return id;

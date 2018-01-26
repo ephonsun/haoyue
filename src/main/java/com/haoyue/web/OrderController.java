@@ -110,6 +110,7 @@ public class OrderController {
         return new Result(false, Global.do_success, order, null);
     }
 
+
     @RequestMapping("/save")
     public Result save(String deliver_price, Integer proId, Integer proTypeId, String sellerId, String receiver, String phone, String address, Integer amount, String openId, String leaveMessage, String usevip, String wxname, String cashTicketCode) {
         //当用户点击拒接获取信息后，导致openId为空

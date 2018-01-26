@@ -27,11 +27,12 @@ public class AfterSaleService {
     @Autowired
     private MessageService messageService;
 
-    public AfterSale save(AfterSale afterSale) {
+    public AfterSale save(AfterSale afterSale,boolean isCutomer) {
         afterSaleRepo.save(afterSale);
         //保存协商信息
         String str = afterSale.getOrder().getTotalPrice() + "#" + afterSale.getReason() + "#" + afterSale.getPhone() + "#" + afterSale.getOrder().getState() + "#" + afterSale.getDescs();
-        messageService.save(str, afterSale.getId());
+
+        messageService.save(str, afterSale.getId(),isCutomer);
         return afterSale;
     }
 
@@ -39,11 +40,12 @@ public class AfterSaleService {
         return afterSaleRepo.findOne(Integer.parseInt(id));
     }
 
-    public void update(AfterSale afterSale, String str) {
+    public void update(AfterSale afterSale, String str, boolean isCustomer) {
         afterSaleRepo.save(afterSale);
         //保存协商信息
         if (!StringUtils.isNullOrBlank(str)) {
-            messageService.save(str, afterSale.getId());
+            messageService.save(str, afterSale.getId(), isCustomer);
+
         }
     }
 
@@ -76,8 +78,8 @@ public class AfterSaleService {
         return afterSaleRepo.findByOrderId(oid);
     }
 
-    public List<Message> messageList(int id){
-       return messageService.findByAfterSaleId(id);
+    public List<Message> messageList(int id) {
+        return messageService.findByAfterSaleId(id);
     }
 
     // 定时器1 买家申请后，卖家7日内未处理
@@ -113,14 +115,14 @@ public class AfterSaleService {
                 // 最后发货日期  拒绝后七日内无操作
                 if (date.after(afterSale.getEndDeliverDate()) || date.getTime() - afterSale.getDealDate().getTime() >= 3600 * 24 * 7 * 1000) {
                     afterSale.setClosed(true);
-                    update(afterSale, null);
+                    update(afterSale, null,false);
                 }
             }
         }
     }
 
     //定时器3 10天内未确认收货，自动收货且退款
-    public void flush3(){
+    public void flush3() {
         List<AfterSale> list = afterSaleRepo.findByPages("5");
         Date date = new Date();
         if (list != null && list.size() != 0) {
@@ -129,7 +131,7 @@ public class AfterSaleService {
                 if (date.after(afterSale.getEndReceiveDate())) {
                     //退款
                     //拼接参数
-                    String param = "id="+afterSale.getId();
+                    String param = "id=" + afterSale.getId();
                     //处理请求
                     String result = HttpRequest.sendGet("https://www.cslapp.com/after-sale/receive", param);
                     System.out.println("系统自动处理10日内商家没有确认收货：" + result);
