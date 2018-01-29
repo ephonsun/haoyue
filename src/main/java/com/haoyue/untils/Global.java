@@ -116,6 +116,7 @@ public class Global {
     public static String signName="苏州皓月科技";
     public static String TemplateCode="SMS_91140162";
     public static String TemplateCode2="SMS_115765225";
+    public static String TemplateCode4="SMS_123796676";
 
     //微信支付
     public static String notify_url="https://www.cslapp.com/pay/notify";//通知地址
@@ -142,6 +143,11 @@ public class Global {
     public static String already_apply_payback="不可多次申请退款/退货";
     public static String already_cancel="当前订单不可重复撤销";
     public static String apply_order_date_expire="当前订单已超过申请退款/货有效期";
+    public static String not_can_apply_cancel_true="已撤销订单不可操作";
+
+    //快递
+    public static String kuaidi_key="3d1b6253bbfbbfb003aa9ec6a3c2ee0c";
+    public static String not_receive="当前快递未签收";
 
     //非拦截地址
     public static List<String> urls(){

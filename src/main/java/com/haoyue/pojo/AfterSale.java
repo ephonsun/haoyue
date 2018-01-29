@@ -32,6 +32,7 @@ public class AfterSale {
     private String dcode;//单号
     private int process;// 默认为0 退款进程 1 卖家同意 2 微信处理退款 3 退款成功
     private String phone;
+    private double totalPrice;
     private String receiveAddress;
 
     //      卖家未处理 1
@@ -74,6 +75,14 @@ public class AfterSale {
     private boolean closed = false;//关闭
     private boolean active = true;//卖家
     private boolean active_buyer = true;//买家
+
+    public double getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(double totalPrice) {
+        this.totalPrice = totalPrice;
+    }
 
     public Date getSuccessDate() {
         return successDate;

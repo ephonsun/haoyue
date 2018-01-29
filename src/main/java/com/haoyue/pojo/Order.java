@@ -75,12 +75,21 @@ public class Order {
     private boolean active = true;//买家订单active
     private boolean active_seller=true;//卖家订单active
     private boolean isApplyReturn = false;//是否申请退货
+    private boolean isApplyReturnFinsh = false;//是否申请退货
     private boolean isLuckDraw=false;//是否是抽奖订单
     private boolean isLuckDrawEnd=false;//抽奖是否结束
     private String wxname;
     private String luckcode;//抽奖号码
     private boolean isLuck=false;//是否中奖
     private boolean iscomment=false;
+
+    public boolean getIsApplyReturnFinsh() {
+        return isApplyReturnFinsh;
+    }
+
+    public void setIsApplyReturnFinsh(boolean applyReturnFinsh) {
+        isApplyReturnFinsh = applyReturnFinsh;
+    }
 
     public Date getLatestDate() {
         return latestDate;

@@ -37,27 +37,39 @@ public class AfterSaleController {
     @RequestMapping("/save")
     public Result save(String oid, AfterSale afterSale) {
         Order order = orderService.findOne(Integer.parseInt(oid));
-        Date date=new Date();
+        if (order.getIsApplyReturn()){
+            return new Result(true, Global.already_apply_payback, null, null);
+        }
+        // 判断订单是否已经签收
+        String code = order.getDeliver().getDcode();
+        boolean flag = Kuaidi.getStatus(code);
+        if (flag == false && afterSale.getType().equals("1")) {
+            //未签收
+            return new Result(true, Global.not_receive, null, null);
+        }
+        //检验 sellerId
         if (order.getSellerId() != Integer.parseInt(afterSale.getSellerId())) {
             return new Result(true, Global.have_no_right, null, null);
         }
+        //判断之前是否撤销过申请，每个订单撤销后不能再次申请
         List<AfterSale> list = afterSaleService.findByOrderId(order.getId());
-        if (list != null && list.size() == 2) {
-            return new Result(true, Global.already_apply_payback, null, null);
-        }
-        //  订单自发货之日起12日内可以提交申请退款、退货
-        if (date.getTime()-order.getDeliver().getCreateDate().getTime()>3600*24*12*1000){
-            return new Result(true, Global.apply_order_date_expire, null, null);
+        if (list != null && list.size() !=0) {
+            for (AfterSale item:list){
+                if (item.getCancel()){
+                    return new Result(true, Global.not_can_apply_cancel_true, null, null);
+                }
+            }
         }
         //更新订单是否申请退换货
         order.setIsApplyReturn(true);
         orderService.update(order);
         afterSale.setOrder(order);
         afterSale.setCreateDate(new Date());
+        afterSale.setTotalPrice(order.getTotalPrice());
         afterSale.setIsAgree("0");//等待卖家处理
         afterSale.setPages("1");
 
-        return new Result(false, Global.do_success, afterSaleService.save(afterSale,true), null);
+        return new Result(false, Global.do_success, afterSaleService.save(afterSale, true), null);
     }
 
 
@@ -93,6 +105,7 @@ public class AfterSaleController {
                 afterSale.setProcess(3);
                 afterSale.setSuccessDate(new Date());
                 str = "卖家同意退款申请," + afterSale.getOrder().getTotalPrice() + "元已经退回买家账户";
+
             }
 
         } else {
@@ -106,11 +119,10 @@ public class AfterSaleController {
                 afterSale.setPages("3");
                 str = "卖家拒绝退款申请，理由：" + response;
             }
-            str = response;
         }
         afterSale.setResponse(response);
         afterSale.setDealDate(new Date());
-        afterSaleService.update(afterSale, str,false);
+        afterSaleService.update(afterSale, str, false);
         //退款
         if (afterSale.getType().equals("2")) {
             //退款  更新dictionarys表数据
@@ -123,6 +135,9 @@ public class AfterSaleController {
                 System.out.println("after-sale-result:" + result);
                 if (!result.equalsIgnoreCase("fail")) {
                     addTemplate(order, afterSale.getFormId());
+                    //更新订单退款状态
+                    order.setIsApplyReturnFinsh(true);
+                    orderService.update(order);
                 }
 
             }
@@ -170,7 +185,7 @@ public class AfterSaleController {
         if (!StringUtils.isNullOrBlank(openId)) {
             afterSale.setActive_buyer(false);
         }
-        afterSaleService.update(afterSale, null,false);
+        afterSaleService.update(afterSale, null, false);
         return new Result(false, Global.do_success, null, null);
     }
 
@@ -192,7 +207,9 @@ public class AfterSaleController {
         calendar.add(Calendar.DATE, 10);
         afterSale.setEndReceiveDate(calendar.getTime());
         String str = "买家已经退货，物流名：" + dname + " ,物流单号:" + dcode;
-        afterSaleService.update(afterSale, str,true);
+        //短信通知商家
+
+        afterSaleService.update(afterSale, str, true);
     }
 
 
@@ -213,7 +230,7 @@ public class AfterSaleController {
             }
         }
         afterSale.setCancel(true);
-        afterSaleService.update(afterSale, null,false);
+        afterSaleService.update(afterSale, null, false);
 
         return new Result(false, Global.do_success, null, null);
     }
@@ -221,7 +238,17 @@ public class AfterSaleController {
     //  /after-sale/update?pics=图片地址&type=[1 退货/退款 2 退款 ]&reason=原因&desc=退款说明&phone=电话&openId=122&id=121212
     @RequestMapping("/update")
     public Result update(AfterSale afterSale, String again) {
+
         AfterSale afterSale1 = afterSaleService.findOne(afterSale.getId() + "");
+        //判断之前是否撤销过申请，每个订单撤销后不能再次申请
+        List<AfterSale> list = afterSaleService.findByOrderId(afterSale1.getOrder().getId());
+        if (list != null && list.size() !=0) {
+            for (AfterSale item:list){
+                if (item.getCancel()){
+                    return new Result(true, Global.not_can_apply_cancel_true, null, null);
+                }
+            }
+        }
         afterSale1.setType(afterSale.getType());
         afterSale1.setDescs(afterSale.getDescs());
         afterSale1.setReason(afterSale.getReason());
@@ -235,12 +262,12 @@ public class AfterSaleController {
             afterSale1.setDealDate(null);
             afterSale1.setIsAgree("0");
         }
-        afterSaleService.update(afterSale1, null,false);
+        afterSaleService.update(afterSale1, null, false);
         return new Result(false, Global.do_success, null, null);
     }
 
 
-    //  /after-sale/receive?id=申请记录ID
+    //  /after-sale/receive?id=申请记录ID&sellerId=12
     @RequestMapping("/receive")
     public Result receive(String id) {
         AfterSale afterSale = afterSaleService.findOne(id);
@@ -249,7 +276,7 @@ public class AfterSaleController {
         afterSale.setProcess(2);
         afterSale.setPages("7");
         afterSale.setSuccessDate(new Date());
-        afterSaleService.update(afterSale, str,false);
+        afterSaleService.update(afterSale, str, false);
         //拼接参数
         String param = "saleId=" + afterSale.getSellerId() + "&oid=" + afterSale.getOrder().getId() + "&fe=" + afterSale.getOrder().getTotalPrice() * 100;
         //退款请求
@@ -257,19 +284,20 @@ public class AfterSaleController {
         System.out.println("after-sale-result:" + result);
         if (!result.equalsIgnoreCase("fail")) {
             addTemplate(afterSale.getOrder(), afterSale.getFormId());
+            //更新订单退货退款状态
+            afterSale.getOrder().setIsApplyReturnFinsh(true);
+            orderService.update(afterSale.getOrder());
         }
         return new Result(false, Global.do_success, null, null);
     }
 
     //  /after-sale/update_price?id=申请记录ID&totalPrice=修改后的总价&openId=221
     @RequestMapping("/update_price")
-    public Result updatePrice(String id,double totalPrice,String openId){
-        AfterSale afterSale=afterSaleService.findOne(id);
-        Order order=afterSale.getOrder();
-        String str="买家修改了退款金额："+totalPrice+" ,原退款金额："+order.getTotalPrice();
-        order.setTotalPrice(totalPrice);
-        orderService.update(order);
-        afterSaleService.update(afterSale,str,true);
+    public Result updatePrice(String id, double totalPrice, String openId) {
+        AfterSale afterSale = afterSaleService.findOne(id);
+        String str = "买家修改了退款金额：" + totalPrice + " ,原退款金额：" + afterSale.getTotalPrice();
+        afterSale.setTotalPrice(totalPrice);
+        afterSaleService.update(afterSale, str, true);
         return new Result(false, Global.do_success, null, null);
     }
 

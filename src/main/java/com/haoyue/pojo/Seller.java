@@ -56,7 +56,15 @@ public class Seller implements Serializable{
     private boolean isMember=false;
     private String mchId;//商户号
     private String key1;//支付密匙
+    private String receiveAddress;//退货时候卖家收货地址
 
+    public String getReceiveAddress() {
+        return receiveAddress;
+    }
+
+    public void setReceiveAddress(String receiveAddress) {
+        this.receiveAddress = receiveAddress;
+    }
 
     public String getTemplate_downprice() {
         return template_downprice;

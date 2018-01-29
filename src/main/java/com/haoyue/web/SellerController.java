@@ -350,6 +350,13 @@ public class SellerController {
         return new Result(false, Global.do_success, null, null);
     }
 
+    // 获取退货时的收货地址  /seller/get_receive_address?sellerId=卖家ID
+    @RequestMapping("/get_receive_address")
+    public Result  getReceiveAddress(String sellerId){
+        Seller seller=sellerService.findOne(Integer.parseInt(sellerId));
+        return new Result(false, Global.do_success, seller.getReceiveAddress(), null);
+    }
+
 
     /**
      * 离线操作

@@ -4,6 +4,7 @@ import com.haoyue.pojo.AfterSale;
 import com.haoyue.pojo.Message;
 import com.haoyue.pojo.QAfterSale;
 import com.haoyue.repo.AfterSaleRepo;
+import com.haoyue.repo.SellerRepo;
 import com.haoyue.untils.HttpRequest;
 import com.haoyue.untils.StringUtils;
 import com.querydsl.core.BooleanBuilder;
@@ -26,6 +27,8 @@ public class AfterSaleService {
     private AfterSaleRepo afterSaleRepo;
     @Autowired
     private MessageService messageService;
+    @Autowired
+    private SellerRepo sellerRepo;
 
     public AfterSale save(AfterSale afterSale,boolean isCutomer) {
         afterSaleRepo.save(afterSale);
@@ -88,14 +91,27 @@ public class AfterSaleService {
         Date date = new Date();
         if (list != null && list.size() != 0) {
             for (AfterSale afterSale : list) {
-                // 7 天
-                if (date.getTime() - afterSale.getCreateDate().getTime() >= 3600 * 24 * 7 * 1000) {
-                    //退款
-                    //拼接参数
-                    String param = "id=" + afterSale.getId() + "&sellerId=" + afterSale.getSellerId() + "&=isAgree=yes&response=系统默认同意";
-                    //处理请求
-                    String result = HttpRequest.sendGet("https://www.cslapp.com/after-sale/deal", param);
-                    System.out.println("系统自动处理7日内商家未处理的退款、退货申请：" + result);
+                if (afterSale.getType().equals("1")) {
+                    // 5 天
+                    if (date.getTime() - afterSale.getCreateDate().getTime() >= 3600 * 24 * 5 * 1000) {
+                        //退款
+                        //拼接参数
+                        String param = "id=" + afterSale.getId() + "&sellerId=" + afterSale.getSellerId() + "&=isAgree=yes&response=系统默认同意&receiveAddress=" + sellerRepo.findOne(Integer.parseInt(afterSale.getSellerId())).getReceiveAddress();
+                        //处理请求
+                        HttpRequest.sendGet("https://www.cslapp.com/after-sale/deal", param);
+                        System.out.println("系统自动处理5日内商家未处理的退款/退货申请");
+                    }
+                } else {
+                    // 7 天
+                    if (date.getTime() - afterSale.getCreateDate().getTime() >= 3600 * 24 * 7 * 1000) {
+                        //退款
+                        //拼接参数
+                        String param = "id=" + afterSale.getId() + "&sellerId=" + afterSale.getSellerId() + "&=isAgree=yes&response=系统默认同意";
+                        //处理请求
+                        HttpRequest.sendGet("https://www.cslapp.com/after-sale/deal", param);
+                        System.out.println("系统自动处理7日内商家未处理的退款申请");
+                    }
+
                 }
             }
         }
@@ -134,10 +150,13 @@ public class AfterSaleService {
                     String param = "id=" + afterSale.getId();
                     //处理请求
                     String result = HttpRequest.sendGet("https://www.cslapp.com/after-sale/receive", param);
-                    System.out.println("系统自动处理10日内商家没有确认收货：" + result);
+                    System.out.println("系统自动处理10日内商家没有确认收货");
                 }
             }
         }
     }
 
+    public void del(Integer id) {
+        afterSaleRepo.delete(id);
+    }
 }
