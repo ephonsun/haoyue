@@ -36,6 +36,8 @@ public class SuperAdminController {
     private ShopCarService shopCarService;
     @Autowired
     private DictionaryService dictionaryService;
+    @Autowired
+    private AfterSaleService afterSaleService;
 
     @RequestMapping("/login")
     public Result login(SuperAdmin superAdmin) {
@@ -261,11 +263,15 @@ public class SuperAdminController {
                 productsService.autoFlush();
                 //代付款订单刷新
                 orderService.unpayFlush();
+                //刷新退款信息
+                System.out.println("高级版--退款列表刷新了。。。。");
+                afterSaleService.flush1();
+                afterSaleService.flush2();
+                afterSaleService.flush3();
             }
             catch (Exception e){
                 e.printStackTrace();
             }
-
         }
     };
 

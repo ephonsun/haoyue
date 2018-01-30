@@ -1,11 +1,9 @@
 package com.haoyue.web;
 
+import com.aliyuncs.exceptions.ClientException;
 import com.haoyue.Exception.MyException;
 import com.haoyue.pojo.*;
-import com.haoyue.service.AfterSaleService;
-import com.haoyue.service.CustomerService;
-import com.haoyue.service.DictionaryService;
-import com.haoyue.service.OrderService;
+import com.haoyue.service.*;
 import com.haoyue.untils.*;
 import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +29,8 @@ public class AfterSaleController {
     private OrderService orderService;
     @Autowired
     private CustomerService customerService;
+    @Autowired
+    private SellerService sellerService;
 
 
     //http://localhost:8080/after-sale/save?oid=133&openId=1111&sellerId=1&pics=图片地址&type=[1 退货/退款 2 退款 ]&reason=原因&desc=退款说明&phone=电话
@@ -129,7 +129,7 @@ public class AfterSaleController {
             if (afterSale.getIsAgree().equals("1")) {
                 Order order = afterSale.getOrder();
                 //拼接参数
-                String param = "saleId=" + order.getSellerId() + "&oid=" + order.getId() + "&fe=" + order.getTotalPrice() * 100;
+                String param = "saleId=" + order.getSellerId() + "&oid=" + order.getId() + "&fe=" + afterSale.getTotalPrice() * 100;
                 //退款请求
                 String result = HttpRequest.sendGet("https://www.cslapp.com/payback/do", param);
                 System.out.println("after-sale-result:" + result);
@@ -139,7 +139,6 @@ public class AfterSaleController {
                     order.setIsApplyReturnFinsh(true);
                     orderService.update(order);
                 }
-
             }
         }
         return new Result(false, Global.do_success, null, null);
@@ -208,7 +207,13 @@ public class AfterSaleController {
         afterSale.setEndReceiveDate(calendar.getTime());
         String str = "买家已经退货，物流名：" + dname + " ,物流单号:" + dcode;
         //短信通知商家
-
+        Seller seller=sellerService.findOne(Integer.parseInt(afterSale.getSellerId()));
+        Customer customer=customerService.findByOpenId(afterSale.getOpenId(),afterSale.getSellerId());
+        try {
+            SendCode.sendSms4(seller.getSellerPhone(),customer.getWxname());
+        } catch (ClientException e) {
+            e.printStackTrace();
+        }
         afterSaleService.update(afterSale, str, true);
     }
 
@@ -278,7 +283,7 @@ public class AfterSaleController {
         afterSale.setSuccessDate(new Date());
         afterSaleService.update(afterSale, str, false);
         //拼接参数
-        String param = "saleId=" + afterSale.getSellerId() + "&oid=" + afterSale.getOrder().getId() + "&fe=" + afterSale.getOrder().getTotalPrice() * 100;
+        String param = "saleId=" + afterSale.getSellerId() + "&oid=" + afterSale.getOrder().getId() + "&fe=" + afterSale.getTotalPrice() * 100;
         //退款请求
         String result = HttpRequest.sendGet("https://www.cslapp.com/payback/do", param);
         System.out.println("after-sale-result:" + result);
