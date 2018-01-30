@@ -123,6 +123,9 @@ public class OrderService {
                 if (name.equals("luckdraw")) {
                     bd.and(order.isLuckDraw.eq(true));
                 }
+                if (name.equals("applyreturn")) {
+                    bd.and(order.isApplyReturn.eq(false));
+                }
 
             }
         }

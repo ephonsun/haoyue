@@ -168,6 +168,10 @@ public class SellerService {
         if (!StringUtils.isNullOrBlank(seller.getLunbo())) {
             seller1.setLunbo(seller.getLunbo());
         }
+        if (!StringUtils.isNullOrBlank(seller.getReceiveAddress())) {
+            seller1.setReceiveAddress(seller.getReceiveAddress());
+        }
+
         sellerRepo.save(seller1);
     }
 

@@ -502,3 +502,151 @@ CREATE TABLE t_delivers (
   PRIMARY KEY (id)
 );
 
+DROP TABLE IF EXISTS t_dictionarys;
+CREATE TABLE t_dictionarys (
+  id int(11) NOT NULL AUTO_INCREMENT,
+  create_date date DEFAULT NULL,
+  sale_id varchar(255) DEFAULT NULL,
+  turnover double(10,2) DEFAULT NULL,
+  views int(11) NOT NULL,
+  visitors int(11) NOT NULL,
+  buyers int(11) NOT NULL,
+  PRIMARY KEY (id)
+);
+
+DROP TABLE IF EXISTS t_free_shopping;
+CREATE TABLE t_free_shopping (
+  id int(11) NOT NULL AUTO_INCREMENT,
+  create_date datetime DEFAULT NULL,
+  end_date datetime DEFAULT NULL,
+  is_active bit(1) NOT NULL,
+  open_id varchar(255) DEFAULT NULL,
+  order_code1 varchar(255) DEFAULT NULL,
+  order_code2 varchar(255) DEFAULT NULL,
+  sale_id varchar(255) DEFAULT NULL,
+  PRIMARY KEY (id)
+);
+
+DROP TABLE IF EXISTS t_orders;
+CREATE TABLE t_orders (
+  id int(11) NOT NULL AUTO_INCREMENT,
+  amount int(11) NOT NULL,
+  code varchar(255) DEFAULT NULL,
+  create_date datetime DEFAULT NULL,
+  deliver_price double NOT NULL,
+  iscomment bit(1) NOT NULL,
+  open_id varchar(255) DEFAULT NULL,
+  pay_date datetime DEFAULT NULL,
+  product_price double NOT NULL,
+  sale_id varchar(255) DEFAULT NULL,
+  showbuy bit(1) NOT NULL,
+  showsale bit(1) NOT NULL,
+  state varchar(255) DEFAULT NULL,
+  total_price double NOT NULL,
+  wxname varchar(255) DEFAULT NULL,
+  wxpic varchar(255) DEFAULT NULL,
+  comment_id int(11) DEFAULT NULL,
+  t_deliver_id int(11) DEFAULT NULL,
+  t_products_id int(11) DEFAULT NULL,
+  t_products_types_id int(11) DEFAULT NULL,
+  isdelay bit(1) NOT NULL,
+  leavemsg varchar(255) DEFAULT NULL,
+  leavemsg2 varchar(255) DEFAULT NULL,
+  form_id varchar(255) DEFAULT NULL,
+  isapplyreturn bit(1) NOT NULL,
+  ispayback bit(1) NOT NULL,
+  out_trade_no varchar(255) DEFAULT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (t_products_id) REFERENCES t_products (id),
+  FOREIGN KEY (t_deliver_id) REFERENCES t_delivers (id),
+  FOREIGN KEY (t_products_types_id) REFERENCES t_products_type (id),
+  FOREIGN KEY (comment_id) REFERENCES t_comment (id)
+);
+
+DROP TABLE IF EXISTS t_paybackdeal;
+CREATE TABLE t_paybackdeal (
+  id int(11) NOT NULL AUTO_INCREMENT,
+  appid varchar(255) DEFAULT NULL,
+  date datetime DEFAULT NULL,
+  mch_id varchar(255) DEFAULT NULL,
+  out_trade_no varchar(255) DEFAULT NULL,
+  refund_fee varchar(255) DEFAULT NULL,
+  refund_id varchar(255) DEFAULT NULL,
+  result_code varchar(255) DEFAULT NULL,
+  sale_id varchar(255) DEFAULT NULL,
+  transaction_id varchar(255) DEFAULT NULL,
+  settlement_refund_fee varchar(255) DEFAULT NULL,
+  seller_id varchar(255) DEFAULT NULL,
+  PRIMARY KEY (id)
+);
+
+DROP TABLE IF EXISTS t_paydeals;
+CREATE TABLE t_paydeals (
+  id int(11) NOT NULL AUTO_INCREMENT,
+  app_id varchar(255) DEFAULT NULL,
+  date datetime DEFAULT NULL,
+  mch_id varchar(255) DEFAULT NULL,
+  open_id varchar(255) DEFAULT NULL,
+  return_code varchar(255) DEFAULT NULL,
+  total_fee varchar(255) DEFAULT NULL,
+  transaction_id varchar(255) DEFAULT NULL,
+  out_trade_no varchar(255) DEFAULT NULL,
+  PRIMARY KEY (id)
+);
+
+DROP TABLE IF EXISTS t_product_type_name;
+CREATE TABLE t_product_type_name (
+  id int(11) NOT NULL AUTO_INCREMENT,
+  create_date datetime DEFAULT NULL,
+  sale_id varchar(255) DEFAULT NULL,
+  types varchar(255) DEFAULT NULL,
+  PRIMARY KEY (id)
+);
+
+DROP TABLE IF EXISTS t_products;
+CREATE TABLE t_products (
+  id int(11) NOT NULL AUTO_INCREMENT,
+  create_date datetime DEFAULT NULL,
+  deliver varchar(255) DEFAULT NULL,
+  detail_pic text,
+  index_pic text,
+  is_tuan bit(1) NOT NULL,
+  parameters text,
+  pname varchar(255) DEFAULT NULL,
+  sale_id varchar(255) DEFAULT NULL,
+  style varchar(255) DEFAULT NULL,
+  tuan_numbers int(11) NOT NULL,
+  tuan_times int(11) NOT NULL,
+  types varchar(255) DEFAULT NULL,
+  active bit(1) NOT NULL,
+  sale_num int(11) NOT NULL,
+  is_free bit(1) NOT NULL,
+  end_date datetime DEFAULT NULL,
+  is_end bit(1) NOT NULL,
+  start_date datetime DEFAULT NULL,
+  suffix varchar(255) DEFAULT NULL,
+  tuan_sale_num int(11) NOT NULL,
+  qrcode varchar(255) DEFAULT NULL,
+  weight double NOT NULL,
+  PRIMARY KEY (id)
+);
+
+DROP TABLE IF EXISTS t_products_type;
+CREATE TABLE t_products_type (
+  id int(11) NOT NULL AUTO_INCREMENT,
+  amount int(11) NOT NULL,
+  color varchar(255) DEFAULT NULL,
+  create_date datetime DEFAULT NULL,
+  new_price double NOT NULL,
+  old_price double NOT NULL,
+  sale_id varchar(255) DEFAULT NULL,
+  size varchar(255) DEFAULT NULL,
+  tuan_price double NOT NULL,
+  active bit(1) NOT NULL,
+  sale_num int(11) NOT NULL,
+  PRIMARY KEY (id)
+);
+
+
+
+

@@ -66,7 +66,7 @@ public class Order {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:SS", timezone = "GMT+8")
     @Temporal(TemporalType.TIMESTAMP)
     @Column(updatable = false)
-    private Date LatestDate;//最晚付款日期  三天
+    private Date latestDate;//最晚付款日期  三天
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:SS", timezone = "GMT+8")
     @Temporal(TemporalType.TIMESTAMP)
@@ -75,6 +75,7 @@ public class Order {
     private boolean active = true;//买家订单active
     private boolean active_seller=true;//卖家订单active
     private boolean isApplyReturn = false;//是否申请退货
+    private boolean isApplyReturnFinsh = false;//是否申请退货
     private boolean isLuckDraw=false;//是否是抽奖订单
     private boolean isLuckDrawEnd=false;//抽奖是否结束
     private String wxname;
@@ -82,13 +83,20 @@ public class Order {
     private boolean isLuck=false;//是否中奖
     private boolean iscomment=false;
 
+    public boolean getIsApplyReturnFinsh() {
+        return isApplyReturnFinsh;
+    }
+
+    public void setIsApplyReturnFinsh(boolean applyReturnFinsh) {
+        isApplyReturnFinsh = applyReturnFinsh;
+    }
 
     public Date getLatestDate() {
-        return LatestDate;
+        return latestDate;
     }
 
     public void setLatestDate(Date latestDate) {
-        LatestDate = latestDate;
+        this.latestDate = latestDate;
     }
 
     public boolean getIsActive_seller() {

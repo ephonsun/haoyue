@@ -1,10 +1,13 @@
 package com.haoyue.web;
 
+import com.haoyue.pojo.AfterSale;
 import com.haoyue.pojo.Deliver;
 import com.haoyue.pojo.Order;
+import com.haoyue.service.AfterSaleService;
 import com.haoyue.service.DelievrService;
 import com.haoyue.service.OrderService;
 import com.haoyue.untils.Global;
+import com.haoyue.untils.Kuaidi;
 import com.haoyue.untils.Result;
 import com.haoyue.untils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,10 +29,13 @@ public class DelievrController {
     private DelievrService delievrService;
     @Autowired
     private OrderService orderService;
+    @Autowired
+    private AfterSaleService afterSaleService;
 
     @RequestMapping("/save")
     public Result deliver(Integer oid, Deliver deliver, String token, String iscontinue) {
         Order order = orderService.findOne(oid);
+
         if (order.getSellerId() != Integer.parseInt(token)) {
             return new Result(true, Global.have_no_right, null, token);
         }
@@ -50,6 +56,16 @@ public class DelievrController {
         order.setDeliver(deliver);
         order.setState(Global.order_send);
 
+        //未发货订单，买家申请退款，买卖双方协商后，卖家发货，覆盖退款申请
+        if (order.getIsApplyReturn()) {
+            order.setIsApplyReturn(false);
+            List<AfterSale> list = afterSaleService.findByOrderId(oid);
+            if (list != null && list.size() != 0) {
+                //删除原退款申请
+                afterSaleService.del(list.get(0).getId());
+            }
+        }
+
         orderService.update(order);
         return new Result(false, Global.do_success, order, token);
     }
@@ -67,8 +83,8 @@ public class DelievrController {
             }
         }
         //顺丰快递的计价方式为重量计费
-        if (deliver.getDname().contains("顺丰")){
-            if (!deliver.getPrice_type().equals("重量")){
+        if (deliver.getDname().contains("顺丰")) {
+            if (!deliver.getPrice_type().equals("重量")) {
                 return new Result(true, Global.weight_required, null, null);
             }
         }

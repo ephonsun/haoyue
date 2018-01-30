@@ -22,10 +22,10 @@ public class Comment {
     @Column(columnDefinition="TEXT")
     private String images;//评论晒图
     private Integer orderId;
-    // 在和数据库表字段映射时候该字段除外
+    //数据库表字段映射时候该字段除外
     @Transient
-    private Order order;
-    private String  openId;
+    private Order  order;
+    private String openId;
     private String wxname;
     private String cutwxname;
     private String wxpic;

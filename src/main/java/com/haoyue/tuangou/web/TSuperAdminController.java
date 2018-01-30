@@ -66,7 +66,7 @@ public class TSuperAdminController {
                 //数据表 dictionarys 新增数据
                 dictionarysService.addEachDay();
                 //刷新访问通知active属性，发送通知
-                wxTemplateService.autoFlush();
+                //wxTemplateService.autoFlush();
             }
             catch (Exception e){
                 System.out.println("刷新团购dictionarys表定时器出错了");
