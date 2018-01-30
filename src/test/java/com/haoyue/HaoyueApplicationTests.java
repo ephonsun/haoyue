@@ -2,12 +2,13 @@ package com.haoyue;
 
 import com.aliyun.oss.OSSClient;
 import com.aliyun.oss.model.PutObjectResult;
-import com.google.common.collect.Maps;
-import com.haoyue.pojo.*;
+
 import com.haoyue.untils.*;
 //import io.goeasy.GoEasy;
 import com.haoyue.untils.HttpRequest;
 import io.goeasy.GoEasy;
+
+import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -415,7 +416,21 @@ public class HaoyueApplicationTests {
     }
 
     @Test
-    public void f32(){
+    public void check(){
+        //  https://way.jd.com/jisuapi/query?type=SFEXPRESS&number=925749187579&appkey=您申请的APPKEY
+        String code="888212746238226568";
+        String url="https://way.jd.com/jisuapi/query";
+        String param="type=auto&number="+code+"&appkey=3d1b6253bbfbbfb003aa9ec6a3c2ee0c";
+        String result=HttpRequest.sendGet(url,param);
+        System.out.println(result);
+
+        try {
+            net.sf.json.JSONObject jsonObject=net.sf.json.JSONObject.fromObject(result);
+            System.out.println(jsonObject.getJSONObject("result"));
+            System.out.println(jsonObject.getJSONObject("result").getString("status"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 
