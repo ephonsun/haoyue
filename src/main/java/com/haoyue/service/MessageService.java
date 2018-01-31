@@ -46,6 +46,7 @@ public class MessageService {
         else {
             Seller seller=sellerRepo.findOne(afterSale.getOrder().getSellerId());
             message.setSellerName(seller.getSellerName());
+            message.setSellerPic(seller.getSellerPic());
         }
         messageRepo.save(message);
     }

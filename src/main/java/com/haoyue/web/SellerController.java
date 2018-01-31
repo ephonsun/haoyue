@@ -232,6 +232,27 @@ public class SellerController {
         return new UploadSuccessResult(Global.do_success);
     }
 
+
+    //  /seller/uploadPics?sellerId=12&multipartFiles=上传的文件
+    @RequestMapping("/uploadPics")
+    public Object uploadPics(MultipartFile[] multipartFiles, Integer sellerId) throws MyException {
+        StringBuffer stringBuffer = new StringBuffer();
+        synchronized (Global.object4) {
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            for (MultipartFile multipartFile : multipartFiles) {
+                OSSClientUtil ossClientUtil = new OSSClientUtil();
+                String uploadUrl = ossClientUtil.uploadImg2Oss(multipartFile);
+                stringBuffer.append(Global.aliyun_href+uploadUrl);
+                stringBuffer.append(",");
+            }
+        }
+        return new UploadSuccessResult(stringBuffer.toString()) ;
+    }
+
     @RequestMapping("/checkPass")
     public Result checkPass(String oldPass, String token) {
         Seller seller = sellerService.findOne(Integer.parseInt(token));

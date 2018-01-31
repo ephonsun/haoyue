@@ -306,11 +306,11 @@ public class AfterSaleController {
         return new Result(false, Global.do_success, null, null);
     }
 
-    public void getTemplate(Template template, String formId) {
+    public void getTemplate(Template template, String formId,Seller seller) {
         //模板信息通知用户
         //获取 access_token
         String access_token_url = "https://api.weixin.qq.com/cgi-bin/token";
-        String param1 = "grant_type=client_credential&appid=wxe46b9aa1b768e5fe&secret=8bcdb74a9915b5685fa0ec37f6f25b24";
+        String param1 = "grant_type=client_credential&appid="+seller.getAppId()+"&secret="+seller.getSecret();
         String access_token = HttpRequest.sendPost(access_token_url, param1);
         access_token = access_token.substring(access_token.indexOf(":") + 2, access_token.indexOf(",") - 1);
 
@@ -323,7 +323,7 @@ public class AfterSaleController {
     }
 
     public void addTemplate(Order order, String formId) {
-
+        Seller seller=sellerService.findOne(order.getSellerId());
         List<TemplateResponse> list = new ArrayList<>();
         TemplateResponse templateResponse1 = new TemplateResponse();
         templateResponse1.setColor("#000000");
@@ -344,12 +344,12 @@ public class AfterSaleController {
         list.add(templateResponse3);
 
         Template template = new Template();
-        template.setTemplateId("-0Za6kJa3GroTxYOVLdCpGtun1KflJUKRld29bm9Wx0");
+        template.setTemplateId(seller.getPayback_template());
         template.setTemplateParamList(list);
         template.setTopColor("#000000");
         template.setPage("pages/index/index");
         template.setToUser(customerService.findOpenIdById(order.getCustomerId() + ""));
-        getTemplate(template, formId);
+        getTemplate(template, formId,seller);
     }
 
 }

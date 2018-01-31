@@ -484,7 +484,7 @@ public class OrderController {
         list.add(templateResponse5);
 
         Template template = new Template();
-        template.setTemplateId(sellerService.findOne(order.getSellerId()).getTemplate_pay());
+        template.setTemplateId(sellerService.findOne(order.getSellerId()).getPaysuccess_template());
         template.setTemplateParamList(list);
         template.setTopColor("#000000");
         template.setPage("pages/index/index");

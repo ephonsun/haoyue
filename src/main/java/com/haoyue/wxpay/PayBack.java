@@ -111,7 +111,9 @@ public class PayBack {
                         //  短信通知卖家退款失败,同一个卖家,一天只通知一次
                         List<String> list= Global.sendsms3;
                         if (!list.contains(sellerId)){
+                            //额外通知到本人
                             SendCode.sendSms3("18715161200");
+                            SendCode.sendSms3(sellerService.findOne(Integer.parseInt(sellerId)).getSellerPhone());
                             Global.sendsms3.add(sellerId);
                         }
                     }

@@ -22,6 +22,7 @@ public class Message  {
     private String wxname;
     private String wxpic;
     private String sellerName;
+    private String sellerPic;
     private String content;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:SS", timezone = "GMT+8")
@@ -29,6 +30,14 @@ public class Message  {
     @Column(updatable = false)
     private Date createDate;//创建日期
 
+
+    public String getSellerPic() {
+        return sellerPic;
+    }
+
+    public void setSellerPic(String sellerPic) {
+        this.sellerPic = sellerPic;
+    }
 
     public String getSellerName() {
         return sellerName;

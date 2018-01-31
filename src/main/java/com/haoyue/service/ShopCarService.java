@@ -220,7 +220,7 @@ public class ShopCarService {
         list.add(templateResponse4);
 
         Template template = new Template();
-        template.setTemplateId(sellerService.findOne(ptype.getSellerId()).getTemplate_downprice());
+        template.setTemplateId(sellerService.findOne(ptype.getSellerId()).getPrice_down_template());
         template.setTemplateParamList(list);
         template.setTopColor("#000000");
         template.setPage("pages/details/details?id=" + pid + "&ptypeId=" + ptype.getId());

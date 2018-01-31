@@ -16,27 +16,27 @@ public class Comment {
     @GeneratedValue
     private Integer id;
 
-    private String level;//好评，中评，差评
-    private String message;//评论内容
+    private String  level;//好评，中评，差评
+    private String  message;//评论内容
     @Lob
     @Column(columnDefinition="TEXT")
-    private String images;//评论晒图
+    private String  images;//评论晒图
     private Integer orderId;
     //数据库表字段映射时候该字段除外
     @Transient
-    private Order  order;
-    private String openId;
-    private String wxname;
-    private String cutwxname;
-    private String wxpic;
+    private Order   order;
+    private String  openId;
+    private String  wxname;
+    private String  cutwxname;
+    private String  wxpic;
     private Integer sellerId;//卖家ID
-    private String reversion;//回复
-    private String pid;
+    private String  reversion;//回复
+    private String  pid;
 
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:SS", timezone="GMT+8")
     @Temporal(TemporalType.TIMESTAMP)
     @Column(updatable=false)
-    private Date createDate;//创建日期
+    private Date   createDate;//创建日期
 
     public Order getOrder() {
         return order;

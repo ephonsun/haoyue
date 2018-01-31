@@ -171,6 +171,9 @@ public class SellerService {
         if (!StringUtils.isNullOrBlank(seller.getReceiveAddress())) {
             seller1.setReceiveAddress(seller.getReceiveAddress());
         }
+        if (!StringUtils.isNullOrBlank(seller.getSellerPic())) {
+            seller1.setSellerPic(seller.getSellerPic());
+        }
 
         sellerRepo.save(seller1);
     }

@@ -166,7 +166,7 @@ public class DictionaryService {
                                 continue;
                             }
                             Seller seller = sellerService.findOne(Integer.parseInt(wxTemplate.getSellerId()));
-                            addTemplate(customerService.findByOpenId(wxTemplate.getOpenId(), wxTemplate.getSellerId()).getWxname(), wxTemplate.getFormId(), wxTemplate.getOpenId(), Global.wxtemplate_msg1, "pages/index/index", seller.getSellerId(), seller.getTemplate_daily());
+                            addTemplate(customerService.findByOpenId(wxTemplate.getOpenId(), wxTemplate.getSellerId()).getWxname(), wxTemplate.getFormId(), wxTemplate.getOpenId(), Global.wxtemplate_msg1, "pages/index/index", seller.getSellerId(), seller.getService_template());
                             wxTemplate.setActive(false);
                             wxTemplateService.save(wxTemplate);
                             break;
@@ -220,7 +220,7 @@ public class DictionaryService {
                         Global.miaosha_map.put(sellerId, "yes");
                         String pagePath = getPagePath(sellerId, "秒杀");
                         Seller seller = sellerService.findOne(Integer.parseInt(sellerId));
-                        addTemplate(customer.getWxname(), wxTemplate.getFormId(), wxTemplate.getOpenId(), Global.wxtemplate_msg3, pagePath, seller.getSellerId(), seller.getTemplate_daily());
+                        addTemplate(customer.getWxname(), wxTemplate.getFormId(), wxTemplate.getOpenId(), Global.wxtemplate_msg3, pagePath, seller.getSellerId(), seller.getService_template());
                         wxTemplate.setActive(false);
                         wxTemplateService.save(wxTemplate);
                         break;
@@ -235,7 +235,7 @@ public class DictionaryService {
                         // key=sellerId value=yes
                         String pagePath = getPagePath(sellerId, "秒杀");
                         Seller seller = sellerService.findOne(Integer.parseInt(sellerId));
-                        addTemplate(customer.getWxname(), wxTemplate.getFormId(), wxTemplate.getOpenId(), Global.wxtemplate_msg3, pagePath, seller.getSellerId(), seller.getTemplate_daily());
+                        addTemplate(customer.getWxname(), wxTemplate.getFormId(), wxTemplate.getOpenId(), Global.wxtemplate_msg3, pagePath, seller.getSellerId(), seller.getService_template());
                         wxTemplate.setActive(false);
                         wxTemplateService.save(wxTemplate);
                         break;
@@ -296,7 +296,7 @@ public class DictionaryService {
                         Global.yushou_map.put(sellerId, "yes");
                         String pagePath = getPagePath(sellerId, "预售");
                         Seller seller = sellerService.findOne(Integer.parseInt(sellerId));
-                        addTemplate(customer.getWxname(), wxTemplate.getFormId(), wxTemplate.getOpenId(), Global.wxtemplate_msg2, pagePath, seller.getSellerId(), seller.getTemplate_daily());
+                        addTemplate(customer.getWxname(), wxTemplate.getFormId(), wxTemplate.getOpenId(), Global.wxtemplate_msg2, pagePath, seller.getSellerId(), seller.getService_template());
                         wxTemplate.setActive(false);
                         wxTemplateService.save(wxTemplate);
                         break;
@@ -311,7 +311,7 @@ public class DictionaryService {
                         // key=sellerId value=yes
                         String pagePath = getPagePath(sellerId, "预售");
                         Seller seller = sellerService.findOne(Integer.parseInt(sellerId));
-                        addTemplate(customer.getWxname(), wxTemplate.getFormId(), wxTemplate.getOpenId(), Global.wxtemplate_msg2, pagePath, seller.getSellerId(), seller.getTemplate_daily());
+                        addTemplate(customer.getWxname(), wxTemplate.getFormId(), wxTemplate.getOpenId(), Global.wxtemplate_msg2, pagePath, seller.getSellerId(), seller.getService_template());
                         wxTemplate.setActive(false);
                         wxTemplateService.save(wxTemplate);
                         break;

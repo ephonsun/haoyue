@@ -35,6 +35,9 @@ public class PayBackUtil {
     public static String post(String url, String xmlParam,String file_payback,String mchId) {
         StringBuilder sb = new StringBuilder();
         //获取项目根路径
+        //退款文件在服务器中的路径
+        // /var/lib/docker/aufs/mnt/ad37a7062146aa68b40666b5bf639505676f32de7bdd8e671d1f5d89198beb19/wxpayfiles
+
         String relativelyPath = System.getProperty("user.dir");
         System.out.println("底层地址   "+relativelyPath);
         try {

@@ -25,6 +25,7 @@ public class Seller implements Serializable{
     private String sellerPhone;
     @Column(unique = true,length = 30)
     private String sellerEmail;
+    private String sellerPic;//店铺头像
     @Lob
     @Column(columnDefinition="TEXT")
     private String banners;//店铺图片
@@ -36,9 +37,6 @@ public class Seller implements Serializable{
     private String appId;
     private String secret;//8bcdb74a9915b5685fa0ec37f6f25b24
     private String authority;//权限 0 简易版 1 基础版  2 高级版
-    private String template_pay;// 付款通知 Z_Xg6rYdQgci4FP_aOjTvZHXeC5BSs99EwARD6NJXWk
-    private String template_daily;//日常通知 Foc6pkGtA2FZON2_5nXJxCmFvfIdKWAv5oj6REd_3w4
-    private String template_downprice;// 降价通知 HsbxE0x_CqdmCu6u0hhYtGB4Ry2f_R9M96KBLLxWbUM
     private String file_payback;//退款证书  apiclient_cert.p12
 
     private boolean isActive=true;//店铺是否可用
@@ -57,6 +55,60 @@ public class Seller implements Serializable{
     private String mchId;//商户号
     private String key1;//支付密匙
     private String receiveAddress;//退货时候卖家收货地址
+    private String price_down_template;//降价通知 HsbxE0x_CqdmCu6u0hhYtGB4Ry2f_R9M96KBLLxWbUM
+    private String unpay_template;//待付款通知 Foc6pkGtA2FZON2_5nXJxCmFvfIdKWAv5oj6REd_3w4
+    private String payback_template;//退款通知 Foc6pkGtA2FZON2_5nXJxCmFvfIdKWAv5oj6REd_3w4
+    private String service_template;//服务状态通知 Foc6pkGtA2FZON2_5nXJxCmFvfIdKWAv5oj6REd_3w4
+    private String paysuccess_template;//付款成功通知 Z_Xg6rYdQgci4FP_aOjTvZHXeC5BSs99EwARD6NJXWk
+
+
+    public String getPrice_down_template() {
+        return price_down_template;
+    }
+
+    public void setPrice_down_template(String price_down_template) {
+        this.price_down_template = price_down_template;
+    }
+
+    public String getUnpay_template() {
+        return unpay_template;
+    }
+
+    public void setUnpay_template(String unpay_template) {
+        this.unpay_template = unpay_template;
+    }
+
+    public String getPayback_template() {
+        return payback_template;
+    }
+
+    public void setPayback_template(String payback_template) {
+        this.payback_template = payback_template;
+    }
+
+    public String getService_template() {
+        return service_template;
+    }
+
+    public void setService_template(String service_template) {
+        this.service_template = service_template;
+    }
+
+    public String getPaysuccess_template() {
+        return paysuccess_template;
+    }
+
+    public void setPaysuccess_template(String paysuccess_template) {
+        this.paysuccess_template = paysuccess_template;
+    }
+
+    public String getSellerPic() {
+        return sellerPic;
+    }
+
+    public void setSellerPic(String sellerPic) {
+        this.sellerPic = sellerPic;
+    }
 
     public String getReceiveAddress() {
         return receiveAddress;
@@ -66,36 +118,12 @@ public class Seller implements Serializable{
         this.receiveAddress = receiveAddress;
     }
 
-    public String getTemplate_downprice() {
-        return template_downprice;
-    }
-
-    public void setTemplate_downprice(String template_downprice) {
-        this.template_downprice = template_downprice;
-    }
-
     public String getFile_payback() {
         return file_payback;
     }
 
     public void setFile_payback(String file_payback) {
         this.file_payback = file_payback;
-    }
-
-    public String getTemplate_daily() {
-        return template_daily;
-    }
-
-    public void setTemplate_daily(String template_daily) {
-        this.template_daily = template_daily;
-    }
-
-    public String getTemplate_pay() {
-        return template_pay;
-    }
-
-    public void setTemplate_pay(String template_pay) {
-        this.template_pay = template_pay;
     }
 
     public String getSecret() {
