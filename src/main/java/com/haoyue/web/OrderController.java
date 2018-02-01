@@ -445,6 +445,7 @@ public class OrderController {
         template.setForm_id(form_id);
         String url = "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token=" + access_token + "&form_id=" + form_id;
         String result = CommonUtil.httpRequest(url, "POST", template.toJSON());
+        System.out.println("付款通知：：："+result);
         //刷新 Global.package_map
         Global.package_map.remove(template.getToUser());
     }

@@ -36,7 +36,7 @@ public class DelievrService {
         delievrRepo.save(deliver);
     }
 
-    public Deliver findByDcodeAndDename(String dcode, String dename) {
+    public List<Deliver> findByDcodeAndDename(String dcode, String dename) {
         return delievrRepo.findByDcodeAndDename(dcode, dename);
     }
 

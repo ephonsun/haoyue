@@ -29,6 +29,7 @@ public class Global {
     //会员
     public static String member_exist="当前会员信息已经存在";
     public static String discount_not_set="店主未设置会员折扣";
+    public static String leavel_undefined="leavel值为undefined，不合法";
 
     //抵用券
     public static String no_cashticket="抵用券已被抢完";
@@ -146,7 +147,7 @@ public class Global {
     public static String not_can_apply_cancel_true="已撤销订单不可操作";
 
     //快递
-    public static String kuaidi_key="3d1b6253bbfbbfb003aa9ec6a3c2ee0c";
+    public static String kuaidi_key="d348100a2fd46f0dc1aeddde3f0a904c";
     public static String not_receive="当前快递未签收";
 
     //非拦截地址

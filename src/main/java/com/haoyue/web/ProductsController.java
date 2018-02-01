@@ -283,5 +283,20 @@ public class ProductsController {
         return new Result(false, Global.do_success, products, null);
     }
 
+    //  /seller/pro/update_monthsale?pid=商品Id&monthSale=销量&sellerId=1
+    @RequestMapping("/update_monthsale")
+    public Result updateMonthSale(int pid,int monthSale,int sellerId){
+        if (monthSale<0){
+            return new Result(true, "销量"+Global.data_unright, null, null);
+        }
+        Products products=productsService.findOne(pid);
+        products.setMonthSale(monthSale);
+        productsService.update(products);
+        return new Result(false, Global.do_success, products, null);
+    }
+
+
+
+
 
 }

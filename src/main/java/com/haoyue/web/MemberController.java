@@ -93,6 +93,9 @@ public class MemberController {
     //   买家领取会员卡  /member/addone?openId=1234&sellerId=卖家ID&discount=折扣&wxname=微信名&leavel=等级
     @RequestMapping("/addone")
     public Result addVip(Member member){
+        if(member.getLeavel().equals("undefined")){
+            return new Result(true, Global.leavel_undefined, null, null);
+        }
         //判断是否已领当前等级会员卡
         Member old=memberService.findByOpenIdAndLeavelAndSellerId(member.getOpenId(),member.getLeavel(),member.getSellerId());
         if (old!=null){

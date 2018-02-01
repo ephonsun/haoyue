@@ -13,7 +13,7 @@ import java.util.List;
  * Created by LiJia on 2017/8/24.
  */
 public interface DelievrRepo extends BaseRepo<Deliver,Integer> {
-    Deliver findByDcodeAndDename(String dcode, String dename);
+    List<Deliver> findByDcodeAndDename(String dcode, String dename);
 
     @Query(nativeQuery = true,value = "select  * from deliver where seller_id=?1 group by dname")
     List<Deliver> findBySellerId(String sellerId);

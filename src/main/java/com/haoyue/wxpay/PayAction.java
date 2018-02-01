@@ -47,7 +47,7 @@ public class PayAction {
      * 前后再调用 wx.request(object) 进行支付
      */
     @RequestMapping("/do")
-    public JSONArray pay(HttpServletRequest  request,String body, String appId, String mchId, String ip, String openId,  String key1, String session_key, String total_fee,String oid) throws UnsupportedEncodingException, DocumentException, MyException {
+    public JSONArray pay(HttpServletRequest request,String body, String appId, String mchId, String ip, String openId,  String key1, String session_key, String total_fee,String oid) throws UnsupportedEncodingException, DocumentException, MyException {
         synchronized (Global.object) {
             if (StringUtils.isNullOrBlank(openId)) {
                 throw new MyException(Global.openId_isNull, null, 102);
@@ -104,7 +104,6 @@ public class PayAction {
             //MD5运算生成签名
             String mysign = PayUtil.sign(prestr, key, "utf-8").toUpperCase();
 
-
             paymentPo.setSign(mysign);
             //打包要发送的xml
             String respXml = MessageUtil.messageToXML(paymentPo);
@@ -135,6 +134,12 @@ public class PayAction {
             System.out.println("return_code" + return_code);
             JSONObject JsonObject = new JSONObject();
             JSONArray jsonArray = new JSONArray();
+            if(return_code.contains("FAIL")){
+                JsonObject.put("return_msg",return_msg);
+                JsonObject.put("return_code",return_code);
+                jsonArray.add(JsonObject);
+                return jsonArray;
+            }
             if (return_code == "SUCCESS" || return_code.equals(return_code)) {
                 // 业务结果
                 String prepay_id = (String) map.get("prepay_id");//返回的预付单信息

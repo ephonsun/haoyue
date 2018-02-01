@@ -43,8 +43,8 @@ public class DelievrController {
             return new Result(true, Global.data_unright, null, null);
         }
         //判断快递单号-快递名是否存在
-        Deliver deliver2 = delievrService.findByDcodeAndDename(deliver.getDcode(), deliver.getDename());
-        if (deliver2 != null) {
+        List<Deliver> deliver2 = delievrService.findByDcodeAndDename(deliver.getDcode(), deliver.getDename());
+        if (deliver2 != null&&deliver2.size()!=0) {
             if (StringUtils.isNullOrBlank(iscontinue)) {
                 return new Result(true, Global.record_exist, null, null);
             }
