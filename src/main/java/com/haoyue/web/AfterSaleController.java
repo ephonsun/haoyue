@@ -84,6 +84,12 @@ public class AfterSaleController {
     //http://localhost:8080/after-sale/deal?id=退款记录ID&sellerId=卖家ID&isAgree=yes/no&response=卖家回复&receiveAddress=收货地址
     @RequestMapping("/deal")
     public Result deal(String id, String sellerId, String isAgree, String response, String receiveAddress) {
+        if (response.equals("auto")){
+            response="系统默认处理 ";
+        }
+        if (receiveAddress.equals("auto")){
+            receiveAddress=
+        }
         AfterSale afterSale = afterSaleService.findOne(id);
         if (!sellerId.equals(afterSale.getSellerId())) {
             return new Result(true, Global.have_no_right, null, null);

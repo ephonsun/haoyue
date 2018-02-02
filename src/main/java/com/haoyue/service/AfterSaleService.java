@@ -96,7 +96,7 @@ public class AfterSaleService {
                     if (date.getTime() - afterSale.getCreateDate().getTime() >= 3600 * 24 * 5 * 1000) {
                         //退款
                         //拼接参数
-                        String param = "id=" + afterSale.getId() + "&sellerId=" + afterSale.getSellerId() + "&=isAgree=yes&response=系统默认同意&receiveAddress=" + sellerRepo.findOne(Integer.parseInt(afterSale.getSellerId())).getReceiveAddress();
+                        String param = "id=" + afterSale.getId() + "&sellerId=" + afterSale.getSellerId() + "&isAgree=yes&response=auto&receiveAddress=auto";
                         //处理请求
                         HttpRequest.sendGet("https://www.cslapp.com/after-sale/deal", param);
                         System.out.println("系统自动处理5日内商家未处理的退款/退货申请");
@@ -106,7 +106,7 @@ public class AfterSaleService {
                     if (date.getTime() - afterSale.getCreateDate().getTime() >= 3600 * 24 * 7 * 1000) {
                         //退款
                         //拼接参数
-                        String param = "id=" + afterSale.getId() + "&sellerId=" + afterSale.getSellerId() + "&=isAgree=yes&response=系统默认同意";
+                        String param = "id=" + afterSale.getId() + "&sellerId=" + afterSale.getSellerId() + "&isAgree=yes&response=auto";
                         //处理请求
                         HttpRequest.sendGet("https://www.cslapp.com/after-sale/deal", param);
                         System.out.println("系统自动处理7日内商家未处理的退款申请");
@@ -129,7 +129,7 @@ public class AfterSaleService {
         if (list != null && list.size() != 0) {
             for (AfterSale afterSale : list) {
                 // 最后发货日期  拒绝后七日内无操作
-                if (date.after(afterSale.getEndDeliverDate()) || date.getTime() - afterSale.getDealDate().getTime() >= 3600 * 24 * 7 * 1000) {
+                if ((afterSale.getEndDeliverDate()!=null&&date.after(afterSale.getEndDeliverDate()) )|| date.getTime() - afterSale.getDealDate().getTime() >= 3600 * 24 * 7 * 1000) {
                     afterSale.setClosed(true);
                     update(afterSale, null,false);
                 }
