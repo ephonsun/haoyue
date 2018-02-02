@@ -129,7 +129,7 @@ public class AfterSaleController {
             if (afterSale.getIsAgree().equals("1")) {
                 Order order = afterSale.getOrder();
                 //拼接参数
-                String param = "saleId=" + order.getSellerId() + "&oid=" + order.getId() + "&fe=" + afterSale.getTotalPrice() * 100;
+                String param = "sellerId=" + order.getSellerId() + "&oid=" + order.getId() + "&fe=" + afterSale.getTotalPrice() * 100;
                 //退款请求
                 String result = HttpRequest.sendGet("https://www.cslapp.com/payback/do", param);
                 System.out.println("after-sale-result:" + result);
@@ -283,7 +283,7 @@ public class AfterSaleController {
         afterSale.setSuccessDate(new Date());
         afterSaleService.update(afterSale, str, false);
         //拼接参数
-        String param = "saleId=" + afterSale.getSellerId() + "&oid=" + afterSale.getOrder().getId() + "&fe=" + afterSale.getTotalPrice() * 100;
+        String param = "sellerId=" + afterSale.getSellerId() + "&oid=" + afterSale.getOrder().getId() + "&fe=" + afterSale.getTotalPrice() * 100;
         //退款请求
         String result = HttpRequest.sendGet("https://www.cslapp.com/payback/do", param);
         System.out.println("after-sale-result:" + result);

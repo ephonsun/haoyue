@@ -146,7 +146,7 @@ public class PayAction {
                 String nonceStr = UUIDHexGenerator.generate();
                 JsonObject.put("nonceStr", nonceStr);
                 JsonObject.put("package", "prepay_id=" + prepay_id);
-                Global.package_map.put(openId,prepay_id);
+                Global.package_map.put(oid+"",prepay_id);
                 Long timeStamp = System.currentTimeMillis() / 1000;
                 JsonObject.put("timeStamp", timeStamp + "");
                 String stringSignTemp = "appId=" + appid + "&nonceStr=" + nonceStr + "&package=prepay_id=" + prepay_id + "&signType=MD5&timeStamp=" + timeStamp;

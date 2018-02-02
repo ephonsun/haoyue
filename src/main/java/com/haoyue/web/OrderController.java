@@ -431,7 +431,7 @@ public class OrderController {
         }
     }
 
-    public void getTemplate(Template template, int sellerId) {
+    public void getTemplate(Template template, int sellerId,int oid) {
         //获取 appId 和 secret 8bcdb74a9915b5685fa0ec37f6f25b24
         Seller seller = sellerService.findOne(sellerId);
         //模板信息通知用户
@@ -441,13 +441,13 @@ public class OrderController {
         String access_token = HttpRequest.sendPost(access_token_url, param1);
         access_token = access_token.substring(access_token.indexOf(":") + 2, access_token.indexOf(",") - 1);
         //发送模板信息
-        String form_id = Global.package_map.get(template.getToUser());
+        String form_id = Global.package_map.get(oid+"");
         template.setForm_id(form_id);
         String url = "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token=" + access_token + "&form_id=" + form_id;
         String result = CommonUtil.httpRequest(url, "POST", template.toJSON());
         System.out.println("付款通知：：："+result);
         //刷新 Global.package_map
-        Global.package_map.remove(template.getToUser());
+        Global.package_map.remove(oid+"");
     }
 
     public void addTemplate(Order order) {
@@ -490,7 +490,7 @@ public class OrderController {
         template.setTopColor("#000000");
         template.setPage("pages/index/index");
         template.setToUser(customerService.findOpenIdById(order.getCustomerId() + ""));
-        getTemplate(template, order.getSellerId());
+        getTemplate(template, order.getSellerId(),order.getId());
     }
 
 }
