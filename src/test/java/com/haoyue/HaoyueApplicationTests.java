@@ -412,7 +412,8 @@ public class HaoyueApplicationTests {
 
     @Test
     public void f31(){
-
+        String str="12.523";
+        System.out.println(new DecimalFormat("0").format(Double.parseDouble(str)));
     }
 
     @Test
