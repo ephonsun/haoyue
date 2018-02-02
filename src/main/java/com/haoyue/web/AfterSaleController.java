@@ -84,23 +84,23 @@ public class AfterSaleController {
     //http://localhost:8080/after-sale/deal?id=退款记录ID&sellerId=卖家ID&isAgree=yes/no&response=卖家回复&receiveAddress=收货地址
     @RequestMapping("/deal")
     public Result deal(String id, String sellerId, String isAgree, String response, String receiveAddress) {
-        if (response.equals("auto")){
-            response="系统默认处理 ";
-        }
-        if (receiveAddress.equals("auto")){
-            receiveAddress=
+        if (!StringUtils.isNullOrBlank(receiveAddress)&&receiveAddress.equals("auto")){
+            receiveAddress=sellerService.findOne(Integer.parseInt(sellerId)).getReceiveAddress();
         }
         AfterSale afterSale = afterSaleService.findOne(id);
         if (!sellerId.equals(afterSale.getSellerId())) {
             return new Result(true, Global.have_no_right, null, null);
         }
-        String str = "";
+        String str="";
         //同意
         if (isAgree.equals("yes")) {
             afterSale.setIsAgree("1");
             if (afterSale.getType().equals("1")) {
                 afterSale.setPages("4");
                 str = "卖家同意退款/退货申请，退货地址：" + receiveAddress;
+                if (response.equals("auto")){
+                    str = "系统默认处理同意退款/退货申请，退货地址：" + receiveAddress;
+                }
                 Calendar calendar = Calendar.getInstance();
                 calendar.add(Calendar.DATE, 7);
                 afterSale.setEndDeliverDate(calendar.getTime());
@@ -111,7 +111,10 @@ public class AfterSaleController {
                 afterSale.setProcess(3);
                 afterSale.setSuccessDate(new Date());
                 str = "卖家同意退款申请," + afterSale.getOrder().getTotalPrice() + "元已经退回买家账户";
-
+                if (response.equals("auto")){
+                    response="系统默认处理 ";
+                    str="系统默认处理同意退款："+ afterSale.getOrder().getTotalPrice() + "元已经退回买家账户";
+                }
             }
 
         } else {
@@ -273,21 +276,24 @@ public class AfterSaleController {
             afterSale1.setDealDate(null);
             afterSale1.setIsAgree("0");
         }
-        afterSaleService.update(afterSale1, null, false);
+        afterSaleService.update(afterSale1, afterSale1.getDescs(), true);
         return new Result(false, Global.do_success, null, null);
     }
 
 
     //  /after-sale/receive?id=申请记录ID&sellerId=12
     @RequestMapping("/receive")
-    public Result receive(String id) {
+    public Result receive(String id,String auto) {
         AfterSale afterSale = afterSaleService.findOne(id);
         afterSale.setReceive(true);
         String str = "卖家已经确认收货并执行系统退款";
+        if (!StringUtils.isNullOrBlank(auto)&&auto.equals("yes")){
+            str = "系统自动确认收货并执行系统退款";
+        }
         afterSale.setProcess(2);
         afterSale.setPages("7");
         afterSale.setSuccessDate(new Date());
-        afterSaleService.update(afterSale, str, false);
+        afterSaleService.update(afterSale, str,false);
         //拼接参数
         String param = "sellerId=" + afterSale.getSellerId() + "&oid=" + afterSale.getOrder().getId() + "&fe=" + afterSale.getTotalPrice() * 100;
         //退款请求

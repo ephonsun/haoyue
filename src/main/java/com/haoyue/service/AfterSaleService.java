@@ -31,10 +31,9 @@ public class AfterSaleService {
     private SellerRepo sellerRepo;
 
     public AfterSale save(AfterSale afterSale,boolean isCutomer) {
-        afterSaleRepo.save(afterSale);
         //保存协商信息
         String str = afterSale.getOrder().getTotalPrice() + "#" + afterSale.getReason() + "#" + afterSale.getPhone() + "#" + afterSale.getOrder().getState() + "#" + afterSale.getDescs();
-
+        afterSaleRepo.save(afterSale);
         messageService.save(str, afterSale.getId(),isCutomer);
         return afterSale;
     }
@@ -147,7 +146,7 @@ public class AfterSaleService {
                 if (date.after(afterSale.getEndReceiveDate())) {
                     //退款
                     //拼接参数
-                    String param = "id=" + afterSale.getId();
+                    String param = "id=" + afterSale.getId()+"&auto=yes&sellerId="+afterSale.getSellerId();
                     //处理请求
                     String result = HttpRequest.sendGet("https://www.cslapp.com/after-sale/receive", param);
                     System.out.println("系统自动处理10日内商家没有确认收货");
