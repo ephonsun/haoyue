@@ -26,5 +26,13 @@ public class Kuaidi {
         return flag;
     }
 
+    public static  String getDetail(String code) {
+
+        //快递查询 京东万象  https://wx.jcloud.com/market/datas/26/10307
+        String url = "https://way.jd.com/jisuapi/query";
+        String param = "type=auto&number=" + code + "&appkey=" + Global.kuaidi_key;
+        String result = HttpRequest.sendGet(url, param);
+        return result;
+    }
 
 }

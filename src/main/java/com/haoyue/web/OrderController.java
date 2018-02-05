@@ -375,6 +375,14 @@ public class OrderController {
         return new Result(false, Global.do_success, iterable, null);
     }
 
+    //  http://localhost:8080/order/deliver?sellerId=1&code=3910771985669
+    @RequestMapping("/deliver")
+    public Result kuaidi(String sellerId,String code){
+        String result=Kuaidi.getDetail(code);
+        System.out.println(result);
+        return new Result(false, Global.do_success, result, null);
+    }
+
 
     //每当买家订单付款后会更新该买家的会员信息
     public void saveMember(Order order) {
