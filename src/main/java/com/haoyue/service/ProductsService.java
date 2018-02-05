@@ -3,6 +3,7 @@ package com.haoyue.service;
 import com.haoyue.pojo.*;
 import com.haoyue.repo.ProductsRepo;
 import com.haoyue.repo.ProdutsTypeRepo;
+import com.haoyue.repo.SellerRepo;
 import com.haoyue.untils.*;
 import com.querydsl.core.BooleanBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,8 @@ public class ProductsService {
     private PtypeNamesService ptypeNamesService;
     @Autowired
     private ShopCarService shopCarService;
+    @Autowired
+    private SellerRepo sellerRepo;
 
     public Products save(Products products) throws IOException {
 
@@ -240,7 +243,8 @@ public class ProductsService {
     //生成二维码
     public String qrcode(String sellerId, String pid) throws FileNotFoundException {
         String access_token_url = "https://api.weixin.qq.com/cgi-bin/token";
-        String param1 = "grant_type=client_credential&appid=wxe46b9aa1b768e5fe&secret=8bcdb74a9915b5685fa0ec37f6f25b24";
+        Seller seller=sellerRepo.findOne(Integer.parseInt(sellerId));
+        String param1 = "grant_type=client_credential&appid="+seller.getAppId()+"&secret="+seller.getSecret();
         String access_token = HttpRequest.sendPost(access_token_url, param1);
         access_token = access_token.substring(access_token.indexOf(":") + 2, access_token.indexOf(",") - 1);
 
