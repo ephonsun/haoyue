@@ -18,6 +18,7 @@ public class TUserSale {
     private Integer id;
     private String appId;
     private String machId;// 1487862802
+    private String secret;
     private String key1;//支付密匙  hecaishangwu1234hecaishangwu1234
     private String name;
     private String pass;
@@ -35,6 +36,14 @@ public class TUserSale {
     @Column(updatable=false)
     private Date createDate;//创建日期
     private boolean redpacket=false;//红包
+
+    public String getSecret() {
+        return secret;
+    }
+
+    public void setSecret(String secret) {
+        this.secret = secret;
+    }
 
     public boolean getRedpacket() {
         return redpacket;

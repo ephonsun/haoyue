@@ -113,7 +113,11 @@ public class OrderController {
 
     @RequestMapping("/save")
     public Result save(String deliver_price, Integer proId, Integer proTypeId, String sellerId, String receiver, String phone, String address, Integer amount, String openId, String leaveMessage, String usevip, String wxname, String cashTicketCode) {
-        //当用户点击拒接获取信息后，导致openId为空
+        //  当用户点击拒接获取信息后，导致wxname,wxpic为空
+        if (StringUtils.isNullOrBlank(wxname)){
+            return new Result(true, Global.cannot_get_info, null, null);
+        }
+        //  当用户点击拒接获取信息后，导致openId为空
         if (StringUtils.isNullOrBlank(openId) || openId.equals("undefined")) {
             return new Result(true, Global.cannot_get_info, null, null);
         }
