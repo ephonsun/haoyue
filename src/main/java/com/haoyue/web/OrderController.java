@@ -121,6 +121,8 @@ public class OrderController {
         if (StringUtils.isNullOrBlank(openId) || openId.equals("undefined")) {
             return new Result(true, Global.cannot_get_info, null, null);
         }
+
+
         Customer customer = customerService.findByOpenId(openId, sellerId);
         Order order = new Order();
         //客户
@@ -131,11 +133,23 @@ public class OrderController {
         order.setLeaveMessage_seller("");
         //商品
         Products products = productsService.findOne(proId);
+        //商品分类
+        ProdutsType produtsType = produtsTypeService.findOne(proTypeId);
+        //计算商品价格
+        double product_price=0;
+        //折扣价
+        product_price=produtsType.getDiscountPrice();
+        if (products.getSecondKillStart()!=null&&products.getSecondKillEnd()!=null){
+            Date date=new Date();
+            //秒杀时间段
+            if (date.before(products.getSecondKillEnd())&&date.after(products.getSecondKillStart())){
+                product_price=produtsType.getSecondKillPrice();
+            }
+        }
         List<Products> productses = new ArrayList<>();
         productses.add(products);
         order.setProducts(productses);
-        //商品分类
-        ProdutsType produtsType = produtsTypeService.findOne(proTypeId);
+
         //判断库存量是否足够
         if (produtsType.getAmount() < amount) {
             return new Result(true, Global.amount_notEnough, null, null);
@@ -178,7 +192,7 @@ public class OrderController {
         //原价
         order.setOldPrice(produtsType.getPriceOld() == null ? produtsType.getPriceNew() : produtsType.getPriceOld());
         //现价
-        order.setPrice(produtsType.getDiscountPrice() * amount);
+        order.setPrice(product_price * amount);
         //订单号 唯一
         synchronized (Global.object) {
             order.setOrderCode(Global.order_code_begin + (Global.count++) + new Date().getTime());

@@ -43,6 +43,7 @@ public class CustomerController {
     购物车可以点击查看物品详情
     购物车列表显示物品分类，尺码，颜色
     */
+
     @RequestMapping("/loginOrReg")
     public Result save(String openId,String sellerId,String wxname,String wxpic){
 

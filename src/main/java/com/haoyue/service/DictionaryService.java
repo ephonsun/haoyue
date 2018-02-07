@@ -321,6 +321,21 @@ public class DictionaryService {
         }
     }
 
+
+    //官网小程序访问通知
+    public void website_inform() {
+        //首先更新一下表数据
+        wxTemplateService.updateActive();
+        List<WxTemplate> list = wxTemplateService.findByButtonName("官网");
+        String pagePath = "pages/index/index";
+        String templateId = "_vURY92OKlK5MiN-zZydqz0Nx1tp8-lZTe-e0pPen6Q";
+        String message = "皓月小程序制作访问通知(测试)";
+        for (WxTemplate wxTemplate : list) {
+            Customer customer = customerService.findByOpenId(wxTemplate.getOpenId(), wxTemplate.getSellerId());
+            addTemplate(customer.getWxname(), wxTemplate.getFormId(), customer.getOpenId(), message, pagePath, Integer.parseInt(wxTemplate.getSellerId()), templateId);
+        }
+    }
+
     public String getPagePath(String sellerId, String key) {
         String pagePath = "";
         String ptypename = ptypeNamesService.findBySellerId(sellerId).getPtypename();
@@ -349,8 +364,8 @@ public class DictionaryService {
                 continue;
             }
             old_date = deliver.getCreateDate();
-            if(old_date==null){
-               old_date=order.getCreateDate();
+            if (old_date == null) {
+                old_date = order.getCreateDate();
             }
             //判断距离发货日期的时间差
             if ((now_date.getTime() - old_date.getTime()) > 1000 * 60 * 60 * 24 * 15) {

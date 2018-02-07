@@ -5,6 +5,7 @@ import com.haoyue.repo.WxTemplateRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -44,5 +45,24 @@ public class WxTemplateService {
 
     public List<String> findActiveAndButtonName(String str) {
         return wxTemplateRepo.findActiveAndButtonName(str);
+    }
+
+    public List<WxTemplate> findByButtonName(String str) {
+        List<WxTemplate> wxTemplateList = new ArrayList<>();
+        List<String> openIds = wxTemplateRepo.findActiveAndButtonName(str);
+        for (String openId : openIds) {
+            if (openId.equals("undefined")){
+                continue;
+            }
+            List<WxTemplate> wxTemplates = wxTemplateRepo.findByOpenIdAndActive(openId);
+            for (WxTemplate wxTemplate:wxTemplates){
+                if (wxTemplate.getFormId().contains("mock")){
+                    continue;
+                }
+                wxTemplateList.add(wxTemplate);
+                break;
+            }
+        }
+        return wxTemplateList;
     }
 }

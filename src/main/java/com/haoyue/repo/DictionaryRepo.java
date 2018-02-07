@@ -24,4 +24,6 @@ public interface DictionaryRepo extends BaseRepo<Dictionary ,Integer> {
     Dictionary findLast();
 
     Dictionary findBySellerIdAndCreateDateAndProductIdIsNull(Integer sellerId, Date ymd);
+
+
 }

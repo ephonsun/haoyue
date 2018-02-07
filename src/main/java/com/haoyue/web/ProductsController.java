@@ -104,6 +104,7 @@ public class ProductsController {
         return new Result(false, Global.do_success, list,null);
     }
 
+    //  https://www.cslapp.com/seller/pro/findOne?pid=158
     @RequestMapping("/findOne")
     public Result findOne(Integer pid, String token, String pname, String ptype, String pcode) {
         Map<String, String> map = new HashMap<>();
@@ -159,12 +160,15 @@ public class ProductsController {
     @RequestMapping("/save")
     @Transactional
     public Result update_all(Products products, String token, String protypes, String showHours, String killStart, String killEnd) throws FileNotFoundException, ParseException {
+
+
         //上线时间
         if (!StringUtils.isNullOrBlank(showHours)) {
             products.setShowDate(StringUtils.formatDate2(showHours));
         } else {
             products.setShowDate(new Date());
         }
+
         //秒杀
         if (products.getIssecondkill()) {
             products.setSecondKillStart(StringUtils.formatDate2(killStart));
