@@ -103,7 +103,7 @@ public class DictionaryService {
 
     public void addEachDay() {
         //访问通知
-        //auto_inform();
+        auto_inform();
         //默认收货
         auto_receive();
         //每天向dictionary表注入当日新的数据
@@ -144,7 +144,6 @@ public class DictionaryService {
             Date date = new Date();
             for (String openid : openids) {
                 //方便自己观察模板信息发送情况  ook0P0VO6YbmFq37iAazBWLDAnsg
-                //  select * from wx_template where open_id=ook0P0VO6YbmFq37iAazBWLDAnsg and active=true
                 if (date.getHours() == 12 || openid.equals("ook0P0VO6YbmFq37iAazBWLDAnsg")) {
                     //过滤
                     if (openid == null || openid.equals("undefined")) {
