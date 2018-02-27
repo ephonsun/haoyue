@@ -103,7 +103,7 @@ public class DictionaryService {
 
     public void addEachDay() {
         //访问通知
-        //auto_inform();
+        auto_inform();
         //默认收货
         auto_receive();
         //每天向dictionary表注入当日新的数据
@@ -166,7 +166,7 @@ public class DictionaryService {
                                 continue;
                             }
                             Seller seller = sellerService.findOne(Integer.parseInt(wxTemplate.getSellerId()));
-                            addTemplate(customerService.findByOpenId(wxTemplate.getOpenId(), wxTemplate.getSellerId()).getWxname(), wxTemplate.getFormId(), wxTemplate.getOpenId(), Global.wxtemplate_msg1, "pages/index/index", seller.getSellerId(), seller.getService_template());
+                            addTemplate(customerService.findByOpenId(wxTemplate.getOpenId(), wxTemplate.getSellerId()).getWxname(), wxTemplate.getFormId(), wxTemplate.getOpenId(), seller.getService_template_msg(), "pages/index/index", seller.getSellerId(), seller.getService_template());
                             wxTemplate.setActive(false);
                             wxTemplateService.save(wxTemplate);
                             break;
@@ -235,7 +235,7 @@ public class DictionaryService {
                         // key=sellerId value=yes
                         String pagePath = getPagePath(sellerId, "秒杀");
                         Seller seller = sellerService.findOne(Integer.parseInt(sellerId));
-                        addTemplate(customer.getWxname(), wxTemplate.getFormId(), wxTemplate.getOpenId(), Global.wxtemplate_msg3, pagePath, seller.getSellerId(), seller.getService_template());
+                        addTemplate(customer.getWxname(), wxTemplate.getFormId(), wxTemplate.getOpenId(), seller.getService_template_msg(), pagePath, seller.getSellerId(), seller.getService_template());
                         wxTemplate.setActive(false);
                         wxTemplateService.save(wxTemplate);
                         break;
