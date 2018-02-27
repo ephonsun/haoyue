@@ -40,7 +40,7 @@ public class ProductsController {
 
     //  http://localhost:8080/seller/pro/list?token=1&active=false
     //  商品列表-在售  追加参数 showdate=yes
-    //   商品列表-预售  追加参数 showdate=no
+    //  商品列表-预售  追加参数 showdate=no
     // 秒杀商品列表  追加参数 killproduct=true
     @RequestMapping("/list")
     public Result list(@RequestParam Map<String, String> map, @RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize) {
@@ -106,10 +106,11 @@ public class ProductsController {
 
     //  https://www.cslapp.com/seller/pro/findOne?pid=158
     @RequestMapping("/findOne")
-    public Result findOne(Integer pid, String token, String pname, String ptype, String pcode) {
+    public Result findOne(Integer pid, String token, String pname, String ptype, String ptypep,String pcode) {
         Map<String, String> map = new HashMap<>();
         map.put("pname", pname);
         map.put("ptype", ptype);
+        map.put("ptypep", ptypep);
         map.put("token", token);
         if (!StringUtils.isNullOrBlank(pcode)) {
             Products products = productsService.findByPcode(pcode);
@@ -251,8 +252,6 @@ public class ProductsController {
                 }
             }
             productsService.save(products);
-            //商品分类更新
-            productsService.update_ptype(products);
             //设置商品号
             if (StringUtils.isNullOrBlank(products.getPcode())) {
                 Seller seller = sellerService.findOne(Integer.parseInt(token));
