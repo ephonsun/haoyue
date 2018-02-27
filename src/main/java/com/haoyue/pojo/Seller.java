@@ -59,17 +59,8 @@ public class Seller implements Serializable{
     private String unpay_template;//待付款通知 Foc6pkGtA2FZON2_5nXJxCmFvfIdKWAv5oj6REd_3w4
     private String payback_template;//退款通知 Foc6pkGtA2FZON2_5nXJxCmFvfIdKWAv5oj6REd_3w4
     private String service_template;//服务状态通知 Foc6pkGtA2FZON2_5nXJxCmFvfIdKWAv5oj6REd_3w4
-    private String service_template_msg;
     private String paysuccess_template;//付款成功通知 Z_Xg6rYdQgci4FP_aOjTvZHXeC5BSs99EwARD6NJXWk
 
-
-    public String getService_template_msg() {
-        return service_template_msg;
-    }
-
-    public void setService_template_msg(String service_template_msg) {
-        this.service_template_msg = service_template_msg;
-    }
 
     public String getPrice_down_template() {
         return price_down_template;
