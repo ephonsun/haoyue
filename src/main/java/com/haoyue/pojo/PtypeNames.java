@@ -1,9 +1,7 @@
 package com.haoyue.pojo;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.List;
 
 /**
  * Created by LiJia on 2017/10/26.
@@ -17,8 +15,16 @@ public class PtypeNames {
     @GeneratedValue
     private Integer id;
     private String sellerId;
-    private String ptypename;
+    private String ptypename;//一级分类
+    private String ptypenames;//二级分类
 
+
+    public String getPtypenames() {
+        return ptypenames;
+    }
+    public void setPtypenames(String ptypenames) {
+        this.ptypenames = ptypenames;
+    }
     public Integer getId() {
         return id;
     }
