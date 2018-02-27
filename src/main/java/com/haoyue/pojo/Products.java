@@ -32,6 +32,7 @@ public class Products {
 
     private String pvideo;//视频
     private String ptypeName;//宝贝分类 如 女装
+    private String ptypeNamep;//一级分类
 
     @OneToMany
     private List<ProdutsType> produtsTypes;//颜色 尺码  库存
@@ -84,6 +85,15 @@ public class Products {
     private int views;
     private String qrcode;//二维码
     private double weight;//重量
+
+
+    public String getPtypeNamep() {
+        return ptypeNamep;
+    }
+
+    public void setPtypeNamep(String ptypeNamep) {
+        this.ptypeNamep = ptypeNamep;
+    }
 
     public double getWeight() {
         return weight;
