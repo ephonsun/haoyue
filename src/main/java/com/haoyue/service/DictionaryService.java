@@ -337,18 +337,17 @@ public class DictionaryService {
 
     public String getPagePath(String sellerId, String key) {
         String pagePath = "";
-        List<PtypeNames> list = ptypeNamesService.findBySellerId(sellerId);
-        PtypeNames parents = ptypeNamesService.findBySellerIdAndPtypenameIsNull(sellerId);
-        String ptypename = "";
-        if (parents != null) {
-            ptypename = parents.getPtypenames();
-        } else {
-            for (PtypeNames p : list) {
-                if (!StringUtils.isNullOrBlank(p.getPtypename())) {
-                    ptypename += "," + p.getPtypename();
-                }
-            }
-        }
+        PtypeNames parents = ptypeNamesService.findBySellerId(sellerId);
+        String ptypename = parents.getPtypenames();
+//        if (parents != null) {
+//            ptypename = parents.getPtypenames();
+//        } else {
+//            for (PtypeNames p : list) {
+//                if (!StringUtils.isNullOrBlank(p.getPtypename())) {
+//                    ptypename += "," + p.getPtypename();
+//                }
+//            }
+//        }
         String[] ptypenames = ptypename.split(",");
         for (int i = 0; i < ptypenames.length; i++) {
             if (!StringUtils.isNullOrBlank(ptypenames[i]) && ptypenames[i].contains(key)) {

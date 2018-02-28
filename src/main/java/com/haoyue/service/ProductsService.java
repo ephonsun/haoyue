@@ -82,9 +82,6 @@ public class ProductsService {
                 if (name.equals("ptypename")) {
                     bd.and(pro.ptypeName.contains(value));
                 }
-                if (name.equals("ptypep")) {
-                    bd.and(pro.ptypeNamep.contains(value));
-                }
                 if (name.equals("pname")) {
                     bd.and(pro.pname.contains(value));
                 }
@@ -164,7 +161,7 @@ public class ProductsService {
             product.setActive(false);
             productsRepo.save(product);
             //商品分类更新
-            update_ptype(product,"down");
+            update_ptype(product);
         }
         //商品上架
         else if (!StringUtils.isNullOrBlank(map.get("active_pro"))) {
@@ -181,7 +178,7 @@ public class ProductsService {
             }
             productsRepo.save(product);
             //商品分类更新
-            update_ptype(product,"up");
+            update_ptype(product);
         }
         //单价
         else if (!StringUtils.isNullOrBlank(map.get("price"))) {
@@ -222,55 +219,21 @@ public class ProductsService {
     }
 
 
-    public void update_ptype(Products product,String type) {
-        //商品下架更新分类
-        if (type.equals("down")) {
-            //商品分类更新
-            List<String> productses = productsRepo.findBySellerIdAndActive(product.getSellerId());
-            List<PtypeNames> ptypeNames = ptypeNamesService.findBySellerId(product.getSellerId() + "");
-            boolean flag = false;
-            //判断当前分类是否存在于在售商品
-            //存在
-            for (String pname : productses) {
-                if (pname.equals(product.getPtypeName())) {
-                    flag = true;
-                }
-            }
-            //不存在
-            if (!flag) {
-                for (PtypeNames p : ptypeNames) {
-                    if (p.getPtypename().equals(product.getPtypeNamep())) {
-                        p.setPtypenames(p.getPtypenames().replaceAll(product.getPtypeName() + ",", ""));
-                        ptypeNamesService.save(p);
-                    }
-                }
-            }
-        }else {
-            //商品上架更新分类
-            //商品分类更新
-            List<String> productses = productsRepo.findBySellerIdAndActive(product.getSellerId());
-            List<PtypeNames> ptypeNames = ptypeNamesService.findBySellerId(product.getSellerId() + "");
-            boolean flag = false;
-            //判断当前分类是否存在于在售商品
-            //存在
-            for (String pname : productses) {
-                if (pname.equals(product.getPtypeName())) {
-                    flag = true;
-                }
-            }
-            //不存在 更新指定一级分类中的二级分类
-            if (!flag) {
-                for (PtypeNames p : ptypeNames) {
-                    if (p.getPtypename().equals(product.getPtypeNamep())){
-                       p.setPtypenames(p.getPtypenames()+","+product.getPtypeName());
-                       ptypeNamesService.save(p);
-                    }
-
-                }
-            }
+    public void update_ptype(Products product) {
+        //商品分类更新
+        List<String> productses = productsRepo.findBySellerIdAndActive(product.getSellerId());
+        PtypeNames ptypeNames = ptypeNamesService.findBySellerId(product.getSellerId() + "");
+        if (ptypeNames == null) {
+            ptypeNames = new PtypeNames();
+            ptypeNames.setSellerId(product.getSellerId() + "");
         }
-
-
+        StringBuffer stringBuffer = new StringBuffer();
+        for (String products : productses) {
+            stringBuffer.append(products);
+            stringBuffer.append(",");
+        }
+        ptypeNames.setPtypename(stringBuffer.toString());
+        ptypeNamesService.save(ptypeNames);
     }
 
     public List<Products> findBySellerIdAndCreateDate(String sellerId, Date date) {
@@ -284,7 +247,6 @@ public class ProductsService {
         String param1 = "grant_type=client_credential&appid="+seller.getAppId()+"&secret="+seller.getSecret();
         String access_token = HttpRequest.sendPost(access_token_url, param1);
         access_token = access_token.substring(access_token.indexOf(":") + 2, access_token.indexOf(",") - 1);
-
         // d:/haoyue/erweima/1.jpg
         String filename = QRcode.getminiqrQr(access_token, pid);
         File file = new File(filename);
