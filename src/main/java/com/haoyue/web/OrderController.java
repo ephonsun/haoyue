@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.*;
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.Collections;
 
@@ -335,21 +336,24 @@ public class OrderController {
                 addTemplate(order);
             }
             orderService.update(order);
-            //更新个人花费总额
+            //更新个人花费总额 + 订单总价（不包括邮费）
             Customer customer = customerService.findOne(order.getCustomerId());
-            customer.setExpense(customer.getExpense() + order.getTotalPrice());
+            double expense=customer.getExpense() + order.getPrice();
+            //保留两位小数
+            DecimalFormat decimalFormat=new DecimalFormat("#.##");
+            customer.setExpense(Double.valueOf(decimalFormat.format(expense)));
             customerService.update(customer);
 
             return new Result(false, Global.do_success, order, null);
         }
     }
 
-    // https://www.cslapp.com/order/excel?sellerId=3&oids=714=715
-    // http://localhost:8080/order/excel?sellerId=1&state=已完成订单&openId=1
+    //订单转excel
     @RequestMapping("/excel")
     public Result excel(String sellerId, String oids) throws IOException {
         return orderService.excel(sellerId, oids);
     }
+
 
     @RequestMapping("/update")
     public Result update(Order order, String selleId, String changePrice) {

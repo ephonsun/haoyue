@@ -150,6 +150,13 @@ public class Global {
     public static String kuaidi_key="d348100a2fd46f0dc1aeddde3f0a904c";
     public static String not_receive="当前快递未签收";
 
+    //积攒送小程序
+    public static int thumbs_up_num=40;//积攒目标数
+    public static String thumbs_up_access="集赞数已达到啦！";
+    public static String already_apply_thumb_up="你已经申请过积攒啦！";
+    public static String already_help_thumb_up="不可重复点赞";
+    public static String already_thumb_up_expire="当前用户申请的积攒活动已经失效";
+
     //非拦截地址
     public static List<String> urls(){
         List<String> list=new ArrayList<>();

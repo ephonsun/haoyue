@@ -29,6 +29,19 @@ public class ActivityForThumbsUp {
     @Column(updatable=false)
     private Date createDate;//创建日期
 
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:SS", timezone="GMT+8")
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(updatable=false)
+    private Date endDate;//创建日期
+
+
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
 
     public boolean getIsIsowner() {
         return isowner;
