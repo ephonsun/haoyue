@@ -2,9 +2,7 @@ package com.haoyue.web;
 
 import com.haoyue.pojo.Customer;
 import com.haoyue.pojo.Seller;
-import com.haoyue.service.CustomerService;
-import com.haoyue.service.ProductsService;
-import com.haoyue.service.SellerService;
+import com.haoyue.service.*;
 import com.haoyue.untils.Global;
 import com.haoyue.untils.HttpRequest;
 import com.haoyue.untils.Result;
@@ -30,6 +28,10 @@ public class CustomerController {
     private CustomerService customerService;
     @Autowired
     private SellerService sellerService;
+    @Autowired
+    private OrderService orderService;
+    @Autowired
+    private CommentService commentService;
 
 
     //关键词查询 商品分类查询
@@ -75,6 +77,11 @@ public class CustomerController {
             customer.setWxname(wxname);
             customer.setWxpic(wxpic);
             customerService.update(customer);
+            //更改订单中微信名和头像
+            orderService.updateWxname(wxname,customer.getId());
+            //更新评论中微信名和头像
+            commentService.updateWxname(wxname,wxpic,customer.getOpenId(),customer.getSellerId());
+
         }
         return new Result(false,Global.do_success,customer,null);
     }

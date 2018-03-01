@@ -483,4 +483,8 @@ public class OrderService {
         Date date=new Date();
         orderRepo.unpayFlush(date);
     }
+
+    public void updateWxname(String wxname, Integer cid) {
+        orderRepo.updateWxname(wxname,cid);
+    }
 }

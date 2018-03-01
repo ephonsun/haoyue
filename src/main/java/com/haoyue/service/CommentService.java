@@ -49,4 +49,8 @@ public class CommentService {
         bd.and(comment.sellerId.eq(Integer.parseInt(map.get("sellerId"))));
         return commentRepo.findAll(bd.getValue(), new PageRequest(pageNumber, pageSize, new Sort(Sort.Direction.DESC, "id")));
     }
+
+    public void updateWxname(String wxname, String wxpic, String openId, String sellerId) {
+        commentRepo.updateWxname(wxname,wxpic,openId,sellerId);
+    }
 }

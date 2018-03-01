@@ -57,4 +57,9 @@ public interface OrderRepo extends BaseRepo<Order,Integer> {
     @Transactional
     @Query(nativeQuery = true,value = "update orders set active=false ,active_seller=false  where latest_date<?1")
     void unpayFlush(Date date);
+
+    @Modifying
+    @Transactional
+    @Query(nativeQuery = true,value = "update orders set wxname=?1 where customer_id=?2")
+    void updateWxname(String wxname, Integer cid);
 }

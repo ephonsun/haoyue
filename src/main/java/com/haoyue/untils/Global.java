@@ -133,7 +133,7 @@ public class Global {
   
 
     //微信模板信息访问通知
-    public static String wxtemplate_msg1="海量春款上新中。。。置顶关注，每天都有大不同哦!";//日常访问通知
+    //public static String wxtemplate_msg1="海量春款上新中。。。置顶关注，每天都有大不同哦!";//日常访问通知
     public static String wxtemplate_msg2="亲爱的，您喜欢的宝贝上架啦，貌似新品有限时折扣！";//预售通知
     public static String wxtemplate_msg3="置顶关注，限时巨划算怎能错过！";//秒杀通知
     public static Map<String,String> yushou_map=new HashMap<>();
@@ -156,6 +156,7 @@ public class Global {
     public static String already_apply_thumb_up="你已经申请过积攒啦！";
     public static String already_help_thumb_up="不可重复点赞";
     public static String already_thumb_up_expire="当前用户申请的积攒活动已经失效";
+    public static String can_not_thumb_up_self="不可为自己点赞";
 
     //非拦截地址
     public static List<String> urls(){
