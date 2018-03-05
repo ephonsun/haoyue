@@ -4,6 +4,7 @@ import com.haoyue.pojo.ActivityForThumbsUp;
 import com.haoyue.service.ActivityForThumbsUpService;
 import com.haoyue.untils.Global;
 import com.haoyue.untils.Result;
+import com.haoyue.untils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,6 +23,10 @@ public class ActivityForThumbsUpController {
     // /activity/thumbs_up/save?openId=123&wxname=微信名称&wxpic=微信头像&isowner=【自己申请 true/ 帮好友点赞 false】
     @RequestMapping("/save")
     public Result save(ActivityForThumbsUp activityForThumbsUp, int pid) {
+        //判断用户是否点击了允许获取个人信息
+        if(StringUtils.isNullOrBlank(activityForThumbsUp.getWxname())||activityForThumbsUp.getWxname().equals("undefined")){
+            return new Result(true, Global.cannot_get_info, null, null);
+        }
         Date date = new Date();
         activityForThumbsUp.setCreateDate(date);
         //申请之前判断是否之前已经申请过
@@ -86,6 +91,14 @@ public class ActivityForThumbsUpController {
     public Result list(@RequestParam Map<String, String> map, @RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize) {
         Iterable<ActivityForThumbsUp> iterable = activityForThumbsUpService.list(map, pageNumber, pageSize);
         return new Result(false, Global.do_success, iterable, null);
+    }
+
+    // /activity/thumbs_up/finsh
+    @RequestMapping("/finsh")
+    public Result finsh(){
+        int finshNum=activityForThumbsUpService.isFinsh();
+        return new Result(false, Global.do_success, finshNum, null);
+
     }
 
 

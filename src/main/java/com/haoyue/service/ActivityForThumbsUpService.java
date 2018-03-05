@@ -10,6 +10,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -47,5 +48,16 @@ public class ActivityForThumbsUpService {
 
     public void delete(ActivityForThumbsUp old) {
         activityForThumbsUpRepo.delete(old);
+    }
+
+    public int isFinsh() {
+        int sum=0;
+        List<ActivityForThumbsUp> list= activityForThumbsUpRepo.findByIsowner(true);
+        for (ActivityForThumbsUp activity:list){
+            if (activity.getList()!=null&&activity.getList().size()==40){
+                sum++;
+            }
+        }
+        return sum;
     }
 }
