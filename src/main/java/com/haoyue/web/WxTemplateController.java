@@ -24,6 +24,9 @@ public class WxTemplateController {
     //   /wxtemplate/save?sellerId=12&openId=12&formId=12&buttonName=按钮名
     @RequestMapping("/save")
     private Result save(WxTemplate wxTemplate){
+        if(wxTemplate.getSellerId().equals("9")||wxTemplate.getSellerId().equals("10")){
+            return new Result(false, Global.do_success,null,null);
+        }
         wxTemplate.setCreateDate(new Date());
         Calendar calendar=Calendar.getInstance();
         calendar.add(Calendar.DATE,7);

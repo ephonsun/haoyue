@@ -103,5 +103,20 @@ public class CustomerController {
     }
 
 
+    // /customer/update?openId=1213&sellerId=3&sex=性别&phone=手机号&email=邮箱&birthday=生日(例如 10-01)
+    // &province=省份&city=城市名称(调用高德地图api)
+    // http://lbs.amap.com/api/javascript-api/guide/map-data/geocoding
+    @RequestMapping("/update")
+    public Result update(Customer customer){
+        Customer customer1=customerService.findByOpenId(customer.getOpenId(),customer.getSellerId());
+        customer1.setSex(customer.getSex());
+        customer1.setPhone(customer.getPhone());
+        customer1.setEmail(customer.getEmail());
+        customer1.setBirthday(customer.getBirthday());
+        customer1.setProvince(customer.getProvince());
+        customer1.setCity(customer.getCity());
+        customerService.update(customer1);
+        return  new Result(false,Global.do_success,customer1,null);
+    }
 
 }

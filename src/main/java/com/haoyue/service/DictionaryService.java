@@ -397,40 +397,7 @@ public class DictionaryService {
     }
 
     public void flushMembers() {
-        //删除普通会员
-        memberService.delVip();
-        //高级会员和至尊会员降一级
-        List<Member> memberList = memberService.findByOpenIdIsNotNull();
-        String discount_1 = "";
-        String discount_2 = "";
-        String total_consume1 = "";
-        String total_consume2 = "";
-        List<Member> memberList1 = new ArrayList<>();
-        for (Member member : memberList) {
-            //找到买家对应的卖家会员模板信息
-            memberList1 = memberService.findBySellerIdAndOpenIdIsNull(member.getSellerId());
-            for (Member member1 : memberList1) {
-                if (member1.getLeavel().equals("lev1")) {
-                    discount_1 = member1.getDiscount();
-                    total_consume1 = member1.getTotal_consume();
-                }
-                if (member1.getLeavel().equals("lev2")) {
-                    discount_2 = member1.getDiscount();
-                    total_consume2 = member1.getTotal_consume();
-                }
-            }
-            if (member.getLeavel().equals("lev2")) {
-                member.setLeavel("lev1");
-                member.setDiscount(discount_1);
-                member.setTotal_consume(total_consume1);
-            }
-            if (member.getLeavel().equals("lev3")) {
-                member.setLeavel("lev2");
-                member.setDiscount(discount_2);
-                member.setTotal_consume(total_consume2);
-            }
-            memberService.save(member);
-        }
+
     }
 
     public void addEachDay2() {

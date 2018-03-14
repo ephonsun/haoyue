@@ -23,10 +23,13 @@ public class Customer {
     private String wxname;
     private String wxpic;
     private double expense;//花费
+    private int buynums;//购买次数
     private String name;
     private String email;
     private String birthday;
-
+    private String sex;//性别
+    private String province;
+    private String city;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:SS", timezone = "GMT+8")
     @Temporal(TemporalType.TIMESTAMP)
@@ -35,6 +38,39 @@ public class Customer {
 
     @OneToMany
     private List<Address> addressList;
+
+
+    public int getBuynums() {
+        return buynums;
+    }
+
+    public void setBuynums(int buynums) {
+        this.buynums = buynums;
+    }
+
+    public String getProvince() {
+        return province;
+    }
+
+    public void setProvince(String province) {
+        this.province = province;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getSex() {
+        return sex;
+    }
+
+    public void setSex(String sex) {
+        this.sex = sex;
+    }
 
     public String getName() {
         return name;

@@ -37,4 +37,6 @@ public interface MemberRepo extends BaseRepo<Member,Integer> {
     @Transactional
     @Query(nativeQuery = true,value = "update members set discount=?1 where seller_id=?3 and leavel=?2 and open_id is not null")
     void flushInfo(String discount, String leavel, String sellerId);
+
+    Member findBySellerIdAndLeavel(String sellerId, String leavel);
 }
