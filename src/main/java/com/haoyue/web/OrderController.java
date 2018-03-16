@@ -415,6 +415,9 @@ public class OrderController {
         Date date = new Date();
         //查询出指定商家的会员体系
         List<Member> memberList = memberService.findBySellerIdAndOpenIdIsNull(customer.getSellerId());
+        if(memberList==null||memberList.size()==0){
+            return;
+        }
         //查询出当前买家所对应的会员
         Member oldmember = memberService.findByOpenIdAndSellerId(customer.getOpenId(), customer.getSellerId());
         int index = 0;

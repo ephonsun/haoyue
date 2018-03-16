@@ -1,17 +1,16 @@
 package com.haoyue.web;
 
 import com.haoyue.pojo.Customer;
+import com.haoyue.pojo.Member;
 import com.haoyue.pojo.Seller;
 import com.haoyue.service.*;
-import com.haoyue.untils.Global;
-import com.haoyue.untils.HttpRequest;
-import com.haoyue.untils.Result;
-import com.haoyue.untils.WXAppletUserInfo;
+import com.haoyue.untils.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.text.ParseException;
 import java.util.Date;
 import java.util.Map;
 
@@ -32,6 +31,8 @@ public class CustomerController {
     private OrderService orderService;
     @Autowired
     private CommentService commentService;
+    @Autowired
+    private MemberService memberService;
 
 
     //关键词查询 商品分类查询
@@ -116,6 +117,21 @@ public class CustomerController {
         customer1.setProvince(customer.getProvince());
         customer1.setCity(customer.getCity());
         customerService.update(customer1);
+
+        //更新会员信息
+        Member member=memberService.findByOpenIdAndSellerId(customer.getOpenId(),customer.getSellerId());
+        if(member!=null){
+            member.setPhone(customer.getPhone());
+            member.setSex(customer.getSex());
+            member.setBirthday(customer.getBirthday());
+            try {
+                member.setBirthDate(StringUtils.formatDate2(new Date().getYear()+"-"+member.getBirthday()));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            memberService.save(member);
+        }
+
         return  new Result(false,Global.do_success,customer1,null);
     }
 
