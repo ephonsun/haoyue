@@ -2,10 +2,7 @@ package com.haoyue.web;
 
 import com.haoyue.Exception.MyException;
 import com.haoyue.pojo.Member;
-import com.haoyue.pojo.Order;
-import com.haoyue.pojo.OrderTotalPrice;
 import com.haoyue.service.MemberService;
-import com.haoyue.service.OrderService;
 import com.haoyue.untils.Global;
 import com.haoyue.untils.OSSClientUtil;
 import com.haoyue.untils.Result;
@@ -16,9 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -52,7 +47,6 @@ public class MemberController {
     }
 
 
-
     //上传图片  /member/uploadPics
     @RequestMapping("/uploadPics")
     public Result uploadPics(MultipartFile[] multipartFiles, Integer sellerId) throws MyException {
@@ -84,7 +78,6 @@ public class MemberController {
         }else {
             member = memberService.findByOpenIdAndSellerId(openId, sellerId);
         }
-
         return new Result(false, Global.do_success, member, null);
     }
 
@@ -95,7 +88,7 @@ public class MemberController {
     @RequestMapping("/list")
     public Result list_new(@RequestParam Map<String, String> map, @RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize) {
         Iterable<Member> iterable = memberService.list(map, pageNumber, pageSize);
-        return new Result(false, Global.do_success, null, null);
+        return new Result(false, Global.do_success, iterable, null);
     }
 
 }

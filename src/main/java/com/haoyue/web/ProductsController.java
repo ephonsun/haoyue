@@ -192,13 +192,17 @@ public class ProductsController {
             String price = null;
             String secondKillPrice = "0";
             String amount = null;
-            if (strings.length == 5) {
+            String pic=null;
+            if (strings.length == 6) {
                 color = strings[0];//颜色
                 size = strings[1];//尺码
                 discount = strings[2];//折扣价
                 price = strings[3];//原价
                 amount = strings[4];//库存
+                pic=strings[5];//每个商品分类对应一个图片
+
             } else {
+                //兼容旧的宝贝上传接口
                 color = strings[0];//颜色
                 size = strings[1];//尺码
                 discount = strings[2];//折扣价
@@ -224,6 +228,7 @@ public class ProductsController {
                 produtsType.setISDiscount(true);
                 produtsType.setDiscountPrice(Double.valueOf(discount));
             }
+            produtsType.setPic(pic);
             produtsType.setAmount(Integer.parseInt(amount));
             produtsType.setActive(true);
             produtsType.setPriceOld(0.0);

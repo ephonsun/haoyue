@@ -31,6 +31,15 @@ public class ProdutsType {
     private boolean isDiscount=false;//是否打折
     private Double discountPrice;//折扣价
     private Double secondKillPrice;//秒杀价
+    private String pic;//每个分类对应一个图片
+
+    public String getPic() {
+        return pic;
+    }
+
+    public void setPic(String pic) {
+        this.pic = pic;
+    }
 
     public Double getSecondKillPrice() {
         return secondKillPrice;
