@@ -3,10 +3,7 @@ package com.haoyue.web;
 import com.haoyue.Exception.MyException;
 import com.haoyue.pojo.Member;
 import com.haoyue.service.MemberService;
-import com.haoyue.untils.Global;
-import com.haoyue.untils.OSSClientUtil;
-import com.haoyue.untils.Result;
-import com.haoyue.untils.StringUtils;
+import com.haoyue.untils.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -49,7 +46,7 @@ public class MemberController {
 
     //上传图片  /member/uploadPics
     @RequestMapping("/uploadPics")
-    public Result uploadPics(MultipartFile[] multipartFiles, Integer sellerId) throws MyException {
+    public UploadSuccessResult uploadPics(MultipartFile[] multipartFiles, Integer sellerId) throws MyException {
         StringBuffer stringBuffer = new StringBuffer();
         synchronized (Global.object4) {
             try {
@@ -64,7 +61,7 @@ public class MemberController {
                 stringBuffer.append(",");
             }
         }
-        return new Result(false, Global.do_success, stringBuffer.toString(), null);
+        return new UploadSuccessResult(stringBuffer.toString());
     }
 
 

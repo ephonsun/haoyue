@@ -439,7 +439,7 @@ public class OrderController {
                 oldmember.setSellerId(customer.getSellerId());
                 oldmember.setBirthday(customer.getBirthday());
                 try {
-                    oldmember.setBirthDate(StringUtils.formatDate2(date.getYear() + "-" + customer.getBirthday()));
+                    oldmember.setBirthDate(StringUtils.formatDate2(Calendar.getInstance().get(Calendar.YEAR) + "-" + customer.getBirthday()+" 00:00:00"));
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }

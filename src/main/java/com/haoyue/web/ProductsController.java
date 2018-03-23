@@ -104,7 +104,7 @@ public class ProductsController {
         return new Result(false, Global.do_success, list, null);
     }
 
-    //  https://www.cslapp.com/seller/pro/findOne?pid=158
+    //  https://www.cslapp.com/seller/pro/findOne?pid=228
     @RequestMapping("/findOne")
     public Result findOne(Integer pid, String token, String pname, String ptype, String ptypep, String pcode) {
         Map<String, String> map = new HashMap<>();
@@ -158,6 +158,7 @@ public class ProductsController {
         }
     }
 
+    //  /seller/pro/save protypes参数追加值 =商品分类图片外链
     @RequestMapping("/save")
     @Transactional
     public Result update_all(Products products, String token, String protypes, String showHours, String killStart, String killEnd) throws FileNotFoundException, ParseException {
@@ -193,21 +194,23 @@ public class ProductsController {
             String secondKillPrice = "0";
             String amount = null;
             String pic=null;
-            if (strings.length == 6) {
+            if (strings.length == 7) {
                 color = strings[0];//颜色
                 size = strings[1];//尺码
                 discount = strings[2];//折扣价
                 price = strings[3];//原价
-                amount = strings[4];//库存
-                pic=strings[5];//每个商品分类对应一个图片
+                secondKillPrice=strings[4];//秒杀价
+                amount = strings[5];//库存
+                pic=strings[6];//每个商品分类对应一个图片
 
-            } else {
+            }
+            if(strings.length==6){
                 //兼容旧的宝贝上传接口
                 color = strings[0];//颜色
                 size = strings[1];//尺码
                 discount = strings[2];//折扣价
                 price = strings[3];//原价
-                secondKillPrice = strings[4];//秒杀价
+                secondKillPrice=strings[4];//秒杀价
                 amount = strings[5];//库存
             }
 

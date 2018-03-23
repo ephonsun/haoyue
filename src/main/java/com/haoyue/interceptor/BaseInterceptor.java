@@ -53,7 +53,7 @@ public class BaseInterceptor implements HandlerInterceptor {
         }
 
         //校验是否携带参数token
-        if (Global.urls().contains(url) || url.contains("super-admin") || url.contains("leave-message")) {
+        if (Global.urls().contains(url) || url.contains("super-admin") || url.contains("leave-message")||url.contains("uploadPics")) {
             return true;
         } else {
             String token = request.getParameter("token");

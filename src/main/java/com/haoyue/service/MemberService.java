@@ -102,6 +102,9 @@ public class MemberService {
                 else if(name.equals("wxname")){
                     bd.and(member.wxname.eq(value));
                 }
+                else if(name.equals("sellerId")){
+                    bd.and(member.sellerId.eq(value));
+                }
                 else if(name.equals("lev")){
                     bd.and(member.leavel.eq(value));
                 }
