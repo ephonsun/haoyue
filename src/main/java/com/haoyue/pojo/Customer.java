@@ -26,7 +26,8 @@ public class Customer {
     private int buynums;//购买次数
     private String name;
     private String email;
-    private String birthday;
+    private String birthday;// MM-dd
+    private String birthdays;//yyyy-MM-dd
     private String sex;//性别
     private String province;
     private String city;
@@ -39,6 +40,14 @@ public class Customer {
     @OneToMany
     private List<Address> addressList;
 
+
+    public String getBirthdays() {
+        return birthdays;
+    }
+
+    public void setBirthdays(String birthdays) {
+        this.birthdays = birthdays;
+    }
 
     public int getBuynums() {
         return buynums;

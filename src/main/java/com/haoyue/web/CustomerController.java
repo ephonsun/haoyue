@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.text.ParseException;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
 
@@ -113,7 +114,8 @@ public class CustomerController {
         customer1.setSex(customer.getSex());
         customer1.setPhone(customer.getPhone());
         customer1.setEmail(customer.getEmail());
-        customer1.setBirthday(customer.getBirthday());
+        customer1.setBirthdays(customer.getBirthday());
+        customer1.setBirthday(customer.getBirthday().substring(customer.getBirthday().indexOf("-")+1));
         customer1.setProvince(customer.getProvince());
         customer1.setCity(customer.getCity());
         customerService.update(customer1);
@@ -124,8 +126,10 @@ public class CustomerController {
             member.setPhone(customer.getPhone());
             member.setSex(customer.getSex());
             member.setBirthday(customer.getBirthday());
+            member.setProvince(customer.getProvince());
+            member.setCity(customer.getCity());
             try {
-                member.setBirthDate(StringUtils.formatDate2(new Date().getYear()+"-"+member.getBirthday()));
+                member.setBirthDate(StringUtils.formatDate2(Calendar.getInstance().get(Calendar.YEAR) + "-" + customer.getBirthday()+" 00:00:00"));
             } catch (ParseException e) {
                 e.printStackTrace();
             }

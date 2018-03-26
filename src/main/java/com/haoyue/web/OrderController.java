@@ -95,7 +95,7 @@ public class OrderController {
 
 
     // /order/clist?sellerId&openId&state&active=true
-    //  /order/clist?sellerId=122&openId=1221
+    //  http://www.cslapp.com/order/clist?sellerId=3&openId=ook0P0VO6YbmFq37iAazBWLDAnsg
     @RequestMapping("/clist")
     public Result clist(@RequestParam Map<String, String> map) {
         String openId = map.get("openId");
@@ -123,7 +123,6 @@ public class OrderController {
         if (StringUtils.isNullOrBlank(openId) || openId.equals("undefined")) {
             return new Result(true, Global.cannot_get_info, null, null);
         }
-
 
         Customer customer = customerService.findByOpenId(openId, sellerId);
         Order order = new Order();
@@ -437,7 +436,9 @@ public class OrderController {
                 oldmember.setCreateDate(date);
                 oldmember.setOpenId(customer.getOpenId());
                 oldmember.setSellerId(customer.getSellerId());
-                oldmember.setBirthday(customer.getBirthday());
+                oldmember.setBirthday(customer.getBirthdays());
+                oldmember.setProvince(customer.getProvince());
+                oldmember.setCity(customer.getCity());
                 try {
                     oldmember.setBirthDate(StringUtils.formatDate2(Calendar.getInstance().get(Calendar.YEAR) + "-" + customer.getBirthday()+" 00:00:00"));
                 } catch (ParseException e) {

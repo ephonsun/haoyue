@@ -30,6 +30,7 @@ public class Global {
     public static String member_exist="当前会员信息已经存在";
     public static String discount_not_set="店主未设置会员折扣";
     public static String leavel_undefined="leavel值为undefined，不合法";
+    public static String birthday_illegal="生日输入公式不合法,参照(年-月-日)";
 
     //抵用券
     public static String no_cashticket="抵用券已被抢完";

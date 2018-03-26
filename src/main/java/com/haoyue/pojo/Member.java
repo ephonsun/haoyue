@@ -28,7 +28,7 @@ public class Member {
     private String sex;
     private String groupName;//会员对应分组
     private String email;
-    private String leavel;//普通会员 高级会员 至尊会员  lev1 lev2 lev3
+    private String leavel;//普通会员 高级会员 至尊会员  lev1 lev2 lev3 lev4
     private double total_consume;//最低消费  会员消费
     private double avg_consume;//平均消费额
     private int nums;//购买次数
@@ -36,6 +36,8 @@ public class Member {
     private int productnums;//宝贝件数
     private String pic;
     private String receiveAddress;
+    private String province;
+    private String city;
     private boolean active = true;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:SS", timezone = "GMT+8")
     @Temporal(TemporalType.TIMESTAMP)
@@ -50,6 +52,21 @@ public class Member {
     @Temporal(TemporalType.TIMESTAMP)
     private Date birthDate;//生日日期
 
+    public String getProvince() {
+        return province;
+    }
+
+    public void setProvince(String province) {
+        this.province = province;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
 
     public double getAvg_consume() {
         return avg_consume;
