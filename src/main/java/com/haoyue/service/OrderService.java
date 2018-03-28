@@ -481,7 +481,7 @@ public class OrderService {
 
     public void unpayFlush() {
         Date date=new Date();
-        orderRepo.unpayFlush(date);
+        orderRepo.unpayFlush(date,"待付款订单");
     }
 
     public void updateWxname(String wxname, Integer cid) {

@@ -38,7 +38,9 @@ public class ProductsController {
     private LuckDrawService luckDrawService;
 
 
-    //  http://localhost:8080/seller/pro/list?token=1&active=false
+    //  https://www.cslapp.com/seller/pro/list?token=3&key=商品名称&pcode=商品编号&
+    //  mothsale_from=销量开始&mothsale_to=销量结束&price_from=价格开始&price_to=价格结束
+    //  &ptypename=宝贝分类
     //  商品列表-在售  追加参数 showdate=yes
     //  商品列表-预售  追加参数 showdate=no
     // 秒杀商品列表  追加参数 killproduct=true

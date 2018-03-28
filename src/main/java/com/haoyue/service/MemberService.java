@@ -91,7 +91,8 @@ public class MemberService {
         Date dateto=null;
         Date birthfrom=null;
         Date birthto=null;
-
+        //筛选openId不为null的数据
+        bd.and(member.openId.isNotNull());
         for (String name : map.keySet()) {
             String value = (String) map.get(name);
             if (!(StringUtils.isNullOrBlank(value))) {
@@ -181,8 +182,5 @@ public class MemberService {
     public Member findById(int id) {
         return memberRepo.findOne(id);
     }
-
-
-
 
 }

@@ -114,7 +114,7 @@ public class OrderController {
 
 
     @RequestMapping("/save")
-    public Result save(String deliver_price, Integer proId, Integer proTypeId, String sellerId, String receiver, String phone, String address, Integer amount, String openId, String leaveMessage, String usevip, String wxname, String cashTicketCode) {
+    public Result save(String deliver_price, Integer proId, Integer proTypeId, String sellerId, String receiver, String phone, String address, Integer amount, String openId, String leaveMessage, String wxname, String cashTicketCode) {
         //  当用户点击拒接获取信息后，导致wxname,wxpic为空
         if (StringUtils.isNullOrBlank(wxname)) {
             return new Result(true, Global.cannot_get_info, null, null);
@@ -207,10 +207,10 @@ public class OrderController {
         order.setState(Global.order_unpay);
         //总计
         order.setTotalPrice(order.getPrice() + order.getDeliver().getPrice());
-        //是否使用会员卡
-        if (!StringUtils.isNullOrBlank(usevip) && usevip.equals("yes")) {
-            Member member = memberService.findByOpenIdAndSellerId(openId, sellerId);
-            order.setTotalPrice(order.getTotalPrice() * Double.valueOf(member.getDiscount()));
+        //是否是会员  订单总价=商品价*折扣+快递费用
+        Member member = memberService.findByOpenIdAndSellerId(openId, sellerId);
+        if (member!=null) {
+            order.setTotalPrice(order.getPrice() * Double.valueOf(member.getDiscount())+order.getDeliver().getPrice());
         }
         //是否使用抵用券
         if (!StringUtils.isNullOrBlank(cashTicketCode)) {

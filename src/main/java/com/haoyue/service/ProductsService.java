@@ -113,6 +113,10 @@ public class ProductsService {
         QProducts pro = QProducts.products;
         BooleanBuilder bd = new BooleanBuilder();
         Date date = new Date();
+        int monthsale_from=0;
+        int monthsale_to=0;
+        double price_from=0;
+        double price_to=0;
         for (String name : map.keySet()) {
             String value = (String) map.get(name);
             if (!(StringUtils.isNullOrBlank(value))) {
@@ -122,6 +126,9 @@ public class ProductsService {
                 if (name.equals("key")) {
                     bd.and(pro.pname.contains(value));
                 }
+                if (name.equals("pcode")) {
+                    bd.and(pro.pcode.contains(value));
+                }
                 if (name.equals("ptypename")) {
                     bd.and(pro.ptypeName.contains(value));
                 }
@@ -130,12 +137,30 @@ public class ProductsService {
                     bd.and(pro.active.eq(Boolean.valueOf(value)));
                     bd.or(pro.showDate.after(date));
                 }
+                if (name.equals("mothsale_from")) {
+                   monthsale_from=Integer.parseInt(value);
+                }
+                if (name.equals("mothsale_to")) {
+                    monthsale_to=Integer.parseInt(value);
+                }
+                if (name.equals("price_from")) {
+                    price_from=Double.valueOf(value);
+                }
+                if (name.equals("price_to")) {
+                    price_to=Double.valueOf(value);
+                }
                 if (name.equals("killproduct")) {
                     bd.and(pro.issecondkill.eq(true));
                     bd.and(pro.secondKillStart.before(date));
                     bd.and(pro.secondKillEnd.after(date));
                 }
             }
+        }
+        if(monthsale_from>=0&&monthsale_to!=0){
+            bd.and(pro.monthSale.between(monthsale_from,monthsale_to));
+        }
+        if(price_from>=0&&price_to!=0){
+            bd.and(pro.produtsTypes.any().priceNew.between(price_from,price_to));
         }
         return productsRepo.findAll(bd.getValue(), new PageRequest(pagenumber, pagesize, new Sort(Sort.Direction.DESC, new String[]{"monthSale"})));
     }
