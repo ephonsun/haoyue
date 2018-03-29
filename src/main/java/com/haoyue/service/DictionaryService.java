@@ -234,7 +234,7 @@ public class DictionaryService {
                         // key=sellerId value=yes
                         String pagePath = getPagePath(sellerId, "秒杀");
                         Seller seller = sellerService.findOne(Integer.parseInt(sellerId));
-                        addTemplate(customer.getWxname(), wxTemplate.getFormId(), wxTemplate.getOpenId(), seller.getService_template_msg(), pagePath, seller.getSellerId(), seller.getService_template());
+                        addTemplate(customer.getWxname(), wxTemplate.getFormId(), wxTemplate.getOpenId(), Global.wxtemplate_msg3, pagePath, seller.getSellerId(), seller.getService_template());
                         wxTemplate.setActive(false);
                         wxTemplateService.save(wxTemplate);
                         break;

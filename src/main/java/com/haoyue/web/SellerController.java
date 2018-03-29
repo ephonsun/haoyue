@@ -314,7 +314,7 @@ public class SellerController {
      * @param token
      * @param pageSize
      * @return
-     * https://www.cslapp.com/seller/index.action?token=3
+     * https://www.cslapp.com/seller/index?token=3
      */
     @RequestMapping("/index")
     public Result index(Integer token, Integer pageSize) {

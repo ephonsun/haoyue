@@ -136,11 +136,8 @@ public class Global {
   
 
     //微信模板信息访问通知
-<<<<<<< HEAD
-    //public static String wxtemplate_msg1="3月5日各种活动：小香套装最低360元起，还有各种团购，秒杀，记得围观哦！";//日常访问通知
-=======
-    //public static String wxtemplate_msg1="海量春款上新中。。。置顶关注，每天都有大不同哦!";//日常访问通知
->>>>>>> lijia
+
+    public static String wxtemplate_msg1="3月5日各种活动：小香套装最低360元起，还有各种团购，秒杀，记得围观哦！";//日常访问通知
     public static String wxtemplate_msg2="亲爱的，您喜欢的宝贝上架啦，貌似新品有限时折扣！";//预售通知
     public static String wxtemplate_msg3="置顶关注，限时巨划算怎能错过！";//秒杀通知
     public static Map<String,String> yushou_map=new HashMap<>();
