@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.*;
+import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.util.*;
 import java.util.Collections;
 
@@ -93,7 +95,7 @@ public class OrderController {
 
 
     // /order/clist?sellerId&openId&state&active=true
-    //  /order/clist?sellerId=122&openId=1221
+    //  http://www.cslapp.com/order/clist?sellerId=3&openId=ook0P0VO6YbmFq37iAazBWLDAnsg
     @RequestMapping("/clist")
     public Result clist(@RequestParam Map<String, String> map) {
         String openId = map.get("openId");
@@ -105,18 +107,23 @@ public class OrderController {
 
     //   /order/findOne?oid=订单Id&openId=2221
     @RequestMapping("/findOne")
-    public Result findOne(Integer oid,String openId) {
+    public Result findOne(Integer oid, String openId) {
         Order order = orderService.findOne(oid);
         return new Result(false, Global.do_success, order, null);
     }
 
 
     @RequestMapping("/save")
-    public Result save(String deliver_price, Integer proId, Integer proTypeId, String sellerId, String receiver, String phone, String address, Integer amount, String openId, String leaveMessage, String usevip, String wxname, String cashTicketCode) {
-        //当用户点击拒接获取信息后，导致openId为空
+    public Result save(String deliver_price, Integer proId, Integer proTypeId, String sellerId, String receiver, String phone, String address, Integer amount, String openId, String leaveMessage, String wxname, String cashTicketCode) {
+        //  当用户点击拒接获取信息后，导致wxname,wxpic为空
+        if (StringUtils.isNullOrBlank(wxname)) {
+            return new Result(true, Global.cannot_get_info, null, null);
+        }
+        //  当用户点击拒接获取信息后，导致openId为空
         if (StringUtils.isNullOrBlank(openId) || openId.equals("undefined")) {
             return new Result(true, Global.cannot_get_info, null, null);
         }
+
         Customer customer = customerService.findByOpenId(openId, sellerId);
         Order order = new Order();
         //客户
@@ -127,11 +134,23 @@ public class OrderController {
         order.setLeaveMessage_seller("");
         //商品
         Products products = productsService.findOne(proId);
+        //商品分类
+        ProdutsType produtsType = produtsTypeService.findOne(proTypeId);
+        //计算商品价格
+        double product_price = 0;
+        //折扣价
+        product_price = produtsType.getDiscountPrice();
+        if (products.getSecondKillStart() != null && products.getSecondKillEnd() != null) {
+            Date date = new Date();
+            //秒杀时间段
+            if (date.before(products.getSecondKillEnd()) && date.after(products.getSecondKillStart())) {
+                product_price = produtsType.getSecondKillPrice();
+            }
+        }
         List<Products> productses = new ArrayList<>();
         productses.add(products);
         order.setProducts(productses);
-        //商品分类
-        ProdutsType produtsType = produtsTypeService.findOne(proTypeId);
+
         //判断库存量是否足够
         if (produtsType.getAmount() < amount) {
             return new Result(true, Global.amount_notEnough, null, null);
@@ -162,8 +181,8 @@ public class OrderController {
         order.setAddress(address1);
         //日期
         order.setCreateDate(new Date());
-        Calendar calendar=Calendar.getInstance();
-        calendar.add(Calendar.DATE,3);
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DATE, 3);
         order.setLatestDate(calendar.getTime());
         //数量
         order.setAmount(amount);
@@ -174,7 +193,7 @@ public class OrderController {
         //原价
         order.setOldPrice(produtsType.getPriceOld() == null ? produtsType.getPriceNew() : produtsType.getPriceOld());
         //现价
-        order.setPrice(produtsType.getDiscountPrice() * amount);
+        order.setPrice(product_price * amount);
         //订单号 唯一
         synchronized (Global.object) {
             order.setOrderCode(Global.order_code_begin + (Global.count++) + new Date().getTime());
@@ -188,10 +207,10 @@ public class OrderController {
         order.setState(Global.order_unpay);
         //总计
         order.setTotalPrice(order.getPrice() + order.getDeliver().getPrice());
-        //是否使用会员卡
-        if (!StringUtils.isNullOrBlank(usevip) && usevip.equals("yes")) {
-            Member member = memberService.findByOpenIdAndSellerId(openId, sellerId);
-            order.setTotalPrice(order.getTotalPrice() * Double.valueOf(member.getDiscount()));
+        //是否是会员  订单总价=商品价*折扣+快递费用
+        Member member = memberService.findByOpenIdAndSellerId(openId, sellerId);
+        if (member!=null) {
+            order.setTotalPrice(order.getPrice() * Double.valueOf(member.getDiscount())+order.getDeliver().getPrice());
         }
         //是否使用抵用券
         if (!StringUtils.isNullOrBlank(cashTicketCode)) {
@@ -317,21 +336,27 @@ public class OrderController {
                 addTemplate(order);
             }
             orderService.update(order);
-            //更新个人花费总额
+            //更新个人花费总额 + 订单总价（不包括邮费）
             Customer customer = customerService.findOne(order.getCustomerId());
-            customer.setExpense(customer.getExpense() + order.getTotalPrice());
+            double expense = customer.getExpense() + order.getPrice();
+            //保留两位小数
+            DecimalFormat decimalFormat = new DecimalFormat("#.##");
+            customer.setExpense(Double.valueOf(decimalFormat.format(expense)));
+            customer.setBuynums(customer.getBuynums() + 1);
             customerService.update(customer);
+            //更新会员信息
+            saveMember(order, customer);
 
             return new Result(false, Global.do_success, order, null);
         }
     }
 
-    // https://www.cslapp.com/order/excel?sellerId=3&oids=714=715
-    // http://localhost:8080/order/excel?sellerId=1&state=已完成订单&openId=1
+    //订单转excel
     @RequestMapping("/excel")
     public Result excel(String sellerId, String oids) throws IOException {
         return orderService.excel(sellerId, oids);
     }
+
 
     @RequestMapping("/update")
     public Result update(Order order, String selleId, String changePrice) {
@@ -375,63 +400,100 @@ public class OrderController {
         return new Result(false, Global.do_success, iterable, null);
     }
 
-
-    //每当买家订单付款后会更新该买家的会员信息
-    public void saveMember(Order order) {
-        String cid = order.getCustomerId() + "";
-        String open_id = customerService.findOpenIdById(cid);
-        double total_price = orderService.getToTalPriceByCustomerId(cid, order.getSellerId() + "", orderService.getdate());
-        List<Member> memberList = memberService.findBySellerIdAndOpenIdIsNull(order.getSellerId() + "");
-        int leavel = 0;
-        String lev_1 = "";
-        String lev_2 = "";
-        String lev_3 = "";
-        for (Member member : memberList) {
-            if (total_price >= Double.valueOf(member.getTotal_consume())) {
-                leavel++;
-            }
-            if (member.getLeavel().equals("lev1")) {
-                lev_1 = member.getDiscount();
-            }
-            if (member.getLeavel().equals("lev2")) {
-                lev_2 = member.getDiscount();
-            }
-            if (member.getLeavel().equals("lev3")) {
-                lev_3 = member.getDiscount();
-            }
-        }
-        if (leavel != 0) {
-            Member member = memberService.findByOpenIdAndSellerId(open_id, order.getSellerId() + "");
-            // 区别被降级的会员和升级的会员
-            if (total_price > Double.valueOf(member.getTotal_consume())) {
-                if (member == null && member.getId() == null) {
-                    member = new Member();
-                    member.setOpenId(open_id);
-                    member.setSellerId(order.getSellerId() + "");
-                    member.setCreateDate(new Date());
-                }
-                member.setTotal_consume(String.valueOf(total_price));
-                member.setLeavel("lev" + leavel);
-                if (leavel == 1) {
-                    member.setDiscount(lev_1);
-                }
-                if (leavel == 2) {
-                    member.setDiscount(lev_2);
-                }
-                if (leavel == 3) {
-                    member.setDiscount(lev_3);
-                }
-                member.setWxname(order.getWxname());
-                memberService.save(member);
-                if (StringUtils.isNullOrBlank(member.getCode())) {
-                    member.setCode((8888 + member.getId()) + "");
-                    memberService.save(member);
-                }
-            }
-        }
+    //  http://localhost:8080/order/deliver?sellerId=1&code=3910771985669
+    @RequestMapping("/deliver")
+    public Result kuaidi(String sellerId, String code) {
+        String result = Kuaidi.getDetail(code);
+        System.out.println(result);
+        return new Result(false, Global.do_success, result, null);
     }
 
-    public void getTemplate(Template template, int sellerId,int oid) {
+
+    //每当买家订单付款后会更新该买家的会员信息
+    public void saveMember(Order order, Customer customer) {
+        Date date = new Date();
+        //查询出指定商家的会员体系
+        List<Member> memberList = memberService.findBySellerIdAndOpenIdIsNull(customer.getSellerId());
+        if(memberList==null||memberList.size()==0){
+            return;
+        }
+        //查询出当前买家所对应的会员
+        Member oldmember = memberService.findByOpenIdAndSellerId(customer.getOpenId(), customer.getSellerId());
+        int index = 0;
+        Member memberto = null;
+        //判断该买家处于会员系统的哪一个等级
+        for (Member m : memberList) {
+            if (customer.getBuynums() >= m.getNums() || customer.getExpense() >= m.getTotal_consume()) {
+                index++;
+                memberto = m;
+            }
+        }
+        //更新买家信息到会员系统,当前消费额或者次数大于会员体系,不管旧的会员是否存在
+        if (index != 0) {
+            if (oldmember == null) {
+                //新建会员信息
+                oldmember = new Member();
+                oldmember.setCreateDate(date);
+                oldmember.setOpenId(customer.getOpenId());
+                oldmember.setSellerId(customer.getSellerId());
+                oldmember.setBirthday(customer.getBirthdays());
+                oldmember.setProvince(customer.getProvince());
+                oldmember.setCity(customer.getCity());
+                try {
+                    oldmember.setBirthDate(StringUtils.formatDate2(Calendar.getInstance().get(Calendar.YEAR) + "-" + customer.getBirthday()+" 00:00:00"));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                oldmember.setEmail(customer.getEmail());
+                oldmember.setPhone(customer.getPhone());
+                oldmember.setReceiveAddress(order.getAddress().getAddress());
+                oldmember.setSex(customer.getSex());
+                oldmember.setWxname(customer.getWxname());
+                oldmember.setLeavel(memberto.getLeavel());
+                oldmember.setDiscount(memberto.getDiscount());
+            } else {
+                //更改旧的会员信息
+                //等级有变化
+                if (!oldmember.getLeavel().equals(memberto.getLeavel())) {
+                    //获取 lev1 最后的数字 1
+                    int before = Integer.parseInt(oldmember.getLeavel().substring(3));
+                    int after = Integer.parseInt(memberto.getLeavel().substring(3));
+                    //等级降低了，说明卖家提高了消费次数或金额
+                    if (before < after) {
+                        //保持现有等级和折扣不变
+                    } else {
+                        //等级提高了
+                        oldmember.setLeavel(memberto.getLeavel());
+                        oldmember.setDiscount(memberto.getDiscount());
+                    }
+                }
+
+            }
+            oldmember.setNums(oldmember.getNums() + 1);
+            oldmember.setTotal_consume(oldmember.getTotal_consume() + order.getTotalPrice());
+            oldmember.setLatestBuyDate(date);
+            oldmember.setProductnums(oldmember.getProductnums() + order.getProducts().size());
+            //保留两位小数
+            DecimalFormat decimalFormat = new DecimalFormat("#.##");
+            oldmember.setAvg_consume(Double.valueOf(decimalFormat.format(oldmember.getTotal_consume() / oldmember.getNums())));
+            memberService.save(oldmember);
+        }
+        //更新买家信息到会员系统,当前消费额或者次数小于会员体系,旧的会员信息存在
+        //保持当前会员等级和折扣不变
+        if(index==0&&oldmember!=null){
+            oldmember.setNums(oldmember.getNums() + 1);
+            oldmember.setTotal_consume(oldmember.getTotal_consume() + order.getTotalPrice());
+            oldmember.setLatestBuyDate(date);
+            oldmember.setProductnums(oldmember.getProductnums() + order.getProducts().size());
+            //保留两位小数
+            DecimalFormat decimalFormat = new DecimalFormat("#.##");
+            oldmember.setAvg_consume(Double.valueOf(decimalFormat.format(oldmember.getTotal_consume() / oldmember.getNums())));
+            memberService.save(oldmember);
+        }
+
+    }
+
+    public void getTemplate(Template template, int sellerId, int oid) {
         //获取 appId 和 secret 8bcdb74a9915b5685fa0ec37f6f25b24
         Seller seller = sellerService.findOne(sellerId);
         //模板信息通知用户
@@ -441,13 +503,13 @@ public class OrderController {
         String access_token = HttpRequest.sendPost(access_token_url, param1);
         access_token = access_token.substring(access_token.indexOf(":") + 2, access_token.indexOf(",") - 1);
         //发送模板信息
-        String form_id = Global.package_map.get(oid+"");
+        String form_id = Global.package_map.get(oid + "");
         template.setForm_id(form_id);
         String url = "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token=" + access_token + "&form_id=" + form_id;
         String result = CommonUtil.httpRequest(url, "POST", template.toJSON());
-        System.out.println("付款通知：：："+result);
+        System.out.println("付款通知：：：" + result);
         //刷新 Global.package_map
-        Global.package_map.remove(oid+"");
+        Global.package_map.remove(oid + "");
     }
 
     public void addTemplate(Order order) {
@@ -490,7 +552,14 @@ public class OrderController {
         template.setTopColor("#000000");
         template.setPage("pages/index/index");
         template.setToUser(customerService.findOpenIdById(order.getCustomerId() + ""));
-        getTemplate(template, order.getSellerId(),order.getId());
+        getTemplate(template, order.getSellerId(), order.getId());
+    }
+
+    //  http://localhost:8080/order/flush?sellerId=3
+    @RequestMapping("/flush")
+    public Result flush(String sellerId){
+        orderService.unpayFlush();
+        return new Result(false,Global.do_success,null,null);
     }
 
 }

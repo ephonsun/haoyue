@@ -40,7 +40,7 @@ public class BaseInterceptor implements HandlerInterceptor {
         }
         String url = request.getRequestURI();
         //如果是拼多多直接跳过
-        if (url.contains("/tuan")||url.contains("website")){
+        if (url.contains("/tuan")||url.contains("website")||url.contains("activity")){
             return true;
         }
         //注入service
@@ -53,7 +53,7 @@ public class BaseInterceptor implements HandlerInterceptor {
         }
 
         //校验是否携带参数token
-        if (Global.urls().contains(url) || url.contains("super-admin") || url.contains("leave-message")) {
+        if (Global.urls().contains(url) || url.contains("super-admin") || url.contains("leave-message")||url.contains("uploadPics")) {
             return true;
         } else {
             String token = request.getParameter("token");

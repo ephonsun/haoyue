@@ -3,7 +3,9 @@ package com.haoyue.tuangou.service;
 
 import com.haoyue.tuangou.pojo.QTProducts;
 import com.haoyue.tuangou.pojo.TProducts;
+import com.haoyue.tuangou.pojo.TUserSale;
 import com.haoyue.tuangou.repo.TProductsRepo;
+import com.haoyue.tuangou.repo.TUserSaleRepo;
 import com.haoyue.tuangou.utils.QRcode;
 import com.haoyue.tuangou.utils.StringUtils;
 import com.haoyue.tuangou.utils.TGlobal;
@@ -31,6 +33,8 @@ public class TProductsService {
     private TProductsRepo tProductsRepo;
     @Autowired
     private TuanOrdersService tuanOrdersService;
+    @Autowired
+    private TUserSaleRepo tUserSaleRepo;
 
     public void save(TProducts tProducts) {
         tProductsRepo.save(tProducts);
@@ -197,8 +201,9 @@ public class TProductsService {
     //生成二维码
     public String qrcode(String saleId, String pid) throws FileNotFoundException {
 
+        TUserSale tUserSale=tUserSaleRepo.findOne(Integer.parseInt(saleId));
         String access_token_url = "https://api.weixin.qq.com/cgi-bin/token";
-        String param1 = "grant_type=client_credential&appid=wxf80175142f3214e1&secret=e0251029d53d21e84a650681af6139b1";
+        String param1 = "grant_type=client_credential&appid="+tUserSale.getAppId()+"&secret="+tUserSale.getSecret();
         String access_token = HttpRequest.sendPost(access_token_url, param1);
         access_token = access_token.substring(access_token.indexOf(":") + 2, access_token.indexOf(",") - 1);
 

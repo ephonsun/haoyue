@@ -10,7 +10,7 @@ import java.util.Date;
  * 退款结果记录
  */
 @Entity
-@Table(name = "t_paybackdeal")
+@Table(name = "paybackdeal")
 public class PayBackDeal {
 
     @Id

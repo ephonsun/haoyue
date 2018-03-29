@@ -38,9 +38,11 @@ public class ProductsController {
     private LuckDrawService luckDrawService;
 
 
-    //  http://localhost:8080/seller/pro/list?token=1&active=false
+    //  https://www.cslapp.com/seller/pro/list?token=3&key=商品名称&pcode=商品编号&
+    //  mothsale_from=销量开始&mothsale_to=销量结束&price_from=价格开始&price_to=价格结束
+    //  &ptypename=宝贝分类
     //  商品列表-在售  追加参数 showdate=yes
-    //   商品列表-预售  追加参数 showdate=no
+    //  商品列表-预售  追加参数 showdate=no
     // 秒杀商品列表  追加参数 killproduct=true
     @RequestMapping("/list")
     public Result list(@RequestParam Map<String, String> map, @RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize) {
@@ -101,14 +103,16 @@ public class ProductsController {
     @RequestMapping("/recommend")
     public Result Recommend(String sellerId, String pid) {
         List<Products> list = productsService.recommend(sellerId, pid);
-        return new Result(false, Global.do_success, list,null);
+        return new Result(false, Global.do_success, list, null);
     }
 
+    //  https://www.cslapp.com/seller/pro/findOne?pid=228
     @RequestMapping("/findOne")
-    public Result findOne(Integer pid, String token, String pname, String ptype, String pcode) {
+    public Result findOne(Integer pid, String token, String pname, String ptype, String ptypep, String pcode) {
         Map<String, String> map = new HashMap<>();
         map.put("pname", pname);
         map.put("ptype", ptype);
+        map.put("ptypep", ptypep);
         map.put("token", token);
         if (!StringUtils.isNullOrBlank(pcode)) {
             Products products = productsService.findByPcode(pcode);
@@ -156,15 +160,19 @@ public class ProductsController {
         }
     }
 
+    //  /seller/pro/save protypes参数追加值 =商品分类图片外链
     @RequestMapping("/save")
     @Transactional
     public Result update_all(Products products, String token, String protypes, String showHours, String killStart, String killEnd) throws FileNotFoundException, ParseException {
+
+
         //上线时间
         if (!StringUtils.isNullOrBlank(showHours)) {
             products.setShowDate(StringUtils.formatDate2(showHours));
         } else {
             products.setShowDate(new Date());
         }
+
         //秒杀
         if (products.getIssecondkill()) {
             products.setSecondKillStart(StringUtils.formatDate2(killStart));
@@ -187,18 +195,24 @@ public class ProductsController {
             String price = null;
             String secondKillPrice = "0";
             String amount = null;
-            if (strings.length == 5) {
+            String pic=null;
+            if (strings.length == 7) {
                 color = strings[0];//颜色
                 size = strings[1];//尺码
                 discount = strings[2];//折扣价
                 price = strings[3];//原价
-                amount = strings[4];//库存
-            } else {
+                secondKillPrice=strings[4];//秒杀价
+                amount = strings[5];//库存
+                pic=strings[6];//每个商品分类对应一个图片
+
+            }
+            if(strings.length==6){
+                //兼容旧的宝贝上传接口
                 color = strings[0];//颜色
                 size = strings[1];//尺码
                 discount = strings[2];//折扣价
                 price = strings[3];//原价
-                secondKillPrice = strings[4];//秒杀价
+                secondKillPrice=strings[4];//秒杀价
                 amount = strings[5];//库存
             }
 
@@ -219,6 +233,7 @@ public class ProductsController {
                 produtsType.setISDiscount(true);
                 produtsType.setDiscountPrice(Double.valueOf(discount));
             }
+            produtsType.setPic(pic);
             produtsType.setAmount(Integer.parseInt(amount));
             produtsType.setActive(true);
             produtsType.setPriceOld(0.0);
@@ -247,8 +262,6 @@ public class ProductsController {
                 }
             }
             productsService.save(products);
-            //商品分类更新
-            productsService.update_ptype(products);
             //设置商品号
             if (StringUtils.isNullOrBlank(products.getPcode())) {
                 Seller seller = sellerService.findOne(Integer.parseInt(token));
@@ -283,20 +296,17 @@ public class ProductsController {
         return new Result(false, Global.do_success, products, null);
     }
 
-    //  /seller/pro/update_monthsale?pid=商品Id&monthSale=销量&sellerId=1
+    //  https://www.cslapp.com/seller/pro/update_monthsale?pid=174&sellerId=3&monthSale=销量
     @RequestMapping("/update_monthsale")
-    public Result updateMonthSale(int pid,int monthSale,int sellerId){
-        if (monthSale<0){
-            return new Result(true, "销量"+Global.data_unright, null, null);
+    public Result updateMonthSale(int pid, int monthSale, int sellerId) {
+        if (monthSale < 0) {
+            return new Result(true, "销量" + Global.data_unright, null, null);
         }
-        Products products=productsService.findOne(pid);
+        Products products = productsService.findOne(pid);
         products.setMonthSale(monthSale);
         productsService.update(products);
         return new Result(false, Global.do_success, products, null);
     }
-
-
-
 
 
 }

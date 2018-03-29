@@ -144,7 +144,6 @@ public class DictionaryService {
             Date date = new Date();
             for (String openid : openids) {
                 //方便自己观察模板信息发送情况  ook0P0VO6YbmFq37iAazBWLDAnsg
-                //  select * from wx_template where open_id=ook0P0VO6YbmFq37iAazBWLDAnsg and active=true
                 if (date.getHours() == 12 || openid.equals("ook0P0VO6YbmFq37iAazBWLDAnsg")) {
                     //过滤
                     if (openid == null || openid.equals("undefined")) {
@@ -321,9 +320,34 @@ public class DictionaryService {
         }
     }
 
+
+    //官网小程序访问通知
+    public void website_inform() {
+        //首先更新一下表数据
+        wxTemplateService.updateActive();
+        List<WxTemplate> list = wxTemplateService.findByButtonName("官网");
+        String pagePath = "pages/index/index";
+        String templateId = "_vURY92OKlK5MiN-zZydqz0Nx1tp8-lZTe-e0pPen6Q";
+        String message = "皓月小程序制作访问通知(测试)";
+        for (WxTemplate wxTemplate : list) {
+            Customer customer = customerService.findByOpenId(wxTemplate.getOpenId(), wxTemplate.getSellerId());
+            addTemplate(customer.getWxname(), wxTemplate.getFormId(), customer.getOpenId(), message, pagePath, Integer.parseInt(wxTemplate.getSellerId()), templateId);
+        }
+    }
+
     public String getPagePath(String sellerId, String key) {
         String pagePath = "";
-        String ptypename = ptypeNamesService.findBySellerId(sellerId).getPtypename();
+        PtypeNames parents = ptypeNamesService.findBySellerId(sellerId);
+        String ptypename = parents.getPtypenames();
+//        if (parents != null) {
+//            ptypename = parents.getPtypenames();
+//        } else {
+//            for (PtypeNames p : list) {
+//                if (!StringUtils.isNullOrBlank(p.getPtypename())) {
+//                    ptypename += "," + p.getPtypename();
+//                }
+//            }
+//        }
         String[] ptypenames = ptypename.split(",");
         for (int i = 0; i < ptypenames.length; i++) {
             if (!StringUtils.isNullOrBlank(ptypenames[i]) && ptypenames[i].contains(key)) {
@@ -349,8 +373,8 @@ public class DictionaryService {
                 continue;
             }
             old_date = deliver.getCreateDate();
-            if(old_date==null){
-               old_date=order.getCreateDate();
+            if (old_date == null) {
+                old_date = order.getCreateDate();
             }
             //判断距离发货日期的时间差
             if ((now_date.getTime() - old_date.getTime()) > 1000 * 60 * 60 * 24 * 15) {
@@ -373,40 +397,7 @@ public class DictionaryService {
     }
 
     public void flushMembers() {
-        //删除普通会员
-        memberService.delVip();
-        //高级会员和至尊会员降一级
-        List<Member> memberList = memberService.findByOpenIdIsNotNull();
-        String discount_1 = "";
-        String discount_2 = "";
-        String total_consume1 = "";
-        String total_consume2 = "";
-        List<Member> memberList1 = new ArrayList<>();
-        for (Member member : memberList) {
-            //找到买家对应的卖家会员模板信息
-            memberList1 = memberService.findBySellerIdAndOpenIdIsNull(member.getSellerId());
-            for (Member member1 : memberList1) {
-                if (member1.getLeavel().equals("lev1")) {
-                    discount_1 = member1.getDiscount();
-                    total_consume1 = member1.getTotal_consume();
-                }
-                if (member1.getLeavel().equals("lev2")) {
-                    discount_2 = member1.getDiscount();
-                    total_consume2 = member1.getTotal_consume();
-                }
-            }
-            if (member.getLeavel().equals("lev2")) {
-                member.setLeavel("lev1");
-                member.setDiscount(discount_1);
-                member.setTotal_consume(total_consume1);
-            }
-            if (member.getLeavel().equals("lev3")) {
-                member.setLeavel("lev2");
-                member.setDiscount(discount_2);
-                member.setTotal_consume(total_consume2);
-            }
-            memberService.save(member);
-        }
+
     }
 
     public void addEachDay2() {

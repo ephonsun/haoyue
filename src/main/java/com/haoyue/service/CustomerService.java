@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -88,5 +89,13 @@ public class CustomerService {
 
     public Customer findOne(Integer customerId) {
         return customerRepo.findOne(customerId);
+    }
+
+    public List<Customer> findByWxnamAndSellerId(String wxname, String sellerId) {
+        return customerRepo.findByWxnameAndSellerId(wxname,sellerId);
+    }
+
+    public Customer findByWebOpenIdAndSellerId(String webOpenId, String sellerId) {
+        return customerRepo.findByWebOpenIdAndSellerId(webOpenId,sellerId);
     }
 }

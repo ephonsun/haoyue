@@ -8,6 +8,7 @@ import java.util.Date;
 /**
  * Created by LiJia on 2017/10/31.
  * 会员
+ * 没有openId是卖家设置的会员等级
  */
 @Entity
 @Table(name = "members")
@@ -22,46 +23,169 @@ public class Member {
     private String code;//会员编号
     private String discount;//折扣
     private String wxname;
-    private String leavel;//普通会员 高级会员 至尊会员  lev1 lev2 lev3
-    private String total_consume;//最低消费
-    private String comment1;//领取会员卡下的备注
-    private String comment2;
-    private String comment3;
-    @JsonFormat(pattern="yyyy-MM-dd HH:mm:SS", timezone="GMT+8")
+    private String phone;
+    private String birthday;// 10-01
+    private String sex;
+    private String groupName;//会员对应分组
+    private String email;
+    private String leavel;//普通会员 高级会员 至尊会员  lev1 lev2 lev3 lev4
+    private double total_consume;//最低消费  会员消费
+    private double avg_consume;//平均消费额
+    private int nums;//购买次数
+    private int closenums;//关闭订单次数
+    private int productnums;//宝贝件数
+    private String pic;
+    private String receiveAddress;
+    private String province;
+    private String city;
+    private boolean active = true;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:SS", timezone = "GMT+8")
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(updatable=false)
+    @Column(updatable = false)
     private Date createDate;//创建日期
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:SS", timezone = "GMT+8")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date latestBuyDate;//上次购买日期
 
-    public String getComment1() {
-        return comment1;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:SS", timezone = "GMT+8")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date birthDate;//生日日期
+
+    public String getProvince() {
+        return province;
     }
 
-    public void setComment1(String comment1) {
-        this.comment1 = comment1;
+    public void setProvince(String province) {
+        this.province = province;
     }
 
-    public String getComment2() {
-        return comment2;
+    public String getCity() {
+        return city;
     }
 
-    public void setComment2(String comment2) {
-        this.comment2 = comment2;
+    public void setCity(String city) {
+        this.city = city;
     }
 
-    public String getComment3() {
-        return comment3;
+    public double getAvg_consume() {
+        return avg_consume;
     }
 
-    public void setComment3(String comment3) {
-        this.comment3 = comment3;
+    public void setAvg_consume(double avg_consume) {
+        this.avg_consume = avg_consume;
     }
 
-    public String getTotal_consume() {
+    public String getReceiveAddress() {
+        return receiveAddress;
+    }
+
+    public void setReceiveAddress(String receiveAddress) {
+        this.receiveAddress = receiveAddress;
+    }
+
+    public int getProductnums() {
+        return productnums;
+    }
+
+    public void setProductnums(int productnums) {
+        this.productnums = productnums;
+    }
+
+    public int getClosenums() {
+        return closenums;
+    }
+
+    public void setClosenums(int closenums) {
+        this.closenums = closenums;
+    }
+
+    public Date getBirthDate() {
+        return birthDate;
+    }
+
+    public void setBirthDate(Date birthDate) {
+        this.birthDate = birthDate;
+    }
+
+    public String getPic() {
+        return pic;
+    }
+
+    public void setPic(String pic) {
+        this.pic = pic;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getGroupName() {
+        return groupName;
+    }
+
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(String birthday) {
+        this.birthday = birthday;
+    }
+
+    public String getSex() {
+        return sex;
+    }
+
+    public void setSex(String sex) {
+        this.sex = sex;
+    }
+
+    public boolean getActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public Date getLatestBuyDate() {
+        return latestBuyDate;
+    }
+
+    public void setLatestBuyDate(Date latestBuyDate) {
+        this.latestBuyDate = latestBuyDate;
+    }
+
+    public int getNums() {
+        return nums;
+    }
+
+    public void setNums(int nums) {
+        this.nums = nums;
+    }
+
+
+    public double getTotal_consume() {
         return total_consume;
     }
 
-    public void setTotal_consume(String total_consume) {
+    public void setTotal_consume(double total_consume) {
         this.total_consume = total_consume;
     }
 

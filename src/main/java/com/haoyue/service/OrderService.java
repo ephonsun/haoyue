@@ -181,18 +181,18 @@ public class OrderService {
         String openId = "";
         String result_discount = "";
         for (Member m : news) {
-            if (m.getLeavel().equals("lev1")) {
-                total_consume_1 = m.getTotal_consume();
-                discount_1 = m.getDiscount();
-            }
-            if (m.getLeavel().equals("lev2")) {
-                total_consume_2 = m.getTotal_consume();
-                discount_2 = m.getDiscount();
-            }
-            if (m.getLeavel().equals("lev3")) {
-                total_consume_3 = m.getTotal_consume();
-                discount_3 = m.getDiscount();
-            }
+//            if (m.getLeavel().equals("lev1")) {
+//                total_consume_1 = m.getTotal_consume();
+//                discount_1 = m.getDiscount();
+//            }
+//            if (m.getLeavel().equals("lev2")) {
+//                total_consume_2 = m.getTotal_consume();
+//                discount_2 = m.getDiscount();
+//            }
+//            if (m.getLeavel().equals("lev3")) {
+//                total_consume_3 = m.getTotal_consume();
+//                discount_3 = m.getDiscount();
+//            }
         }
         // 遍历每一个买家的交易额和会员成长体系进行对比
         for (OrderTotalPrice each : list) {
@@ -218,7 +218,7 @@ public class OrderService {
                     member.setSellerId(sellerId);
                     member.setCreateDate(new Date());
                     member.setOpenId(openId);
-                    member.setTotal_consume(each.getTotal_price() + "");
+                    //member.setTotal_consume(each.getTotal_price() + "");
                 }
                 member.setDiscount(result_discount);
                 member.setLeavel("lev" + index);
@@ -481,6 +481,10 @@ public class OrderService {
 
     public void unpayFlush() {
         Date date=new Date();
-        orderRepo.unpayFlush(date);
+        orderRepo.unpayFlush(date,"待付款订单");
+    }
+
+    public void updateWxname(String wxname, Integer cid) {
+        orderRepo.updateWxname(wxname,cid);
     }
 }

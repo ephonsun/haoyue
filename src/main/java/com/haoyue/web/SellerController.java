@@ -276,16 +276,25 @@ public class SellerController {
             }
             return new Result(false, Global.do_success, code, token);
         } else {
-            Seller seller = sellerService.findBySellerPhone(phone);
-            if (seller == null) {
-                return new Result(true, Global.phone_isnull, null, null);
-            }
             String code = StringUtils.getPhoneCode();
-            try {
-                SendCode.sendSms(phone, code);
-            } catch (ClientException e) {
-                e.printStackTrace();
-                return new Result(false, Global.do_fail);
+            if(StringUtils.isNullOrBlank(token)){
+                try {
+                    SendCode.sendSms(phone, code);
+                } catch (ClientException e) {
+                    e.printStackTrace();
+                    return new Result(false, Global.do_fail);
+                }
+            }else {
+                Seller seller = sellerService.findBySellerPhone(phone);
+                if (seller == null) {
+                    return new Result(true, Global.phone_isnull, null, null);
+                }
+                try {
+                    SendCode.sendSms(phone, code);
+                } catch (ClientException e) {
+                    e.printStackTrace();
+                    return new Result(false, Global.do_fail);
+                }
             }
             return new Result(false, Global.do_success, code, token);
         }
@@ -305,6 +314,7 @@ public class SellerController {
      * @param token
      * @param pageSize
      * @return
+     * https://www.cslapp.com/seller/index.action?token=3
      */
     @RequestMapping("/index")
     public Result index(Integer token, Integer pageSize) {

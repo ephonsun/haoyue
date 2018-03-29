@@ -35,8 +35,7 @@ import java.util.*;
 public class HaoyueApplicationTests {
 
     @Test
-    public void contextLoads()
-    {
+    public void contextLoads() {
         System.out.println(new Date().toLocaleString());
     }
 
@@ -62,9 +61,9 @@ public class HaoyueApplicationTests {
 
     @Test
     public void f4() {
-        System.out.println(Integer.parseInt("我"));
-    }
 
+        System.out.println(Integer.parseInt("lev1".substring(3)));
+    }
 
 
     public void upload() {
@@ -254,8 +253,8 @@ public class HaoyueApplicationTests {
 
     @Test
     public void f18() {
-        Calendar calendar=Calendar.getInstance();
-        calendar.add(Calendar.MONTH,-3);
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.MONTH, -3);
         System.out.println(calendar.getTime().toLocaleString());
     }
 
@@ -304,25 +303,25 @@ public class HaoyueApplicationTests {
 
 
     @Test
-    public  void f21() {
+    public void f21() {
         DecimalFormat df = new DecimalFormat("######0");
         String fee = String.valueOf(df.format(1.0));
         System.out.println(fee);
     }
 
     @Test
-    public void f22(){
-     //test,test1,test2,test3,test4,test5
-        String old="test,test1,test2,test3,test4,test5";
-        String news=old.replace("test1,","");
+    public void f22() {
+        //test,test1,test2,test3,test4,test5
+        String old = "test,test1,test2,test3,test4,test5";
+        String news = old.replace("test1,", "");
         System.out.println(news);
     }
 
     @Test
-    public void f23()  {
-        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        String str="2017-12-08 10:10";
-        Date date= null;
+    public void f23() {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        String str = "2017-12-08 10:10";
+        Date date = null;
         try {
             date = simpleDateFormat.parse(str);
         } catch (ParseException e) {
@@ -332,27 +331,27 @@ public class HaoyueApplicationTests {
     }
 
     @Test
-    public void f24(){
-        List<String> list=new ArrayList<>();
-        if (list.contains("1")){
+    public void f24() {
+        List<String> list = new ArrayList<>();
+        if (list.contains("1")) {
             System.out.println("111111");
         }
         list.add("1");
         list.add("11");
         list.add("111");
-        if (list.contains("1")){
+        if (list.contains("1")) {
             System.out.println("22222");
         }
     }
 
     @Test
-    public void f25(){
-        String access_token="4_m4SXUmYY-g_E0-eUNsJbJcQkGAA03T0r4bwu3BkmcXsbEHnH-XLx9Ceraa7yy3POH4txYK5X4YKBum3uhIACHDoGCYP0RAW6XFm3ueWBQDl3blwa50TOkhbJ3D8akG_6_AY7FPs7FnW7ycnENUVcAIAFMN";
-        getminiqrQr(access_token,"43");
+    public void f25() {
+        String access_token = "4_m4SXUmYY-g_E0-eUNsJbJcQkGAA03T0r4bwu3BkmcXsbEHnH-XLx9Ceraa7yy3POH4txYK5X4YKBum3uhIACHDoGCYP0RAW6XFm3ueWBQDl3blwa50TOkhbJ3D8akG_6_AY7FPs7FnW7ycnENUVcAIAFMN";
+        getminiqrQr(access_token, "43");
     }
 
     @Test
-    public void f26(){
+    public void f26() {
         String access_token_url = "https://api.weixin.qq.com/cgi-bin/token";
         String param1 = "grant_type=client_credential&appid=wxf80175142f3214e1&secret=e0251029d53d21e84a650681af6139b1";
         String access_token = com.haoyue.tuangou.wxpay.HttpRequest.sendPost(access_token_url, param1);
@@ -361,17 +360,17 @@ public class HaoyueApplicationTests {
     }
 
     @Test
-    public void f27(){
-        long a=Long.parseLong("1513743237268");
+    public void f27() {
+        long a = Long.parseLong("1513743237268");
         System.out.println(a);
-        Date date=new Date(a);
+        Date date = new Date(a);
         System.out.println(date.toLocaleString());
     }
 
     @Test
     public void f28() {
-        String str="ABCDEFA";
-        String str2=str.replace("A","a");
+        String str = "ABCDEFA";
+        String str2 = str.replace("A", "a");
         System.out.println(str);
         System.out.println(str2);
 
@@ -381,14 +380,14 @@ public class HaoyueApplicationTests {
     @Test
     public void f29() {
         HashMap<Integer, Integer> integerHashMap = new HashMap<>();
-        integerHashMap.put(10,12);
-        integerHashMap.put(8,10);
-        integerHashMap.put(12,11);
-        integerHashMap.put(9,8);
+        integerHashMap.put(10, 12);
+        integerHashMap.put(8, 10);
+        integerHashMap.put(12, 11);
+        integerHashMap.put(9, 8);
         Set<Map.Entry<Integer, Integer>> entrySet = integerHashMap.entrySet();
         ArrayList<Map.Entry<Integer, Integer>> arrayList = new ArrayList<>(entrySet);
-        Collections.sort(arrayList, (a,  b) ->{
-            return a.getKey()-b.getKey();
+        Collections.sort(arrayList, (a, b) -> {
+            return a.getKey() - b.getKey();
         });
         ArrayList<Object> conList = new ArrayList<>();
         arrayList.forEach(a -> {
@@ -396,55 +395,95 @@ public class HaoyueApplicationTests {
             conList.add(a.getValue());
         });
         conList.forEach(a ->
-                System.out.print(a +" ")
+                System.out.print(a + " ")
         );
     }
 
     @Test
-    public void f30(){
-        Map<String,String> map=new HashMap<>();
-        map.put("1","1");
-        map.put("2","2");
+    public void f30() {
+        Map<String, String> map = new HashMap<>();
+        map.put("1", "1");
+        map.put("2", "2");
         System.out.println(map.get("1"));
         map.clear();
         System.out.println(map.get("1"));
     }
 
     @Test
-    public void f31(){
-        String str="12.523";
+    public void f31() {
+        String str = "12.523";
         System.out.println(new DecimalFormat("0").format(Double.parseDouble(str)));
     }
 
     @Test
-    public void check(){
+    public void f32() {
+
+        List old = new ArrayList();
+        for (int i = 0; i < 10; i++) {
+            old.add(i);
+        }
+        int max = old.size();
+        for (int i = 0; i < old.size(); i++) {
+
+            if (i >= 5 && i < 8) {
+                old.remove(old.get(5));
+            }
+
+        }
+        for (Object o : old) {
+            System.out.print(o + " ");
+        }
+
+
+    }
+
+    @Test
+    public void f33(){
+
+        String str=Calendar.getInstance().get(Calendar.YEAR) + "-" +"1-5 00:00:00";
+        System.out.println(str);
+        try {
+            Date date= StringUtils.formatDate2(str);
+            System.out.println(date.toLocaleString());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void check() {
         //  https://way.jd.com/jisuapi/query?type=SFEXPRESS&number=925749187579&appkey=您申请的APPKEY
-        String code="888212746238226568";
-        String url="https://way.jd.com/jisuapi/query";
-        String param="type=auto&number="+code+"&appkey=3d1b6253bbfbbfb003aa9ec6a3c2ee0c";
-        String result=HttpRequest.sendGet(url,param);
+        String code = "888212746238226568";
+        String url = "https://way.jd.com/jisuapi/query";
+        String param = "type=auto&number=" + code + "&appkey=3d1b6253bbfbbfb003aa9ec6a3c2ee0c";
+        String result = HttpRequest.sendGet(url, param);
         System.out.println(result);
 
         try {
-            net.sf.json.JSONObject jsonObject=net.sf.json.JSONObject.fromObject(result);
+            net.sf.json.JSONObject jsonObject = net.sf.json.JSONObject.fromObject(result);
             System.out.println(jsonObject.getJSONObject("result"));
             System.out.println(jsonObject.getJSONObject("result").getString("status"));
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        List<Dog> list=new ArrayList<>();
-        Dog dog=new Dog();
-        dog.setName("aaa");
-        list.add(dog);
+    }
 
-        if (list.contains(dog)){
-            System.out.println("=====");
-        }
-        else {
-            System.out.println("------");
-        }
+    @Test
+    public void f34(){
 
+        String str="{\"status\":\"0\",\"msg\":\"ok\",\"result\":{\"number\":\"888212746238226568\",\"type\":\"yto\",\"list\":[{\"time\":\"2018-1-27 10:37:49\",\"status\":\"客户 签收人: 邮件收发章 已签收 感谢使用圆通速递，期待再次为您服务\"},{\"time\":\"2018-1-26 9:27:50\",\"status\":\"【江苏省苏州市常熟市大润发分部公司】 派件人: 陈书兵 派件中 \"},{\"time\":\"2018-1-26 7:32:20\",\"status\":\"【江苏省苏州市常熟市公司】 已发出 下一站 【江苏省苏州市常熟市大润发分部公司】\"},{\"time\":\"2018-1-26 3:16:59\",\"status\":\"【无锡转运中心】 已发出 下一站 【江苏省苏州市常熟市公司】\"},{\"time\":\"2018-1-26 3:14:56\",\"status\":\"【无锡转运中心】 已收入\"},{\"time\":\"2018-1-25 3:14:46\",\"status\":\"【广州转运中心】 已发出 下一站 【无锡转运中心】\"},{\"time\":\"2018-1-25 3:12:40\",\"status\":\"【广州转运中心】 已收入\"},{\"time\":\"2018-1-25 1:46:33\",\"status\":\"【广东省广州市白云区金沙洲公司】 已发出 下一站 【广州转运中心】\"},{\"time\":\"2018-1-24 23:59:51\",\"status\":\"【广东省广州市白云区金沙洲公司】 已打包\"},{\"time\":\"2018-1-24 20:53:07\",\"status\":\"【广东省广州市白云区金沙洲公司】 已收件\"},{\"time\":\"2018-1-24 19:04:16\",\"status\":\"【广东省广州市白云区金沙洲公司】 取件人: 陈银巧 已收件\"}],\"deliverystatus\":\"3\",\"issign\":\"1\"}}";
+        net.sf.json.JSONObject.fromObject(str);
+
+    }
+
+    @Test
+    public void f35(){
+        Calendar calendar=Calendar.getInstance();
+        calendar.set(Calendar.YEAR,1997);
+        calendar.set(Calendar.MONTH,4);
+        calendar.set(Calendar.DATE,20);
+        System.out.println(calendar.getTime().toLocaleString());
 
     }
 
@@ -462,13 +501,13 @@ public class HaoyueApplicationTests {
         }
     }
 
-    public Map getminiqrQr(String accessToken,String pid) {
+    public Map getminiqrQr(String accessToken, String pid) {
         RestTemplate rest = new RestTemplate();
         InputStream inputStream = null;
         OutputStream outputStream = null;
         try {
-            String url = "https://api.weixin.qq.com/cgi-bin/wxaapp/createwxaqrcode?access_token="+accessToken;
-            Map<String,Object> param = new HashMap<>();
+            String url = "https://api.weixin.qq.com/cgi-bin/wxaapp/createwxaqrcode?access_token=" + accessToken;
+            Map<String, Object> param = new HashMap<>();
             param.put("path", "pages/details/details?id=43");
             param.put("width", 430);
             MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
@@ -479,10 +518,10 @@ public class HaoyueApplicationTests {
 
             //获取项目根路径
             String relativelyPath = "c:";
-            String mkdirs=relativelyPath+"/qrcode/";
-            String filename=relativelyPath+"/qrcode/"+pid+".jpg";
+            String mkdirs = relativelyPath + "/qrcode/";
+            String filename = relativelyPath + "/qrcode/" + pid + ".jpg";
             File filedirs = new File(mkdirs);
-            if (!filedirs.isDirectory()){
+            if (!filedirs.isDirectory()) {
                 filedirs.mkdirs();
             }
             outputStream = new FileOutputStream(new File(filename));
@@ -495,14 +534,14 @@ public class HaoyueApplicationTests {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            if(inputStream != null){
+            if (inputStream != null) {
                 try {
                     inputStream.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
-            if(outputStream != null){
+            if (outputStream != null) {
                 try {
                     outputStream.close();
                 } catch (IOException e) {

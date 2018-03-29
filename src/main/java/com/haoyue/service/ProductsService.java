@@ -3,6 +3,7 @@ package com.haoyue.service;
 import com.haoyue.pojo.*;
 import com.haoyue.repo.ProductsRepo;
 import com.haoyue.repo.ProdutsTypeRepo;
+import com.haoyue.repo.SellerRepo;
 import com.haoyue.untils.*;
 import com.querydsl.core.BooleanBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,8 @@ public class ProductsService {
     private PtypeNamesService ptypeNamesService;
     @Autowired
     private ShopCarService shopCarService;
+    @Autowired
+    private SellerRepo sellerRepo;
 
     public Products save(Products products) throws IOException {
 
@@ -110,6 +113,10 @@ public class ProductsService {
         QProducts pro = QProducts.products;
         BooleanBuilder bd = new BooleanBuilder();
         Date date = new Date();
+        int monthsale_from=0;
+        int monthsale_to=0;
+        double price_from=0;
+        double price_to=0;
         for (String name : map.keySet()) {
             String value = (String) map.get(name);
             if (!(StringUtils.isNullOrBlank(value))) {
@@ -119,6 +126,9 @@ public class ProductsService {
                 if (name.equals("key")) {
                     bd.and(pro.pname.contains(value));
                 }
+                if (name.equals("pcode")) {
+                    bd.and(pro.pcode.contains(value));
+                }
                 if (name.equals("ptypename")) {
                     bd.and(pro.ptypeName.contains(value));
                 }
@@ -127,12 +137,30 @@ public class ProductsService {
                     bd.and(pro.active.eq(Boolean.valueOf(value)));
                     bd.or(pro.showDate.after(date));
                 }
+                if (name.equals("mothsale_from")) {
+                   monthsale_from=Integer.parseInt(value);
+                }
+                if (name.equals("mothsale_to")) {
+                    monthsale_to=Integer.parseInt(value);
+                }
+                if (name.equals("price_from")) {
+                    price_from=Double.valueOf(value);
+                }
+                if (name.equals("price_to")) {
+                    price_to=Double.valueOf(value);
+                }
                 if (name.equals("killproduct")) {
                     bd.and(pro.issecondkill.eq(true));
                     bd.and(pro.secondKillStart.before(date));
                     bd.and(pro.secondKillEnd.after(date));
                 }
             }
+        }
+        if(monthsale_from>=0&&monthsale_to!=0){
+            bd.and(pro.monthSale.between(monthsale_from,monthsale_to));
+        }
+        if(price_from>=0&&price_to!=0){
+            bd.and(pro.produtsTypes.any().priceNew.between(price_from,price_to));
         }
         return productsRepo.findAll(bd.getValue(), new PageRequest(pagenumber, pagesize, new Sort(Sort.Direction.DESC, new String[]{"monthSale"})));
     }
@@ -240,10 +268,10 @@ public class ProductsService {
     //生成二维码
     public String qrcode(String sellerId, String pid) throws FileNotFoundException {
         String access_token_url = "https://api.weixin.qq.com/cgi-bin/token";
-        String param1 = "grant_type=client_credential&appid=wxe46b9aa1b768e5fe&secret=8bcdb74a9915b5685fa0ec37f6f25b24";
+        Seller seller=sellerRepo.findOne(Integer.parseInt(sellerId));
+        String param1 = "grant_type=client_credential&appid="+seller.getAppId()+"&secret="+seller.getSecret();
         String access_token = HttpRequest.sendPost(access_token_url, param1);
         access_token = access_token.substring(access_token.indexOf(":") + 2, access_token.indexOf(",") - 1);
-
         // d:/haoyue/erweima/1.jpg
         String filename = QRcode.getminiqrQr(access_token, pid);
         File file = new File(filename);

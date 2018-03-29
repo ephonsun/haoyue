@@ -110,6 +110,13 @@
 			<scope>system</scope>
 			<systemPath>${basedir}/src/lib/goeasy-sdk.jar</systemPath>
 		</dependency>
+		<dependency>
+			<groupId>javaxmail</groupId>
+			<artifactId>javaxmail</artifactId>
+			<version>1.0</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/src/lib/javaxmail.jar</systemPath>
+		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/com.aliyun/aliyun-java-sdk-core -->
 		<dependency>

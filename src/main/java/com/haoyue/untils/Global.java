@@ -30,6 +30,7 @@ public class Global {
     public static String member_exist="当前会员信息已经存在";
     public static String discount_not_set="店主未设置会员折扣";
     public static String leavel_undefined="leavel值为undefined，不合法";
+    public static String birthday_illegal="生日输入公式不合法,参照(年-月-日)";
 
     //抵用券
     public static String no_cashticket="抵用券已被抢完";
@@ -65,7 +66,7 @@ public class Global {
     public static String luckdraw_num_enough="抽奖人数已满";
     public static String luckdraw_end_ornotbegin="抽奖活动已结束或未开启";
     public static String access_in_again="同一个用户不可重复抽奖";
-    public static String cannot_get_info="请设置允许获取信息后再提交订单";
+    public static String cannot_get_info="请设置允许获取信息后再提交";
     public static int count=1;
     public static boolean flag=false;
     public static Object object=new Object();//线程锁
@@ -96,6 +97,8 @@ public class Global {
     public static String have_no_right="无权操作";
     public static String service_stop="该店铺服务已到期或被强行停止";
     public static String seller_online="当前账号已被登录，你已被迫下线，如遇密码泄露，请尽快修改";
+    public static String customer_not_only="用户信息重复";
+    public static String wxname_isNullorBlank="无法获取微信名称";
 
     //密码校验
     public static String oldPass_unRigt="原密码不正确";
@@ -133,7 +136,11 @@ public class Global {
   
 
     //微信模板信息访问通知
+<<<<<<< HEAD
     //public static String wxtemplate_msg1="3月5日各种活动：小香套装最低360元起，还有各种团购，秒杀，记得围观哦！";//日常访问通知
+=======
+    //public static String wxtemplate_msg1="海量春款上新中。。。置顶关注，每天都有大不同哦!";//日常访问通知
+>>>>>>> lijia
     public static String wxtemplate_msg2="亲爱的，您喜欢的宝贝上架啦，貌似新品有限时折扣！";//预售通知
     public static String wxtemplate_msg3="置顶关注，限时巨划算怎能错过！";//秒杀通知
     public static Map<String,String> yushou_map=new HashMap<>();
@@ -149,6 +156,14 @@ public class Global {
     //快递
     public static String kuaidi_key="d348100a2fd46f0dc1aeddde3f0a904c";
     public static String not_receive="当前快递未签收";
+
+    //积攒送小程序
+    public static int thumbs_up_num=40;//积攒目标数
+    public static String thumbs_up_access="集赞数已达到啦！";
+    public static String already_apply_thumb_up="你已经申请过积攒啦！";
+    public static String already_help_thumb_up="不可重复点赞";
+    public static String already_thumb_up_expire="当前用户申请的积攒活动已经失效";
+    public static String can_not_thumb_up_self="不可为自己点赞";
 
     //非拦截地址
     public static List<String> urls(){
