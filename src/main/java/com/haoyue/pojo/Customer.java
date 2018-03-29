@@ -19,6 +19,7 @@ public class Customer {
 
     private String phone;
     private String openId;//小程序用户唯一标识  ook0P0U-SCSR6GMDophZ3Ij_87hU   id  2468
+    private String webOpenId;//微商城openId
     private String sellerId;//appid
     private String wxname;
     private String wxpic;
@@ -40,6 +41,14 @@ public class Customer {
     @OneToMany
     private List<Address> addressList;
 
+
+    public String getWebOpenId() {
+        return webOpenId;
+    }
+
+    public void setWebOpenId(String webOpenId) {
+        this.webOpenId = webOpenId;
+    }
 
     public String getBirthdays() {
         return birthdays;

@@ -96,7 +96,9 @@ public class MemberService {
         for (String name : map.keySet()) {
             String value = (String) map.get(name);
             if (!(StringUtils.isNullOrBlank(value))) {
-
+                if (name.equals("id")){
+                    bd.and(member.id.eq(Integer.parseInt(value)));
+                }
                 if(name.equals("groupname")){
                     bd.and(member.groupName.eq(value));
                 }
@@ -155,8 +157,6 @@ public class MemberService {
                         e.printStackTrace();
                     }
                 }
-
-
             }
         }
         //消费次数

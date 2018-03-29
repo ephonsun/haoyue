@@ -97,6 +97,8 @@ public class Global {
     public static String have_no_right="无权操作";
     public static String service_stop="该店铺服务已到期或被强行停止";
     public static String seller_online="当前账号已被登录，你已被迫下线，如遇密码泄露，请尽快修改";
+    public static String customer_not_only="用户信息重复";
+    public static String wxname_isNullorBlank="无法获取微信名称";
 
     //密码校验
     public static String oldPass_unRigt="原密码不正确";

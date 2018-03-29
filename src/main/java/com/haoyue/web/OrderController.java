@@ -555,4 +555,11 @@ public class OrderController {
         getTemplate(template, order.getSellerId(), order.getId());
     }
 
+    //  http://localhost:8080/order/flush?sellerId=3
+    @RequestMapping("/flush")
+    public Result flush(String sellerId){
+        orderService.unpayFlush();
+        return new Result(false,Global.do_success,null,null);
+    }
+
 }
