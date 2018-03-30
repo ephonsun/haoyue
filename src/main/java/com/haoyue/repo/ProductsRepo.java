@@ -30,4 +30,6 @@ public interface ProductsRepo extends BaseRepo<Products,Integer> {
 
     @Query(nativeQuery = true,value = "select * from products where seller_id=?1 and active=?2")
     List<Products> findBySellerIdAndActive(String sellerId, boolean flag);
+
+    List<Products> findBySellerIdAndPtypeNameAndActive(Integer sellerId, String ptypename, boolean b);
 }

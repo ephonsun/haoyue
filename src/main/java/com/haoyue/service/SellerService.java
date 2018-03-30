@@ -174,6 +174,9 @@ public class SellerService {
         if (!StringUtils.isNullOrBlank(seller.getSellerPic())) {
             seller1.setSellerPic(seller.getSellerPic());
         }
+        if (!StringUtils.isNullOrBlank(seller.getService_template_msg())) {
+            seller1.setService_template_msg(seller.getService_template_msg());
+        }
 
         sellerRepo.save(seller1);
     }

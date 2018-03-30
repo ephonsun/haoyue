@@ -34,6 +34,7 @@ public class Member {
     private int nums;//购买次数
     private int closenums;//关闭订单次数
     private int productnums;//宝贝件数
+    private String froms;//来源 交易成功  交易未成功
     private String pic;
     private String receiveAddress;
     private String province;
@@ -51,6 +52,15 @@ public class Member {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:SS", timezone = "GMT+8")
     @Temporal(TemporalType.TIMESTAMP)
     private Date birthDate;//生日日期
+
+
+    public String getFroms() {
+        return froms;
+    }
+
+    public void setFroms(String froms) {
+        this.froms = froms;
+    }
 
     public String getProvince() {
         return province;

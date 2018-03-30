@@ -195,24 +195,24 @@ public class ProductsController {
             String price = null;
             String secondKillPrice = "0";
             String amount = null;
-            String pic=null;
+            String pic = null;
             if (strings.length == 7) {
                 color = strings[0];//颜色
                 size = strings[1];//尺码
                 discount = strings[2];//折扣价
                 price = strings[3];//原价
-                secondKillPrice=strings[4];//秒杀价
+                secondKillPrice = strings[4];//秒杀价
                 amount = strings[5];//库存
-                pic=strings[6];//每个商品分类对应一个图片
+                pic = strings[6];//每个商品分类对应一个图片
 
             }
-            if(strings.length==6){
+            if (strings.length == 6) {
                 //兼容旧的宝贝上传接口
                 color = strings[0];//颜色
                 size = strings[1];//尺码
                 discount = strings[2];//折扣价
                 price = strings[3];//原价
-                secondKillPrice=strings[4];//秒杀价
+                secondKillPrice = strings[4];//秒杀价
                 amount = strings[5];//库存
             }
 
@@ -306,6 +306,22 @@ public class ProductsController {
         products.setMonthSale(monthSale);
         productsService.update(products);
         return new Result(false, Global.do_success, products, null);
+    }
+
+
+    //  http://localhost:8080/seller/pro/get-secondPtypeNames?sellerId=4&ptypename=汽车贴膜
+    @RequestMapping("/get-secondPtypeNames")
+    public Result getSecondPtypeNames(String sellerId, String ptypename) {
+        List<Products> list = productsService.findBySellerIdAndPtypeNameAndActive(sellerId, ptypename, true);
+        List<String> secondPtypeNames = new ArrayList<>();
+        if (list != null && list.size() != 0) {
+            for (Products p : list) {
+                if (!secondPtypeNames.contains(p.getSecondPtypeName())) {
+                    secondPtypeNames.add(p.getSecondPtypeName());
+                }
+            }
+        }
+        return new Result(false, Global.do_success, secondPtypeNames, null);
     }
 
 

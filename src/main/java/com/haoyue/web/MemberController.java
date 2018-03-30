@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
@@ -70,12 +71,17 @@ public class MemberController {
 
     //  查看买家会员信息 /member/findOne?sellerId=卖家ID&openId=12345
     //  /member/findOne?id=当前记录的ID&sellerId=12
+    //  /member/findOne?sellerId=12&leavel=lev1
     @RequestMapping("/findOne")
-    public Result findOne(String sellerId, String openId, String id) {
+    public Result findOne(String sellerId, String openId, String id,String leavel) {
         Member member = null;
         if (!StringUtils.isNullOrBlank(id)) {
             member = memberService.findById(Integer.parseInt(id));
-        } else {
+        }
+        else  if(!StringUtils.isNullOrBlank(leavel)){
+            member = memberService.findBySellerIdAndLeavel(sellerId, leavel);
+        }
+        else {
             member = memberService.findByOpenIdAndSellerId(openId, sellerId);
         }
         return new Result(false, Global.do_success, member, null);
@@ -86,12 +92,13 @@ public class MemberController {
 //      &expense_from=交易额开始&expense_to=交易额结束&nums_from=交易笔数开始&nums_to=交易笔数结束
 //      &datefrom=上次交易时间开始&dateto=上次交易时间结束&sex=性别&birthfrom=生日开始&birthto=生日结束
 //      &discount=折扣
+    //  昨日新增 /member/list?sellerId=3&createdate=yes
+    //  会员总数 /member/list?sellerId=3
     @RequestMapping("/list")
     public Result list_new(@RequestParam Map<String, String> map, @RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize) {
         Iterable<Member> iterable = memberService.list(map, pageNumber, pageSize);
         return new Result(false, Global.do_success, iterable, null);
     }
-
 
     // /member/update?id=当前会员的Id&sellerId=3&wxname=微信昵称&sex=性别&phone=电话&email=邮箱
     //  &birthday=生日(1999-08-15)&province=省份&city=城市&receiveAddress=收货地址&lev=会员级别(lev1 lev2...)
@@ -108,7 +115,7 @@ public class MemberController {
         old.setReceiveAddress(member.getReceiveAddress());
         try {
             //判断输入的是否是 yyyy-MM-dd
-            if(member.getBirthday().split("-").length!=3){
+            if (member.getBirthday().split("-").length != 3) {
                 return new Result(true, Global.birthday_illegal, null, null);
             }
             String str = member.getBirthday();
@@ -118,13 +125,19 @@ public class MemberController {
             e.printStackTrace();
         }
         //会员级别有改动
-        if(!member.getLeavel().equals(old.getLeavel())){
+        if (!member.getLeavel().equals(old.getLeavel())) {
             old.setLeavel(member.getLeavel());
-            Member member_seller= memberService.findBySellerIdAndLeavel(member.getSellerId(),member.getLeavel());
+            Member member_seller = memberService.findBySellerIdAndLeavel(member.getSellerId(), member.getLeavel());
             old.setDiscount(member_seller.getDiscount());
         }
         memberService.updateMemeber(old);
         return new Result(false, Global.do_success, old, null);
+    }
+
+    // /member/toExcel?sellerId=3&ids=23=24=32
+    @RequestMapping("/toExcel")
+    public Result toExcel(String sellerId,String ids) throws IOException {
+        return memberService.toExcel(ids);
     }
 
 }

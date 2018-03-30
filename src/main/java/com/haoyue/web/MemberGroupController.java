@@ -42,6 +42,4 @@ public class MemberGroupController {
         memberGroupService.del(id);
         return new Result(false, Global.do_success,null,null);
     }
-
-
 }

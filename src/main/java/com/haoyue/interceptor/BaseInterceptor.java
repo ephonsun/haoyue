@@ -48,9 +48,9 @@ public class BaseInterceptor implements HandlerInterceptor {
         sellerService = (SellerService) factory.getBean("SellerService");
 
         //当online_code不为空时候 校验online_code是否正确
-        if (!request.getRequestURI().contains("login") && !request.getRequestURI().contains("super-admin") && !StringUtils.isNullOrBlank(request.getParameter("online_code")) && !sellerService.findByOnlineCode(request.getParameter("online_code"))) {
-            throw new MyException(Global.seller_online, null, 102);
-        }
+//        if (!request.getRequestURI().contains("login") && !request.getRequestURI().contains("super-admin") && !StringUtils.isNullOrBlank(request.getParameter("online_code")) && !sellerService.findByOnlineCode(request.getParameter("online_code"))) {
+//            throw new MyException(Global.seller_online, null, 102);
+//        }
 
         //校验是否携带参数token
         if (Global.urls().contains(url) || url.contains("super-admin") || url.contains("leave-message")||url.contains("uploadPics")) {

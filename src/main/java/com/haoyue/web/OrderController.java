@@ -331,21 +331,33 @@ public class OrderController {
                 luckDrawService.update(luckDraw);
             }
 
-            //微信付款通知模板
-            if (!state.equals(Global.order_unpay) && !state.equals(Global.order_luckdraw_unpay)) {
+            //微信付款成功通知模板
+            if (order.getState().equals(Global.order_unsend)) {
                 addTemplate(order);
             }
             orderService.update(order);
-            //更新个人花费总额 + 订单总价（不包括邮费）
-            Customer customer = customerService.findOne(order.getCustomerId());
-            double expense = customer.getExpense() + order.getPrice();
-            //保留两位小数
-            DecimalFormat decimalFormat = new DecimalFormat("#.##");
-            customer.setExpense(Double.valueOf(decimalFormat.format(expense)));
-            customer.setBuynums(customer.getBuynums() + 1);
-            customerService.update(customer);
-            //更新会员信息
-            saveMember(order, customer);
+            //如果是刚付款的订单转为代发货订单 更新会员信息和买家信息
+            Customer customer=null;
+            if(order.getState().equals(Global.order_unsend)) {
+                //更新个人花费总额 + 订单总价（不包括邮费）
+                customer = customerService.findOne(order.getCustomerId());
+                double expense = customer.getExpense() + order.getPrice();
+                //保留两位小数
+                DecimalFormat decimalFormat = new DecimalFormat("#.##");
+                customer.setExpense(Double.valueOf(decimalFormat.format(expense)));
+                customer.setBuynums(customer.getBuynums() + 1);
+                customerService.update(customer);
+                //更新会员信息
+                saveMember(order, customer);
+            }
+            //已完成订单刷新会员来源  交易成功
+            if(order.getState().equals(Global.order_finsh)){
+                Member member= memberService.findByOpenIdAndSellerId(customer.getOpenId(),order.getSellerId()+"");
+                if(member!=null){
+                    member.setFroms(Global.member_froms_success);
+                    memberService.save(member);
+                }
+            }
 
             return new Result(false, Global.do_success, order, null);
         }
@@ -411,7 +423,6 @@ public class OrderController {
 
     //每当买家订单付款后会更新该买家的会员信息
     public void saveMember(Order order, Customer customer) {
-        Date date = new Date();
         //查询出指定商家的会员体系
         List<Member> memberList = memberService.findBySellerIdAndOpenIdIsNull(customer.getSellerId());
         if(memberList==null||memberList.size()==0){
@@ -433,7 +444,7 @@ public class OrderController {
             if (oldmember == null) {
                 //新建会员信息
                 oldmember = new Member();
-                oldmember.setCreateDate(date);
+                oldmember.setCreateDate(order.getCreateDate());
                 oldmember.setOpenId(customer.getOpenId());
                 oldmember.setSellerId(customer.getSellerId());
                 oldmember.setBirthday(customer.getBirthdays());
@@ -467,15 +478,16 @@ public class OrderController {
                         oldmember.setDiscount(memberto.getDiscount());
                     }
                 }
-
             }
             oldmember.setNums(oldmember.getNums() + 1);
             oldmember.setTotal_consume(oldmember.getTotal_consume() + order.getTotalPrice());
-            oldmember.setLatestBuyDate(date);
+            oldmember.setLatestBuyDate(order.getCreateDate());
             oldmember.setProductnums(oldmember.getProductnums() + order.getProducts().size());
             //保留两位小数
             DecimalFormat decimalFormat = new DecimalFormat("#.##");
             oldmember.setAvg_consume(Double.valueOf(decimalFormat.format(oldmember.getTotal_consume() / oldmember.getNums())));
+            //刷新会员来源  交易未成功
+            oldmember.setFroms(Global.member_froms_fail);
             memberService.save(oldmember);
         }
         //更新买家信息到会员系统,当前消费额或者次数小于会员体系,旧的会员信息存在
@@ -483,11 +495,13 @@ public class OrderController {
         if(index==0&&oldmember!=null){
             oldmember.setNums(oldmember.getNums() + 1);
             oldmember.setTotal_consume(oldmember.getTotal_consume() + order.getTotalPrice());
-            oldmember.setLatestBuyDate(date);
+            oldmember.setLatestBuyDate(order.getCreateDate());
             oldmember.setProductnums(oldmember.getProductnums() + order.getProducts().size());
             //保留两位小数
             DecimalFormat decimalFormat = new DecimalFormat("#.##");
             oldmember.setAvg_consume(Double.valueOf(decimalFormat.format(oldmember.getTotal_consume() / oldmember.getNums())));
+            //刷新会员来源  交易未成功
+            oldmember.setFroms(Global.member_froms_fail);
             memberService.save(oldmember);
         }
 

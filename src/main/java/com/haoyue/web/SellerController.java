@@ -186,6 +186,7 @@ public class SellerController {
         return new Result(indexResults, map.get("token"));
     }
 
+    // /seller/update?token=3&service_template_msg=访问通知信息内容
     @RequestMapping("/update")
     public Object update(Seller seller, MultipartFile[] files, String token) throws IOException, MyException {
         seller.setSellerId(Integer.parseInt(token));

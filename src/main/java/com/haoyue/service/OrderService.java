@@ -455,6 +455,13 @@ public class OrderService {
 
 
     public void autoDone(Integer id) {
+        //刷新会员来源
+        Customer customer= customerService.findOne(findOne(id).getCustomerId());
+        Member member= memberService.findByOpenIdAndSellerId(customer.getOpenId(),customer.getSellerId());
+        if(member!=null){
+            member.setFroms(Global.member_froms_success);
+            memberService.save(member);
+        }
         orderRepo.autoDone(id);
     }
 

@@ -313,4 +313,7 @@ public class ProductsService {
     }
 
 
+    public List<Products> findBySellerIdAndPtypeNameAndActive(String sellerId, String ptypename, boolean b) {
+        return productsRepo.findBySellerIdAndPtypeNameAndActive(Integer.parseInt(sellerId),ptypename,true);
+    }
 }

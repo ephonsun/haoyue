@@ -376,7 +376,7 @@ public class DictionaryService {
             if (old_date == null) {
                 old_date = order.getCreateDate();
             }
-            //判断距离发货日期的时间差
+            //判断距离发货日期的时间差 15日
             if ((now_date.getTime() - old_date.getTime()) > 1000 * 60 * 60 * 24 * 15) {
                 //order.setState(Global.order_finsh);
                 orderService.autoDone(order.getId());
