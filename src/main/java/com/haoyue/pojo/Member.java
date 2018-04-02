@@ -36,6 +36,7 @@ public class Member {
     private int productnums;//宝贝件数
     private String froms;//来源 交易成功  交易未成功
     private String pic;
+    private String defultPic;//默认图片
     private String receiveAddress;
     private String province;
     private String city;
@@ -53,6 +54,14 @@ public class Member {
     @Temporal(TemporalType.TIMESTAMP)
     private Date birthDate;//生日日期
 
+
+    public String getDefultPic() {
+        return defultPic;
+    }
+
+    public void setDefultPic(String defultPic) {
+        this.defultPic = defultPic;
+    }
 
     public String getFroms() {
         return froms;

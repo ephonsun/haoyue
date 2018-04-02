@@ -404,4 +404,14 @@ public class SellerController {
         return new Result(false, Global.do_success, null, null);
     }
 
+    // http://localhost:8080/seller/out_line?sellerId=3
+    @RequestMapping("/test")
+    public Result test(){
+        System.out.println("123");
+        System.out.println("456");
+        return new Result(false, Global.do_success, null, null);
+    }
+
+
+
 }

@@ -29,6 +29,7 @@ public class MemberController {
     // 卖家后台设置会员 - 新
     // /member/save_new?sellerId=3&total_consume=交易额&nums=交易次数
     // &discount=折扣&pic=图片地址&leavel=等级（lev1 lev2 lev3 lev4）&active=true/false
+    //  &defultPic=默认会员图片地址
     @RequestMapping("/save_new")
     public Result save_new(Member member) {
         Member oldone = memberService.findBySellerIdAndLeavel(member.getSellerId(), member.getLeavel());
@@ -42,6 +43,7 @@ public class MemberController {
         oldone.setNums(member.getNums());
         oldone.setDiscount(member.getDiscount());
         oldone.setPic(member.getPic());
+        oldone.setDefultPic(member.getDefultPic());
         oldone.setLeavel(member.getLeavel());
         memberService.save(oldone);
         return new Result(false, Global.do_success, null, null);
