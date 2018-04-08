@@ -36,6 +36,8 @@ public class ProductsController {
     private OrderService orderService;
     @Autowired
     private LuckDrawService luckDrawService;
+    @Autowired
+    private ShopCarService shopCarService;
 
 
     //  https://www.cslapp.com/seller/pro/list?token=3&key=商品名称&pcode=商品编号&
@@ -46,7 +48,24 @@ public class ProductsController {
     // 秒杀商品列表  追加参数 killproduct=true
     @RequestMapping("/list")
     public Result list(@RequestParam Map<String, String> map, @RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize) {
-        return new Result(false, "", productsService.plist(map, pageNumber, pageSize), map.get("token"));
+        Iterable<Products> iterable=productsService.plist(map, pageNumber, pageSize);
+        Iterator<Products> iterator= iterable.iterator();
+        while (iterator.hasNext()){
+            Products products=iterator.next();
+            int count=shopCarService.findCountByPid(products.getId());
+            products.setShopcar_count(count);
+        }
+        //按照加入购物车量排序
+        List<Products> productsList=new ArrayList<>();
+        iterable.forEach(products -> productsList.add(products));
+        Collections.sort(productsList, new Comparator<Products>() {
+            @Override
+            public int compare(Products o1, Products o2) {
+                return o1.getShopcar_count()-o2.getShopcar_count();
+            }
+        });
+
+        return new Result(false, "", iterable, map.get("token"));
     }
 
     // http://localhost:8080/seller/pro/uploadPic?token=1&multipartFiles=12221

@@ -161,18 +161,14 @@ public class CustomerController {
         return new Result(false, null, response, null);
     }
 
-    // https://www.cslapp.com/customer/getUser_info?access_token=access_token&openid=openid&sellerId=3
+    // https://www.cslapp.com/customer/getUser_info?code=code&sellerId=3
     @RequestMapping("/getUser_info")
     public Result getUser_info(String code) {
         String response1 = HttpRequest.sendGet("https://api.weixin.qq.com/sns/oauth2/access_token", "appid=wxae8906e8139f3fe8&secret=34694bb20f76f2ebce095c845ec3919e&code=" + code + "&grant_type=authorization_code");
-        System.out.println(response1);
         JSONObject jsonObject = net.sf.json.JSONObject.fromObject(response1);
         String access_token = jsonObject.getString("access_token");
-        System.out.println("access_token:" + access_token);
         String openid = jsonObject.getString("openid");
-        System.out.println("openid:" + openid);
         String response = HttpRequest.sendGet("https://api.weixin.qq.com/sns/userinfo", "access_token=" + access_token + "&openid=" + openid + "&lang=zh_CN");
-        System.out.println(response);
         return new Result(false, null, response, null);
     }
 

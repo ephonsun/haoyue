@@ -207,6 +207,9 @@ public class OrderController {
         order.setState(Global.order_unpay);
         //总计
         order.setTotalPrice(order.getPrice() + order.getDeliver().getPrice());
+        //格式化价格
+        DecimalFormat decimalFormat=new DecimalFormat("#.##");
+        order.setTotalPrice(Double.valueOf(decimalFormat.format(order.getTotalPrice())));
         //是否是会员  订单总价=商品价*折扣+快递费用
         Member member = memberService.findByOpenIdAndSellerId(openId, sellerId);
         if (member!=null) {

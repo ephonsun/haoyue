@@ -116,6 +116,14 @@ public class ShopCarService {
         return result;
     }
 
+    public int findCountByPid(int pid){
+        List<Integer> ids = shopCarRepo.findShopCarIdByProId(String.valueOf(pid));
+        if(ids!=null&&ids.size()!=0){
+            return ids.size();
+        }
+        return 0;
+    }
+
     public List<String> findShopCarIdByProId(String proId) {
         List<Integer> ids = shopCarRepo.findShopCarIdByProId(proId);
         List<String> names = new ArrayList<>();
