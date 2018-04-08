@@ -32,6 +32,8 @@ public class Customer {
     private String sex;//性别
     private String province;
     private String city;
+    private int unuseScroll;//可用积分
+    private int usedScroll;//已用积分
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:SS", timezone = "GMT+8")
     @Temporal(TemporalType.TIMESTAMP)
@@ -41,6 +43,22 @@ public class Customer {
     @OneToMany
     private List<Address> addressList;
 
+
+    public int getUnuseScroll() {
+        return unuseScroll;
+    }
+
+    public void setUnuseScroll(int unuseScroll) {
+        this.unuseScroll = unuseScroll;
+    }
+
+    public int getUsedScroll() {
+        return usedScroll;
+    }
+
+    public void setUsedScroll(int usedScroll) {
+        this.usedScroll = usedScroll;
+    }
 
     public String getWebOpenId() {
         return webOpenId;

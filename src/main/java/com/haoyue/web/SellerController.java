@@ -70,6 +70,7 @@ public class SellerController {
         }
     }
 
+    // /seller/findOne?token=3
     @RequestMapping("/findOne")
     public Result findOne(@RequestParam Map<String, String> map) throws IOException {
 

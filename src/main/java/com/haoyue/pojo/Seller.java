@@ -62,6 +62,25 @@ public class Seller implements Serializable{
     private String service_template_msg;
     private String paysuccess_template;//付款成功通知 Z_Xg6rYdQgci4FP_aOjTvZHXeC5BSs99EwARD6NJXWk
 
+    //积分
+    private int maxable;//单次消费最大限度可使用积分
+    private double integral_money;// 1积分=金额
+
+    public int getMaxable() {
+        return maxable;
+    }
+
+    public void setMaxable(int maxable) {
+        this.maxable = maxable;
+    }
+
+    public double getIntegral_money() {
+        return integral_money;
+    }
+
+    public void setIntegral_money(double integral_money) {
+        this.integral_money = integral_money;
+    }
 
     public String getService_template_msg() {
         return service_template_msg;

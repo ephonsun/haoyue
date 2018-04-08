@@ -69,9 +69,9 @@ public class CustomerController {
         Customer customer = customerService.findByOpenId(openId, sellerId);
         if (customer == null) {
             //不存在
-            List<Customer> customerList =customerService.findByWxnamAndSellerId(customer.getWxname(),customer.getSellerId());
+            List<Customer> customerList = customerService.findByWxnamAndSellerId(customer.getWxname(), customer.getSellerId());
             //之前没有登录过微商城
-            if(customerList==null) {
+            if (customerList == null) {
                 customer = new Customer();
                 customer.setOpenId(openId);
                 customer.setSellerId(sellerId);
@@ -79,16 +79,14 @@ public class CustomerController {
                 customer.setWxname(wxname);
                 customer.setWxpic(wxpic);
                 customer = customerService.save(customer);
-            }
-            else {
+            } else {
                 //之前有登录过微商城
-                if(customerList.size()==1){
+                if (customerList.size() == 1) {
                     //数据唯一
-                    customer=customerList.get(0);
+                    customer = customerList.get(0);
                     customer.setOpenId(openId);
                     customerService.save(customer);
-                }
-                else {
+                } else {
                     //数据不唯一
                     return new Result(false, Global.customer_not_only, customerList, null);
                 }
@@ -111,8 +109,8 @@ public class CustomerController {
     @RequestMapping("/web-login")
     public Result weblogin(Customer customer) {
         //检验微信名
-        if(StringUtils.isNullOrBlank(customer.getWxname())){
-            return new Result(true,Global.wxname_isNullorBlank,null,null);
+        if (StringUtils.isNullOrBlank(customer.getWxname())) {
+            return new Result(true, Global.wxname_isNullorBlank, null, null);
         }
         //首先查找用户是否存在
         Customer oldone = customerService.findByWebOpenIdAndSellerId(customer.getWebOpenId(), customer.getSellerId());
@@ -180,6 +178,19 @@ public class CustomerController {
         return new Result(false, Global.do_success, response, null);
     }
 
+
+    // /customer/update_integral?openId=123&sellerId=123&nums=使用积分数
+    @RequestMapping("/update_integral")
+    public Result updateIntegral(String openId, String sellerId, String nums) {
+        Customer customer = customerService.findByOpenId(openId, sellerId);
+        if (Integer.parseInt(nums) > customer.getUnuseScroll()) {
+            return new Result(true, Global.data_unright + ":" + nums, null, null);
+        }
+        customer.setUnuseScroll(customer.getUnuseScroll() - Integer.parseInt(nums));
+        customer.setUsedScroll(customer.getUsedScroll() + Integer.parseInt(nums));
+        customerService.update(customer);
+        return new Result(false, Global.do_success, null, null);
+    }
 
     // /customer/update?openId=1213&sellerId=3&sex=性别&phone=手机号&email=邮箱&birthday=生日(例如 10-01)
     // &province=省份&city=城市名称(调用高德地图api)

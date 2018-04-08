@@ -177,6 +177,12 @@ public class SellerService {
         if (!StringUtils.isNullOrBlank(seller.getService_template_msg())) {
             seller1.setService_template_msg(seller.getService_template_msg());
         }
+        if (!StringUtils.isNullOrBlank(seller.getMaxable()+"")) {
+            seller1.setMaxable(seller.getMaxable());
+        }
+        if (!StringUtils.isNullOrBlank(seller.getIntegral_money()+"")) {
+            seller1.setIntegral_money(seller.getIntegral_money());
+        }
 
         sellerRepo.save(seller1);
     }

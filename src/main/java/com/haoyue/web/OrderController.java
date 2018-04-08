@@ -114,7 +114,7 @@ public class OrderController {
 
 
     @RequestMapping("/save")
-    public Result save(String deliver_price, Integer proId, Integer proTypeId, String sellerId, String receiver, String phone, String address, Integer amount, String openId, String leaveMessage, String wxname, String cashTicketCode) {
+    public Result save(String deliver_price, Integer proId, Integer proTypeId, String sellerId, String receiver, String phone, String address, Integer amount, String openId, String leaveMessage, String wxname, String cashTicketCode,String integralMoney) {
         //  当用户点击拒接获取信息后，导致wxname,wxpic为空
         if (StringUtils.isNullOrBlank(wxname)) {
             return new Result(true, Global.cannot_get_info, null, null);
@@ -221,6 +221,10 @@ public class OrderController {
             order.setTotalPrice(order.getTotalPrice() - Double.valueOf(cashTicket.getCash()));
             cashTicket.setIsuse(true);
             cashTicketService.update(cashTicket);
+        }
+        //是否使用积分抵消部分金额
+        if(!StringUtils.isNullOrBlank(integralMoney)){
+            order.setTotalPrice(order.getTotalPrice()-Double.valueOf(integralMoney));
         }
         //是否抽奖订单
         if (products.getIsLuckDraw()) {

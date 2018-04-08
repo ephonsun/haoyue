@@ -135,10 +135,12 @@ public class Global {
     public static Object object4=new Object();
     public static List<String> sendsms3=new ArrayList<>();//存放退款通知的卖家ID
     public static boolean timer=false;
-  
+
+    //签到
+    public static String already_signin="不可以重复签到";
+    public static String activity_closed="活动已经关闭";
 
     //微信模板信息访问通知
-
     public static String wxtemplate_msg1="3月5日各种活动：小香套装最低360元起，还有各种团购，秒杀，记得围观哦！";//日常访问通知
     public static String wxtemplate_msg2="亲爱的，您喜欢的宝贝上架啦，貌似新品有限时折扣！";//预售通知
     public static String wxtemplate_msg3="置顶关注，限时巨划算怎能错过！";//秒杀通知
