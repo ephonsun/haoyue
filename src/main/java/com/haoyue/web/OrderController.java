@@ -51,6 +51,10 @@ public class OrderController {
     private LuckDrawService luckDrawService;
     @Autowired
     private SellerService sellerService;
+    @Autowired
+    private IntegralService integralService;
+    @Autowired
+    private IntegralRecordService integralRecordService;
 
 
     // /order/list?pageNumber&pageSize&sellerId&state&active=true
@@ -353,6 +357,20 @@ public class OrderController {
                 DecimalFormat decimalFormat = new DecimalFormat("#.##");
                 customer.setExpense(Double.valueOf(decimalFormat.format(expense)));
                 customer.setBuynums(customer.getBuynums() + 1);
+                //消费增加积分
+                Integral integral= integralService.findBySellerIdAndTypename(order.getSellerId()+"","1");
+                if(integral!=null) {
+                    customer.setUnuseScroll(customer.getUnuseScroll() + Integer.parseInt(integral.getScrolls()));
+                    //增加积分的记录
+                    IntegralRecord integralRecord=new IntegralRecord();
+                    integralRecord.setCreateDate(new Date());
+                    integralRecord.setFroms("1");//消费
+                    integralRecord.setOpenId(customer.getOpenId());
+                    integralRecord.setSellerId(customer.getSellerId());
+                    integralRecord.setScrolls(Integer.parseInt(integral.getScrolls()));
+                    integralRecord.setType("0");//获取积分
+                    integralRecordService.save(integralRecord);
+                }
                 customerService.update(customer);
                 //更新会员信息
                 saveMember(order, customer);

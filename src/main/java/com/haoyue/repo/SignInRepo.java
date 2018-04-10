@@ -11,7 +11,7 @@ import java.util.List;
  */
 public interface SignInRepo extends BaseRepo<SignIn,Integer> {
 
-    @Query(nativeQuery = true,value = "select * from signin where open_id=?1 and seller_id=2 and create_date>?3")
+    @Query(nativeQuery = true,value = "select * from signin where open_id=?1 and seller_id=?2 and create_date>?3")
     SignIn findIsSignIn(String openId, String sellerId, Date createDate);
 
 

@@ -1,5 +1,6 @@
 package com.haoyue.service;
 
+import com.haoyue.pojo.IntegralRecord;
 import com.haoyue.pojo.QSignIn;
 import com.haoyue.pojo.SignIn;
 import com.haoyue.repo.SignInRepo;
@@ -25,6 +26,7 @@ public class SignInService {
 
     public void save(SignIn signin) {
         signInRepo.save(signin);
+
     }
 
     public boolean findIsSignIn(SignIn signin) {
@@ -33,7 +35,7 @@ public class SignInService {
         calendar.set(Calendar.MINUTE, 0);
         signin.setCreateDate(calendar.getTime());
         SignIn signIn = signInRepo.findIsSignIn(signin.getOpenId(), signin.getSellerId(), signin.getCreateDate());
-        return signIn==null?true:false;
+        return signIn==null?false:true;
     }
 
     public List<SignIn> findByOpenIdAndSellerIdAndActive(String openId,String sellerId,boolean b) {

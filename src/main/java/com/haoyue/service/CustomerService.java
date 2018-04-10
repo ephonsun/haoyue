@@ -64,18 +64,17 @@ public class CustomerService {
     }
 
     public Iterable<Customer> list2(Map<String, String> map,int pageNumber,int pageSzie ) {
-
         QCustomer customer = QCustomer.customer;
         BooleanBuilder bd = new BooleanBuilder();
-
         for (String name : map.keySet()) {
             String value = (String) map.get(name);
             if (!(StringUtils.isNullOrBlank(value))) {
-
-
+                if(name.equals("havescroll")){
+                    bd.and(customer.unuseScroll.ne(0));
+                    bd.or(customer.usedScroll.ne(0));
+                }
             }
         }
-
         return customerRepo.findAll(bd.getValue(),new PageRequest(pageNumber,pageSzie));
     }
 

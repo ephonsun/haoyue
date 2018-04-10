@@ -1,6 +1,7 @@
 package com.haoyue.web;
 
 import com.haoyue.pojo.Customer;
+import com.haoyue.pojo.IntegralRecord;
 import com.haoyue.pojo.Member;
 import com.haoyue.pojo.Seller;
 import com.haoyue.service.*;
@@ -34,6 +35,8 @@ public class CustomerController {
     private CommentService commentService;
     @Autowired
     private MemberService memberService;
+    @Autowired
+    private IntegralRecordService integralRecordService;
 
 
     //关键词查询 商品分类查询
@@ -189,6 +192,14 @@ public class CustomerController {
         customer.setUnuseScroll(customer.getUnuseScroll() - Integer.parseInt(nums));
         customer.setUsedScroll(customer.getUsedScroll() + Integer.parseInt(nums));
         customerService.update(customer);
+        //增加积分的记录
+        IntegralRecord integralRecord=new IntegralRecord();
+        integralRecord.setCreateDate(new Date());
+        integralRecord.setOpenId(customer.getOpenId());
+        integralRecord.setSellerId(customer.getSellerId());
+        integralRecord.setScrolls(Integer.parseInt(nums));
+        integralRecord.setType("1");//消费积分
+        integralRecordService.save(integralRecord);
         return new Result(false, Global.do_success, null, null);
     }
 
@@ -224,6 +235,21 @@ public class CustomerController {
         }
 
         return new Result(false, Global.do_success, customer1, null);
+    }
+
+    // /customer/scroll_list?sellerId=3&havescroll=3
+    @RequestMapping("/scroll_list")
+    public Result list(@RequestParam Map<String, String> map, @RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize) {
+        Iterable<Customer> iterable = customerService.list2(map, pageNumber, pageSize);
+        Iterator<Customer> iterator = iterable.iterator();
+        List<Customer> customerList = new ArrayList<>();
+        while (iterator.hasNext()) {
+            Customer customer = iterator.next();
+            if (customer.getSellerId().equals(map.get("sellerId"))) {
+                customerList.add(customer);
+            }
+        }
+        return new Result(false, Global.do_success, customerList, null);
     }
 
 }

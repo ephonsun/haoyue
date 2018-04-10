@@ -42,4 +42,8 @@ public class IntegralService {
         }
         return integralRepo.findAll(bd.getValue());
     }
+
+    public Integral findBySellerIdAndTypename(String s, String s1) {
+        return integralRepo.findBySellerIdAndTypename(s,s1);
+    }
 }

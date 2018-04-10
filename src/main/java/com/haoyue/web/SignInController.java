@@ -2,8 +2,10 @@ package com.haoyue.web;
 
 import com.haoyue.pojo.Customer;
 import com.haoyue.pojo.Integral;
+import com.haoyue.pojo.IntegralRecord;
 import com.haoyue.pojo.SignIn;
 import com.haoyue.service.CustomerService;
+import com.haoyue.service.IntegralRecordService;
 import com.haoyue.service.IntegralService;
 import com.haoyue.service.SignInService;
 import com.haoyue.untils.Global;
@@ -28,9 +30,11 @@ public class SignInController {
     private IntegralService integralService;
     @Autowired
     private CustomerService customerService;
+    @Autowired
+    private IntegralRecordService integralRecordService;
 
 
-    // /signin/save?openId=123&sellerId=3&wxname=微信名称
+    // https://www.cslapp.com/signin/save?openId=123&sellerId=3&wxname=微信名称
     @RequestMapping("/save")
     public Result save(SignIn signin){
        signin.setCreateDate(new Date());
@@ -60,6 +64,15 @@ public class SignInController {
                Customer customer= customerService.findByOpenId(signin.getOpenId(),signin.getSellerId());
                customer.setUnuseScroll(customer.getUnuseScroll()+Integer.parseInt(scrolls));
                customerService.update(customer);
+               //增加积分的记录
+                IntegralRecord integralRecord=new IntegralRecord();
+                integralRecord.setCreateDate(new Date());
+                integralRecord.setFroms("0");//签到
+                integralRecord.setOpenId(customer.getOpenId());
+                integralRecord.setSellerId(customer.getSellerId());
+                integralRecord.setScrolls(Integer.parseInt(scrolls));
+                integralRecord.setType("0");//获取积分
+                integralRecordService.save(integralRecord);
                //更新签到记录active=false
                for(SignIn signIn:signInList){
                    signIn.setActive(false);
@@ -75,5 +88,12 @@ public class SignInController {
     public Result list(@RequestParam Map<String, String> map, @RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize){
         Iterable<SignIn> iterable= signInService.list(map,pageNumber,pageSize);
         return new Result(false, Global.do_success,iterable,null);
+    }
+
+    // /signin/signInToday?sellerId=3&openId=123
+    @RequestMapping("/signInToday")
+    public Result signInToday(SignIn signin){
+        boolean flag= signInService.findIsSignIn(signin);
+        return new Result(false, Global.do_success,flag,null);
     }
 }
