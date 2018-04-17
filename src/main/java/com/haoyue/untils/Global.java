@@ -158,6 +158,12 @@ public class Global {
     public static String kuaidi_key = "d348100a2fd46f0dc1aeddde3f0a904c";
     public static String not_receive = "当前快递未签收";
 
+    //自定义优惠券
+    public static String already_MaxGets="当前每人限领：";
+    public static String alreay_expire="当前优惠券已经失效";
+    public static String already_used="当前优惠券已经使用";
+    public static String already_got_all="当前优惠券已经全部领取完毕";
+
     //积攒送小程序
     public static int thumbs_up_num = 40;//积攒目标数
     public static String thumbs_up_access = "集赞数已达到啦！";

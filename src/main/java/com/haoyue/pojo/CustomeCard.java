@@ -22,6 +22,7 @@ public class CustomeCard {
     private String cardName;//优惠券名称
     private int totalNums;//总发放量
     private int gotNums;//已领取量
+    private int gotUsed;//已经使用量
     private String type;//优惠形式 金额 0 折扣 1
     private double typeValue;//优惠额度 1元 0.9折
     private String picSmall;//小图标
@@ -36,6 +37,8 @@ public class CustomeCard {
     private String comments;//备注说明
     private String phone;//客服电话
     private String pid;//客户领取的优惠券对应商家设置的优惠券的ID，方便统计领取数量
+    private String expiretype;//有效期 0 固定 1 从领取当日开始计算  2 从领取次日开始计算
+    private int expiredays;//有效期几日
 
 
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:SS", timezone="GMT+8")
@@ -55,6 +58,30 @@ public class CustomeCard {
     private Date expireDate;//过期日期
     private String expireDateStr;//过期日期
 
+
+    public int getGotUsed() {
+        return gotUsed;
+    }
+
+    public void setGotUsed(int gotUsed) {
+        this.gotUsed = gotUsed;
+    }
+
+    public String getExpiretype() {
+        return expiretype;
+    }
+
+    public void setExpiretype(String expiretype) {
+        this.expiretype = expiretype;
+    }
+
+    public int getExpiredays() {
+        return expiredays;
+    }
+
+    public void setExpiredays(int expiredays) {
+        this.expiredays = expiredays;
+    }
 
     public int getGotNums() {
         return gotNums;

@@ -55,6 +55,8 @@ public class OrderController {
     private IntegralService integralService;
     @Autowired
     private IntegralRecordService integralRecordService;
+    @Autowired
+    private CustomeCardService customeCardService;
 
 
     // /order/list?pageNumber&pageSize&sellerId&state&active=true
@@ -118,7 +120,7 @@ public class OrderController {
 
 
     @RequestMapping("/save")
-    public Result save(String deliver_price, Integer proId, Integer proTypeId, String sellerId, String receiver, String phone, String address, Integer amount, String openId, String leaveMessage, String wxname, String cashTicketCode,String integralMoney) {
+    public Result save(String deliver_price, Integer proId, Integer proTypeId, String sellerId, String receiver, String phone, String address, Integer amount, String openId, String leaveMessage, String wxname, String cashTicketCode,String integralMoney,String customeCardId) {
         //  当用户点击拒接获取信息后，导致wxname,wxpic为空
         if (StringUtils.isNullOrBlank(wxname)) {
             return new Result(true, Global.cannot_get_info, null, null);
@@ -230,6 +232,19 @@ public class OrderController {
         if(!StringUtils.isNullOrBlank(integralMoney)){
             order.setTotalPrice(order.getTotalPrice()-Double.valueOf(integralMoney));
         }
+        //是否使用优惠券
+        if(!StringUtils.isNullOrBlank(customeCardId)){
+            CustomeCard customeCard= customeCardService.findOne(Integer.parseInt(customeCardId));
+            //金额优惠
+            if(customeCard.getType().equals("0")){
+                order.setTotalPrice(order.getTotalPrice()-customeCard.getTypeValue());
+            }
+            //折扣优惠
+            if(customeCard.getType().equals("1")){
+                order.setTotalPrice(order.getTotalPrice()*customeCard.getTypeValue());
+            }
+        }
+
         //是否抽奖订单
         if (products.getIsLuckDraw()) {
             if (products.getIsLuckDrawEnd()) {
@@ -257,6 +272,8 @@ public class OrderController {
                 }
             }
         }
+        //再次格式化订单总价格
+        order.setTotalPrice(Double.valueOf(decimalFormat.format(order.getTotalPrice())));
         return new Result(false, Global.do_success, orderService.save(order), null);
     }
 
