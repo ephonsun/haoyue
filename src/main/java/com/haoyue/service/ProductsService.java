@@ -162,6 +162,9 @@ public class ProductsService {
         if(price_from>=0&&price_to!=0){
             bd.and(pro.produtsTypes.any().priceNew.between(price_from,price_to));
         }
+        if(!StringUtils.isNullOrBlank(map.get("orderById"))){
+            return productsRepo.findAll(bd.getValue(), new PageRequest(pagenumber, pagesize, new Sort(Sort.Direction.DESC, new String[]{"id"})));
+        }
         return productsRepo.findAll(bd.getValue(), new PageRequest(pagenumber, pagesize, new Sort(Sort.Direction.DESC, new String[]{"monthSale"})));
     }
 

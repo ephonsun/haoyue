@@ -37,11 +37,11 @@ public class SignInController {
     // https://www.cslapp.com/signin/save?openId=123&sellerId=3&wxname=微信名称
     @RequestMapping("/save")
     public Result save(SignIn signin){
-       signin.setCreateDate(new Date());
        boolean flag= signInService.findIsSignIn(signin);
        if(flag){
            return new Result(false, Global.already_signin,null,null);
        }
+        signin.setCreateDate(new Date());
        //查询当前卖家设置的积分
         Map map=new HashMap();
         map.put("sellerId",signin.getSellerId());
@@ -83,7 +83,7 @@ public class SignInController {
        return new Result(false, Global.do_success,signin,null);
     }
 
-    // /signin/list?sellerId=3&openId=123&active=true/false
+    // https://www.cslapp.com/signin/list?sellerId=3&openId=ook0P0aZGFGfXFzB9f0k8qiQXGJU
     @RequestMapping("/list")
     public Result list(@RequestParam Map<String, String> map, @RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize){
         Iterable<SignIn> iterable= signInService.list(map,pageNumber,pageSize);

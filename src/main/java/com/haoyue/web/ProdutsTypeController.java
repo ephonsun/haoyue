@@ -43,6 +43,7 @@ public class ProdutsTypeController {
         return new Result(false, Global.do_success, token);
     }
 
+    //   /protype/update?id=商品分类ID&discountPrice=最终的折扣价&token=店铺ID
     @RequestMapping("/update")
     public Result update(ProdutsType produtsType, String token){
         ProdutsType old=produtsTypeService.findOne(produtsType.getId());
@@ -55,6 +56,9 @@ public class ProdutsTypeController {
         if (produtsType.getPriceNew()!=null){
             old.setPriceOld(old.getPriceNew());
             old.setPriceNew(produtsType.getPriceNew());
+        }
+        if(produtsType.getDiscountPrice()!=null){
+            old.setDiscountPrice(produtsType.getDiscountPrice());
         }
         produtsTypeService.save(old);
         return new Result(false, Global.do_success,null,token);

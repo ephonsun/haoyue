@@ -332,6 +332,7 @@ public class SellerController {
         map.put("token", sellerId + "");
         map.put("active", "true");
         map.put("showdate","yes");
+        map.put("orderById","yes");
         Iterable<Products> iterable = productsService.plist(map, Global.pageNumber, pageSize);
         objects.add(iterable);
         objects.add(seller.getLunbo());
