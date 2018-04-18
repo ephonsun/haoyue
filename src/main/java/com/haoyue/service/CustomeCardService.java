@@ -125,7 +125,6 @@ public class CustomeCardService {
     }
 
     public void addTemplate(CustomeCard customeCard) {
-
         List<TemplateResponse> list = new ArrayList<>();
         TemplateResponse templateResponse1 = new TemplateResponse();
         templateResponse1.setColor("#000000");

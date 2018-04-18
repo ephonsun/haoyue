@@ -38,6 +38,8 @@ public class SuperAdminController {
     private DictionaryService dictionaryService;
     @Autowired
     private AfterSaleService afterSaleService;
+    @Autowired
+    private CustomeCardService customeCardService;
 
     @RequestMapping("/login")
     public Result login(SuperAdmin superAdmin) {
@@ -268,6 +270,9 @@ public class SuperAdminController {
                 afterSaleService.flush1();
                 afterSaleService.flush2();
                 afterSaleService.flush3();
+                //优惠券刷新
+                customeCardService.flush();
+
             }
             catch (Exception e){
                 e.printStackTrace();
