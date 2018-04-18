@@ -61,7 +61,7 @@ public class Seller implements Serializable{
     private String service_template;//服务状态通知 Foc6pkGtA2FZON2_5nXJxCmFvfIdKWAv5oj6REd_3w4
     private String service_template_msg;
     private String paysuccess_template;//付款成功通知 Z_Xg6rYdQgci4FP_aOjTvZHXeC5BSs99EwARD6NJXWk
-    private String customeCard_template;//自定义优惠券通知
+    private String customeCard_template;//自定义优惠券通知 custome_card_template
     //积分
     private int maxable;//单次消费最大限度可使用积分
     private double integral_money;// 1积分=金额

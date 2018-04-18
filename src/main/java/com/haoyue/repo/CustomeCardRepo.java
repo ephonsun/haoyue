@@ -23,4 +23,9 @@ public interface CustomeCardRepo extends BaseRepo<CustomeCard,Integer> {
 
     @Query(nativeQuery = true,value = "select remind from customecard where id=?1")
     boolean findRemindById(int i);
+
+    @Modifying
+    @Transactional
+    @Query(nativeQuery = true,value = "update customecard set hasremind=true where id=?1")
+    void updateHasremind(Integer id);
 }

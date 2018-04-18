@@ -39,6 +39,7 @@ public class CustomeCard {
     private String pid;//客户领取的优惠券对应商家设置的优惠券的ID，方便统计领取数量
     private String expiretype;//有效期 0 固定 1 从领取当日开始计算  2 从领取次日开始计算
     private int expiredays;//有效期几日
+    private boolean hasremind=false;//是否发过模板消息
 
 
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:SS", timezone="GMT+8")
@@ -58,6 +59,14 @@ public class CustomeCard {
     private Date expireDate;//过期日期
     private String expireDateStr;//过期日期
 
+
+    public boolean getHasremind() {
+        return hasremind;
+    }
+
+    public void setHasremind(boolean hasremind) {
+        this.hasremind = hasremind;
+    }
 
     public int getGotUsed() {
         return gotUsed;

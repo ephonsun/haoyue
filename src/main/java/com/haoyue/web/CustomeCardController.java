@@ -35,8 +35,12 @@ public class CustomeCardController {
 //       &[ 如果 expiretype=0 的话: beginDateStr=开始日期(格式 2017-9-19 16:28:25)&expireDateStr=结束日期(格式 同上)]
 //       &[  如果 expiretype=1/2 的话: expiredays=有效期几日]
     @RequestMapping("/save")
-    public Result save(CustomeCard customeCard) {
+    public Result save(CustomeCard customeCard) throws ParseException {
         customeCard.setCreateDate(new Date());
+        if(customeCard.getExpiretype().equals("0")){
+            customeCard.setBeginDate(StringUtils.formatDate2(customeCard.getBeginDateStr()));
+            customeCard.setExpireDate(StringUtils.formatDate2(customeCard.getExpireDateStr()));
+        }
         customeCardService.save(customeCard);
         return new Result(false, Global.do_success, customeCard, null);
     }

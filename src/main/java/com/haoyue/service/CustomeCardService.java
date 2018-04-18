@@ -75,19 +75,29 @@ public class CustomeCardService {
     public void flush(){
         Date date=new Date();
         //刷新数据
-        customeCardRepo.flush();
+        customeCardRepo.flush(date);
         //访问通知
         List<CustomeCard> list= customeCardRepo.findByActiveAndUsedAndOpenIdIsNotNull(true,false);
         long expiredate=0;
         long nowdate=date.getTime();
         for(CustomeCard customeCard:list){
+            //模板是否设置了提醒
             if(findRemindById(Integer.parseInt(customeCard.getPid()))==false){
+                continue;
+            }
+            //是否已经提醒过了
+            if(customeCard.getHasremind()){
+                continue;
+            }
+            //formId格式校验
+            if(StringUtils.isNullOrBlank(customeCard.getFormId())||customeCard.getFormId().contains("mock")){
                 continue;
             }
             expiredate=customeCard.getExpireDate().getTime();
             //时间差小于 4 天
             if(expiredate-nowdate<3600*24*4){
                 addTemplate(customeCard);
+                customeCardRepo.updateHasremind(customeCard.getId());
             }
         }
     }
@@ -116,45 +126,32 @@ public class CustomeCardService {
 
     public void addTemplate(CustomeCard customeCard) {
 
-//        List<TemplateResponse> list = new ArrayList<>();
-//        TemplateResponse templateResponse1 = new TemplateResponse();
-//        templateResponse1.setColor("#000000");
-//        templateResponse1.setName("keyword1");
-//        templateResponse1.setValue(order.getProducts().get(0).getPname());
-//        list.add(templateResponse1);
-//
-//        TemplateResponse templateResponse2 = new TemplateResponse();
-//        templateResponse2.setColor("#000000");
-//        templateResponse2.setName("keyword2");
-//        templateResponse2.setValue(order.getWxname());
-//        list.add(templateResponse2);
-//
-//        TemplateResponse templateResponse3 = new TemplateResponse();
-//        templateResponse3.setColor("#000000");
-//        templateResponse3.setName("keyword3");
-//        templateResponse3.setValue(order.getTotalPrice() + "");
-//        list.add(templateResponse3);
-//
-//        TemplateResponse templateResponse4 = new TemplateResponse();
-//        templateResponse4.setColor("#000000");
-//        templateResponse4.setName("keyword4");
-//        templateResponse4.setValue("微信支付");
-//        list.add(templateResponse4);
-//
-//        TemplateResponse templateResponse5 = new TemplateResponse();
-//        templateResponse5.setColor("#000000");
-//        templateResponse5.setName("keyword5");
-//        String date = StringUtils.formDateToStr(new Date());
-//        templateResponse5.setValue(date);
-//        list.add(templateResponse5);
-//
-//        Template template = new Template();
-//        template.setTemplateId(sellerService.findOne(Integer.parseInt(customeCard.getSellerId())).getPaysuccess_template());
-//        template.setTemplateParamList(list);
-//        template.setTopColor("#000000");
-//        template.setPage("pages/index/index");
-//        template.setToUser(customeCard.getOpenId());
-        getTemplate(null, customeCard.getSellerId(), customeCard.getFormId());
+        List<TemplateResponse> list = new ArrayList<>();
+        TemplateResponse templateResponse1 = new TemplateResponse();
+        templateResponse1.setColor("#000000");
+        templateResponse1.setName("keyword1");
+        templateResponse1.setValue(customeCard.getCardName());
+        list.add(templateResponse1);
+
+        TemplateResponse templateResponse2 = new TemplateResponse();
+        templateResponse2.setColor("#000000");
+        templateResponse2.setName("keyword2");
+        templateResponse2.setValue(StringUtils.formDateToStr(customeCard.getExpireDate()));
+        list.add(templateResponse2);
+
+        TemplateResponse templateResponse3 = new TemplateResponse();
+        templateResponse3.setColor("#000000");
+        templateResponse3.setName("keyword3");
+        templateResponse3.setValue("卡券即将到期，请及时使用！");
+        list.add(templateResponse3);
+
+        Template template = new Template();
+        template.setTemplateId(sellerService.findOne(Integer.parseInt(customeCard.getSellerId())).getCustomeCard_template());
+        template.setTemplateParamList(list);
+        template.setTopColor("#000000");
+        template.setPage("pages/index/index");
+        template.setToUser(customeCard.getOpenId());
+        getTemplate(template, customeCard.getSellerId(), customeCard.getFormId());
     }
 
 }
