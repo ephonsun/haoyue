@@ -175,5 +175,12 @@ public class CustomeCardController {
         return new Result(false, Global.do_success, customeCard, null);
     }
 
+    //  /customecard/findone?id=优惠券ID&sellerId=3
+    @RequestMapping("/findone")
+    public Result findOne(Integer id,String sellerId){
+        CustomeCard customeCard= customeCardService.findOne(id);
+        return new Result(false, Global.do_success, customeCard, null);
+    }
+
 
 }
