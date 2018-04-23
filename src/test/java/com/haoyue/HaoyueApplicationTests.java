@@ -6,8 +6,10 @@ import com.aliyun.oss.model.PutObjectResult;
 import com.haoyue.untils.*;
 //import io.goeasy.GoEasy;
 import com.haoyue.untils.HttpRequest;
+import com.sun.deploy.net.HttpUtils;
 import io.goeasy.GoEasy;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,6 +23,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
@@ -403,17 +406,17 @@ public class HaoyueApplicationTests {
     @Test
     public void f30(){
         Calendar calendar=Calendar.getInstance();
-        calendar.add(Calendar.DATE,-1);
-        calendar.set(Calendar.HOUR,0);
+        calendar.set(Calendar.HOUR_OF_DAY,0);
         calendar.set(Calendar.MINUTE,0);
         System.out.println(calendar.getTime().toLocaleString());
     }
 
     @Test
     public void f31(){
-        String str="12.523";
-        System.out.println(new DecimalFormat("0").format(Double.parseDouble(str)));
+        double str=999.009;
+        System.out.println(System.currentTimeMillis());
     }
+
 
     @Test
     public void check(){
