@@ -86,6 +86,17 @@ public class Products {
     private String qrcode;//二维码
     private double weight;//重量
 
+    //多个商品对应一个折扣活动
+    @ManyToOne
+    private ActivityForDiscount activityForDiscount;
+
+    public ActivityForDiscount getActivityForDiscount() {
+        return activityForDiscount;
+    }
+
+    public void setActivityForDiscount(ActivityForDiscount activityForDiscount) {
+        this.activityForDiscount = activityForDiscount;
+    }
 
     public String getSecondPtypeName() {
         return secondPtypeName;

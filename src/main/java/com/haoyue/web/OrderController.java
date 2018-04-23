@@ -57,6 +57,8 @@ public class OrderController {
     private IntegralRecordService integralRecordService;
     @Autowired
     private CustomeCardService customeCardService;
+    @Autowired
+    private ActivityForDiscountService activityForDiscountService;
 
 
     // /order/list?pageNumber&pageSize&sellerId&state&active=true
@@ -120,7 +122,7 @@ public class OrderController {
 
 
     @RequestMapping("/save")
-    public Result save(String deliver_price, Integer proId, Integer proTypeId, String sellerId, String receiver, String phone, String address, Integer amount, String openId, String leaveMessage, String wxname, String cashTicketCode,String integralMoney,String customeCardId) {
+    public Result save(String deliver_price, String total_price,Integer proId, Integer proTypeId, String sellerId, String receiver, String phone, String address, Integer amount, String openId, String leaveMessage, String wxname, String cashTicketCode) {
         //  当用户点击拒接获取信息后，导致wxname,wxpic为空
         if (StringUtils.isNullOrBlank(wxname)) {
             return new Result(true, Global.cannot_get_info, null, null);
@@ -196,10 +198,10 @@ public class OrderController {
         order.setInvoiceType(Global.invoice_type);
         //支付方式
         order.setPayType(Global.pay_type);
-        //原价
-        order.setOldPrice(produtsType.getPriceOld() == null ? produtsType.getPriceNew() : produtsType.getPriceOld());
-        //现价
-        order.setPrice(product_price * amount);
+        //原价  已经无意义
+        order.setOldPrice(0.0);
+        //现价 暂时: 商品折扣价+快递费用
+        order.setPrice(product_price * amount+Double.valueOf(deliver_price));
         //订单号 唯一
         synchronized (Global.object) {
             order.setOrderCode(Global.order_code_begin + (Global.count++) + new Date().getTime());
@@ -211,38 +213,13 @@ public class OrderController {
         order.setSellerId(products.getSellerId());
         //新建订单为未付款订单
         order.setState(Global.order_unpay);
-        //总计
-        order.setTotalPrice(order.getPrice() + order.getDeliver().getPrice());
-        //格式化价格
-        DecimalFormat decimalFormat=new DecimalFormat("#.##");
-        order.setTotalPrice(Double.valueOf(decimalFormat.format(order.getTotalPrice())));
-        //是否是会员  订单总价=商品价*折扣+快递费用
-        Member member = memberService.findByOpenIdAndSellerId(openId, sellerId);
-        if (member!=null) {
-            order.setTotalPrice(order.getPrice() * Double.valueOf(member.getDiscount())+order.getDeliver().getPrice());
-        }
+
         //是否使用抵用券
         if (!StringUtils.isNullOrBlank(cashTicketCode)) {
             CashTicket cashTicket = cashTicketService.findByCode(cashTicketCode);
             order.setTotalPrice(order.getTotalPrice() - Double.valueOf(cashTicket.getCash()));
             cashTicket.setIsuse(true);
             cashTicketService.update(cashTicket);
-        }
-        //是否使用积分抵消部分金额
-        if(!StringUtils.isNullOrBlank(integralMoney)){
-            order.setTotalPrice(order.getTotalPrice()-Double.valueOf(integralMoney));
-        }
-        //是否使用优惠券
-        if(!StringUtils.isNullOrBlank(customeCardId)){
-            CustomeCard customeCard= customeCardService.findOne(Integer.parseInt(customeCardId));
-            //金额优惠
-            if(customeCard.getType().equals("0")){
-                order.setTotalPrice(order.getTotalPrice()-customeCard.getTypeValue());
-            }
-            //折扣优惠
-            if(customeCard.getType().equals("1")){
-                order.setTotalPrice(order.getTotalPrice()*customeCard.getTypeValue());
-            }
         }
 
         //是否抽奖订单
@@ -272,8 +249,8 @@ public class OrderController {
                 }
             }
         }
-        //再次格式化订单总价格
-        order.setTotalPrice(Double.valueOf(decimalFormat.format(order.getTotalPrice())));
+        //格式化订单总价格
+        order.setTotalPrice(Double.valueOf(total_price));
         return new Result(false, Global.do_success, orderService.save(order), null);
     }
 
@@ -364,9 +341,9 @@ public class OrderController {
                 addTemplate(order);
             }
             orderService.update(order);
-            //如果是刚付款的订单转为代发货订单 更新会员信息和买家信息
-            Customer customer=null;
-            if(order.getState().equals(Global.order_unsend)) {
+            //如果是刚付款的订单转为代发货订单 更新会员信息和买家信息和折扣活动信息
+            Customer customer = null;
+            if (order.getState().equals(Global.order_unsend)) {
                 //更新个人花费总额 + 订单总价（不包括邮费）
                 customer = customerService.findOne(order.getCustomerId());
                 double expense = customer.getExpense() + order.getPrice();
@@ -375,11 +352,11 @@ public class OrderController {
                 customer.setExpense(Double.valueOf(decimalFormat.format(expense)));
                 customer.setBuynums(customer.getBuynums() + 1);
                 //消费增加积分
-                Integral integral= integralService.findBySellerIdAndTypename(order.getSellerId()+"","1");
-                if(integral!=null) {
+                Integral integral = integralService.findBySellerIdAndTypename(order.getSellerId() + "", "1");
+                if (integral != null) {
                     customer.setUnuseScroll(customer.getUnuseScroll() + Integer.parseInt(integral.getScrolls()));
                     //增加积分的记录
-                    IntegralRecord integralRecord=new IntegralRecord();
+                    IntegralRecord integralRecord = new IntegralRecord();
                     integralRecord.setCreateDate(new Date());
                     integralRecord.setFroms("1");//消费
                     integralRecord.setOpenId(customer.getOpenId());
@@ -391,19 +368,23 @@ public class OrderController {
                 customerService.update(customer);
                 //更新会员信息
                 saveMember(order, customer);
+                //刷新折扣活动信息
+                updateActivityDiscount(order);
             }
             //已完成订单刷新会员来源  交易成功
-            if(order.getState().equals(Global.order_finsh)){
-                Member member= memberService.findByOpenIdAndSellerId(customer.getOpenId(),order.getSellerId()+"");
-                if(member!=null){
+            if (order.getState().equals(Global.order_finsh)) {
+                Member member = memberService.findByOpenIdAndSellerId(customer.getOpenId(), order.getSellerId() + "");
+                if (member != null) {
                     member.setFroms(Global.member_froms_success);
                     memberService.save(member);
                 }
             }
 
+
             return new Result(false, Global.do_success, order, null);
         }
     }
+
 
     //订单转excel
     @RequestMapping("/excel")
@@ -467,7 +448,7 @@ public class OrderController {
     public void saveMember(Order order, Customer customer) {
         //查询出指定商家的会员体系
         List<Member> memberList = memberService.findBySellerIdAndOpenIdIsNull(customer.getSellerId());
-        if(memberList==null||memberList.size()==0){
+        if (memberList == null || memberList.size() == 0) {
             return;
         }
         //查询出当前买家所对应的会员
@@ -493,7 +474,7 @@ public class OrderController {
                 oldmember.setProvince(customer.getProvince());
                 oldmember.setCity(customer.getCity());
                 try {
-                    oldmember.setBirthDate(StringUtils.formatDate2(Calendar.getInstance().get(Calendar.YEAR) + "-" + customer.getBirthday()+" 00:00:00"));
+                    oldmember.setBirthDate(StringUtils.formatDate2(Calendar.getInstance().get(Calendar.YEAR) + "-" + customer.getBirthday() + " 00:00:00"));
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
@@ -534,7 +515,7 @@ public class OrderController {
         }
         //更新买家信息到会员系统,当前消费额或者次数小于会员体系,旧的会员信息存在
         //保持当前会员等级和折扣不变
-        if(index==0&&oldmember!=null){
+        if (index == 0 && oldmember != null) {
             oldmember.setNums(oldmember.getNums() + 1);
             oldmember.setTotal_consume(oldmember.getTotal_consume() + order.getTotalPrice());
             oldmember.setLatestBuyDate(order.getCreateDate());
@@ -547,6 +528,25 @@ public class OrderController {
             memberService.save(oldmember);
         }
 
+    }
+
+    //刷新 折扣活动
+    public void updateActivityDiscount(Order order) {
+        List<Products> productsList = order.getProducts();
+        Date date = new Date();
+        for (Products products : productsList) {
+            //当前商品是否有折扣活动
+            if (products.getActivityForDiscount() != null) {
+                ActivityForDiscount activityForDiscount = products.getActivityForDiscount();
+                //活动是否过期
+                if (activityForDiscount.getEndDate().after(date) && activityForDiscount.getFromDate().before(date)) {
+                    activityForDiscount.setCustomerNums(activityForDiscount.getCustomerNums() + 1);
+                    activityForDiscount.setOrderNums(activityForDiscount.getOrderNums() + 1);
+                    activityForDiscount.setTotalPrice(activityForDiscount.getTotalPrice() + order.getTotalPrice());
+                    activityForDiscountService.update(activityForDiscount);
+                }
+            }
+        }
     }
 
     public void getTemplate(Template template, int sellerId, int oid) {
@@ -613,9 +613,9 @@ public class OrderController {
 
     //  http://localhost:8080/order/flush?sellerId=3
     @RequestMapping("/flush")
-    public Result flush(String sellerId){
+    public Result flush(String sellerId) {
         orderService.unpayFlush();
-        return new Result(false,Global.do_success,null,null);
+        return new Result(false, Global.do_success, null, null);
     }
 
 }
