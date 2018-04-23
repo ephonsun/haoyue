@@ -33,6 +33,7 @@ public class WxTemplateService {
         wxTemplateRepo.updateActive(new Date());
         wxTemplateRepo.deleteUndefined();
         wxTemplateRepo.deleteActiveFalse();
+        wxTemplateRepo.deleteOpenidNull();
     }
 
     public List<String> findActive() {

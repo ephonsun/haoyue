@@ -44,4 +44,9 @@ public interface WxTemplateRepo extends BaseRepo<WxTemplate,Integer> {
     @Transactional
     @Query(nativeQuery = true,value = "delete from wx_template where active=false ")
     void deleteActiveFalse();
+
+    @Modifying
+    @Transactional
+    @Query(nativeQuery = true,value = "delete from wx_template where open_id is null or open_id='null' ")
+    void deleteOpenidNull();
 }
