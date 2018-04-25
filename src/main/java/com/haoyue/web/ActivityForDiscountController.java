@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -57,7 +59,11 @@ public class ActivityForDiscountController {
     @RequestMapping("/findone")
     public Result findOne(int id,String sellerId){
         ActivityForDiscount activityForDiscount= activityForDiscountService.findOne(id);
-        return new Result(false, Global.do_success,activityForDiscount,null);
+        Iterable<Products> productsList=productsService.findByActivityDiscount(activityForDiscount.getId());
+        List<Object> list=new ArrayList<>();
+        list.add(activityForDiscount);
+        list.add(productsList);
+        return new Result(false, Global.do_success,list,null);
     }
 
     //  /activity/discount/del?id=12&sellerId=3
@@ -78,5 +84,8 @@ public class ActivityForDiscountController {
         Iterable<ActivityForDiscount> iterable = activityForDiscountService.list(map, pageNumber, pageSize);
         return new Result(false, Global.do_success, iterable, null);
     }
+
+
+
 
 }

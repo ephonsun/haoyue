@@ -319,4 +319,11 @@ public class ProductsService {
     public List<Products> findBySellerIdAndPtypeNameAndActive(String sellerId, String ptypename, boolean b) {
         return productsRepo.findBySellerIdAndPtypeNameAndActive(Integer.parseInt(sellerId),ptypename,true);
     }
+
+    public Iterable<Products> findByActivityDiscount(Integer id) {
+        QProducts pro = QProducts.products;
+        BooleanBuilder bd = new BooleanBuilder();
+        bd.and(pro.activityForDiscount.id.eq(id));
+        return productsRepo.findAll(bd.getValue());
+    }
 }
