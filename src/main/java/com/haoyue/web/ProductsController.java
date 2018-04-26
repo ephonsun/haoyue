@@ -215,14 +215,14 @@ public class ProductsController {
             String secondKillPrice = "0";
             String amount = null;
             String pic = null;
-            if (strings.length == 7) {
+            if (strings.length == 5) {
                 color = strings[0];//颜色
                 size = strings[1];//尺码
-                discount = strings[2];//折扣价
-                price = strings[3];//原价
-                secondKillPrice = strings[4];//秒杀价
-                amount = strings[5];//库存
-                pic = strings[6];//每个商品分类对应一个图片
+                //discount = strings[2];//折扣价
+                price = strings[2];//原价
+                secondKillPrice = strings[3];//秒杀价
+                amount = strings[4];//库存
+                //pic = strings[6];//每个商品分类对应一个图片
 
             }
             if (strings.length == 6) {
@@ -238,9 +238,9 @@ public class ProductsController {
             if (amount.equals("0")) {
                 continue;
             }
-            if (!StringUtils.isDiget(discount) || discount.equals("0")) {
-                return new Result(true, Global.discount_price_unright, null, null);
-            }
+//            if (!StringUtils.isDiget(discount) || discount.equals("0")) {
+//                return new Result(true, Global.discount_price_unright, null, null);
+//            }
             if (!StringUtils.isDiget(price)) {
                 return new Result(true, Global.price_is_unright, null, null);
             }
@@ -248,7 +248,7 @@ public class ProductsController {
             produtsType.setPriceNew(Double.valueOf(price));
             produtsType.setColor(color);
             //判断是否折扣
-            if (!discount.equals("0")) {
+            if (discount!=null&&!discount.equals("0")) {
                 produtsType.setISDiscount(true);
                 produtsType.setDiscountPrice(Double.valueOf(discount));
             }

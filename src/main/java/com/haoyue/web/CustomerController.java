@@ -72,9 +72,9 @@ public class CustomerController {
         Customer customer = customerService.findByOpenId(openId, sellerId);
         if (customer == null) {
             //不存在
-            List<Customer> customerList = customerService.findByWxnamAndSellerId(customer.getWxname(), customer.getSellerId());
+            List<Customer> customerList = customerService.findByWxnamAndSellerId(wxname, sellerId);
             //之前没有登录过微商城
-            if (customerList == null) {
+            if (customerList == null||customerList.size()==0) {
                 customer = new Customer();
                 customer.setOpenId(openId);
                 customer.setSellerId(sellerId);
