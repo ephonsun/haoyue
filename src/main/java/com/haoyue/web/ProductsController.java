@@ -68,6 +68,12 @@ public class ProductsController {
         return new Result(false, "", iterable, map.get("token"));
     }
 
+    @RequestMapping("/list_new")
+    public Result list_new(@RequestParam Map<String, String> map) {
+        Iterable<Products> iterable=productsService.list(map);
+        return new Result(false, "", iterable, map.get("token"));
+    }
+
     // http://localhost:8080/seller/pro/uploadPic?token=1&multipartFiles=12221
     @RequestMapping("/uploadPic")
     public Object uploadPic(MultipartFile[] multipartFiles, String token) throws IOException, MyException {

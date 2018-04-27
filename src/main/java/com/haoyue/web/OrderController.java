@@ -57,6 +57,8 @@ public class OrderController {
     private IntegralRecordService integralRecordService;
     @Autowired
     private CustomeCardService customeCardService;
+    @Autowired
+    private ActivityForDiscountService activityForDiscountService;
 
 
     // /order/list?pageNumber&pageSize&sellerId&state&active=true
@@ -391,6 +393,8 @@ public class OrderController {
                 customerService.update(customer);
                 //更新会员信息
                 saveMember(order, customer);
+                //刷新折扣活动信息
+                updateActivityDiscount(order);
             }
             //已完成订单刷新会员来源  交易成功
             if(order.getState().equals(Global.order_finsh)){
@@ -547,6 +551,29 @@ public class OrderController {
             memberService.save(oldmember);
         }
 
+    }
+
+    //刷新 折扣活动
+    public void updateActivityDiscount(Order order) {
+        List<Products> productsList = order.getProducts();
+        Date date = new Date();
+        try {
+            for (Products products : productsList) {
+                //当前商品是否有折扣活动
+                if (products.getActivityForDiscount() != null) {
+                    ActivityForDiscount activityForDiscount = products.getActivityForDiscount();
+                    //活动是否过期
+                    if (activityForDiscount.getEndDate().after(date) && activityForDiscount.getFromDate().before(date)) {
+                        activityForDiscount.setCustomerNums(activityForDiscount.getCustomerNums() + 1);
+                        activityForDiscount.setOrderNums(activityForDiscount.getOrderNums() + 1);
+                        activityForDiscount.setTotalPrice(activityForDiscount.getTotalPrice() + order.getTotalPrice());
+                        activityForDiscountService.update(activityForDiscount);
+                    }
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     public void getTemplate(Template template, int sellerId, int oid) {

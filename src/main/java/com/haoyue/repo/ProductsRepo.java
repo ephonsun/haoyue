@@ -32,4 +32,15 @@ public interface ProductsRepo extends BaseRepo<Products,Integer> {
     List<Products> findBySellerIdAndActive(String sellerId, boolean flag);
 
     List<Products> findBySellerIdAndPtypeNameAndActive(Integer sellerId, String ptypename, boolean b);
+
+    @Modifying
+    @Transactional
+    @Query(nativeQuery = true,value = "delete from products_childtypes where childtypes_id=?1")
+    void del_childtypes_middle(Integer id);
+
+    @Modifying
+    @Transactional
+    @Query(nativeQuery = true,value = "delete from products_parenttypes where parenttypes_id=?1")
+    void del_parenttypes_middle(Integer id);
+
 }

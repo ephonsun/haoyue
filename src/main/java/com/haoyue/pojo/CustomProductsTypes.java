@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by LiJia on 2017/12/8.
@@ -20,13 +21,44 @@ public class CustomProductsTypes {
 
     private String name;
     private String sellerId;
-    private String pcode;
+
+    private String pid;
+
+
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<CustomProductsTypes> childs;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:SS", timezone = "GMT+8")
     @Temporal(TemporalType.TIMESTAMP)
     @Column(updatable = false)
     private Date createDate;//创建日期
 
+    private boolean active=true;
+
+    public boolean getActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public List<CustomProductsTypes> getChilds() {
+        return childs;
+    }
+
+
+    public String getPid() {
+        return pid;
+    }
+
+    public void setPid(String pid) {
+        this.pid = pid;
+    }
+
+    public void setChilds(List<CustomProductsTypes> childs) {
+        this.childs = childs;
+    }
 
     public Integer getId() {
         return id;
@@ -52,13 +84,6 @@ public class CustomProductsTypes {
         this.sellerId = sellerId;
     }
 
-    public String getPcode() {
-        return pcode;
-    }
-
-    public void setPcode(String pcode) {
-        this.pcode = pcode;
-    }
 
     public Date getCreateDate() {
         return createDate;

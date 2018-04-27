@@ -1,6 +1,7 @@
 package com.haoyue.pojo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -89,6 +90,27 @@ public class Products {
     //多个商品对应一个折扣活动
     @ManyToOne
     private ActivityForDiscount activityForDiscount;
+
+    @ManyToMany(cascade = CascadeType.ALL)
+    private List<CustomProductsTypes> parenttypes;//一个商品对应多个一级分类
+    @ManyToMany(cascade = CascadeType.ALL)
+    private List<CustomProductsTypes> childtypes;//一个商品对应多个二级分类
+
+    public List<CustomProductsTypes> getParenttypes() {
+        return parenttypes;
+    }
+
+    public void setParenttypes(List<CustomProductsTypes> parenttypes) {
+        this.parenttypes = parenttypes;
+    }
+
+    public List<CustomProductsTypes> getChildtypes() {
+        return childtypes;
+    }
+
+    public void setChildtypes(List<CustomProductsTypes> childtypes) {
+        this.childtypes = childtypes;
+    }
 
     public ActivityForDiscount getActivityForDiscount() {
         return activityForDiscount;

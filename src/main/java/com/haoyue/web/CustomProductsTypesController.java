@@ -1,15 +1,19 @@
 package com.haoyue.web;
 
+import com.haoyue.pojo.ActivityForDiscount;
 import com.haoyue.pojo.CustomProductsTypes;
+import com.haoyue.pojo.Products;
 import com.haoyue.service.CustomProductsTypesService;
+import com.haoyue.service.ProductsService;
 import com.haoyue.untils.Global;
 import com.haoyue.untils.Result;
 import com.haoyue.untils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Date;
+import java.util.*;
 
 /**
  * Created by LiJia on 2017/12/8.
@@ -21,35 +25,118 @@ public class CustomProductsTypesController {
 
     @Autowired
     private CustomProductsTypesService customProductsTypesService;
+    @Autowired
+    private ProductsService productsService;
 
 
-    // 前台做 分类名 和 商品编号 非空校验
-    //  保存 /customprotype/save?name=自定义分类名&sellerId=1221&pcode=商品编号1=商品编号2=商品编号3
-    // 编辑  /customprotype/save?name=自定义分类名&sellerId=1221&pcode=商品编号1=商品编号2=商品编号3&id=12
+    //  /customprotype/save?name=名称&sellerId=3&(pid=父节点ID)
     @RequestMapping("/save")
-    public Result save(CustomProductsTypes customProductsTypes) {
-        customProductsTypes.setCreateDate(new Date());
-        String pcode = customProductsTypes.getPcode();
-        String pcodes[] = pcode.split("=");
-        for (String str : pcodes) {
-            if (!StringUtils.isNullOrBlank(str)) {
-                pcode += "=" + str;
-            }
+    public Result save(CustomProductsTypes customProductsTypes){
+        boolean flag=false;
+        if(customProductsTypes.getId()==null){
+            customProductsTypes.setCreateDate(new Date());
+            flag=true;
         }
-        customProductsTypes.setPcode(pcode.substring(1));
         customProductsTypesService.save(customProductsTypes);
-        return new Result(false, Global.do_success,customProductsTypes,null);
+        //关联父节点
+        if(flag&&!StringUtils.isNullOrBlank(customProductsTypes.getPid())){
+            CustomProductsTypes parent=customProductsTypesService.findOne(Integer.parseInt(customProductsTypes.getPid()));
+            List<CustomProductsTypes> childs= parent.getChilds();
+            List<CustomProductsTypes> news=new ArrayList<>();
+            if(childs!=null&&childs.size()!=0) {
+                news.addAll(childs);
+            }
+            news.add(customProductsTypes);
+            parent.setChilds(news);
+            customProductsTypesService.update(parent);
+        }
+        return new Result(false, null, customProductsTypes, null);
     }
 
-    // 删除  /customprotype/del?saleId=1212&id=121
-    @RequestMapping("/del")
-    public Result del(String sellerId,String id) {
-        CustomProductsTypes customProductsTypes= customProductsTypesService.findOne(Integer.parseInt(id));
-        if (!customProductsTypes.getSellerId().equals(sellerId)){
-            return new Result(true, Global.have_no_right,null,null);
+
+    //  /customprotype/list?sellerId=3(&pageNumber=页数，从0开始)
+    @RequestMapping("/list")
+    public Result list(@RequestParam Map<String, String> map, @RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize) {
+        Iterable<CustomProductsTypes> iterable = customProductsTypesService.list(map, pageNumber, pageSize);
+        Iterator<CustomProductsTypes> iterator= iterable.iterator();
+        List<CustomProductsTypes> customProductsTypes=new ArrayList<>();
+        while (iterator.hasNext()){
+            List<CustomProductsTypes> childsnew=new ArrayList<>();
+            CustomProductsTypes parent=iterator.next();
+            List<CustomProductsTypes> childs= parent.getChilds();
+            for (CustomProductsTypes child:childs){
+                if (child.getActive()){
+                    childsnew.add(child);
+                }
+            }
+            parent.setChilds(childsnew);
+            customProductsTypes.add(parent);
         }
-        customProductsTypesService.del(customProductsTypes);
-        return new Result(false, Global.do_success,null,null);
+
+        return new Result(false, Global.do_success, customProductsTypes, null);
     }
+
+
+    //  /customprotype/del?sellerId=3&id=分类ID
+    @RequestMapping("/del")
+    public Result del(Integer id,String sellerId){
+        CustomProductsTypes customProductsTypes=customProductsTypesService.findOne(id);
+        customProductsTypes.setActive(false);
+        customProductsTypesService.update(customProductsTypes);
+
+        //如果删除二级分类，取消关联商品和二级分类
+        if(!StringUtils.isNullOrBlank(customProductsTypes.getPid())){
+            productsService.del_childtypes_middle(customProductsTypes.getId());
+        }else {
+            //如果删除一级分类，首先获取二级分类
+            List<CustomProductsTypes> childs=customProductsTypes.getChilds();
+            //取消关联二级分类
+            if(childs!=null&&childs.size()!=0){
+                for (CustomProductsTypes child:childs){
+                    productsService.del_childtypes_middle(child.getId());
+                }
+            }
+            //取消关联一级分类
+            productsService.del_parenttypes_middle(customProductsTypes.getId());
+
+        }
+
+        return new Result(false, Global.do_success, null, null);
+    }
+
+    //  /customprotype/bind?sellerId=3&id=二级分类ID&pid=一级分类ID&productid=商品Id
+    @RequestMapping("bind")
+    public Result bind(Integer pid,Integer id,Integer productid,String sellerId){
+
+        Products products=productsService.findOne(productid);
+        CustomProductsTypes parent=customProductsTypesService.findOne(pid);
+        CustomProductsTypes child=customProductsTypesService.findOne(id);
+        //商品关联一级分类
+        List<CustomProductsTypes> parenttypes =products.getParenttypes();
+        List<CustomProductsTypes> parenttypes1=new ArrayList<>();
+        if(parenttypes!=null&&parenttypes.size()!=0){
+            parenttypes1.addAll(parenttypes);
+        }
+        if(parenttypes==null||!parenttypes.contains(parent)) {
+            parenttypes1.add(parent);
+        }
+        //商品关联二级分类
+        List<CustomProductsTypes> childtypes =products.getChildtypes();
+        List<CustomProductsTypes> childtypes1=new ArrayList<>();
+        if(childtypes!=null&&childtypes.size()!=0){
+            childtypes1.addAll(childtypes);
+        }
+        if(childtypes==null||!childtypes.contains(child)) {
+            childtypes1.add(child);
+        }
+        products.setParenttypes(parenttypes1);
+        products.setChildtypes(childtypes1);
+        //提交更新
+        productsService.update(products);
+
+        return new Result(false, Global.do_success, null, null);
+    }
+
+
 
 }
