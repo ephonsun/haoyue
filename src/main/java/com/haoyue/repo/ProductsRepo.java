@@ -43,4 +43,14 @@ public interface ProductsRepo extends BaseRepo<Products,Integer> {
     @Query(nativeQuery = true,value = "delete from products_parenttypes where parenttypes_id=?1")
     void del_parenttypes_middle(Integer id);
 
+    @Modifying
+    @Transactional
+    @Query(nativeQuery = true,value = "delete from products_parenttypes where parenttypes_id=?1 and products_id=?2")
+    void unbind_parenttypes_middle(Integer id,Integer pid);
+
+    @Modifying
+    @Transactional
+    @Query(nativeQuery = true,value = "delete from products_childtypes where childtypes_id=?1 and products_id=?2")
+    void unbind_childtypes_middle(Integer id ,Integer pid);
+
 }

@@ -340,4 +340,20 @@ public class ProductsService {
     public void del_parenttypes_middle(Integer id) {
         productsRepo.del_parenttypes_middle(id);
     }
+
+    public void unbind_parenttypes_middle(Integer id,Integer pid) {
+        productsRepo.unbind_parenttypes_middle(id,pid);
+    }
+
+    public void unbind_childtypes_middle(Integer id,Integer pid) {
+        productsRepo.unbind_childtypes_middle(id,pid);
+    }
+
+    public Iterable<Products> list_webapp(int sellerId1) {
+        QProducts pro = QProducts.products;
+        BooleanBuilder bd = new BooleanBuilder();
+        bd.and(pro.sellerId.eq(sellerId1));
+        bd.and(pro.active.eq(true));
+        return productsRepo.findAll(bd.getValue(),new PageRequest(0,10,new Sort(Sort.Direction.DESC, new String[]{"id"})));
+    }
 }

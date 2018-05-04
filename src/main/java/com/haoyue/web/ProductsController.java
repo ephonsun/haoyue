@@ -74,6 +74,27 @@ public class ProductsController {
         return new Result(false, "", iterable, map.get("token"));
     }
 
+    //  https://www.cslapp.com/seller/pro/list_webapp?token=1
+    //微商城
+    @RequestMapping("/list_webapp")
+    public Result list_web(){
+
+        Iterable<Products> iterable1=productsService.list_webapp(3);
+        //Iterable<Products> iterable2=productsService.list_webapp(10);
+        Iterable<Products> iterable2=productsService.list_webapp(9);
+        List<Products> productsList=new ArrayList<>();
+        iterable1.forEach(p->productsList.add(p));
+        iterable2.forEach(p->productsList.add(p));
+        Collections.sort(productsList, new Comparator<Products>() {
+            @Override
+            public int compare(Products o1, Products o2) {
+                return o2.getId()-o1.getId();
+            }
+        });
+
+        return new Result(false, Global.do_success, productsList, null);
+    }
+
     // http://localhost:8080/seller/pro/uploadPic?token=1&multipartFiles=12221
     @RequestMapping("/uploadPic")
     public Object uploadPic(MultipartFile[] multipartFiles, String token) throws IOException, MyException {
@@ -265,9 +286,6 @@ public class ProductsController {
             produtsType.setSecondKillPrice(Double.valueOf(secondKillPrice));
             produtsType.setSize(size);
             produtsType.setSellerId(Integer.parseInt(token));
-            if (produtsType.getDiscountPrice() > produtsType.getPriceNew()) {
-                return new Result(true, Global.price_ls_discountprice);
-            }
             produtsTypes.add(produtsType);
         }
 

@@ -138,5 +138,17 @@ public class CustomProductsTypesController {
     }
 
 
+    //  /customprotype/unbind?pid=商品ID&(parentid=一级分类/childid=二级分类ID）&sellerId=3
+    @RequestMapping("unbind")
+    public Result unbind(Integer pid,Integer parentid,Integer childid,String sellerId){
+        if(parentid!=0) {
+            productsService.unbind_parenttypes_middle(parentid,pid);
+        }
+        if(childid!=0){
+            productsService.unbind_childtypes_middle(childid,pid);
+        }
+        return new Result(false, Global.do_success, null, null);
+    }
+
 
 }
