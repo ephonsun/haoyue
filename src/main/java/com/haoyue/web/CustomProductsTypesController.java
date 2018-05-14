@@ -1,17 +1,17 @@
 package com.haoyue.web;
 
+import com.haoyue.Exception.MyException;
 import com.haoyue.pojo.ActivityForDiscount;
 import com.haoyue.pojo.CustomProductsTypes;
 import com.haoyue.pojo.Products;
 import com.haoyue.service.CustomProductsTypesService;
 import com.haoyue.service.ProductsService;
-import com.haoyue.untils.Global;
-import com.haoyue.untils.Result;
-import com.haoyue.untils.StringUtils;
+import com.haoyue.untils.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 
@@ -32,23 +32,31 @@ public class CustomProductsTypesController {
     //  /customprotype/save?name=名称&sellerId=3&(pid=父节点ID)
     @RequestMapping("/save")
     public Result save(CustomProductsTypes customProductsTypes){
-        boolean flag=false;
-        if(customProductsTypes.getId()==null){
-            customProductsTypes.setCreateDate(new Date());
-            flag=true;
-        }
-        customProductsTypesService.save(customProductsTypes);
-        //关联父节点
-        if(flag&&!StringUtils.isNullOrBlank(customProductsTypes.getPid())){
-            CustomProductsTypes parent=customProductsTypesService.findOne(Integer.parseInt(customProductsTypes.getPid()));
-            List<CustomProductsTypes> childs= parent.getChilds();
-            List<CustomProductsTypes> news=new ArrayList<>();
-            if(childs!=null&&childs.size()!=0) {
-                news.addAll(childs);
+        //同步代码块
+        synchronized (Global.object4) {
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-            news.add(customProductsTypes);
-            parent.setChilds(news);
-            customProductsTypesService.update(parent);
+            boolean flag = false;
+            if (customProductsTypes.getId() == null) {
+                customProductsTypes.setCreateDate(new Date());
+                flag = true;
+            }
+            customProductsTypesService.save(customProductsTypes);
+            //关联父节点
+            if (flag && !StringUtils.isNullOrBlank(customProductsTypes.getPid())) {
+                CustomProductsTypes parent = customProductsTypesService.findOne(Integer.parseInt(customProductsTypes.getPid()));
+                List<CustomProductsTypes> childs = parent.getChilds();
+                List<CustomProductsTypes> news = new ArrayList<>();
+                if (childs != null && childs.size() != 0) {
+                    news.addAll(childs);
+                }
+                news.add(customProductsTypes);
+                parent.setChilds(news);
+                customProductsTypesService.update(parent);
+            }
         }
         return new Result(false, null, customProductsTypes, null);
     }
@@ -148,6 +156,38 @@ public class CustomProductsTypesController {
             productsService.unbind_childtypes_middle(childid,pid);
         }
         return new Result(false, Global.do_success, null, null);
+    }
+
+
+    //上传图片  /customprotype/uploadPics?multipartFiles=图片
+    @RequestMapping("/uploadPics")
+    public UploadSuccessResult uploadPics(MultipartFile[] multipartFiles, Integer sellerId) throws MyException {
+        StringBuffer stringBuffer = new StringBuffer();
+        synchronized (Global.object4) {
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            for (MultipartFile multipartFile : multipartFiles) {
+                OSSClientUtil ossClientUtil = new OSSClientUtil();
+                String uploadUrl = ossClientUtil.uploadImg2Oss(multipartFile);
+                stringBuffer.append(Global.aliyun_href + uploadUrl);
+                stringBuffer.append(",");
+            }
+        }
+        return new UploadSuccessResult(stringBuffer.toString());
+    }
+
+    //一级分类关联海报和关键字
+    // /customprotype/setinfos?id=一级分类ID&pics=图片地址&sellerId=3&keys=关键字1,关键字2,关键字3
+    @RequestMapping("/setinfos")
+    public Result setPics(Integer id,String pics,String sellerId,String keys){
+        CustomProductsTypes customProductsTypes=customProductsTypesService.findOne(id);
+        customProductsTypes.setPics(pics);
+        customProductsTypes.setKeys(keys);
+        customProductsTypesService.update(customProductsTypes);
+        return new Result(false, Global.do_success, customProductsTypes, null);
     }
 
 
