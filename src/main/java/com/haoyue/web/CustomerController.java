@@ -46,10 +46,8 @@ public class CustomerController {
         return new Result(false, Global.do_success, productsService.list(map), map.get("token"));
     }
 
-    /*
-    购物车可以点击查看物品详情
-    购物车列表显示物品分类，尺码，颜色
-    */
+   // 客户访问店铺的时候
+   // https://www.cslapp.com/customer/loginOrReg?openId=oARLy0PHaLUP-jeCSyzJXh8-QV-A&sellerId=5&wxname=微信名称&wxpic=微信头像
     @RequestMapping("/loginOrReg")
     public Result save(String openId, String sellerId, String wxname, String wxpic) {
 

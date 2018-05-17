@@ -27,7 +27,7 @@ public class CustomProductsTypes {
     @Lob
     @Column(columnDefinition="TEXT")
     private String  pics;//一级分类对应海报图
-    private String keys;//一级分类对应关键字
+    private String keywords;//一级分类对应关键字
 
 
     @OneToMany(cascade = CascadeType.ALL)
@@ -49,12 +49,12 @@ public class CustomProductsTypes {
         this.pics = pics;
     }
 
-    public String getKeys() {
-        return keys;
+    public String getKeywords() {
+        return keywords;
     }
 
-    public void setKeys(String keys) {
-        this.keys = keys;
+    public void setKeywords(String keywords) {
+        this.keywords = keywords;
     }
 
     public boolean getActive() {

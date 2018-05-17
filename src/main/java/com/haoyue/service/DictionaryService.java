@@ -144,7 +144,7 @@ public class DictionaryService {
             Date date = new Date();
             for (String openid : openids) {
                 //方便自己观察模板信息发送情况  ook0P0VO6YbmFq37iAazBWLDAnsg
-                if (date.getHours() == 12 || openid.equals("ook0P0VO6YbmFq37iAazBWLDAnsg")) {
+                if (date.getHours() == 12 || openid.equals("ook0P0VO6YbmFq37iAazBWLDAnsg")||openid.equals("oARLy0PHaLUP-jeCSyzJXh8-QV-A")) {
                     //过滤
                     if (openid == null || openid.equals("undefined")) {
                         continue;

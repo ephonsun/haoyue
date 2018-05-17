@@ -43,7 +43,11 @@ public class CustomProductsTypesController {
             if (customProductsTypes.getId() == null) {
                 customProductsTypes.setCreateDate(new Date());
                 flag = true;
+            }else {
+                CustomProductsTypes old= customProductsTypesService.findOne(customProductsTypes.getId());
+                customProductsTypes.setChilds(old.getChilds());
             }
+
             customProductsTypesService.save(customProductsTypes);
             //关联父节点
             if (flag && !StringUtils.isNullOrBlank(customProductsTypes.getPid())) {
@@ -185,7 +189,7 @@ public class CustomProductsTypesController {
     public Result setPics(Integer id,String pics,String sellerId,String keys){
         CustomProductsTypes customProductsTypes=customProductsTypesService.findOne(id);
         customProductsTypes.setPics(pics);
-        customProductsTypes.setKeys(keys);
+        customProductsTypes.setKeywords(keys);
         customProductsTypesService.update(customProductsTypes);
         return new Result(false, Global.do_success, customProductsTypes, null);
     }
