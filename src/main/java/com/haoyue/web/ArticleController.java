@@ -85,6 +85,14 @@ public class ArticleController {
         return new Result(false, Global.do_success, article, null);
     }
 
+    @RequestMapping("/thumbsup")
+    public Result thumbsup(Integer id,String openId){
+        Article article=articleService.findOne(id);
+        article.setThumsup(article.getThumsup()+1);
+        articleService.update(article);
+        return new Result(false, Global.do_success, article, null);
+    }
+
 
     @RequestMapping("/del")
     public Result del(Integer id,String sellerId){
