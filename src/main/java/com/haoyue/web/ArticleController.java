@@ -2,8 +2,10 @@ package com.haoyue.web;
 
 import com.haoyue.Exception.MyException;
 import com.haoyue.pojo.Article;
+import com.haoyue.pojo.Customer;
 import com.haoyue.pojo.Member;
 import com.haoyue.service.ArticleService;
+import com.haoyue.service.CustomerService;
 import com.haoyue.untils.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,8 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Date;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by Lijia on 2018/5/17.
@@ -24,6 +25,8 @@ public class ArticleController {
 
     @Autowired
     private ArticleService articleService;
+    @Autowired
+    private CustomerService customerService;
 
 
     // /article/save?sellerId=1&author=作者&titile=标题&remark=摘要&indexpic=首页图片地址&pics=内容图片地址&content=内容（<br> 分割多个文本框）
@@ -31,6 +34,7 @@ public class ArticleController {
     public Result save(Article article){
         if(article.getId()==null){
             article.setCreateDate(new Date());
+            article.setThumsupids("");
         }
         articleService.save(article);
         return new Result(false, Global.do_success,article,null);
@@ -85,10 +89,24 @@ public class ArticleController {
         return new Result(false, Global.do_success, article, null);
     }
 
+    // 点赞 /article/thumbsup?id=文章id&openId=123
     @RequestMapping("/thumbsup")
     public Result thumbsup(Integer id,String openId){
         Article article=articleService.findOne(id);
+        Customer customer=customerService.findByOpenId(openId,article.getSellerId());
+        //不可以重复点赞
+        if(!article.getThumsupids().equals("")){
+            String customerIds=article.getThumsupids();
+            String[] strings=customerIds.split(",");
+            List<String> customers= Arrays.asList(strings);
+            for (String s:customers){
+                if(s.equals(customer.getId()+"")){
+                    return new Result(false, Global.alery_done, null, null);
+                }
+            }
+        }
         article.setThumsup(article.getThumsup()+1);
+        article.setThumsupids(article.getThumsupids()+customer.getId()+",");
         articleService.update(article);
         return new Result(false, Global.do_success, article, null);
     }

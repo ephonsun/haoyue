@@ -26,6 +26,7 @@ public class Article {
     private String indexpic;
     private int views;//阅读数
     private int thumsup;//点赞
+    private String thumsupids;//点赞用户Id
     private boolean active=true;
     @Lob
     @Column(columnDefinition = "TEXT")
@@ -41,6 +42,14 @@ public class Article {
     @Column(updatable=false)
     private Date createDate;//创建日期
 
+
+    public String getThumsupids() {
+        return thumsupids;
+    }
+
+    public void setThumsupids(String thumsupids) {
+        this.thumsupids = thumsupids;
+    }
 
     public boolean getActive() {
         return active;
