@@ -153,10 +153,18 @@ public class CustomProductsTypesController {
     //  /customprotype/unbind?pid=商品ID&(parentid=一级分类/childid=二级分类ID）&sellerId=3
     @RequestMapping("unbind")
     public Result unbind(Integer pid,Integer parentid,Integer childid,String sellerId){
-        if(parentid!=0) {
-            productsService.unbind_parenttypes_middle(parentid,pid);
+        Products products=productsService.findOne(pid);
+        List<CustomProductsTypes> childs=products.getChildtypes();
+        int amount=0;
+        for (CustomProductsTypes child:childs){
+            if(Integer.parseInt(child.getPid())==parentid){
+             amount++;
+            }
         }
-        if(childid!=0){
+        if(parentid!=0&&childid!=0) {
+            if(amount==1){
+                productsService.unbind_parenttypes_middle(parentid,pid);
+            }
             productsService.unbind_childtypes_middle(childid,pid);
         }
         return new Result(false, Global.do_success, null, null);

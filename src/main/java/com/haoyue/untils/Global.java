@@ -45,6 +45,7 @@ public class Global {
     public static String openId_undefined = "openId数据不正常";
     public static String data_unexist = "数据不存在";
     public static String data_unright = "输入数据不正常";
+    public static String date_unright="输入日期不正常";
     public static String coupon_isopen = "优惠券活动开启，请输入优惠券进入店铺";
     public static String coupon_isuse = "该优惠已经被使用";
     public static String coupon_not_exist = "该优惠券不存在，请确认优惠码";
