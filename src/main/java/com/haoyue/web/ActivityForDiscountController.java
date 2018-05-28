@@ -39,7 +39,7 @@ public class ActivityForDiscountController {
         activityForDiscount.setCreateDate(new Date());
         activityForDiscount.setFromDate(StringUtils.formatDate2(fromdate));
         activityForDiscount.setEndDate(StringUtils.formatDate2(todate));
-        if(activityForDiscount.getFromDate().before(activityForDiscount.getEndDate())){
+        if(activityForDiscount.getFromDate().after(activityForDiscount.getEndDate())){
             return new Result(true, Global.date_unright,null,null);
         }
         activityForDiscountService.save(activityForDiscount);

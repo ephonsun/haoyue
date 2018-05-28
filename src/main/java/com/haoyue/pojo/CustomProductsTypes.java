@@ -28,6 +28,8 @@ public class CustomProductsTypes {
     @Column(columnDefinition="TEXT")
     private String  pics;//一级分类对应海报图
     private String keywords;//一级分类对应关键字
+    private String maintitle;//主标题
+    private String smalltitle;//副标题
 
 
     @OneToMany(cascade = CascadeType.ALL)
@@ -40,6 +42,22 @@ public class CustomProductsTypes {
 
     private boolean active=true;
 
+
+    public String getMaintitle() {
+        return maintitle;
+    }
+
+    public void setMaintitle(String maintitle) {
+        this.maintitle = maintitle;
+    }
+
+    public String getSmalltitle() {
+        return smalltitle;
+    }
+
+    public void setSmalltitle(String smalltitle) {
+        this.smalltitle = smalltitle;
+    }
 
     public String getPics() {
         return pics;

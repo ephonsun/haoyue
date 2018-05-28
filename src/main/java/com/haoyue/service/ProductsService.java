@@ -132,6 +132,12 @@ public class ProductsService {
                 if (name.equals("key")) {
                     bd.and(pro.pname.contains(value));
                 }
+                if(name.equals("parenttypeid")){
+                    bd.and(pro.parenttypes.any().id.eq(Integer.parseInt(value)));
+                }
+                if(name.equals("childtypeid")){
+                    bd.and(pro.childtypes.any().id.eq(Integer.parseInt(value)));
+                }
                 if (name.equals("pcode")) {
                     bd.and(pro.pcode.contains(value));
                 }

@@ -66,7 +66,7 @@ public class CustomProductsTypesController {
     }
 
 
-    //  /customprotype/list?sellerId=3(&pageNumber=页数，从0开始)
+    //  https://www.cslapp.com/customprotype/list?sellerId=3(&pageNumber=页数，从0开始)
     @RequestMapping("/list")
     public Result list(@RequestParam Map<String, String> map, @RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize) {
         Iterable<CustomProductsTypes> iterable = customProductsTypesService.list(map, pageNumber, pageSize);
@@ -192,12 +192,14 @@ public class CustomProductsTypesController {
     }
 
     //一级分类关联海报和关键字
-    // /customprotype/setinfos?id=一级分类ID&pics=图片地址&sellerId=3&keys=关键字1,关键字2,关键字3
+    // /customprotype/setinfos?id=当前记录ID&pics=图片地址&sellerId=3&keys=二级分类ID
     @RequestMapping("/setinfos")
-    public Result setPics(Integer id,String pics,String sellerId,String keys){
+    public Result setPics(Integer id,String pics,String sellerId,String keys,String maintitle,String smalltitle){
         CustomProductsTypes customProductsTypes=customProductsTypesService.findOne(id);
         customProductsTypes.setPics(pics);
         customProductsTypes.setKeywords(keys);
+        customProductsTypes.setMaintitle(maintitle);
+        customProductsTypes.setSmalltitle(smalltitle);
         customProductsTypesService.update(customProductsTypes);
         return new Result(false, Global.do_success, customProductsTypes, null);
     }
