@@ -68,6 +68,7 @@ public class ProductsController {
         return new Result(false, "", iterable, map.get("token"));
     }
 
+    //新建二级分类后的商品列表
     @RequestMapping("/list_new")
     public Result list_new(@RequestParam Map<String, String> map) {
         Iterable<Products> iterable=productsService.list(map);
@@ -211,6 +212,11 @@ public class ProductsController {
     @Transactional
     public Result update_all(Products products, String token, String protypes, String showHours, String killStart, String killEnd) throws FileNotFoundException, ParseException {
 
+        //如果是更新的话，绑定原来的对应的折扣活动
+        if(products.getId()!=null){
+            Products old=productsService.findOne(products.getId());
+            products.setActivityForDiscount(old.getActivityForDiscount());
+        }
 
         //上线时间
         if (!StringUtils.isNullOrBlank(showHours)) {
@@ -242,6 +248,7 @@ public class ProductsController {
             String secondKillPrice = "0";
             String amount = null;
             String pic = null;
+            //商品上传
             if (strings.length == 5) {
                 color = strings[0];//颜色
                 size = strings[1];//尺码
@@ -252,6 +259,7 @@ public class ProductsController {
                 //pic = strings[6];//每个商品分类对应一个图片
 
             }
+            //商品编辑
             if (strings.length == 6) {
                 //兼容旧的宝贝上传接口
                 color = strings[0];//颜色
@@ -265,19 +273,20 @@ public class ProductsController {
             if (amount.equals("0")) {
                 continue;
             }
-//            if (!StringUtils.isDiget(discount) || discount.equals("0")) {
-//                return new Result(true, Global.discount_price_unright, null, null);
-//            }
             if (!StringUtils.isDiget(price)) {
                 return new Result(true, Global.price_is_unright, null, null);
             }
             ProdutsType produtsType = new ProdutsType();
             produtsType.setPriceNew(Double.valueOf(price));
             produtsType.setColor(color);
-            //判断是否折扣
-            if (discount!=null&&!discount.equals("0")) {
+            //原来有折扣价且折扣不为0
+            if (discount!=null&&Double.valueOf(discount)!=0.0) {
                 produtsType.setISDiscount(true);
                 produtsType.setDiscountPrice(Double.valueOf(discount));
+            }
+            //原来没有折扣价或者折扣为0
+            if(discount==null||Double.valueOf(discount)==0.0){
+                produtsType.setDiscountPrice(0.0);
             }
             produtsType.setPic(pic);
             produtsType.setAmount(Integer.parseInt(amount));

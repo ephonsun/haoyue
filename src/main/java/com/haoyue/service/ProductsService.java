@@ -112,7 +112,7 @@ public class ProductsService {
 
             }
         }
-        return productsRepo.findAll(bd.getValue());
+        return productsRepo.findAll(bd.getValue(),new Sort(Sort.Direction.DESC,"id"));
     }
 
     public Iterable<Products> plist(Map<String, String> map, int pagenumber, int pagesize) {

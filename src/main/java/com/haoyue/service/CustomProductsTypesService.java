@@ -45,20 +45,26 @@ public class CustomProductsTypesService {
     }
 
     public Iterable<CustomProductsTypes> list(Map<String, String> map, int pageNumber, int pageSize) {
-        QCustomProductsTypes types =QCustomProductsTypes.customProductsTypes;
+        QCustomProductsTypes types = QCustomProductsTypes.customProductsTypes;
         BooleanBuilder bd = new BooleanBuilder();
-        Date date=new Date();
+        Date date = new Date();
         bd.and(types.pid.isNull());
         bd.and(types.active.eq(true));
+        if (StringUtils.isNullOrBlank(map.get("lunbo"))) {
+            bd.and(types.name.ne("轮播图"));
+        }else {
+            bd.and(types.name.eq("轮播图"));
+        }
         for (String name : map.keySet()) {
             String value = (String) map.get(name);
             if (!(StringUtils.isNullOrBlank(value))) {
-                if(name.equals("sellerId")){
+                if (name.equals("sellerId")) {
                     bd.and(types.sellerId.eq(value));
                 }
+
             }
         }
-        return customProductsTypesRepo.findAll(bd.getValue(),new PageRequest(pageNumber,pageSize,new Sort(Sort.Direction.DESC,new String[]{"id"})));
+        return customProductsTypesRepo.findAll(bd.getValue(), new PageRequest(pageNumber, pageSize, new Sort(Sort.Direction.DESC, new String[]{"id"})));
     }
 
 

@@ -12,7 +12,9 @@ import java.util.List;
 import java.util.Map;
 
 import com.haoyue.Exception.MyException;
+import com.haoyue.pojo.Dictionary;
 import com.haoyue.pojo.Order;
+import com.haoyue.service.DictionaryService;
 import com.haoyue.service.OrderService;
 import com.haoyue.untils.Global;
 import com.haoyue.untils.HttpRequest;
@@ -41,6 +43,8 @@ public class PayAction {
     private PayDealService payDealService;
     @Autowired
     private OrderService orderService;
+    @Autowired
+    private DictionaryService dictionaryService;
 
     /**
      * 小程序端请求的后台action，后台调用统一下单URL，对返回数据再次签名后，把数据传到前台
@@ -234,6 +238,12 @@ public class PayAction {
         Order order=orderService.findByOrderCode(payDeal.getOut_trade_no());
         payDeal.setSellerId(order.getSellerId()+"");
         payDealService.save(payDeal);
+
+        //更新 dictionary  全部 交易额 订单数量
+        Dictionary dictionary = dictionaryService.findByDateAndSellerId(new Date(), order.getSellerId());
+        dictionary.setBuyers(dictionary.getBuyers() + 1);
+        dictionary.setTurnover(Double.valueOf(payDeal.getTotal_fee()) + dictionary.getTurnover());
+        dictionaryService.update(dictionary);
 
         BufferedOutputStream out = new BufferedOutputStream(
                 response.getOutputStream());

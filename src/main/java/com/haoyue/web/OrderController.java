@@ -293,11 +293,6 @@ public class OrderController {
                 //saveMember(order);
                 //付款日期
                 order.setPayDate(new Date());
-                //更新 dictionary  全部 交易额 订单数量
-                Dictionary dictionary = dictionaryService.findByDateAndSellerId(new Date(), order.getSellerId());
-                dictionary.setBuyers(dictionary.getBuyers() + 1);
-                dictionary.setTurnover(order.getTotalPrice() + dictionary.getTurnover());
-                dictionaryService.update(dictionary);
                 //更新商品已经卖出量
                 List<Products> list = order.getProducts();
                 List<ProdutsType> produtsTypes = order.getProdutsTypes();

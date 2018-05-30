@@ -66,7 +66,7 @@ public class CustomProductsTypesController {
     }
 
 
-    //  https://www.cslapp.com/customprotype/list?sellerId=3(&pageNumber=页数，从0开始)
+    //  https://www.cslapp.com/customprotype/list?sellerId=3&lunbo=yes(&pageNumber=页数，从0开始)
     @RequestMapping("/list")
     public Result list(@RequestParam Map<String, String> map, @RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize) {
         Iterable<CustomProductsTypes> iterable = customProductsTypesService.list(map, pageNumber, pageSize);
@@ -192,7 +192,7 @@ public class CustomProductsTypesController {
     }
 
     //一级分类关联海报和关键字
-    // /customprotype/setinfos?id=当前记录ID&pics=图片地址&sellerId=3&keys=二级分类ID
+    // /customprotype/setinfos?id=当前记录ID&pics=图片地址&sellerId=3&keys=二级分类ID&maintitle=主要标题&smalltitle=副标题
     @RequestMapping("/setinfos")
     public Result setPics(Integer id,String pics,String sellerId,String keys,String maintitle,String smalltitle){
         CustomProductsTypes customProductsTypes=customProductsTypesService.findOne(id);
