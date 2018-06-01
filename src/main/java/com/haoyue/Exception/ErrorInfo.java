@@ -2,6 +2,8 @@ package com.haoyue.Exception;
 
 /**
  * Created by LiJia on 2017/9/8.
+ *
+ * 异常信息的实体
  */
 public class ErrorInfo<T> {
 

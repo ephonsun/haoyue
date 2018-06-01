@@ -18,7 +18,7 @@ import java.util.List;
 
 /**
  * Created by LiJia on 2017/11/17.
- * 拼多多拦截器
+ * 图实惠拦截器
  */
 public class BaseInterceptor3 implements HandlerInterceptor {
 

@@ -2,6 +2,10 @@ package com.haoyue.hywebsite;
 
 /**
  * Created by LiJia on 2018/1/12.
+ *
+ * 皓月官网 封装返回信息实体对象
+ *
+ *
  */
 public class Result {
 

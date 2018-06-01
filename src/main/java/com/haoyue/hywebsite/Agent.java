@@ -7,6 +7,7 @@ import java.util.Date;
 
 /**
  * Created by LiJia on 2018/1/12.
+ * 皓月官网   申请代理的实体对象
  */
 @Entity
 @Table(name = "website_agent")

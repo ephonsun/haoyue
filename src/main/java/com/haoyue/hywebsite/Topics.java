@@ -12,6 +12,10 @@ import java.util.List;
 
 /**
  * Created by LiJia on 2018/1/12.
+ *
+ * 皓月官网 社区讨论实体对象
+ * 用户可在社区发布话题信息，用户可对话题信息进行回复，类似于百度贴吧
+ *
  */
 @Entity
 @Table(name = "website_topics")

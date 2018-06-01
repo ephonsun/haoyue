@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * Created by LiJia on 2017/10/27.
+ * 暂未使用...
  */
 public class BaseInterceptor2 implements HandlerInterceptor {
 

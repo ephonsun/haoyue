@@ -20,6 +20,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+/*
+* 全局拦截器
+* 这个拦截器主要拦截 禾才小程序和禾才卖家后台，如果是其他的项目会跳转到对应的拦截器。根据url的开始字符串。
+* 在这里我输出打印了请求路径、请求时间、请求参数等等，方便后期查看日志
+* 每一条请求(除去已经过滤的路径)都需要携带参数 sellerId 或 openId 或 token  否则无法通过拦截
+* 当online_code不为空时候，会去校验online_code的可用性，卖家每一次登录后台时候会刷新当前卖家对应的online_code值
+* */
 
 public class BaseInterceptor implements HandlerInterceptor {
 

@@ -69,6 +69,7 @@ public class ProductsController {
     }
 
     //新建二级分类后的商品列表
+    // https://www.cslapp.com/seller/pro/list_new?token=3&childtypeid=942
     @RequestMapping("/list_new")
     public Result list_new(@RequestParam Map<String, String> map) {
         Iterable<Products> iterable=productsService.list(map);

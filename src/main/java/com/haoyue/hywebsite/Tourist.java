@@ -7,7 +7,7 @@ import java.util.Date;
 
 /**
  * Created by LiJia on 2018/1/12.
- * 官网游客 ，可注册，无登陆，不能进入卖家后台
+ * 皓月官网游客  发布话题时候需要游客进行注册  不能进入卖家后台
  */
 @Entity
 @Table(name = "website_tourist")
