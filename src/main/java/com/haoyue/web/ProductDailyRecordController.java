@@ -16,6 +16,7 @@ import java.util.List;
 
 /**
  * Created by LiJia on 2017/11/15.
+ *
  */
 @RestController
 @RequestMapping("/product/dailyrecord")

@@ -18,6 +18,7 @@ import java.util.Map;
 
 /**
  * Created by Lijia on 2018/4/17.
+ * 自定义优惠券
  */
 @RestController
 @RequestMapping("/customecard")

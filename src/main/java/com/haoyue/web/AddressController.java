@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Created by LiJia on 2017/9/5.
+ * 收货地址
  */
 @RestController
 @RequestMapping("/address")

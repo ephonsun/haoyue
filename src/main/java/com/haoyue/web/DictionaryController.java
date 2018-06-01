@@ -14,6 +14,7 @@ import java.util.Date;
 
 /**
  * Created by LiJia on 2017/8/24.
+ * 每日数据
  */
 @RestController
 @RequestMapping("/dictionary")

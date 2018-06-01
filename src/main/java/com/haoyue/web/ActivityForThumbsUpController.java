@@ -12,6 +12,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.*;
 
+/*
+* 皓月小程序点赞活动
+* */
+
 @RestController
 @RequestMapping("/activity/thumbs_up")
 public class ActivityForThumbsUpController {

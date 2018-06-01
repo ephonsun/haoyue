@@ -17,6 +17,10 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Created by LiJia on 2017/9/29.
+ * 超级管理员  最重要的一点
+ *
+ * 开启定时器，每次服务端重启后，在任一小时的前三十分钟手动触发接口,只需要触发一次即可
+ * https://www.cslapp.com/super-admin/timer?key=abcdefg&sellerId=3
  */
 @RestController
 @RequestMapping("/super-admin")

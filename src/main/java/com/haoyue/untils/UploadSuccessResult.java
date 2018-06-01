@@ -2,7 +2,7 @@ package com.haoyue.untils;
 
 /**
  * Created by LiJia on 2017/8/31.
- * 文件上传插件 上传成功 不能有 error字段
+ * 卖家后台文件上传插件 上传成功 不能有 error字段
  */
 public class UploadSuccessResult {
 

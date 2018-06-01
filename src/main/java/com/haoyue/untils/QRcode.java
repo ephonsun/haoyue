@@ -13,7 +13,7 @@ import java.util.Map;
 
 /**
  * Created by LiJia on 2017/12/18.
- * 生成二维码
+ * 微信提供的商品生成二维码
  */
 public class QRcode {
 

@@ -2,6 +2,10 @@ package com.haoyue.wxpay;
 
 /**
  * Created by LiJia on 2017/9/12.
+ *
+ *
+ * 微信付款
+ *
  */
 
 import java.io.*;

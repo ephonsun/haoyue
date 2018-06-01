@@ -45,10 +45,4 @@ public class PtypeNamesController {
         return new Result(false, Global.do_success, ptypeNames, token);
     }
 
-    //衬衫,连衣裙,衬衫,标题,爱迪生,qwe,123,213,456,234
-    //http://localhost:8080/ptypename/save?sellerId=1&ptypename=衬衫,连衣裙,衬衫,标题,爱迪生,qwe,123,213,456,234
-    // https://www.cslapp.com/ptypename/save?sellerId=1&ptypename=裤子,毛衣啊,风衣,夹克
-    //  https://www.cslapp.com/ptypename/save?sellerId=3&ptypename=连衣裙,大衣,休闲裙,西装外套,衬衫,半裙,毛衣
-    // https://www.cslapp.com/ptypename/save?sellerId=4&ptypename=汽车美容,车载导航,汽车贴膜,汽车灯具
-    // https://www.cslapp.com/ptypename/save?sellerId=5&ptypename=测试
 }

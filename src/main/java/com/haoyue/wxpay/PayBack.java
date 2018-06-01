@@ -23,7 +23,7 @@ import java.util.*;
 
 /**
  * Created by LiJia on 2017/11/14.
- * 退款操作
+ * 微信退款操作
  */
 @RestController
 @RequestMapping("/payback")

@@ -20,6 +20,9 @@ import java.util.Map;
 
 /**
  * Created by Lijia on 2018/4/23.
+ *
+ *商品折扣活动
+ *
  */
 
 @RestController
@@ -47,6 +50,7 @@ public class ActivityForDiscountController {
     }
 
 
+    //  绑定折扣活动和商品
     // /activity/discount/bind?activityId=活动ID&pid=商品ID(不是商品分类ID)&sellerId=3
     @RequestMapping("/bind")
     public Result bindActivityWithProduct(int activityId,int pid,String sellerId){

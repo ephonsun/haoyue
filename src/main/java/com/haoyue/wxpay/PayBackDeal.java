@@ -7,7 +7,7 @@ import java.util.Date;
 
 /**
  * Created by LiJia on 2017/11/17.
- * 退款结果记录
+ * 退款结果记录实体
  */
 @Entity
 @Table(name = "paybackdeal")

@@ -2,6 +2,8 @@ package com.haoyue.untils;
 
 /**
  * Created by Administrator on 2018/1/29.
+ *
+ * 快递查询 京东万象
  */
 public class Kuaidi {
 

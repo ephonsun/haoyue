@@ -90,7 +90,7 @@ public class SignInController {
         return new Result(false, Global.do_success,iterable,null);
     }
 
-    // /signin/signInToday?sellerId=3&openId=123
+    // 今日是否签到  /signin/signInToday?sellerId=3&openId=123
     @RequestMapping("/signInToday")
     public Result signInToday(SignIn signin){
         boolean flag= signInService.findIsSignIn(signin);

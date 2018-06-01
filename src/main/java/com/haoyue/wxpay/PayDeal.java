@@ -8,7 +8,7 @@ import java.util.Date;
 
 /**
  * Created by LiJia on 2017/9/19.
- * 付款结果记录
+ * 付款结果记录实体
  */
 @Entity
 @Table(name = "paydeals")

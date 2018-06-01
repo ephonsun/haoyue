@@ -9,6 +9,7 @@ import java.util.Date;
  * Created by Lijia on 2018/4/23.
  *
  * 折扣活动
+ * 新建折扣活动，商品绑定折扣活动后，就会更新商品的折扣价，商品折扣价默认为0
  *
  */
 @Entity

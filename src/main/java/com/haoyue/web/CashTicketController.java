@@ -15,6 +15,7 @@ import java.util.List;
 
 /**
  * Created by LiJia on 2017/11/1.
+ * 抵用券 暂存
  */
 @RestController
 @RequestMapping("/cashticket")
