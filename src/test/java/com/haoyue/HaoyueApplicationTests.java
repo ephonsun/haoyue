@@ -3,43 +3,43 @@ package com.haoyue;
 import com.aliyun.oss.OSSClient;
 import com.aliyun.oss.model.PutObjectResult;
 
+
 import com.haoyue.untils.*;
-//import io.goeasy.GoEasy;
 import com.haoyue.untils.HttpRequest;
-import com.sun.deploy.net.HttpUtils;
 import io.goeasy.GoEasy;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+
+import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
-import org.springframework.test.annotation.SystemProfileValueSource;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestTemplate;
 
-import javax.servlet.http.HttpServletRequest;
+
 import java.io.*;
+import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class HaoyueApplicationTests {
 
     @Test
-    public void contextLoads()
-    {
+    public void contextLoads() {
         System.out.println(new Date().toLocaleString());
     }
 
@@ -47,7 +47,7 @@ public class HaoyueApplicationTests {
     public void jiemi() {
         WXAppletUserInfo wxAppletUserInfo = new WXAppletUserInfo();
         String encryptedData = "";
-        String iv = "YlU0Fg7wxTacPh1kgARdRw==";
+        java.lang.String iv = "YlU0Fg7wxTacPh1kgARdRw==";
         String session_key = "e6hDqemGTaSBDRm9NpF24A==";
         wxAppletUserInfo.decodeUserInfo(encryptedData, iv, session_key);
     }
@@ -67,7 +67,6 @@ public class HaoyueApplicationTests {
     public void f4() {
         System.out.println(Integer.parseInt("我"));
     }
-
 
 
     public void upload() {
@@ -257,8 +256,8 @@ public class HaoyueApplicationTests {
 
     @Test
     public void f18() {
-        Calendar calendar=Calendar.getInstance();
-        calendar.add(Calendar.MONTH,-3);
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.MONTH, -3);
         System.out.println(calendar.getTime().toLocaleString());
     }
 
@@ -307,25 +306,25 @@ public class HaoyueApplicationTests {
 
 
     @Test
-    public  void f21() {
+    public void f21() {
         DecimalFormat df = new DecimalFormat("######0");
         String fee = String.valueOf(df.format(1.0));
         System.out.println(fee);
     }
 
     @Test
-    public void f22(){
-     //test,test1,test2,test3,test4,test5
-        String old="test,test1,test2,test3,test4,test5";
-        String news=old.replace("test1,","");
+    public void f22() {
+        //test,test1,test2,test3,test4,test5
+        String old = "test,test1,test2,test3,test4,test5";
+        String news = old.replace("test1,", "");
         System.out.println(news);
     }
 
     @Test
-    public void f23()  {
-        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        String str="2017-12-08 10:10";
-        Date date= null;
+    public void f23() {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        String str = "2017-12-08 10:10";
+        Date date = null;
         try {
             date = simpleDateFormat.parse(str);
         } catch (ParseException e) {
@@ -335,27 +334,27 @@ public class HaoyueApplicationTests {
     }
 
     @Test
-    public void f24(){
-        List<String> list=new ArrayList<>();
-        if (list.contains("1")){
+    public void f24() {
+        List<String> list = new ArrayList<>();
+        if (list.contains("1")) {
             System.out.println("111111");
         }
         list.add("1");
         list.add("11");
         list.add("111");
-        if (list.contains("1")){
+        if (list.contains("1")) {
             System.out.println("22222");
         }
     }
 
     @Test
-    public void f25(){
-        String access_token="4_m4SXUmYY-g_E0-eUNsJbJcQkGAA03T0r4bwu3BkmcXsbEHnH-XLx9Ceraa7yy3POH4txYK5X4YKBum3uhIACHDoGCYP0RAW6XFm3ueWBQDl3blwa50TOkhbJ3D8akG_6_AY7FPs7FnW7ycnENUVcAIAFMN";
-        getminiqrQr(access_token,"43");
+    public void f25() {
+        String access_token = "4_m4SXUmYY-g_E0-eUNsJbJcQkGAA03T0r4bwu3BkmcXsbEHnH-XLx9Ceraa7yy3POH4txYK5X4YKBum3uhIACHDoGCYP0RAW6XFm3ueWBQDl3blwa50TOkhbJ3D8akG_6_AY7FPs7FnW7ycnENUVcAIAFMN";
+
     }
 
     @Test
-    public void f26(){
+    public void f26() {
         String access_token_url = "https://api.weixin.qq.com/cgi-bin/token";
         String param1 = "grant_type=client_credential&appid=wxf80175142f3214e1&secret=e0251029d53d21e84a650681af6139b1";
         String access_token = com.haoyue.tuangou.wxpay.HttpRequest.sendPost(access_token_url, param1);
@@ -364,17 +363,17 @@ public class HaoyueApplicationTests {
     }
 
     @Test
-    public void f27(){
-        long a=Long.parseLong("1513743237268");
+    public void f27() {
+        long a = Long.parseLong("1513743237268");
         System.out.println(a);
-        Date date=new Date(a);
+        Date date = new Date(a);
         System.out.println(date.toLocaleString());
     }
 
     @Test
     public void f28() {
-        String str="ABCDEFA";
-        String str2=str.replace("A","a");
+        String str = "ABCDEFA";
+        String str2 = str.replace("A", "a");
         System.out.println(str);
         System.out.println(str2);
 
@@ -384,14 +383,14 @@ public class HaoyueApplicationTests {
     @Test
     public void f29() {
         HashMap<Integer, Integer> integerHashMap = new HashMap<>();
-        integerHashMap.put(10,12);
-        integerHashMap.put(8,10);
-        integerHashMap.put(12,11);
-        integerHashMap.put(9,8);
+        integerHashMap.put(10, 12);
+        integerHashMap.put(8, 10);
+        integerHashMap.put(12, 11);
+        integerHashMap.put(9, 8);
         Set<Map.Entry<Integer, Integer>> entrySet = integerHashMap.entrySet();
         ArrayList<Map.Entry<Integer, Integer>> arrayList = new ArrayList<>(entrySet);
-        Collections.sort(arrayList, (a,  b) ->{
-            return a.getKey()-b.getKey();
+        Collections.sort(arrayList, (a, b) -> {
+            return a.getKey() - b.getKey();
         });
         ArrayList<Object> conList = new ArrayList<>();
         arrayList.forEach(a -> {
@@ -399,125 +398,52 @@ public class HaoyueApplicationTests {
             conList.add(a.getValue());
         });
         conList.forEach(a ->
-                System.out.print(a +" ")
+                System.out.print(a + " ")
         );
     }
 
     @Test
-    public void f30(){
-        Calendar calendar=Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY,0);
-        calendar.set(Calendar.MINUTE,0);
+    public void f30() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
         System.out.println(calendar.getTime().toLocaleString());
     }
 
     @Test
-    public void f31(){
-        double str=999.009;
+    public void f31() {
+        double str = 999.009;
         System.out.println(System.currentTimeMillis());
+    }
+
+    @Test
+    public void f32() {
+
+        String str = "2018-05-25 16:05:02.008";
+        System.out.println(StringUtils.countMatches(str, "0"));
+
+
     }
 
 
     @Test
-    public void check(){
+    public void check() {
         //  https://way.jd.com/jisuapi/query?type=SFEXPRESS&number=925749187579&appkey=您申请的APPKEY
-        String code="888212746238226568";
-        String url="https://way.jd.com/jisuapi/query";
-        String param="type=auto&number="+code+"&appkey=3d1b6253bbfbbfb003aa9ec6a3c2ee0c";
-        String result=HttpRequest.sendGet(url,param);
+        String code = "888212746238226568";
+        String url = "https://way.jd.com/jisuapi/query";
+        String param = "type=auto&number=" + code + "&appkey=3d1b6253bbfbbfb003aa9ec6a3c2ee0c";
+        String result = HttpRequest.sendGet(url, param);
         System.out.println(result);
 
         try {
-            net.sf.json.JSONObject jsonObject=net.sf.json.JSONObject.fromObject(result);
+            net.sf.json.JSONObject jsonObject = net.sf.json.JSONObject.fromObject(result);
             System.out.println(jsonObject.getJSONObject("result"));
             System.out.println(jsonObject.getJSONObject("result").getString("status"));
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        List<Dog> list=new ArrayList<>();
-        Dog dog=new Dog();
-        dog.setName("aaa");
-        list.add(dog);
-
-        if (list.contains(dog)){
-            System.out.println("=====");
-        }
-        else {
-            System.out.println("------");
-        }
-
 
     }
 
-
-    class Dog {
-
-        private String name;
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-    }
-
-    public Map getminiqrQr(String accessToken,String pid) {
-        RestTemplate rest = new RestTemplate();
-        InputStream inputStream = null;
-        OutputStream outputStream = null;
-        try {
-            String url = "https://api.weixin.qq.com/cgi-bin/wxaapp/createwxaqrcode?access_token="+accessToken;
-            Map<String,Object> param = new HashMap<>();
-            param.put("path", "pages/details/details?id=43");
-            param.put("width", 430);
-            MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-            HttpEntity requestEntity = new HttpEntity(param, headers);
-            ResponseEntity<byte[]> entity = rest.exchange(url, HttpMethod.POST, requestEntity, byte[].class, new Object[0]);
-            byte[] result = entity.getBody();
-            inputStream = new ByteArrayInputStream(result);
-
-            //获取项目根路径
-            String relativelyPath = "c:";
-            String mkdirs=relativelyPath+"/qrcode/";
-            String filename=relativelyPath+"/qrcode/"+pid+".jpg";
-            File filedirs = new File(mkdirs);
-            if (!filedirs.isDirectory()){
-                filedirs.mkdirs();
-            }
-            outputStream = new FileOutputStream(new File(filename));
-            int len = 0;
-            byte[] buf = new byte[1024];
-            while ((len = inputStream.read(buf, 0, 1024)) != -1) {
-                outputStream.write(buf, 0, len);
-            }
-            outputStream.flush();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if(inputStream != null){
-                try {
-                    inputStream.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            if(outputStream != null){
-                try {
-                    outputStream.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        return null;
-    }
 }
-
-
-
-
-
-
