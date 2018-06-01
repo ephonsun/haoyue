@@ -7,7 +7,7 @@ import javax.persistence.Table;
 
 /**
  * Created by LiJia on 2017/9/25.
- * 简易版 点赞数
+ * 简易版 点赞数 功能暂存
  */
 @Entity
 @Table(name = "thumbsup")

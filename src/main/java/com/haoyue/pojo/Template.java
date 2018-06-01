@@ -2,6 +2,7 @@ package com.haoyue.pojo;
 
 /**
  * Created by LiJia on 2017/11/6.
+ * 微信模板信息
  */
 import java.util.List;
 

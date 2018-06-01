@@ -7,7 +7,7 @@ import java.util.Date;
 
 /**
  * Created by LiJia on 2017/9/30.
- * 官网网站留言
+ * 官网网站留言 暂存
  */
 @Entity
 @Table(name = "leave_message")

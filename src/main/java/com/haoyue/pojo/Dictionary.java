@@ -7,7 +7,7 @@ import java.util.Date;
 
 /**
  * Created by LiJia on 2017/8/24.
- * 卖家主页 全部 浏览量 交易额 访客数 买家数量--订单数量
+ * 卖家主页 全部 浏览量 交易额 访客数 买家数量==订单数量
  */
 @Entity
 @Table(name = "dictionarys")

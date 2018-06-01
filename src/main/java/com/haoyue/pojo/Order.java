@@ -8,6 +8,7 @@ import java.util.List;
 
 /**
  * Created by LiJia on 2017/8/23.
+ * 订单实体
  */
 @Entity
 @Table(name = "orders")

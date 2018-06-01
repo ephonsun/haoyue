@@ -7,7 +7,7 @@ import java.util.Date;
 
 /**
  * Created by LiJia on 2017/11/29.
- * 存储访问通知formId实体类
+ * 微信模板信息
  */
 @Entity
 @Table(name = "wx_template")

@@ -8,6 +8,7 @@ import java.util.Date;
 /**
  * Created by Lijia on 2018/4/8.
  * 积分
+ * 卖家设置的积分规则
  */
 @Entity
 @Table(name = "integral")

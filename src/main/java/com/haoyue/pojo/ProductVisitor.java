@@ -7,7 +7,7 @@ import java.util.Date;
 
 /**
  * Created by LiJia on 2017/11/15.
- * 被访问商品数
+ * 被访问商品数  功能暂存
  */
 
 @Entity

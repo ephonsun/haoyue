@@ -7,9 +7,8 @@ import javax.persistence.Table;
 
 /**
  * Created by LiJia on 2017/8/23.
- * 存放 宝贝分类 颜色 尺码 库存
- * 有 sellerId 无 productId 卖家个人的宝贝分类库
- * 无 sellerId 有 productId 存放指定商品的 颜色 尺码 库存 已卖出量 现价 原价
+ * 存放 宝贝分类 颜色 尺码 库存 折扣价 原价 秒杀价....
+ *
  */
 @Entity
 @Table(name = "protypes")

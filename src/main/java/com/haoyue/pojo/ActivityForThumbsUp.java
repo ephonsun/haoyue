@@ -7,6 +7,11 @@ import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
 
+/*
+* 皓月小程序积攒活动
+* 邀请好友来点赞，满了之后客户端会有一个弹出框，关于免费试用小程序的说明
+* */
+
 @Entity
 @Table(name = "activity_thumb_up")
 public class ActivityForThumbsUp {

@@ -7,8 +7,9 @@ import java.util.Date;
 
 /**
  * Created by LiJia on 2017/11/15.
- * 当日目前商品访客数 浏览量
+ * 当日目前商品访客数 浏览量  功能暂存
  * 对比昨日数据变化
+ *
  */
 
 @Entity

@@ -7,7 +7,7 @@ import java.util.Date;
 
 /**
  * Created by LiJia on 2017/9/25.
- * 简易版 商品评论 每个人都可以评论
+ * 简易版 商品评论 每个人都可以评论(好像是汽配城小程序的，仅仅是为了那一个小程序写的，现在有没有在用未知)
  */
 @Entity
 @Table(name = "basiccomments")

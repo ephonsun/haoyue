@@ -6,7 +6,8 @@ import javax.persistence.*;
 import java.util.Date;
 
 /**
- * Created by LiJia on 2017/8/24.  物流
+ * Created by LiJia on 2017/8/24.
+ * 快递物流
  * 有 sellerId 是物流模板
  * 无 sellerId  是具体的发货物流
  */

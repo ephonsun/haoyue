@@ -4,6 +4,7 @@ import javax.persistence.*;
 
 /**
  * Created by LiJia on 2017/8/25.
+ * 购物车详情
  */
 @Entity
 @Table(name = "shopcardetail")

@@ -2,6 +2,8 @@ package com.haoyue.pojo;
 
 /**
  * Created by LiJia on 2017/11/6.
+ * 微信模板信息
+ *
  */
 public class TemplateResponse {
     // 参数名称

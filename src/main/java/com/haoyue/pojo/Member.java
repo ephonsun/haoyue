@@ -8,7 +8,8 @@ import java.util.Date;
 /**
  * Created by LiJia on 2017/10/31.
  * 会员
- * 没有openId是卖家设置的会员等级
+ * 没有openId是卖家设置的会员等级规则
+ * 不同的会员对应同的优惠折扣
  */
 @Entity
 @Table(name = "members")

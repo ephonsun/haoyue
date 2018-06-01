@@ -8,6 +8,7 @@ import java.util.List;
 
 /**
  * Created by LiJia on 2017/8/21.
+ * 禾才小程序客户实体对象
  */
 @Entity
 @Table(name = "Customer", uniqueConstraints={@UniqueConstraint(columnNames={"openId","sellerId"})})

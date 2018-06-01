@@ -7,7 +7,7 @@ import java.util.Date;
 
 /**
  * Created by Lijia on 2018/4/17.
- * 自定义优惠券
+ * 自定义优惠券 正在使用的优惠券
  */
 @Entity
 @Table(name = "customecard")

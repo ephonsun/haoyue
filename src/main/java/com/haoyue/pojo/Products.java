@@ -9,8 +9,9 @@ import java.util.List;
 
 /**
  * Created by LiJia on 2017/8/21.
+ * 商品实体对象
  */
-//@SuppressWarnings("all")
+
 @Entity
 @Table(name = "products")
 public class Products {

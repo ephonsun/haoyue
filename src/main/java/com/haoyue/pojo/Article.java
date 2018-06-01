@@ -7,7 +7,7 @@ import java.util.Date;
 
 /**
  * Created by Lijia on 2018/5/17.
- * 文章
+ * 禾才小程序客户发布文章(后期小程序审核未通过)，功能暂存
  */
 
 @Entity

@@ -8,7 +8,7 @@ import java.util.List;
 
 /**
  * Created by Lijia on 2018/5/17.
- * 文章的用户评论
+ * 文章的用户评论，类似于百度贴吧，多级评论
  */
 
 @Entity

@@ -7,7 +7,7 @@ import javax.persistence.Table;
 
 /**
  * Created by LiJia on 2017/9/29.
- * 超级管理员
+ * 超级管理员  功能暂存
  */
 @Entity
 @Table(name = "super_admin")

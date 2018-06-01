@@ -2,6 +2,7 @@ package com.haoyue.pojo;
 
 /**
  * Created by LiJia on 2017/11/2.
+ * 暂存
  */
 public class OrderTotalPrice {
 

@@ -7,6 +7,9 @@ import javax.persistence.Table;
 
 /**
  * Created by LiJia on 2017/9/14.
+ *
+ * 访客数记录，同一个用户每天访问多次，只记录一次访问记录，隔天清空
+ *
  */
 @Entity
 @Table(name = "visitors")

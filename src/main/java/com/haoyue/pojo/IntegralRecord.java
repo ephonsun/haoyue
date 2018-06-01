@@ -8,6 +8,7 @@ import java.util.Date;
 /**
  * Created by Lijia on 2018/4/10.
  * 买家的每一笔积分记录
+ * 禾才小程序客户通过每天签到或者付款获得积分，付款时候可以抵现
  */
 @Entity
 @Table(name = "integral_record")

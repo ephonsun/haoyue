@@ -8,6 +8,7 @@ import java.util.Date;
 /**
  * Created by LiJia on 2017/11/3.
  * 抽奖
+ * 卖家设置的抽奖规则，可通过在商品详情页里设置绑定抽奖
  */
 @Entity
 @Table(name = "luckdraw")

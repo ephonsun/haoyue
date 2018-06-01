@@ -2,6 +2,7 @@ package com.haoyue.pojo;
 
 /**
  * Created by LiJia on 2017/8/25.
+ * 封装的 indexResult  response对象
  */
 public class IndexResult{
 

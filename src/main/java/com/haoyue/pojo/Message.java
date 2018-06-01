@@ -7,7 +7,7 @@ import java.util.Date;
 
 /**
  * Created by Administrator on 2018/1/22.
- * 退货、退款中卖家和买家留言，协商详情展示
+ * 退货、退款中卖家和买家留言，协商详情页展示
  */
 
 @Entity

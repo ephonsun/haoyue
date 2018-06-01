@@ -8,7 +8,7 @@ import java.util.List;
 
 /**
  * Created by LiJia on 2017/12/8.
- * 自定义商品分类
+ * 自定义商品分类，一级分类，二级分类，一级/二级和商品都是多对多的关系
  */
 
 @Entity

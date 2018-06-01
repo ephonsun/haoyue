@@ -7,7 +7,7 @@ import java.util.Date;
 
 /**
  * Created by LiJia on 2017/9/28.
- * 优惠券实体
+ * 优惠券实体  功能暂存
  */
 @Entity
 @Table(name = "coupons")

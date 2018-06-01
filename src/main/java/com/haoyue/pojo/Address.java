@@ -7,6 +7,7 @@ import javax.persistence.Table;
 
 /**
  * Created by LiJia on 2017/9/4.
+ * 客户收货地址
  */
 @Entity
 @Table(name = "address")

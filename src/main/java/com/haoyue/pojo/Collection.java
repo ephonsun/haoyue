@@ -7,6 +7,7 @@ import java.util.Date;
 
 /**
  * Created by LiJia on 2017/11/15.
+ * 小程序我的收藏
  */
 @Entity
 @Table(name = "collections")

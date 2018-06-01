@@ -9,8 +9,9 @@ import java.util.List;
 
 /**
  * Created by LiJia on 2017/8/21.
+ * 卖家实体对象
  */
-//卖家
+
 @Entity
 @Table(name = "sellers")
 public class Seller implements Serializable{

@@ -7,7 +7,7 @@ import java.util.Date;
 
 /**
  * Created by LiJia on 2017/11/1.
- * 代金券
+ *   代金券，以前说过要做代金券我就提前把接口做出来了，后来前端没有来得及编写页面，功能暂存
  */
 @Entity
 @Table(name = "cashtickets")

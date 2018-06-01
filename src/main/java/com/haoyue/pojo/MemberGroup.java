@@ -7,7 +7,7 @@ import javax.persistence.Table;
 
 /**
  * Created by Lijia on 2018/3/13.
- * 会员分组
+ * 会员分组 用于把所有会员分类
  */
 @Entity
 @Table(name = "member_group")

@@ -7,6 +7,7 @@ import java.util.Date;
 
 /**
  * Created by Administrator on 2017/8/23.
+ * 订单评论
  */
 @Entity
 @Table(name = "comments")

@@ -7,7 +7,7 @@ import java.util.Date;
 
 /**
  * Created by Lijia on 2018/4/8.
- * 买家签到
+ * 禾才小程序客户签到，签到可获得积分
  */
 @Entity
 @Table(name = "signin")
