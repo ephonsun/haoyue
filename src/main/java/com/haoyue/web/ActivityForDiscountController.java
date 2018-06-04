@@ -2,8 +2,10 @@ package com.haoyue.web;
 
 import com.haoyue.pojo.ActivityForDiscount;
 import com.haoyue.pojo.Products;
+import com.haoyue.pojo.ProdutsType;
 import com.haoyue.service.ActivityForDiscountService;
 import com.haoyue.service.ProductsService;
+import com.haoyue.service.ProdutsTypeService;
 import com.haoyue.untils.Global;
 import com.haoyue.untils.Result;
 import com.haoyue.untils.StringUtils;
@@ -34,6 +36,8 @@ public class ActivityForDiscountController {
     private ActivityForDiscountService activityForDiscountService;
     @Autowired
     private ProductsService productsService;
+    @Autowired
+    private ProdutsTypeService produtsTypeService;
 
 //     /activity/discount/save?sellerId=3&activityName=活动名称&activitylabel=活动标签
 //       fromdate=活动开始日期&todate=活动结束日期(时间格式  2017-9-19 16:28:25)
@@ -61,6 +65,19 @@ public class ActivityForDiscountController {
         return new Result(false, Global.do_success,null,null);
     }
 
+    // /activity/discount/unbind?pid=商品ID(不是商品分类ID)&sellerId=3
+    @RequestMapping("/unbind")
+    public Result unbind(int pid,String sellerId){
+        Products products= productsService.findOne(pid);
+        products.setActivityForDiscount(null);
+        productsService.update(products);
+        List<ProdutsType> produtsTypes=products.getProdutsTypes();
+        for (ProdutsType type:produtsTypes){
+            type.setDiscountPrice(0.0);
+        }
+        produtsTypeService.update(produtsTypes);
+        return new Result(false, Global.do_success,null,null);
+    }
 
     //  /activity/discount/findone?id=12&sellerId=3
     @RequestMapping("/findone")

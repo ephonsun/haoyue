@@ -464,7 +464,6 @@ public class OrderController {
         return new Result(false, Global.do_success, result, null);
     }
 
-
     //每当买家订单付款后会更新该买家的会员信息
     public void saveMember(Order order, Customer customer) {
         //查询出指定商家的会员体系

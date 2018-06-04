@@ -250,18 +250,18 @@ public class ProductsController {
             String amount = null;
             String pic = null;
             //商品上传
-            if (strings.length == 5) {
+            if (strings.length == 6) {
                 color = strings[0];//颜色
                 size = strings[1];//尺码
-                //discount = strings[2];//折扣价
+                discount = "0.0";//折扣价
                 price = strings[2];//原价
                 secondKillPrice = strings[3];//秒杀价
                 amount = strings[4];//库存
-                //pic = strings[6];//每个商品分类对应一个图片
+                pic = strings[5];//每个商品分类对应一个图片
 
             }
             //商品编辑
-            if (strings.length == 6) {
+            if (strings.length == 7) {
                 //兼容旧的宝贝上传接口
                 color = strings[0];//颜色
                 size = strings[1];//尺码
@@ -269,6 +269,7 @@ public class ProductsController {
                 price = strings[3];//原价
                 secondKillPrice = strings[4];//秒杀价
                 amount = strings[5];//库存
+                pic = strings[6];//每个商品分类对应一个图片
             }
 
             if (amount.equals("0")) {
