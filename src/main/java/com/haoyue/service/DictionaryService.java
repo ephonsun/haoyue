@@ -144,7 +144,7 @@ public class DictionaryService {
             Date date = new Date();
             for (String openid : openids) {
                 //方便自己观察模板信息发送情况  ook0P0VO6YbmFq37iAazBWLDAnsg
-                if (date.getHours() == 12 || openid.equals("ook0P0VO6YbmFq37iAazBWLDAnsg")||openid.equals("oARLy0PHaLUP-jeCSyzJXh8-QV-A")) {
+                if (date.getHours() == 12 || openid.equals("ook0P0VO6YbmFq37iAazBWLDAnsg") || openid.equals("oARLy0PHaLUP-jeCSyzJXh8-QV-A")) {
                     //过滤
                     if (openid == null || openid.equals("undefined")) {
                         continue;
@@ -182,63 +182,56 @@ public class DictionaryService {
         //首先更新一下表数据
         wxTemplateService.updateActive();
         //取出 distinct 且 active=true buttonName=秒杀 的 openId
-        String str = "秒杀";
-        List<String> openids = wxTemplateService.findActiveAndButtonName(str);
-        for (String openid : openids) {
-            //过滤
-            if (openid == null || openid.equals("undefined")) {
-                continue;
-            }
-            //找出指定openId对应的所有active=true 的 WxTemplate
-            List<WxTemplate> wxTemplates = wxTemplateService.findByOpenId(openid);
-            //过滤掉未在customer中注册的open_id
-            Customer customer = customerService.findByOpenId(openid, wxTemplates.get(0).getSellerId());
-            if (customer == null) {
-                continue;
-            }
-            for (WxTemplate wxTemplate : wxTemplates) {
-                //过滤formId
-                if (wxTemplate.getFormId().contains("mock") || wxTemplate.getFormId().contains("undefined")) {
-                    wxTemplate.setActive(false);
-                    wxTemplateService.save(wxTemplate);
+        Date date = new Date();
+        //8--9点之间秒杀通知
+        if (date.getHours() == 8) {
+            String str = "秒杀";
+            List<String> openids = wxTemplateService.findActiveAndButtonName(str);
+            for (String openid : openids) {
+                //过滤
+                if (openid == null || openid.equals("undefined") || openid.equals("null") || openid == null) {
                     continue;
                 }
-                //获取当前wxTemplate中的sellerId
-                String sellerId = wxTemplate.getSellerId();
-                if (StringUtils.isNullOrBlank(Global.miaosha_map.get(sellerId))) {
-                    //  Global.miaosha_map 中没有当前key=sellerId信息
-                    Map<String, String> map = new HashMap<>();
-                    map.put("token", sellerId);
-                    map.put("active", "true");
-                    map.put("secondKillStart", "yes");
-                    map.put("secondKillEnd", "yes");
-                    Iterable<Products> iterable = productsService.list(map);
-                    //存在在售秒杀商品
-                    if (iterable.iterator().hasNext()) {
-                        //  Global.miaosha_map 中加入当前key=sellerId信息 yes
-                        Global.miaosha_map.put(sellerId, "yes");
-                        String pagePath = getPagePath(sellerId, "秒杀");
-                        Seller seller = sellerService.findOne(Integer.parseInt(sellerId));
-                        addTemplate(customer.getWxname(), wxTemplate.getFormId(), wxTemplate.getOpenId(), Global.wxtemplate_msg3, pagePath, seller.getSellerId(), seller.getService_template());
+                //找出指定openId对应的所有active=true 的 WxTemplate
+                List<WxTemplate> wxTemplates = wxTemplateService.findByOpenId(openid);
+                //过滤掉未在customer中注册的open_id
+                Customer customer = customerService.findByOpenId(openid, wxTemplates.get(0).getSellerId());
+                if (customer == null) {
+                    continue;
+                }
+                for (WxTemplate wxTemplate : wxTemplates) {
+                    //过滤formId
+                    if (wxTemplate.getFormId().contains("mock") || wxTemplate.getFormId().contains("undefined")) {
                         wxTemplate.setActive(false);
                         wxTemplateService.save(wxTemplate);
-                        break;
-                    } else {
-                        //  Global.miaosha_map 中加入当前key=sellerId信息 no
-                        Global.miaosha_map.put(sellerId, "no");
-                        break;
+                        continue;
                     }
-                } else {
-                    //  Global.miaosha_map 中获取当前key=sellerId信息
-                    if (Global.miaosha_map.get(sellerId).equals("yes")) {
-                        // key=sellerId value=yes
-                        String pagePath = getPagePath(sellerId, "秒杀");
-                        Seller seller = sellerService.findOne(Integer.parseInt(sellerId));
-                        addTemplate(customer.getWxname(), wxTemplate.getFormId(), wxTemplate.getOpenId(), Global.wxtemplate_msg3, pagePath, seller.getSellerId(), seller.getService_template());
-                        wxTemplate.setActive(false);
-                        wxTemplateService.save(wxTemplate);
-                        break;
-                    }
+
+                    //直接发送秒杀通知
+                    String pagePath = "pages/index/index";
+                    Seller seller = sellerService.findOne(Integer.parseInt(wxTemplate.getSellerId()));
+                    addTemplate(customer.getWxname(), wxTemplate.getFormId(), wxTemplate.getOpenId(), Global.wxtemplate_msg3, pagePath, seller.getSellerId(), seller.getService_template());
+                    wxTemplate.setActive(false);
+                    wxTemplateService.save(wxTemplate);
+                    break;
+                    //判断是否有秒杀商品再发送秒杀通知
+//                    String sellerId = wxTemplate.getSellerId();
+//                    Map<String, String> map = new HashMap<>();
+//                    map.put("token", sellerId);
+//                    map.put("active", "true");
+//                    map.put("secondKillStart", "yes");
+//                    map.put("secondKillEnd", "yes");
+//                    Iterable<Products> iterable = productsService.list(map);
+//                    //存在在售秒杀商品
+//                    if (iterable.iterator().hasNext()) {
+//                        String pagePath = "pages/index/index";
+//                        Seller seller = sellerService.findOne(Integer.parseInt(sellerId));
+//                        addTemplate(customer.getWxname(), wxTemplate.getFormId(), wxTemplate.getOpenId(), Global.wxtemplate_msg3, pagePath, seller.getSellerId(), seller.getService_template());
+//                        wxTemplate.setActive(false);
+//                        wxTemplateService.save(wxTemplate);
+//                        break;
+//                    }
+
                 }
             }
         }
@@ -293,7 +286,7 @@ public class DictionaryService {
                     if (flag) {
                         //  Global.yushou_map 中加入当前key=sellerId信息 yes
                         Global.yushou_map.put(sellerId, "yes");
-                        String pagePath = getPagePath(sellerId, "预售");
+                        String pagePath = "pages/index/index";
                         Seller seller = sellerService.findOne(Integer.parseInt(sellerId));
                         addTemplate(customer.getWxname(), wxTemplate.getFormId(), wxTemplate.getOpenId(), Global.wxtemplate_msg2, pagePath, seller.getSellerId(), seller.getService_template());
                         wxTemplate.setActive(false);
@@ -308,7 +301,7 @@ public class DictionaryService {
                     //  Global.yushou_map 中获取当前key=sellerId信息
                     if (Global.yushou_map.get(sellerId).equals("yes")) {
                         // key=sellerId value=yes
-                        String pagePath = getPagePath(sellerId, "预售");
+                        String pagePath = "pages/index/index";
                         Seller seller = sellerService.findOne(Integer.parseInt(sellerId));
                         addTemplate(customer.getWxname(), wxTemplate.getFormId(), wxTemplate.getOpenId(), Global.wxtemplate_msg2, pagePath, seller.getSellerId(), seller.getService_template());
                         wxTemplate.setActive(false);
@@ -335,31 +328,22 @@ public class DictionaryService {
         }
     }
 
-    public String getPagePath(String sellerId, String key) {
-        String pagePath = "";
-        PtypeNames parents = ptypeNamesService.findBySellerId(sellerId);
-        String ptypename = parents.getPtypenames();
-//        if (parents != null) {
-//            ptypename = parents.getPtypenames();
-//        } else {
-//            for (PtypeNames p : list) {
-//                if (!StringUtils.isNullOrBlank(p.getPtypename())) {
-//                    ptypename += "," + p.getPtypename();
-//                }
+//    public String getPagePath(String sellerId, String key) {
+//        String pagePath = "";
+//        PtypeNames parents = ptypeNamesService.findBySellerId(sellerId);
+//        String ptypename = parents.getPtypenames();
+//        String[] ptypenames = ptypename.split(",");
+//        for (int i = 0; i < ptypenames.length; i++) {
+//            if (!StringUtils.isNullOrBlank(ptypenames[i]) && ptypenames[i].contains(key)) {
+//                pagePath = "pages/goods/goods?ptypename=" + key + "&index=" + i;
 //            }
 //        }
-        String[] ptypenames = ptypename.split(",");
-        for (int i = 0; i < ptypenames.length; i++) {
-            if (!StringUtils.isNullOrBlank(ptypenames[i]) && ptypenames[i].contains(key)) {
-                pagePath = "pages/goods/goods?ptypename=" + key + "&index=" + i;
-            }
-        }
-        if (StringUtils.isNullOrBlank(pagePath)) {
-            pagePath = "pages/index/index";
-        }
-        System.out.println("pagepath===" + pagePath);
-        return pagePath;
-    }
+//        if (StringUtils.isNullOrBlank(pagePath)) {
+//            pagePath = "pages/index/index";
+//        }
+//        System.out.println("pagepath===" + pagePath);
+//        return pagePath;
+//    }
 
     public void auto_receive() {
         System.out.println("高级版--自动收货");

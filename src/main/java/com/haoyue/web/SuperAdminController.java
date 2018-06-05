@@ -251,7 +251,7 @@ public class SuperAdminController {
             // 第二个参数为首次执行的延时时间，第三个参数为定时执行的间隔时间 单位/秒
             //如果定时任务中间发生异常，则后面定时任务不再执行
             service.scheduleAtFixedRate(runnable_1, 30, 3600, TimeUnit.SECONDS);
-            service.scheduleAtFixedRate(runnable_2, 90, 1800, TimeUnit.SECONDS);
+           // service.scheduleAtFixedRate(runnable_2, 90, 3600, TimeUnit.SECONDS);
             Global.timer=true;
             return "ok";
         }
@@ -287,13 +287,12 @@ public class SuperAdminController {
     Runnable runnable_2 = new Runnable() {
         public void run() {
             try {
-                System.out.println("高级版--秒杀通知执行了。。。。");
-                dictionaryService.timeKillInform();
-                System.out.println("高级版--预售通知执行了。。。。");
-                dictionaryService.advanceSale();
+                //System.out.println("高级版--秒杀通知执行了。。。。");
+                //dictionaryService.timeKillInform();
+                //System.out.println("高级版--预售通知执行了。。。。");
+                //dictionaryService.advanceSale();
                 //清空数据
-                Global.yushou_map.clear();
-                Global.miaosha_map.clear();
+                //Global.yushou_map.clear();
             }
             catch (Exception e){
                 e.printStackTrace();

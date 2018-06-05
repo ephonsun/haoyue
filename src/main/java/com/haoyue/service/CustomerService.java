@@ -29,8 +29,25 @@ public class CustomerService {
     private DictionaryService dictionaryService;
 
     public Customer findByPhone(String phone) {
-        return customerRepo.findByPhone(phone);
+        List<Customer> customers=customerRepo.findByPhone(phone);
+        if(customers!=null&&customers.size()!=0){
+            return customers.get(0);
+        }
+        return null;
     }
+
+    public Customer findByPhone(String phone,String sellerId) {
+        List<Customer> customers=customerRepo.findByPhone(phone);
+        if(customers!=null&&customers.size()!=0){
+            for (Customer customer:customers){
+                if(customer.getSellerId().equals(sellerId)){
+                    return customer;
+                }
+            }
+        }
+        return null;
+    }
+
 
 
     public Iterable<ShopCar> list(Map<String, String> map ) {

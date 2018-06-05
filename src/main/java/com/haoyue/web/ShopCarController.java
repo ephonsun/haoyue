@@ -30,6 +30,7 @@ public class ShopCarController {
     @Autowired
     private ShopCarDetailService shopCarDetailService;
 
+    // https://www.cslapp.com/shopCar/list?sellerId=3&openId=ook0P0VO6YbmFq37iAazBWLDAnsg
     @RequestMapping("/list")
     public Result list(@RequestParam Map<String, String> map,@RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize){
         //小程序端用户查看自己的购物车

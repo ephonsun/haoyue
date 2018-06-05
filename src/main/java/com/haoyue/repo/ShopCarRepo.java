@@ -43,6 +43,6 @@ public interface ShopCarRepo extends BaseRepo<ShopCar, Integer> {
 
     @Modifying
     @Transactional
-    @Query(nativeQuery = true,value = "update  shopcar set form_id=null  where id=?1")
+    @Query(nativeQuery = true,value = "update  shopcar set form_id=''  where id=?1")
     void updateFormId(Integer id);
 }

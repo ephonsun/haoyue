@@ -157,25 +157,20 @@ public class ShopCarService {
                     int pid = shopcar.getProductses().get(0).getId();
                     //发送模板信息 过滤掉 the formId is a mock one 和 undefined
                     // ||shopcar.getFormId().equals("undefined")||shopcar.getFormId2().equals("undefined")
+
                     if (shopcar.getFormId().equals("the formId is a mock one") || shopcar.getFormId2().equals("the formId is a mock one")) {
+                        shopCarRepo.updateActiveFalse(shopcar.getId());
                         continue;
                     }
-                    if (StringUtils.isNullOrBlank(shopcar.getFormId())) {
+                    if (!StringUtils.isNullOrBlank(shopcar.getFormId())) {
                         //formId2
-                        if (!shopcar.getFormId2().equals("undefined")) {
-                            addTemplate(pid, pname, shopcar.getOpenId(), shopcar.getShopCarDetails().get(0).getProdutsType(), shopcar.getFormId2());
-                        }
-                        shopcar.setFormId2(null);
-                        shopCarRepo.updateFormId2(shopcar.getId());
-                    } else {
-                        //formId
                         if (!shopcar.getFormId().equals("undefined")) {
                             addTemplate(pid, pname, shopcar.getOpenId(), shopcar.getShopCarDetails().get(0).getProdutsType(), shopcar.getFormId());
                         }
-                        shopcar.setFormId(null);
+                        shopcar.setFormId("");
                         shopCarRepo.updateFormId(shopcar.getId());
                     }
-                    if (StringUtils.isNullOrBlank(shopcar.getFormId()) && StringUtils.isNullOrBlank(shopcar.getFormId2())) {
+                    if (StringUtils.isNullOrBlank(shopcar.getFormId())) {
                         //更新shop.active=false formId formId2 已过期或已被使用
                         shopCarRepo.updateActiveFalse(shopcar.getId());
                     }
@@ -224,7 +219,7 @@ public class ShopCarService {
         TemplateResponse templateResponse4 = new TemplateResponse();
         templateResponse4.setColor("#000000");
         templateResponse4.setName("keyword4");
-        templateResponse4.setValue("近期好价");
+        templateResponse4.setValue("你收藏的宝贝降价啦...");
         list.add(templateResponse4);
 
         Template template = new Template();
@@ -234,6 +229,7 @@ public class ShopCarService {
         template.setPage("pages/details/details?id=" + pid + "&ptypeId=" + ptype.getId());
         template.setToUser(openId);
         getTemplate(template, formId,ptype.getSellerId());
-
     }
+
+
 }

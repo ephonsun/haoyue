@@ -1,6 +1,7 @@
 package com.haoyue.web;
 
 import com.haoyue.pojo.ProdutsType;
+import com.haoyue.pojo.ShopCar;
 import com.haoyue.service.ProdutsTypeService;
 import com.haoyue.service.ShopCarService;
 import com.haoyue.untils.Global;
@@ -21,6 +22,8 @@ public class ProdutsTypeController {
 
     @Autowired
     private ProdutsTypeService produtsTypeService;
+    @Autowired
+    private ShopCarService shopCarService;
 
     @RequestMapping("/list")
     public Result list(@RequestParam Map<String, String> map, @RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "3") int pageSize) {
@@ -59,6 +62,8 @@ public class ProdutsTypeController {
         }
         if(produtsType.getDiscountPrice()!=null){
             old.setDiscountPrice(produtsType.getDiscountPrice());
+            //降价通知
+            shopCarService.sendCustomerWxTemplate(old.getId(), old.getSellerId());
         }
         produtsTypeService.save(old);
         return new Result(false, Global.do_success,null,token);

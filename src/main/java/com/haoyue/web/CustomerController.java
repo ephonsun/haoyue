@@ -46,8 +46,8 @@ public class CustomerController {
         return new Result(false, Global.do_success, productsService.list(map), map.get("token"));
     }
 
-   // 客户访问店铺的时候
-   // https://www.cslapp.com/customer/loginOrReg?openId=oARLy0PHaLUP-jeCSyzJXh8-QV-A&sellerId=5&wxname=微信名称&wxpic=微信头像
+    // 客户访问店铺的时候
+    // https://www.cslapp.com/customer/loginOrReg?openId=oARLy0PHaLUP-jeCSyzJXh8-QV-A&sellerId=5&wxname=微信名称&wxpic=微信头像
     @RequestMapping("/loginOrReg")
     public Result save(String openId, String sellerId, String wxname, String wxpic) {
 
@@ -72,7 +72,7 @@ public class CustomerController {
             //不存在
             List<Customer> customerList = customerService.findByWxnamAndSellerId(wxname, sellerId);
             //之前没有登录过微商城
-            if (customerList == null||customerList.size()==0) {
+            if (customerList == null || customerList.size() == 0) {
                 customer = new Customer();
                 customer.setOpenId(openId);
                 customer.setSellerId(sellerId);
@@ -191,7 +191,7 @@ public class CustomerController {
         customer.setUsedScroll(customer.getUsedScroll() + Integer.parseInt(nums));
         customerService.update(customer);
         //增加积分的记录
-        IntegralRecord integralRecord=new IntegralRecord();
+        IntegralRecord integralRecord = new IntegralRecord();
         integralRecord.setCreateDate(new Date());
         integralRecord.setOpenId(customer.getOpenId());
         integralRecord.setSellerId(customer.getSellerId());
@@ -206,7 +206,15 @@ public class CustomerController {
     // http://lbs.amap.com/api/javascript-api/guide/map-data/geocoding
     @RequestMapping("/update")
     public Result update(Customer customer) {
+
+        //校验一下手机号码是否已经被使用
+        Customer oldcustomer = customerService.findByPhone(customer.getPhone(),customer.getSellerId());
+        if (oldcustomer != null&&!customer.getOpenId().equals(oldcustomer.getOpenId())) {
+            return new Result(true, Global.phone_exist, null, null);
+        }
+
         Customer customer1 = customerService.findByOpenId(customer.getOpenId(), customer.getSellerId());
+
         customer1.setSex(customer.getSex());
         customer1.setPhone(customer.getPhone());
         customer1.setEmail(customer.getEmail());

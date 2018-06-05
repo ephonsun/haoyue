@@ -9,7 +9,7 @@ import java.util.List;
  * Created by LiJia on 2017/9/4.
  */
 public interface CustomerRepo extends BaseRepo<Customer,Integer> {
-    Customer findByPhone(String phone);
+    List<Customer> findByPhone(String phone);
 
     Customer findByOpenId(String openId);
 

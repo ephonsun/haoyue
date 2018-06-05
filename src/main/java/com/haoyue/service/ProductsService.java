@@ -79,10 +79,10 @@ public class ProductsService {
                 if (name.equals("key")) {
                     bd.and(pro.pname.contains(value));
                 }
-                if(name.equals("parenttypeid")){
+                if (name.equals("parenttypeid")) {
                     bd.and(pro.parenttypes.any().id.eq(Integer.parseInt(value)));
                 }
-                if(name.equals("childtypeid")){
+                if (name.equals("childtypeid")) {
                     bd.and(pro.childtypes.any().id.eq(Integer.parseInt(value)));
                 }
                 if (name.equals("ptypename")) {
@@ -112,17 +112,17 @@ public class ProductsService {
 
             }
         }
-        return productsRepo.findAll(bd.getValue(),new Sort(Sort.Direction.DESC,"id"));
+        return productsRepo.findAll(bd.getValue(), new Sort(Sort.Direction.DESC, "id"));
     }
 
     public Iterable<Products> plist(Map<String, String> map, int pagenumber, int pagesize) {
         QProducts pro = QProducts.products;
         BooleanBuilder bd = new BooleanBuilder();
         Date date = new Date();
-        int monthsale_from=0;
-        int monthsale_to=0;
-        double price_from=0;
-        double price_to=0;
+        int monthsale_from = 0;
+        int monthsale_to = 0;
+        double price_from = 0;
+        double price_to = 0;
         for (String name : map.keySet()) {
             String value = (String) map.get(name);
             if (!(StringUtils.isNullOrBlank(value))) {
@@ -132,10 +132,10 @@ public class ProductsService {
                 if (name.equals("key")) {
                     bd.and(pro.pname.contains(value));
                 }
-                if(name.equals("parenttypeid")){
+                if (name.equals("parenttypeid")) {
                     bd.and(pro.parenttypes.any().id.eq(Integer.parseInt(value)));
                 }
-                if(name.equals("childtypeid")){
+                if (name.equals("childtypeid")) {
                     bd.and(pro.childtypes.any().id.eq(Integer.parseInt(value)));
                 }
                 if (name.equals("pcode")) {
@@ -150,16 +150,16 @@ public class ProductsService {
                     bd.or(pro.showDate.after(date));
                 }
                 if (name.equals("mothsale_from")) {
-                   monthsale_from=Integer.parseInt(value);
+                    monthsale_from = Integer.parseInt(value);
                 }
                 if (name.equals("mothsale_to")) {
-                    monthsale_to=Integer.parseInt(value);
+                    monthsale_to = Integer.parseInt(value);
                 }
                 if (name.equals("price_from")) {
-                    price_from=Double.valueOf(value);
+                    price_from = Double.valueOf(value);
                 }
                 if (name.equals("price_to")) {
-                    price_to=Double.valueOf(value);
+                    price_to = Double.valueOf(value);
                 }
                 if (name.equals("killproduct")) {
                     bd.and(pro.issecondkill.eq(true));
@@ -168,13 +168,13 @@ public class ProductsService {
                 }
             }
         }
-        if(monthsale_from>=0&&monthsale_to!=0){
-            bd.and(pro.monthSale.between(monthsale_from,monthsale_to));
+        if (monthsale_from >= 0 && monthsale_to != 0) {
+            bd.and(pro.monthSale.between(monthsale_from, monthsale_to));
         }
-        if(price_from>=0&&price_to!=0){
-            bd.and(pro.produtsTypes.any().priceNew.between(price_from,price_to));
+        if (price_from >= 0 && price_to != 0) {
+            bd.and(pro.produtsTypes.any().priceNew.between(price_from, price_to));
         }
-        if(!StringUtils.isNullOrBlank(map.get("orderById"))){
+        if (!StringUtils.isNullOrBlank(map.get("orderById"))) {
             return productsRepo.findAll(bd.getValue(), new PageRequest(pagenumber, pagesize, new Sort(Sort.Direction.DESC, new String[]{"id"})));
         }
         return productsRepo.findAll(bd.getValue(), new PageRequest(pagenumber, pagesize, new Sort(Sort.Direction.DESC, new String[]{"monthSale"})));
@@ -237,13 +237,9 @@ public class ProductsService {
         else if (!StringUtils.isNullOrBlank(map.get("discount"))) {
             ProdutsType ptype = produtsTypeRepo.findOne(Integer.parseInt(map.get("ptypeId")));
             ptype.setISDiscount(true);
-            double olddiscount = ptype.getDiscountPrice();
             ptype.setDiscountPrice(Double.valueOf(map.get("discount")));
-            //降价
-            if (olddiscount != 0 && olddiscount > ptype.getDiscountPrice()) {
-                //降价通知
-                shopCarService.sendCustomerWxTemplate(ptype.getId(), ptype.getSellerId());
-            }
+            //降价通知
+            shopCarService.sendCustomerWxTemplate(ptype.getId(), ptype.getSellerId());
             produtsTypeRepo.save(ptype);
         }
 
@@ -283,8 +279,8 @@ public class ProductsService {
     //生成二维码
     public String qrcode(String sellerId, String pid) throws FileNotFoundException {
         String access_token_url = "https://api.weixin.qq.com/cgi-bin/token";
-        Seller seller=sellerRepo.findOne(Integer.parseInt(sellerId));
-        String param1 = "grant_type=client_credential&appid="+seller.getAppId()+"&secret="+seller.getSecret();
+        Seller seller = sellerRepo.findOne(Integer.parseInt(sellerId));
+        String param1 = "grant_type=client_credential&appid=" + seller.getAppId() + "&secret=" + seller.getSecret();
         String access_token = HttpRequest.sendPost(access_token_url, param1);
         access_token = access_token.substring(access_token.indexOf(":") + 2, access_token.indexOf(",") - 1);
         // d:/haoyue/erweima/1.jpg
@@ -310,7 +306,7 @@ public class ProductsService {
             list.remove(findOne(Integer.parseInt(pid)));
         }
         // < = 四个商品
-        if (list.size()<=4){
+        if (list.size() <= 4) {
             return list;
         }
         //  > 四个商品,随机抽取四个商品
@@ -329,7 +325,7 @@ public class ProductsService {
 
 
     public List<Products> findBySellerIdAndPtypeNameAndActive(String sellerId, String ptypename, boolean b) {
-        return productsRepo.findBySellerIdAndPtypeNameAndActive(Integer.parseInt(sellerId),ptypename,true);
+        return productsRepo.findBySellerIdAndPtypeNameAndActive(Integer.parseInt(sellerId), ptypename, true);
     }
 
     public Iterable<Products> findByActivityDiscount(Integer id) {
@@ -347,12 +343,12 @@ public class ProductsService {
         productsRepo.del_parenttypes_middle(id);
     }
 
-    public void unbind_parenttypes_middle(Integer id,Integer pid) {
-        productsRepo.unbind_parenttypes_middle(id,pid);
+    public void unbind_parenttypes_middle(Integer id, Integer pid) {
+        productsRepo.unbind_parenttypes_middle(id, pid);
     }
 
-    public void unbind_childtypes_middle(Integer id,Integer pid) {
-        productsRepo.unbind_childtypes_middle(id,pid);
+    public void unbind_childtypes_middle(Integer id, Integer pid) {
+        productsRepo.unbind_childtypes_middle(id, pid);
     }
 
     public Iterable<Products> list_webapp(int sellerId1) {
@@ -360,6 +356,6 @@ public class ProductsService {
         BooleanBuilder bd = new BooleanBuilder();
         bd.and(pro.sellerId.eq(sellerId1));
         bd.and(pro.active.eq(true));
-        return productsRepo.findAll(bd.getValue(),new PageRequest(0,10,new Sort(Sort.Direction.DESC, new String[]{"id"})));
+        return productsRepo.findAll(bd.getValue(), new PageRequest(0, 10, new Sort(Sort.Direction.DESC, new String[]{"id"})));
     }
 }

@@ -96,6 +96,7 @@ public class Global {
     //用户信息
     public static String user_isnull = "用户不存在";
     public static String record_exist = "信息已存在";
+    public static String phone_exist = "电话信息已存在";
     public static String record_unexist = "信息不存在";
     public static String have_no_right = "无权操作";
     public static String service_stop = "该店铺服务已到期或被强行停止";
@@ -127,6 +128,7 @@ public class Global {
 
     //微信支付
     public static String notify_url = "https://www.cslapp.com/pay/notify";//通知地址
+    public static String notify_url_1 = "https://www.cslapp.com/pay/notify_1";//充值成功通知地址
     public static String common_pay_url = "https://api.mch.weixin.qq.com/pay/unifiedorder";//统一下单url
 
     // 付款package
@@ -142,9 +144,8 @@ public class Global {
     public static String activity_closed = "活动已经关闭";
 
     //微信模板信息访问通知
-    public static String wxtemplate_msg1 = "3月5日各种活动：小香套装最低360元起，还有各种团购，秒杀，记得围观哦！";//日常访问通知
     public static String wxtemplate_msg2 = "亲爱的，您喜欢的宝贝上架啦，貌似新品有限时折扣！";//预售通知
-    public static String wxtemplate_msg3 = "置顶关注，限时巨划算怎能错过！";//秒杀通知
+    public static String wxtemplate_msg3 = "你收藏的宝贝正在秒杀！";//秒杀通知
     public static Map<String, String> yushou_map = new HashMap<>();
     public static Map<String, String> miaosha_map = new HashMap<>();
 

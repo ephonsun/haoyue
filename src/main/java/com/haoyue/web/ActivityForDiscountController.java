@@ -6,6 +6,7 @@ import com.haoyue.pojo.ProdutsType;
 import com.haoyue.service.ActivityForDiscountService;
 import com.haoyue.service.ProductsService;
 import com.haoyue.service.ProdutsTypeService;
+import com.haoyue.service.ShopCarService;
 import com.haoyue.untils.Global;
 import com.haoyue.untils.Result;
 import com.haoyue.untils.StringUtils;
@@ -39,6 +40,7 @@ public class ActivityForDiscountController {
     @Autowired
     private ProdutsTypeService produtsTypeService;
 
+
 //     /activity/discount/save?sellerId=3&activityName=活动名称&activitylabel=活动标签
 //       fromdate=活动开始日期&todate=活动结束日期(时间格式  2017-9-19 16:28:25)
     @RequestMapping("/save")
@@ -62,6 +64,9 @@ public class ActivityForDiscountController {
         ActivityForDiscount activityForDiscount= activityForDiscountService.findOne(activityId);
         products.setActivityForDiscount(activityForDiscount);
         productsService.update(products);
+
+
+
         return new Result(false, Global.do_success,null,null);
     }
 
@@ -74,6 +79,7 @@ public class ActivityForDiscountController {
         List<ProdutsType> produtsTypes=products.getProdutsTypes();
         for (ProdutsType type:produtsTypes){
             type.setDiscountPrice(0.0);
+            type.setISDiscount(false);
         }
         produtsTypeService.update(produtsTypes);
         return new Result(false, Global.do_success,null,null);
