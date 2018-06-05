@@ -364,7 +364,7 @@ public class PayAction {
         //更新 dictionary  全部 交易额 订单数量
         Dictionary dictionary = dictionaryService.findByDateAndSellerId(new Date(), order.getSellerId());
         dictionary.setBuyers(dictionary.getBuyers() + 1);
-        dictionary.setTurnover(Double.valueOf(payDeal.getTotal_fee()) + dictionary.getTurnover());
+        dictionary.setTurnover(Double.valueOf(payDeal.getTotal_fee())/100 + dictionary.getTurnover());
         dictionaryService.update(dictionary);
 
         BufferedOutputStream out = new BufferedOutputStream(
