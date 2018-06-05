@@ -523,12 +523,13 @@ public class OrderController {
                     }
                 }
             }
+            DecimalFormat decimalFormat = new DecimalFormat("#.##");
             oldmember.setNums(oldmember.getNums() + 1);
-            oldmember.setTotal_consume(oldmember.getTotal_consume() + order.getTotalPrice());
+            oldmember.setTotal_consume(oldmember.getTotal_consume() + order.getTotalPrice()-order.getDeliver().getPrice());
+            oldmember.setTotal_consume(Double.valueOf(decimalFormat.format(oldmember.getTotal_consume())));
             oldmember.setLatestBuyDate(order.getCreateDate());
             oldmember.setProductnums(oldmember.getProductnums() + order.getProducts().size());
             //保留两位小数
-            DecimalFormat decimalFormat = new DecimalFormat("#.##");
             oldmember.setAvg_consume(Double.valueOf(decimalFormat.format(oldmember.getTotal_consume() / oldmember.getNums())));
             //刷新会员来源  交易未成功
             oldmember.setFroms(Global.member_froms_fail);
