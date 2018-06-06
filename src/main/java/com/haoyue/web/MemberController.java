@@ -132,6 +132,7 @@ public class MemberController {
             Member member_seller = memberService.findBySellerIdAndLeavel(member.getSellerId(), member.getLeavel());
             old.setDiscount(member_seller.getDiscount());
         }
+        old.setGroupName(member.getGroupName());
         memberService.updateMemeber(old);
         return new Result(false, Global.do_success, old, null);
     }
