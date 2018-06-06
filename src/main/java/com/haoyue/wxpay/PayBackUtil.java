@@ -24,11 +24,12 @@ import java.util.*;
 
 /**
  * Created by LiJia on 2017/11/14.
+ *  重要 -- 退款证书的配置，详细信息查看 微信小程序开发文档
+ *
  */
 public class PayBackUtil {
 
     //  1487862802 是mchId
-
     @Autowired
     private SellerService sellerService;
 

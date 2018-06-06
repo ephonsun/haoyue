@@ -283,6 +283,7 @@ public class OrderController {
         return new Result(false, Global.do_success, orderService.save(order), null);
     }
 
+    // /order/changeState?oid=订单ID&state=待发货订单
     @RequestMapping("/changeState")
     public Result changeState(Integer oid, String state) {
         synchronized (Global.object2) {
@@ -427,6 +428,8 @@ public class OrderController {
                 return new Result(true, Global.order_not_unpay, null, null);
             }
             order1.setTotalPrice(order.getTotalPrice());
+            //为了确保修改订单单价后可以重新付款，需要修改订单单号
+            order1.setOrderCode(Global.order_code_begin + (Global.count++) + new Date().getTime());
         }
         orderService.update(order1);
         return new Result(false, Global.do_success, null, null);
@@ -586,6 +589,9 @@ public class OrderController {
         access_token = access_token.substring(access_token.indexOf(":") + 2, access_token.indexOf(",") - 1);
         //发送模板信息
         String form_id = Global.package_map.get(oid + "");
+        if(StringUtils.isNullOrBlank(form_id)){
+            return;
+        }
         template.setForm_id(form_id);
         String url = "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token=" + access_token + "&form_id=" + form_id;
         String result = CommonUtil.httpRequest(url, "POST", template.toJSON());

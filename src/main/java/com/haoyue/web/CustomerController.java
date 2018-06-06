@@ -258,4 +258,21 @@ public class CustomerController {
         return new Result(false, Global.do_success, customerList, null);
     }
 
+
+    //   更新账户充值余额
+    //  /customer/recharge?openId=123&sellerId=112&moneys=消费金额(元)
+    @RequestMapping("/recharge")
+    public Result recharge(String openId,String sellerId,double moneys){
+
+        Customer customer=customerService.findByOpenId(openId,sellerId);
+        double rechargemoney= customer.getRechargeMoney();
+        if(rechargemoney<moneys){
+            return new Result(true, Global.recharge_money_less, null, null);
+        }
+        customer.setRechargeMoney(customer.getRechargeMoney()-moneys);
+        customerService.update(customer);
+        return new Result(false, Global.do_success, null, null);
+
+    }
+
 }
