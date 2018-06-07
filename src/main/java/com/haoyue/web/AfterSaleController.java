@@ -359,7 +359,11 @@ public class AfterSaleController {
         template.setTemplateId(seller.getPayback_template());
         template.setTemplateParamList(list);
         template.setTopColor("#000000");
-        template.setPage("pages/index/index");
+        String pagePath="pages/index/index";
+        if(order.getSellerId()==3||order.getSellerId()==14){
+            pagePath="pages/goods/goods";
+        }
+        template.setPage(pagePath);
         template.setToUser(customerService.findOpenIdById(order.getCustomerId() + ""));
         getTemplate(template, formId,seller);
     }

@@ -144,7 +144,7 @@ public class DictionaryService {
             Date date = new Date();
             for (String openid : openids) {
                 //方便自己观察模板信息发送情况  ook0P0VO6YbmFq37iAazBWLDAnsg
-                if (date.getHours() == 12 || openid.equals("ook0P0VO6YbmFq37iAazBWLDAnsg") || openid.equals("oARLy0PHaLUP-jeCSyzJXh8-QV-A")) {
+                if (date.getHours() == 12) {
                     //过滤
                     if (openid == null || openid.equals("undefined")) {
                         continue;
@@ -165,7 +165,11 @@ public class DictionaryService {
                                 continue;
                             }
                             Seller seller = sellerService.findOne(Integer.parseInt(wxTemplate.getSellerId()));
-                            addTemplate(customerService.findByOpenId(wxTemplate.getOpenId(), wxTemplate.getSellerId()).getWxname(), wxTemplate.getFormId(), wxTemplate.getOpenId(), seller.getService_template_msg(), "pages/index/index", seller.getSellerId(), seller.getService_template());
+                            String pagePath="pages/index/index";
+                            if(seller.getSellerId()==3||seller.getSellerId()==14){
+                                pagePath="pages/goods/goods";
+                            }
+                            addTemplate(customerService.findByOpenId(wxTemplate.getOpenId(), wxTemplate.getSellerId()).getWxname(), wxTemplate.getFormId(), wxTemplate.getOpenId(), seller.getService_template_msg(), pagePath, seller.getSellerId(), seller.getService_template());
                             wxTemplate.setActive(false);
                             wxTemplateService.save(wxTemplate);
                             break;
@@ -208,7 +212,10 @@ public class DictionaryService {
                     }
 
                     //直接发送秒杀通知
-                    String pagePath = "pages/index/index";
+                    String pagePath="pages/index/index";
+                    if(wxTemplate.getSellerId().equals("3")){
+                        pagePath="pages/goods/goods";
+                    }
                     Seller seller = sellerService.findOne(Integer.parseInt(wxTemplate.getSellerId()));
                     addTemplate(customer.getWxname(), wxTemplate.getFormId(), wxTemplate.getOpenId(), Global.wxtemplate_msg3, pagePath, seller.getSellerId(), seller.getService_template());
                     wxTemplate.setActive(false);
@@ -286,7 +293,7 @@ public class DictionaryService {
                     if (flag) {
                         //  Global.yushou_map 中加入当前key=sellerId信息 yes
                         Global.yushou_map.put(sellerId, "yes");
-                        String pagePath = "pages/index/index";
+                        String pagePath = "pages/goods/goods";
                         Seller seller = sellerService.findOne(Integer.parseInt(sellerId));
                         addTemplate(customer.getWxname(), wxTemplate.getFormId(), wxTemplate.getOpenId(), Global.wxtemplate_msg2, pagePath, seller.getSellerId(), seller.getService_template());
                         wxTemplate.setActive(false);
@@ -301,7 +308,10 @@ public class DictionaryService {
                     //  Global.yushou_map 中获取当前key=sellerId信息
                     if (Global.yushou_map.get(sellerId).equals("yes")) {
                         // key=sellerId value=yes
-                        String pagePath = "pages/index/index";
+                        String pagePath="pages/index/index";
+                        if(wxTemplate.getSellerId().equals("3")){
+                            pagePath="pages/goods/goods";
+                        }
                         Seller seller = sellerService.findOne(Integer.parseInt(sellerId));
                         addTemplate(customer.getWxname(), wxTemplate.getFormId(), wxTemplate.getOpenId(), Global.wxtemplate_msg2, pagePath, seller.getSellerId(), seller.getService_template());
                         wxTemplate.setActive(false);

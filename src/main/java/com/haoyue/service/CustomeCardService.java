@@ -148,7 +148,11 @@ public class CustomeCardService {
         template.setTemplateId(sellerService.findOne(Integer.parseInt(customeCard.getSellerId())).getCustomeCard_template());
         template.setTemplateParamList(list);
         template.setTopColor("#000000");
-        template.setPage("pages/index/index");
+        String pagePath="pages/index/index";
+        if(customeCard.getSellerId().equals("3")){
+            pagePath="pages/goods/goods";
+        }
+        template.setPage(pagePath);
         template.setToUser(customeCard.getOpenId());
         getTemplate(template, customeCard.getSellerId(), customeCard.getFormId());
     }
