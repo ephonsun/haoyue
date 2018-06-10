@@ -135,13 +135,13 @@ public class DictionaryService {
     //访问通知
     public void auto_inform() {
 
-        if (true) {
+        Date date=new Date();
+        if (date.getHours()==12) {
             System.out.println("高级版--访问通知");
             //首先更新一下表数据
             wxTemplateService.updateActive();
             //取出 distinct 且 active=true 的 openId
             List<String> openids = wxTemplateService.findActive();
-            Date date = new Date();
             for (String openid : openids) {
                 //方便自己观察模板信息发送情况  ook0P0VO6YbmFq37iAazBWLDAnsg
                 if (date.getHours() == 12) {
