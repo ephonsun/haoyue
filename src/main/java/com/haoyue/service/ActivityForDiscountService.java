@@ -12,6 +12,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -63,5 +64,9 @@ public class ActivityForDiscountService {
             }
         }
         return activityForDiscountRepo.findAll(bd.getValue(),new PageRequest(pageNumber,pageSize,new Sort(Sort.Direction.DESC,new String[]{"id"})));
+    }
+
+    public List<ActivityForDiscount> findEndDateBefor() {
+       return activityForDiscountRepo.findEndDateBefoe();
     }
 }

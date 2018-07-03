@@ -100,6 +100,9 @@ public class ProductsService {
                 if (name.equals("showdate")) {
                     bd.and(pro.showDate.before(date));
                 }
+                if (name.equals("isdelete")) {
+                    bd.and(pro.isdelete.eq(Boolean.valueOf(value)));
+                }
                 if (name.equals("showdate_after")) {
                     bd.and(pro.showDate.after(date));
                 }
@@ -160,6 +163,9 @@ public class ProductsService {
                 }
                 if (name.equals("price_to")) {
                     price_to = Double.valueOf(value);
+                }
+                if (name.equals("isdelete")) {
+                   bd.and(pro.isdelete.eq(Boolean.valueOf(value)));
                 }
                 if (name.equals("killproduct")) {
                     bd.and(pro.issecondkill.eq(true));
@@ -284,7 +290,11 @@ public class ProductsService {
         String access_token = HttpRequest.sendPost(access_token_url, param1);
         access_token = access_token.substring(access_token.indexOf(":") + 2, access_token.indexOf(",") - 1);
         // d:/haoyue/erweima/1.jpg
-        String filename = QRcode.getminiqrQr(access_token, pid);
+        String path="pages/details/details";
+        if(sellerId.equals("3")){
+            path="package1/details/details";
+        }
+        String filename = QRcode.getminiqrQr(access_token, pid,path);
         File file = new File(filename);
         FileInputStream fileInputStream = new FileInputStream(file);
         OSSClientUtil tossClientUtil = new OSSClientUtil();

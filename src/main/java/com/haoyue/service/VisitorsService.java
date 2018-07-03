@@ -1,9 +1,16 @@
 package com.haoyue.service;
 
+import com.haoyue.pojo.QVisitors;
 import com.haoyue.pojo.Visitors;
 import com.haoyue.repo.VisitorsRepo;
+import com.haoyue.untils.StringUtils;
+import com.querydsl.core.BooleanBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import java.util.Map;
 
 /**
  * Created by LiJia on 2017/9/14.
@@ -33,5 +40,19 @@ public class VisitorsService {
 
     public void update(Visitors visitors) {
         visitorsRepo.save(visitors);
+    }
+
+    public Iterable<Visitors> list(Map<String, String> map, int pageNumber, int pageSize) {
+
+        QVisitors visitors=QVisitors.visitors;
+        BooleanBuilder bd=new BooleanBuilder();
+        for (String key:map.keySet()){
+            String value=map.get(key);
+            if(!StringUtils.isNullOrBlank(value)){
+
+
+            }
+        }
+        return visitorsRepo.findAll(bd.getValue(),new PageRequest(pageNumber,pageSize,new Sort(Sort.Direction.DESC,"id")));
     }
 }

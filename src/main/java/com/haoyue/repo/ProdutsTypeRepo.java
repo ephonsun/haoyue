@@ -16,4 +16,7 @@ public interface ProdutsTypeRepo extends BaseRepo<ProdutsType,Integer> {
     @Transactional
     @Query(nativeQuery = true,value = "delete from products_produts_types where products_id =?1")
     void deleteByProId(Integer id);
+
+    @Query(nativeQuery = true,value = "update products_produts_types set discount_price=price_new where products_id =?1")
+    void updateDiscount(Integer id);
 }

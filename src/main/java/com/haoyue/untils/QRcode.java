@@ -17,7 +17,7 @@ import java.util.Map;
  */
 public class QRcode {
 
-    public static String getminiqrQr(String accessToken,String pid) {
+    public static String getminiqrQr(String accessToken,String pid,String path) {
         RestTemplate rest = new RestTemplate();
         InputStream inputStream = null;
         OutputStream outputStream = null;
@@ -25,7 +25,7 @@ public class QRcode {
         try {
             String url = "https://api.weixin.qq.com/cgi-bin/wxaapp/createwxaqrcode?access_token="+accessToken;
             Map<String,Object> param = new HashMap<>();
-            param.put("path", "pages/details/details?id="+pid);
+            param.put("path", path+"?id="+pid);
             param.put("width", 430);
             MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
             HttpEntity requestEntity = new HttpEntity(param, headers);

@@ -66,6 +66,7 @@ public class Products {
 
     private boolean issecondkill=false;//是否秒杀
     private boolean active=true;//是否上架
+    private boolean isdelete=false;
 
     //宝贝参数
     private String brand;//品牌
@@ -96,6 +97,14 @@ public class Products {
     private List<CustomProductsTypes> parenttypes;//一个商品对应多个一级分类
     @ManyToMany(cascade = CascadeType.ALL)
     private List<CustomProductsTypes> childtypes;//一个商品对应多个二级分类
+
+    public boolean getIsdelete() {
+        return isdelete;
+    }
+
+    public void setIsdelete(boolean isdelete) {
+        this.isdelete = isdelete;
+    }
 
     public List<CustomProductsTypes> getParenttypes() {
         return parenttypes;

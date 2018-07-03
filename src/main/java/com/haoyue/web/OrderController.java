@@ -60,6 +60,8 @@ public class OrderController {
     private CustomeCardService customeCardService;
     @Autowired
     private ActivityForDiscountService activityForDiscountService;
+    @Autowired
+    private PhoneRecordsService phoneRecordsService;
 
 
     // /order/list?pageNumber&pageSize&sellerId&state&active=true
@@ -124,6 +126,9 @@ public class OrderController {
 
     @RequestMapping("/save")
     public Result save(String deliver_price,String total_price, Integer proId, Integer proTypeId, String sellerId, String receiver, String phone, String address, Integer amount, String openId, String leaveMessage, String wxname, String cashTicketCode,String integralMoney,String customeCardId) {
+
+
+
         //  当用户点击拒接获取信息后，导致wxname,wxpic为空
         if (StringUtils.isNullOrBlank(wxname)) {
             return new Result(true, Global.cannot_get_info, null, null);
@@ -134,6 +139,15 @@ public class OrderController {
         }
 
         Customer customer = customerService.findByOpenId(openId, sellerId);
+
+        //手机号是否存在于手机号列表里
+        if(!StringUtils.isNullOrBlank(sellerId)&&sellerId.equals("14")){
+            List<PhoneRecords> phoneRecords= phoneRecordsService.findBySellerIdAndPhone(sellerId,customer.getPhone());
+            if(phoneRecords==null||phoneRecords.size()==0){
+                return new Result(true, Global.noright_order, null, null);
+            }
+        }
+
         Order order = new Order();
         //客户
         order.setCustomerId(customer.getId());

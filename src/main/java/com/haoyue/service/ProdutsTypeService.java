@@ -52,4 +52,8 @@ public class ProdutsTypeService {
     public void update(List<ProdutsType> produtsTypes) {
         produtsTypeRepo.save(produtsTypes);
     }
+
+    public void updateDiscount(Integer id) {
+        produtsTypeRepo.updateDiscount(id);
+    }
 }

@@ -253,7 +253,7 @@ public class ProductsController {
             if (strings.length == 6) {
                 color = strings[0];//颜色
                 size = strings[1];//尺码
-                discount = "0.0";//折扣价
+                discount = strings[2];//折扣价
                 price = strings[2];//原价
                 secondKillPrice = strings[3];//秒杀价
                 amount = strings[4];//库存
@@ -378,5 +378,12 @@ public class ProductsController {
         return new Result(false, Global.do_success, secondPtypeNames, null);
     }
 
+    @RequestMapping("/delete")
+    public Result delete(String sellerId,String pid){
+        Products products= productsService.findOne(Integer.parseInt(pid));
+        products.setIsdelete(true);
+        productsService.update(products);
+        return new Result(false, Global.do_success, null, null);
+    }
 
 }

@@ -128,7 +128,10 @@ public class MemberService {
                     bd.and(member.discount.eq(value));
                 } else if (name.equals("nums_from")) {
                     numsfrom = Integer.parseInt(value);
-                } else if (name.equals("nums_to")) {
+                }else if (name.equals("city")) {
+                    bd.and(member.city.contains(value));
+                }
+                else if (name.equals("nums_to")) {
                     numsto = Integer.parseInt(value);
                 } else if (name.equals("expense_from")) {
                     expensefrom = Double.valueOf(value);

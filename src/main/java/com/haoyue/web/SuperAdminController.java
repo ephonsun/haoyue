@@ -44,6 +44,10 @@ public class SuperAdminController {
     private AfterSaleService afterSaleService;
     @Autowired
     private CustomeCardService customeCardService;
+    @Autowired
+    private ActivityForDiscountService activityForDiscountService;
+    @Autowired
+    private ProdutsTypeService produtsTypeService;
 
     @RequestMapping("/login")
     public Result login(SuperAdmin superAdmin) {
@@ -252,6 +256,7 @@ public class SuperAdminController {
             //如果定时任务中间发生异常，则后面定时任务不再执行
             service.scheduleAtFixedRate(runnable_1, 30, 3600, TimeUnit.SECONDS);
            // service.scheduleAtFixedRate(runnable_2, 90, 3600, TimeUnit.SECONDS);
+            service.scheduleAtFixedRate(runnable_3, 30, 60, TimeUnit.SECONDS);
             Global.timer=true;
             return "ok";
         }
@@ -293,6 +298,27 @@ public class SuperAdminController {
                 //dictionaryService.advanceSale();
                 //清空数据
                 //Global.yushou_map.clear();
+            }
+            catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+    };
+
+    Runnable runnable_3 = new Runnable() {
+        public void run() {
+            try {
+                List<ActivityForDiscount> list= activityForDiscountService.findEndDateBefor();
+                for (ActivityForDiscount activity:list){
+                    Iterable<Products> iterable= productsService.findByActivityDiscount(activity.getId());
+                    Iterator<Products> iterator= iterable.iterator();
+                    while (iterator.hasNext()){
+                        Products products=iterator.next();
+                        produtsTypeService.updateDiscount(products.getId());
+                    }
+                    activity.setActive(false);
+                    activityForDiscountService.update(activity);
+                }
             }
             catch (Exception e){
                 e.printStackTrace();
