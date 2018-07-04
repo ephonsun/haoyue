@@ -142,7 +142,9 @@ public class OrderController {
 
         //手机号是否存在于手机号列表里
         if(!StringUtils.isNullOrBlank(sellerId)&&sellerId.equals("14")){
+            System.out.println("sellerId:"+sellerId+"  phone:"+customer.getPhone());
             List<PhoneRecords> phoneRecords= phoneRecordsService.findBySellerIdAndPhone(sellerId,customer.getPhone());
+            System.out.println("phoneRecords::"+phoneRecords.toString());
             if(phoneRecords==null||phoneRecords.size()==0){
                 return new Result(true, Global.noright_order, null, null);
             }

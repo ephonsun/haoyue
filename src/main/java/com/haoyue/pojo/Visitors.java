@@ -1,9 +1,9 @@
 package com.haoyue.pojo;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import javax.persistence.*;
+import java.util.Date;
 
 /**
  * Created by LiJia on 2017/9/14.
@@ -22,6 +22,35 @@ public class Visitors {
     private Integer productId;
     private String openId;
     private int num;//浏览次数
+    private String wxname;
+    private String wxpic;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:SS", timezone = "GMT+8")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createDate;//创建日期
+
+    public Date getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
+    }
+
+    public String getWxname() {
+        return wxname;
+    }
+
+    public void setWxname(String wxname) {
+        this.wxname = wxname;
+    }
+
+    public String getWxpic() {
+        return wxpic;
+    }
+
+    public void setWxpic(String wxpic) {
+        this.wxpic = wxpic;
+    }
 
     public int getNum() {
         return num;

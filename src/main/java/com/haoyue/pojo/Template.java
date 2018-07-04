@@ -105,5 +105,17 @@ public class Template {
         this.templateParamList = templateParamList;
     }
 
+    @Override
+    public String toString() {
+        return "Template{" +
+                "toUser='" + toUser + '\'' +
+                ", templateId='" + templateId + '\'' +
+                ", url='" + url + '\'' +
+                ", topColor='" + topColor + '\'' +
+                ", form_id='" + form_id + '\'' +
+                ", page='" + page + '\'' +
+                ", templateParamList=" + templateParamList +
+                '}';
+    }
 }
 

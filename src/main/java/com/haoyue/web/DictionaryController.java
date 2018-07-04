@@ -1,7 +1,9 @@
 package com.haoyue.web;
 
+import com.haoyue.pojo.Customer;
 import com.haoyue.pojo.Dictionary;
 import com.haoyue.pojo.Visitors;
+import com.haoyue.service.CustomerService;
 import com.haoyue.service.DictionaryService;
 import com.haoyue.service.VisitorsService;
 import com.haoyue.untils.Global;
@@ -24,6 +26,8 @@ public class DictionaryController {
     private DictionaryService dictionaryService;
     @Autowired
     private VisitorsService visitorsService;
+    @Autowired
+    private CustomerService customerService;
 
     @RequestMapping("/findOne")
     public Result findOne(String token, String name){
@@ -74,6 +78,7 @@ public class DictionaryController {
     //整个店铺（商品）访客数
     @RequestMapping("/addVisitors")
     public Result addVisitors(String sellerId,String openId,String proId){
+        Customer customer=customerService.findByOpenId(openId,sellerId);
         if (proId==null) {
             Integer sellerId1 = Integer.parseInt(sellerId);
             Visitors visitors = visitorsService.findBySellerIdAndOpenId(sellerId1, openId);
@@ -82,6 +87,9 @@ public class DictionaryController {
                 visitors.setSellerId(sellerId1);
                 visitors.setOpenId(openId);
                 visitors.setNum(1);
+                visitors.setCreateDate(new Date());
+                visitors.setWxname(customer.getWxname());
+                visitors.setWxpic(customer.getWxpic());
                 //同步代码块
                 synchronized (this) {
                     Dictionary dictionary = dictionaryService.findByDateAndSellerId(new Date(), Integer.parseInt(sellerId));
@@ -94,6 +102,7 @@ public class DictionaryController {
                 }
             }else {
                 visitors.setNum(visitors.getNum()+1);
+                visitors.setCreateDate(new Date());
             }
             visitorsService.update(visitors);
             return new Result(false, Global.do_success, null, null);

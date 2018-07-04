@@ -291,7 +291,7 @@ public class ProductsService {
         access_token = access_token.substring(access_token.indexOf(":") + 2, access_token.indexOf(",") - 1);
         // d:/haoyue/erweima/1.jpg
         String path="pages/details/details";
-        if(sellerId.equals("3")){
+        if(sellerId.equals("3")||sellerId.equals("14")){
             path="package1/details/details";
         }
         String filename = QRcode.getminiqrQr(access_token, pid,path);

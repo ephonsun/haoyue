@@ -49,7 +49,9 @@ public class VisitorsService {
         for (String key:map.keySet()){
             String value=map.get(key);
             if(!StringUtils.isNullOrBlank(value)){
-
+                if(key.equals("sellerId")){
+                    bd.and(visitors.sellerId.eq(Integer.parseInt(value)));
+                }
 
             }
         }

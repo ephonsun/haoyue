@@ -1,7 +1,9 @@
 package com.haoyue.web;
 
 import com.haoyue.pojo.Integral;
+import com.haoyue.pojo.Seller;
 import com.haoyue.service.IntegralService;
+import com.haoyue.service.SellerService;
 import com.haoyue.untils.Global;
 import com.haoyue.untils.Result;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,7 @@ public class IntegralController {
     private IntegralService integralService;
 
 
+
     //  /integral/save?sellerId=3&typename=0（签到获得积分 0 交易获得积分 1）&days=连续签到天数&expense=单次消费金额
     //  &scrolls=奖励积分&comments=活动说明（&id=当前更新的ID）
     @RequestMapping("/save")
@@ -42,7 +45,6 @@ public class IntegralController {
                 }
             }
         }
-
         integral.setCreateDate(new Date());
         integralService.save(integral);
         return new Result(false, Global.do_success,integral,null);

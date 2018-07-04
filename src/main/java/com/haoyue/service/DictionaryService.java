@@ -136,7 +136,7 @@ public class DictionaryService {
     public void auto_inform() {
 
         Date date=new Date();
-        if (date.getHours()==12) {
+        if (date.getHours()==12||date.getHours()==20) {
             System.out.println("高级版--访问通知");
             //首先更新一下表数据
             wxTemplateService.updateActive();
@@ -144,7 +144,7 @@ public class DictionaryService {
             List<String> openids = wxTemplateService.findActive();
             for (String openid : openids) {
                 //方便自己观察模板信息发送情况  ook0P0VO6YbmFq37iAazBWLDAnsg
-                if (date.getHours() == 12) {
+                if (date.getHours() == 12||openid.equals("oe2r20Af-Ajv6z8p3bDFNmbRo6Sk")||openid.equals("oe2r20HPGuFlgB8R5ZVjXx61g9M0")) {
                     //过滤
                     if (openid == null || openid.equals("undefined")) {
                         continue;
@@ -166,7 +166,7 @@ public class DictionaryService {
                             }
                             Seller seller = sellerService.findOne(Integer.parseInt(wxTemplate.getSellerId()));
                             String pagePath="pages/index/index";
-                            if(seller.getSellerId()==3||seller.getSellerId()==14){
+                            if(seller.getSellerId()==3){
                                 pagePath="pages/goods/goods";
                             }
                             addTemplate(customerService.findByOpenId(wxTemplate.getOpenId(), wxTemplate.getSellerId()).getWxname(), wxTemplate.getFormId(), wxTemplate.getOpenId(), seller.getService_template_msg(), pagePath, seller.getSellerId(), seller.getService_template());
@@ -309,7 +309,7 @@ public class DictionaryService {
                     if (Global.yushou_map.get(sellerId).equals("yes")) {
                         // key=sellerId value=yes
                         String pagePath="pages/index/index";
-                        if(wxTemplate.getSellerId().equals("3")){
+                        if(wxTemplate.getSellerId().equals("3")||wxTemplate.getSellerId().equals("14")){
                             pagePath="pages/goods/goods";
                         }
                         Seller seller = sellerService.findOne(Integer.parseInt(sellerId));
@@ -462,6 +462,8 @@ public class DictionaryService {
     }
 
     public void addTemplate(String wxname, String formId, String openId, String message, String pagePath, int sellerId, String templateId) {
+
+        System.out.println("访问通知路径path："+pagePath);
 
         List<TemplateResponse> list = new ArrayList<>();
         TemplateResponse templateResponse1 = new TemplateResponse();

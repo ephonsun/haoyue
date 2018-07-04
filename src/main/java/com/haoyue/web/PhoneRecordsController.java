@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,7 +27,7 @@ public class PhoneRecordsController {
     private PhoneRecordsService phoneRecordsService;
 
 
-    //  /phoneRecords/save?phone=电话号码&sellerId=3
+    //  /phoneRecords/save?phones=电话号码1-电话号码2-电话号码3&sellerId=3
     @RequestMapping("/save")
     public Result save(String phones, String sellerId) {
 
@@ -35,6 +36,10 @@ public class PhoneRecordsController {
             if (phone != null && phone.length != 0) {
                 for (int i = 0; i < phone.length; i++) {
                     String each = phone[i];
+                    List<PhoneRecords> phoneRecordsList= phoneRecordsService.findBySellerIdAndPhone(sellerId,each);
+                    if(phoneRecordsList!=null&&phoneRecordsList.size()!=0){
+                        continue;
+                    }
                     PhoneRecords phoneRecords = new PhoneRecords();
                     phoneRecords.setCreateDate(new Date());
                     phoneRecords.setPhone(each);
@@ -47,12 +52,14 @@ public class PhoneRecordsController {
         return new Result(false, Global.do_success, null, null);
     }
 
+    // /phoneRecords/list?sellerId=3&pageNumber=页数(从0开始)&pageSize=默认10
     @RequestMapping("/list")
     public Result list_new(@RequestParam Map<String, String> map, @RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize) {
         Iterable<PhoneRecords> iterable = phoneRecordsService.list(map, pageNumber, pageSize);
         return new Result(false, Global.do_success, iterable, null);
     }
 
+    // /phoneRecords/delete?id=当前记录ID&sellerId=3
     @RequestMapping("/delete")
     public Result del(String id,String sellerId){
         PhoneRecords phoneRecords=phoneRecordsService.findOne(id);

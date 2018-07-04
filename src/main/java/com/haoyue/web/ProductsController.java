@@ -319,8 +319,14 @@ public class ProductsController {
             //设置商品号
             if (StringUtils.isNullOrBlank(products.getPcode())) {
                 Seller seller = sellerService.findOne(Integer.parseInt(token));
-                String str = StringUtils.getPinYinByStr(seller.getSellerName());
+                String str="";
+                if(seller.getSellerId()==10){
+                    str= StringUtils.getPinYinByStr("hr");
+                }else {
+                    str= StringUtils.getPinYinByStr(seller.getSellerName());
+                }
                 String pcode = str + "-" + (Global.count++) + products.getId();
+
                 boolean f = true;
                 //判断新产生的商品号是否存在
                 while (f) {
@@ -378,6 +384,7 @@ public class ProductsController {
         return new Result(false, Global.do_success, secondPtypeNames, null);
     }
 
+    //  http://localhost:8080/seller/pro/delete?pid=商品ID&sellerId=3
     @RequestMapping("/delete")
     public Result delete(String sellerId,String pid){
         Products products= productsService.findOne(Integer.parseInt(pid));

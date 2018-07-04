@@ -34,16 +34,11 @@ public class VisitorsController {
         return new Result(false, Global.do_success,null,null);
     }
 
+    // /visitors/list?sellerId=3&pageNumber=页数(从0开始)&pageSize=默认10
     @RequestMapping("/list")
     public Result list(@RequestParam Map<String, String> map, @RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize){
         Iterable<Visitors> iterable= visitorsService.list(map,pageNumber,pageSize);
-        Iterator<Visitors> iterator= iterable.iterator();
-        List<Customer> customerList=new ArrayList<>();
-        while (iterator.hasNext()){
-            Customer customer= customerService.findByOpenId(iterator.next().getOpenId(),iterator.next().getSellerId()+"");
-            customerList.add(customer);
-        }
-        return new Result(false, Global.do_success,customerList,null);
+        return new Result(false, Global.do_success,iterable,null);
     }
 
 }

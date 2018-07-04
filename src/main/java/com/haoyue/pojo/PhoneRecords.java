@@ -54,4 +54,14 @@ public class PhoneRecords {
     public void setCreateDate(Date createDate) {
         this.createDate = createDate;
     }
+
+    @Override
+    public String toString() {
+        return "PhoneRecords{" +
+                "id=" + id +
+                ", phone='" + phone + '\'' +
+                ", sellerId='" + sellerId + '\'' +
+                ", createDate=" + createDate +
+                '}';
+    }
 }
