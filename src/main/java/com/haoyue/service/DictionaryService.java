@@ -136,7 +136,7 @@ public class DictionaryService {
     public void auto_inform() {
 
         Date date=new Date();
-        if (date.getHours()==12||date.getHours()==20) {
+        if (date.getHours()==12) {
             System.out.println("高级版--访问通知");
             //首先更新一下表数据
             wxTemplateService.updateActive();
@@ -144,7 +144,7 @@ public class DictionaryService {
             List<String> openids = wxTemplateService.findActive();
             for (String openid : openids) {
                 //方便自己观察模板信息发送情况  ook0P0VO6YbmFq37iAazBWLDAnsg
-                if (date.getHours() == 12||openid.equals("oe2r20Af-Ajv6z8p3bDFNmbRo6Sk")||openid.equals("oe2r20HPGuFlgB8R5ZVjXx61g9M0")) {
+                if (date.getHours() == 12) {
                     //过滤
                     if (openid == null || openid.equals("undefined")) {
                         continue;
@@ -464,7 +464,10 @@ public class DictionaryService {
     public void addTemplate(String wxname, String formId, String openId, String message, String pagePath, int sellerId, String templateId) {
 
         System.out.println("访问通知路径path："+pagePath);
-
+        System.out.println("open_id:"+openId);
+        System.out.println("seller_id:"+sellerId);
+        System.out.println("wxname:"+wxname);
+        System.out.println("template_id"+templateId);
         List<TemplateResponse> list = new ArrayList<>();
         TemplateResponse templateResponse1 = new TemplateResponse();
         templateResponse1.setColor("#000000");

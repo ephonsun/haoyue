@@ -210,7 +210,9 @@ public class CustomerController {
         //校验一下手机号码是否已经被使用
         Customer oldcustomer = customerService.findByPhone(customer.getPhone(),customer.getSellerId());
         if (oldcustomer != null&&!customer.getOpenId().equals(oldcustomer.getOpenId())) {
-            return new Result(true, Global.phone_exist, null, null);
+            if(oldcustomer.getSellerId().equals(customer.getSellerId())){
+                return new Result(true, Global.phone_exist, null, null);
+            }
         }
 
         Customer customer1 = customerService.findByOpenId(customer.getOpenId(), customer.getSellerId());
